@@ -41,15 +41,15 @@ Replace the scaffolded config with:
 ```javascript
 /** @type {import('@dhis2/cli-app-scripts').D2Config} */
 const config = {
-  type: 'app',
-  name: '<app-name>',
-  minDHIS2Version: '2.41',
+    type: 'app',
+    name: '<app-name>',
+    minDHIS2Version: '2.41',
 
-  entryPoints: {
-    app: './src/App.tsx',
-  },
+    entryPoints: {
+        app: './src/App.tsx',
+    },
 
-  viteConfigExtensions: './vite.config.mts',
+    viteConfigExtensions: './vite.config.mts',
 };
 
 module.exports = config;
@@ -64,11 +64,11 @@ import path from 'path';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-  resolve: {
-    alias: {
-      '@': path.resolve(__dirname, 'src'),
+    resolve: {
+        alias: {
+            '@': path.resolve(__dirname, 'src'),
+        },
     },
-  },
 });
 ```
 
@@ -80,12 +80,12 @@ Add the `paths` mapping so TypeScript resolves the `@` alias:
 
 ```json
 {
-  "compilerOptions": {
-    "jsx": "react-jsx", // Overwrite the default jsx setting from the scaffolder
-    "paths": {
-      "@/*": ["./src/*"]
+    "compilerOptions": {
+        "jsx": "react-jsx", // Overwrite the default jsx setting from the scaffolder
+        "paths": {
+            "@/*": ["./src/*"]
+        }
     }
-  }
 }
 ```
 
@@ -109,13 +109,13 @@ import { Outlet, useLocation } from 'react-router-dom';
  */
 
 export const SyncUrlWithGlobalShell = () => {
-  const location = useLocation();
+    const location = useLocation();
 
-  useEffect(() => {
-    dispatchEvent(new PopStateEvent('popstate'));
-  }, [location.key]);
+    useEffect(() => {
+        dispatchEvent(new PopStateEvent('popstate'));
+    }, [location.key]);
 
-  return <Outlet />;
+    return <Outlet />;
 };
 ```
 
@@ -137,23 +137,23 @@ import { SyncUrlWithGlobalShell } from '@/utils/SyncUrlWithGlobalShell';
 const queryClient = new QueryClient();
 
 const router = createHashRouter([
-  {
-    element: <SyncUrlWithGlobalShell />,
-    children: [
-      {
-        path: '/',
-        element: <div>Home</div>,
-      },
-    ],
-  },
+    {
+        element: <SyncUrlWithGlobalShell />,
+        children: [
+            {
+                path: '/',
+                element: <div>Home</div>,
+            },
+        ],
+    },
 ]);
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <CssReset />
-    <CssVariables theme spacers colors elevations />
-    <RouterProvider router={router} />
-  </QueryClientProvider>
+    <QueryClientProvider client={queryClient}>
+        <CssReset />
+        <CssVariables theme spacers colors elevations />
+        <RouterProvider router={router} />
+    </QueryClientProvider>
 );
 
 export default App;
@@ -179,28 +179,28 @@ export type QueryVariables = Record<string, unknown>;
 
 type QueryParameterSingularValue = string | number | boolean;
 interface QueryParameterAliasedValue {
-  [name: string]: QueryParameterSingularValue;
+    [name: string]: QueryParameterSingularValue;
 }
 type QueryParameterSingularOrAliasedValue =
-  | QueryParameterSingularValue
-  | QueryParameterAliasedValue;
+    | QueryParameterSingularValue
+    | QueryParameterAliasedValue;
 type QueryParameterMultipleValue = QueryParameterSingularOrAliasedValue[];
 export type QueryParameterValue =
-  | QueryParameterSingularValue
-  | QueryParameterAliasedValue
-  | QueryParameterMultipleValue
-  | undefined;
+    | QueryParameterSingularValue
+    | QueryParameterAliasedValue
+    | QueryParameterMultipleValue
+    | undefined;
 
 export interface QueryParameters {
-  pageSize?: number;
-  [key: string]: QueryParameterValue;
+    pageSize?: number;
+    [key: string]: QueryParameterValue;
 }
 
 export interface ResourceQuery {
-  resource: string;
-  id?: PossiblyDynamic<string, QueryVariables>;
-  data?: PossiblyDynamic<unknown, QueryVariables>;
-  params?: PossiblyDynamic<QueryParameters, QueryVariables>;
+    resource: string;
+    id?: PossiblyDynamic<string, QueryVariables>;
+    data?: PossiblyDynamic<unknown, QueryVariables>;
+    params?: PossiblyDynamic<QueryParameters, QueryVariables>;
 }
 ```
 
@@ -216,36 +216,36 @@ import { useQuery, QueryFunction, UseQueryOptions, QueryKey } from '@tanstack/re
 import { ResourceQuery } from '../interfaces/apiQueryTypes';
 
 type UseApiDataQueryProps<
-  TResultData,
-  TError = Error,
-  TData = TResultData,
-  TQueryKey extends QueryKey = QueryKey,
+    TResultData,
+    TError = Error,
+    TData = TResultData,
+    TQueryKey extends QueryKey = QueryKey,
 > = Omit<UseQueryOptions<TResultData, TError, TData, TQueryKey>, 'queryFn'> & {
-  query: ResourceQuery;
+    query: ResourceQuery;
 };
 
 export const useApiDataQuery = <
-  TResultData,
-  TError = Error,
-  TData = TResultData,
-  TQueryKey extends QueryKey = QueryKey,
+    TResultData,
+    TError = Error,
+    TData = TResultData,
+    TQueryKey extends QueryKey = QueryKey,
 >({
-  query,
-  queryKey,
-  ...options
-}: UseApiDataQueryProps<TResultData, TError, TData, TQueryKey>) => {
-  const dataEngine = useDataEngine();
-
-  const queryFn: QueryFunction<TResultData, TQueryKey> = async () => {
-    const response = await dataEngine.query({ apiDataQuery: query });
-    return response.apiDataQuery as TResultData;
-  };
-
-  return useQuery<TResultData, TError, TData, TQueryKey>({
+    query,
     queryKey,
-    queryFn,
-    ...options,
-  });
+    ...options
+}: UseApiDataQueryProps<TResultData, TError, TData, TQueryKey>) => {
+    const dataEngine = useDataEngine();
+
+    const queryFn: QueryFunction<TResultData, TQueryKey> = async () => {
+        const response = await dataEngine.query({ apiDataQuery: query });
+        return response.apiDataQuery as TResultData;
+    };
+
+    return useQuery<TResultData, TError, TData, TQueryKey>({
+        queryKey,
+        queryFn,
+        ...options,
+    });
 };
 ```
 

@@ -1,8 +1,8 @@
 {
-  "name": "@dhis2-form-utils/config",
-  "version": "0.0.0",
-  "private": true,
-  "exports": {
-    "./tsconfig.base.json": "./tsconfig.base.json"
-  }
+    "name": "@dhis2-form-utils/config",
+    "version": "0.0.0",
+    "private": true,
+    "exports": {
+        "./tsconfig.base.json": "./tsconfig.base.json"
+    }
 }

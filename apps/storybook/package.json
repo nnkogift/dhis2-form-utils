@@ -1,44 +1,44 @@
 {
-  "name": "storybook",
-  "version": "0.0.0",
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "dev": "storybook dev -p 6006",
-    "build": "storybook build",
-    "test": "vitest run --project=storybook"
-  },
-  "dependencies": {
-    "@dhis2-form-utils/dhis2-ui": "workspace:*",
-    "@dhis2-form-utils/hooks": "workspace:*",
-    "@dhis2-form-utils/rules": "workspace:*",
-    "@dhis2-form-utils/mantine": "workspace:*",
-    "@dhis2-form-utils/mui": "workspace:*",
-    "@dhis2/app-runtime": "^3.17.0",
-    "@dhis2/ui": "^10.15.1",
-    "@emotion/react": "^11.14.0",
-    "@emotion/styled": "^11.14.1",
-    "@mantine/core": "^7.17.8",
-    "@mui/material": "^9.0.1",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-hook-form": "^7.76.0"
-  },
-  "devDependencies": {
-    "@dhis2-form-utils/config": "workspace:*",
-    "@storybook/addon-a11y": "^10.4.0",
-    "@storybook/addon-docs": "^10.4.0",
-    "@storybook/addon-vitest": "^10.4.0",
-    "@storybook/react": "^10.4.0",
-    "@storybook/react-vite": "^10.4.0",
-    "@types/react": "^18.3.29",
-    "@types/react-dom": "^18.3.7",
-    "@vitest/browser": "^4.1.7",
-    "@vitest/browser-playwright": "^4.1.7",
-    "playwright": "^1.60.0",
-    "storybook": "^10.4.0",
-    "typescript": "^5.9.3",
-    "vite": "^8.0.14",
-    "vitest": "^4.1.7"
-  }
+    "name": "storybook",
+    "version": "0.0.0",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "dev": "storybook dev -p 6006",
+        "build": "storybook build",
+        "test": "vitest run --project=storybook"
+    },
+    "dependencies": {
+        "@dhis2-form-utils/dhis2-ui": "workspace:*",
+        "@dhis2-form-utils/hooks": "workspace:*",
+        "@dhis2-form-utils/rules": "workspace:*",
+        "@dhis2-form-utils/mantine": "workspace:*",
+        "@dhis2-form-utils/mui": "workspace:*",
+        "@dhis2/app-runtime": "^3.17.0",
+        "@dhis2/ui": "^10.15.1",
+        "@emotion/react": "^11.14.0",
+        "@emotion/styled": "^11.14.1",
+        "@mantine/core": "^7.17.8",
+        "@mui/material": "^9.0.1",
+        "react": "^18.3.1",
+        "react-dom": "^18.3.1",
+        "react-hook-form": "^7.76.0"
+    },
+    "devDependencies": {
+        "@dhis2-form-utils/config": "workspace:*",
+        "@storybook/addon-a11y": "^10.4.0",
+        "@storybook/addon-docs": "^10.4.0",
+        "@storybook/addon-vitest": "^10.4.0",
+        "@storybook/react": "^10.4.0",
+        "@storybook/react-vite": "^10.4.0",
+        "@types/react": "^18.3.29",
+        "@types/react-dom": "^18.3.7",
+        "@vitest/browser": "^4.1.7",
+        "@vitest/browser-playwright": "^4.1.7",
+        "playwright": "^1.60.0",
+        "storybook": "^10.4.0",
+        "typescript": "^5.9.3",
+        "vite": "^8.0.14",
+        "vitest": "^4.1.7"
+    }
 }

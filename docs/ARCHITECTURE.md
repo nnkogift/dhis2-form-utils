@@ -126,13 +126,13 @@ entry aggregates all effects for that field into a single object the UI can cons
 ```ts
 // packages/rules/src/types.ts
 export type FieldState = {
-  hidden: boolean;
-  mandatory: boolean;
-  warning: string | null;
-  error: string | null;
-  assignedValue: unknown | null;
-  hiddenOptions: Set<string>;
-  hiddenOptionGroups: Set<string>;
+    hidden: boolean;
+    mandatory: boolean;
+    warning: string | null;
+    error: string | null;
+    assignedValue: unknown | null;
+    hiddenOptions: Set<string>;
+    hiddenOptionGroups: Set<string>;
 };
 
 export type FieldStateMap = Record<string, FieldState>;
@@ -150,22 +150,22 @@ import { RuleEngineContext, RuleEngine } from '@dhis2/rule-engine';
 import type { ProgramStageMetadata } from '@dhis2-form-utils/metadata';
 
 export function buildRuleEngineContext(metadata: ProgramStageMetadata): RuleEngineContext {
-  return RuleEngineContext.builder()
-    .rules(metadata.programRules)
-    .ruleVariables(metadata.programRuleVariables)
-    .build();
+    return RuleEngineContext.builder()
+        .rules(metadata.programRules)
+        .ruleVariables(metadata.programRuleVariables)
+        .build();
 }
 
 export function buildRuleEngine(
-  context: RuleEngineContext,
-  enrollmentData?: EnrollmentContext
+    context: RuleEngineContext,
+    enrollmentData?: EnrollmentContext
 ): RuleEngine {
-  const builder = context.toEngineBuilder();
-  if (enrollmentData) {
-    builder.enrollment(enrollmentData.enrollment);
-    builder.events(enrollmentData.previousEvents);
-  }
-  return builder.build();
+    const builder = context.toEngineBuilder();
+    if (enrollmentData) {
+        builder.enrollment(enrollmentData.enrollment);
+        builder.events(enrollmentData.previousEvents);
+    }
+    return builder.build();
 }
 ```
 
@@ -175,12 +175,12 @@ folds the resulting `RuleEffect` list into a `FieldStateMap`:
 ```ts
 // packages/rules/src/evaluate.ts
 export function evaluateAndMap(
-  engine: RuleEngine,
-  currentValues: Record<string, unknown>
+    engine: RuleEngine,
+    currentValues: Record<string, unknown>
 ): FieldStateMap {
-  const targetEvent = toRuleEvent(currentValues);
-  const effects = engine.evaluate(targetEvent);
-  return effects.reduce<FieldStateMap>(applyEffect, {});
+    const targetEvent = toRuleEvent(currentValues);
+    const effects = engine.evaluate(targetEvent);
+    return effects.reduce<FieldStateMap>(applyEffect, {});
 }
 ```
 
@@ -196,15 +196,15 @@ apps add interpretation logic for these patterns without forking the library.
 export type EffectHandler = (effect: RuleEffect, state: FieldStateMap) => FieldStateMap;
 
 export function evaluateAndMap(
-  engine: RuleEngine,
-  currentValues: Record<string, unknown>,
-  effectHandlers?: Partial<Record<string, EffectHandler>>
+    engine: RuleEngine,
+    currentValues: Record<string, unknown>,
+    effectHandlers?: Partial<Record<string, EffectHandler>>
 ): FieldStateMap {
-  const effects = engine.evaluate(toRuleEvent(currentValues));
-  return effects.reduce<FieldStateMap>((state, effect) => {
-    const custom = effectHandlers?.[effect.ruleActionType];
-    return custom ? custom(effect, state) : applyEffect(state, effect);
-  }, {});
+    const effects = engine.evaluate(toRuleEvent(currentValues));
+    return effects.reduce<FieldStateMap>((state, effect) => {
+        const custom = effectHandlers?.[effect.ruleActionType];
+        return custom ? custom(effect, state) : applyEffect(state, effect);
+    }, {});
 }
 ```
 
@@ -214,8 +214,8 @@ and returns a clean payload with hidden fields removed and `ASSIGN`-sourced valu
 
 ```ts
 export function filterPayload(
-  values: Record<string, unknown>,
-  fieldState: FieldStateMap
+    values: Record<string, unknown>,
+    fieldState: FieldStateMap
 ): Record<string, unknown>;
 ```
 
@@ -252,7 +252,7 @@ import { z } from 'zod';
 import type { ProgramStageMetadata } from './types';
 
 export function buildSchema(metadata: ProgramStageMetadata): z.ZodObject<z.ZodRawShape> {
-  // iterates dataElements / trackedEntityAttributes, maps valueType → Zod
+    // iterates dataElements / trackedEntityAttributes, maps valueType → Zod
 }
 ```
 
@@ -284,18 +284,18 @@ owned by the runtime.
 import type { Query } from '@dhis2/data-engine';
 
 export const programStageQuery = (id: string): Query => ({
-  programStage: {
-    resource: 'programStages',
-    id,
-    params: {
-      fields: [
-        'id,displayName',
-        'programStageDataElements[dataElement[id,displayName,valueType,optionSet[options[code,displayName]]]]',
-        'programRules[id,condition,priority,programRuleActions[programRuleActionType,dataElement,content,data]]',
-        'programRuleVariables[id,name,dataElement,programRuleVariableSourceType]',
-      ].join(','),
+    programStage: {
+        resource: 'programStages',
+        id,
+        params: {
+            fields: [
+                'id,displayName',
+                'programStageDataElements[dataElement[id,displayName,valueType,optionSet[options[code,displayName]]]]',
+                'programRules[id,condition,priority,programRuleActions[programRuleActionType,dataElement,content,data]]',
+                'programRuleVariables[id,name,dataElement,programRuleVariableSourceType]',
+            ].join(','),
+        },
     },
-  },
 });
 ```
 
@@ -348,24 +348,24 @@ handles the `dataValueSets` submission format.
 ```ts
 // Simplified illustration of the reactive loop inside useEventForm
 const ruleEngineContext = useMemo(
-  () => (data ? buildRuleEngineContext(data.programStage) : null),
-  [data]
+    () => (data ? buildRuleEngineContext(data.programStage) : null),
+    [data]
 );
 
 const ruleEngine = useMemo(
-  () => (ruleEngineContext ? buildRuleEngine(ruleEngineContext) : null),
-  [ruleEngineContext]
+    () => (ruleEngineContext ? buildRuleEngine(ruleEngineContext) : null),
+    [ruleEngineContext]
 );
 
 const [fieldState, dispatch] = useReducer(fieldStateReducer, {});
 
 useEffect(() => {
-  const subscription = form.watch((currentValues) => {
-    if (!ruleEngine) return;
-    const nextState = evaluateAndMap(ruleEngine, currentValues, effectHandlers);
-    dispatch({ type: 'SET', payload: nextState });
-  });
-  return () => subscription.unsubscribe();
+    const subscription = form.watch((currentValues) => {
+        if (!ruleEngine) return;
+        const nextState = evaluateAndMap(ruleEngine, currentValues, effectHandlers);
+        dispatch({ type: 'SET', payload: nextState });
+    });
+    return () => subscription.unsubscribe();
 }, [form, ruleEngine, effectHandlers]);
 ```
 
@@ -398,26 +398,26 @@ import { useFieldState } from '@dhis2-form-utils/hooks';
 type Props = { name: string; label: string };
 
 export function TextInput({ name, label }: Props) {
-  const { control } = useFormContext();
-  const state = useFieldState(name);
+    const { control } = useFormContext();
+    const state = useFieldState(name);
 
-  if (state.hidden) return null;
+    if (state.hidden) return null;
 
-  return (
-    <Controller
-      name={name}
-      control={control}
-      render={({ field, fieldState: rhfState }) => (
-        <Input
-          {...field}
-          label={label}
-          required={state.mandatory}
-          warning={state.warning}
-          error={rhfState.error?.message ?? state.error}
+    return (
+        <Controller
+            name={name}
+            control={control}
+            render={({ field, fieldState: rhfState }) => (
+                <Input
+                    {...field}
+                    label={label}
+                    required={state.mandatory}
+                    warning={state.warning}
+                    error={rhfState.error?.message ?? state.error}
+                />
+            )}
         />
-      )}
-    />
-  );
+    );
 }
 ```
 
@@ -447,15 +447,15 @@ mode is on across the board. No implicit `any`. Types are derived from Zod schem
 ```json
 // packages/config/tsconfig.base.json
 {
-  "compilerOptions": {
-    "strict": true,
-    "moduleResolution": "bundler",
-    "target": "ES2020",
-    "lib": ["ES2020", "DOM"],
-    "declaration": true,
-    "declarationMap": true,
-    "sourceMap": true
-  }
+    "compilerOptions": {
+        "strict": true,
+        "moduleResolution": "bundler",
+        "target": "ES2020",
+        "lib": ["ES2020", "DOM"],
+        "declaration": true,
+        "declarationMap": true,
+        "sourceMap": true
+    }
 }
 ```
 
@@ -471,18 +471,18 @@ import reactPlugin from 'eslint-plugin-react';
 import reactHooksPlugin from 'eslint-plugin-react-hooks';
 
 export default tseslint.config(...tseslint.configs.strictTypeChecked, {
-  plugins: {
-    react: reactPlugin,
-    'react-hooks': reactHooksPlugin,
-  },
-  rules: {
-    'react-hooks/rules-of-hooks': 'error',
-    'react-hooks/exhaustive-deps': 'warn',
-    '@typescript-eslint/no-explicit-any': 'error',
-  },
-  languageOptions: {
-    parserOptions: { projectService: true },
-  },
+    plugins: {
+        react: reactPlugin,
+        'react-hooks': reactHooksPlugin,
+    },
+    rules: {
+        'react-hooks/rules-of-hooks': 'error',
+        'react-hooks/exhaustive-deps': 'warn',
+        '@typescript-eslint/no-explicit-any': 'error',
+    },
+    languageOptions: {
+        parserOptions: { projectService: true },
+    },
 });
 ```
 

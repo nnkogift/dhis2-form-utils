@@ -1,11 +1,11 @@
 {
-  "files": [],
-  "references": [
-    { "path": "packages/rules" },
-    { "path": "packages/metadata" },
-    { "path": "packages/hooks" },
-    { "path": "packages/dhis2-ui" },
-    { "path": "packages/mantine" },
-    { "path": "packages/mui" }
-  ]
+    "files": [],
+    "references": [
+        { "path": "packages/rules" },
+        { "path": "packages/metadata" },
+        { "path": "packages/hooks" },
+        { "path": "packages/dhis2-ui" },
+        { "path": "packages/mantine" },
+        { "path": "packages/mui" }
+    ]
 }

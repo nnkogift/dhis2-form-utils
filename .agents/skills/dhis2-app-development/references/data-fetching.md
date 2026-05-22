@@ -94,41 +94,41 @@ follows this pattern:
 import { useApiDataQuery } from '@/utils/useApiDataQuery';
 
 type App = {
-  key: string;
-  displayName: string;
-  version: string;
-  pluginLaunchUrl: string;
+    key: string;
+    displayName: string;
+    version: string;
+    pluginLaunchUrl: string;
 };
 
 type UseAppsOptions = {
-  enabled?: boolean;
-  select?: (apps: App[]) => App[];
+    enabled?: boolean;
+    select?: (apps: App[]) => App[];
 };
 
 export const useApps = ({ enabled = true, select }: UseAppsOptions = {}) => {
-  const {
-    data: apps,
-    isLoading,
-    error,
-  } = useApiDataQuery<App[]>({
-    queryKey: ['apps'],
-    query: {
-      resource: 'apps',
-      params: {
-        fields: 'key,displayName,version,pluginLaunchUrl',
-      },
-    },
-    cacheTime: Infinity,
-    staleTime: Infinity,
-    enabled,
-    select,
-  });
+    const {
+        data: apps,
+        isLoading,
+        error,
+    } = useApiDataQuery<App[]>({
+        queryKey: ['apps'],
+        query: {
+            resource: 'apps',
+            params: {
+                fields: 'key,displayName,version,pluginLaunchUrl',
+            },
+        },
+        cacheTime: Infinity,
+        staleTime: Infinity,
+        enabled,
+        select,
+    });
 
-  return {
-    apps,
-    isLoading,
-    error,
-  };
+    return {
+        apps,
+        isLoading,
+        error,
+    };
 };
 ```
 
@@ -139,22 +139,22 @@ DHIS2 has two broad categories of API resources, and they should be cached diffe
 - **Metadata** (organisation units, programs, data elements, option sets, apps, etc.) —
   changes rarely during a session. Cache aggressively:
 
-  ```typescript
-  cacheTime: Infinity,
-  staleTime: Infinity,
-  ```
+    ```typescript
+    cacheTime: Infinity,
+    staleTime: Infinity,
+    ```
 
-  This fetches once and never refetches unless the user hard-refreshes. Metadata endpoints
-  are expensive and the results don't change while the user is working.
+    This fetches once and never refetches unless the user hard-refreshes. Metadata endpoints
+    are expensive and the results don't change while the user is working.
 
 - **Data** (tracked entities, events, data values, analytics, etc.) —
   changes frequently but doesn't need to refetch on every interaction. Use a sensible default:
-  ```typescript
-  staleTime: 5 * 60 * 1000,   // 5 minutes
-  cacheTime: 10 * 60 * 1000,  // 10 minutes
-  ```
-  This avoids redundant requests while still keeping the UI reasonably current. Adjust
-  down for data that must be near-realtime, or up for data that changes less often.
+    ```typescript
+    staleTime: 5 * 60 * 1000,   // 5 minutes
+    cacheTime: 10 * 60 * 1000,  // 10 minutes
+    ```
+    This avoids redundant requests while still keeping the UI reasonably current. Adjust
+    down for data that must be near-realtime, or up for data that changes less often.
 
 ### Query parameters: filtering, ordering, and paging
 
@@ -211,49 +211,49 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import i18n from '@dhis2/d2-i18n';
 
 type UseDeleteRouteOptions = {
-  onSuccess?: () => void;
-  onError?: (error: unknown) => void;
+    onSuccess?: () => void;
+    onError?: (error: unknown) => void;
 };
 
 export const useDeleteRoute = ({
-  id,
-  onSuccess,
-  onError,
-}: { id: string } & UseDeleteRouteOptions) => {
-  const dataEngine = useDataEngine();
-  const queryClient = useQueryClient();
-
-  const { show: showErrorAlert } = useAlert(i18n.t('Error deleting route'), { critical: true });
-  const { show: showSuccessAlert } = useAlert(i18n.t('Route deleted successfully'), {
-    success: true,
-  });
-
-  const DeleteRouteMutation = {
-    resource: 'routes',
     id,
-    type: 'delete' as const,
-  };
+    onSuccess,
+    onError,
+}: { id: string } & UseDeleteRouteOptions) => {
+    const dataEngine = useDataEngine();
+    const queryClient = useQueryClient();
 
-  const { mutate, isPending: isDeleting } = useMutation<unknown, Error, void>(
-    () => dataEngine.mutate(DeleteRouteMutation),
-    {
-      onSuccess: () => {
-        showSuccessAlert();
-        queryClient.invalidateQueries({ queryKey: ['routes'] });
-        onSuccess?.();
-      },
-      onError: (error) => {
-        showErrorAlert();
-        console.error('Error deleting route:', error);
-        onError?.(error);
-      },
-    }
-  );
+    const { show: showErrorAlert } = useAlert(i18n.t('Error deleting route'), { critical: true });
+    const { show: showSuccessAlert } = useAlert(i18n.t('Route deleted successfully'), {
+        success: true,
+    });
 
-  return {
-    deleteRoute: mutate,
-    isDeleting,
-  };
+    const DeleteRouteMutation = {
+        resource: 'routes',
+        id,
+        type: 'delete' as const,
+    };
+
+    const { mutate, isPending: isDeleting } = useMutation<unknown, Error, void>(
+        () => dataEngine.mutate(DeleteRouteMutation),
+        {
+            onSuccess: () => {
+                showSuccessAlert();
+                queryClient.invalidateQueries({ queryKey: ['routes'] });
+                onSuccess?.();
+            },
+            onError: (error) => {
+                showErrorAlert();
+                console.error('Error deleting route:', error);
+                onError?.(error);
+            },
+        }
+    );
+
+    return {
+        deleteRoute: mutate,
+        isDeleting,
+    };
 };
 ```
 
@@ -272,17 +272,17 @@ Create `src/utils/support.ts` to define which minor version introduced each feat
 
 ```typescript
 export const FEATURES = Object.freeze({
-  multiText: 'multiText',
-  customIcons: 'customIcons',
+    multiText: 'multiText',
+    customIcons: 'customIcons',
 });
 
 const MINOR_VERSION_SUPPORT = Object.freeze({
-  [FEATURES.multiText]: 41,
-  [FEATURES.customIcons]: 40,
+    [FEATURES.multiText]: 41,
+    [FEATURES.customIcons]: 40,
 });
 
 export const hasAPISupportForFeature = (minorVersion: string | number, featureName: string) =>
-  MINOR_VERSION_SUPPORT[featureName] <= Number(minorVersion) || false;
+    MINOR_VERSION_SUPPORT[featureName] <= Number(minorVersion) || false;
 ```
 
 Then create `src/hooks/useFeature.ts` to expose this as a React hook:
@@ -293,11 +293,11 @@ import { useConfig } from '@dhis2/app-runtime';
 import { hasAPISupportForFeature } from '@/utils/support';
 
 export const useFeature = (featureName: string) => {
-  const { serverVersion: { minor: minorVersion } = { minor: 0 } } = useConfig();
-  return useMemo(
-    () => hasAPISupportForFeature(minorVersion, featureName),
-    [minorVersion, featureName]
-  );
+    const { serverVersion: { minor: minorVersion } = { minor: 0 } } = useConfig();
+    return useMemo(
+        () => hasAPISupportForFeature(minorVersion, featureName),
+        [minorVersion, featureName]
+    );
 };
 ```
 
@@ -310,8 +310,8 @@ const supportsMultiText = useFeature(FEATURES.multiText);
 
 // Use in query params, payload construction, or UI rendering
 const params = {
-  fields: 'id,displayName',
-  ...(supportsMultiText && { multiText: true }),
+    fields: 'id,displayName',
+    ...(supportsMultiText && { multiText: true }),
 };
 ```
 
@@ -331,28 +331,28 @@ import i18n from '@dhis2/d2-i18n';
 import styles from './MyComponent.module.css';
 
 const MyComponent = () => {
-  const { jobs, error, isLoading } = useJobs();
+    const { jobs, error, isLoading } = useJobs();
 
-  if (isLoading) {
-    return (
-      <div className={styles.loadingContainer}>
-        <CircularLoader />
-      </div>
-    );
-  }
+    if (isLoading) {
+        return (
+            <div className={styles.loadingContainer}>
+                <CircularLoader />
+            </div>
+        );
+    }
 
-  if (error) {
-    return (
-      <div className={styles.errorContainer}>
-        <NoticeBox error title={i18n.t('Error loading jobs')}>
-          {error.message || i18n.t('An unknown error occurred')}
-        </NoticeBox>
-      </div>
-    );
-  }
+    if (error) {
+        return (
+            <div className={styles.errorContainer}>
+                <NoticeBox error title={i18n.t('Error loading jobs')}>
+                    {error.message || i18n.t('An unknown error occurred')}
+                </NoticeBox>
+            </div>
+        );
+    }
 
-  // Safe to use `jobs` here — it's loaded and no error
-  return <JobList jobs={jobs} />;
+    // Safe to use `jobs` here — it's loaded and no error
+    return <JobList jobs={jobs} />;
 };
 ```
 
@@ -360,10 +360,10 @@ Center the loader so it's visible regardless of page layout:
 
 ```css
 .loadingContainer {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-block-size: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-block-size: 300px;
 }
 ```
 

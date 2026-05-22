@@ -3,8 +3,8 @@ name: 'speckit-taskstoissues'
 description: 'Convert existing tasks into actionable, dependency-ordered GitHub issues for the feature based on available design artifacts.'
 compatibility: 'Requires spec-kit project structure with .specify/ directory'
 metadata:
-  author: 'github-spec-kit'
-  source: 'templates/commands/taskstoissues.md'
+    author: 'github-spec-kit'
+    source: 'templates/commands/taskstoissues.md'
 ---
 
 ## User Input
@@ -24,33 +24,33 @@ You **MUST** consider the user input before proceeding (if not empty).
 - If the YAML cannot be parsed or is invalid, skip hook checking silently and continue normally
 - Filter out hooks where `enabled` is explicitly `false`. Treat hooks without an `enabled` field as enabled by default.
 - For each remaining hook, do **not** attempt to interpret or evaluate hook `condition` expressions:
-  - If the hook has no `condition` field, or it is null/empty, treat the hook as executable
-  - If the hook defines a non-empty `condition`, skip the hook and leave condition evaluation to the HookExecutor implementation
+    - If the hook has no `condition` field, or it is null/empty, treat the hook as executable
+    - If the hook defines a non-empty `condition`, skip the hook and leave condition evaluation to the HookExecutor implementation
 - For each executable hook, output the following based on its `optional` flag:
-  - **Optional hook** (`optional: true`):
+    - **Optional hook** (`optional: true`):
 
-    ```
-    ## Extension Hooks
+        ```
+        ## Extension Hooks
 
-    **Optional Pre-Hook**: {extension}
-    Command: `/{command}`
-    Description: {description}
+        **Optional Pre-Hook**: {extension}
+        Command: `/{command}`
+        Description: {description}
 
-    Prompt: {prompt}
-    To execute: `/{command}`
-    ```
+        Prompt: {prompt}
+        To execute: `/{command}`
+        ```
 
-  - **Mandatory hook** (`optional: false`):
+    - **Mandatory hook** (`optional: false`):
 
-    ```
-    ## Extension Hooks
+        ```
+        ## Extension Hooks
 
-    **Automatic Pre-Hook**: {extension}
-    Executing: `/{command}`
-    EXECUTE_COMMAND: {command}
+        **Automatic Pre-Hook**: {extension}
+        Executing: `/{command}`
+        EXECUTE_COMMAND: {command}
 
-    Wait for the result of the hook command before proceeding to the Outline.
-    ```
+        Wait for the result of the hook command before proceeding to the Outline.
+        ```
 
 - If no hooks are registered or `.specify/extensions.yml` does not exist, skip silently
 
@@ -81,30 +81,30 @@ Check if `.specify/extensions.yml` exists in the project root.
 - If the YAML cannot be parsed or is invalid, skip hook checking silently and continue normally
 - Filter out hooks where `enabled` is explicitly `false`. Treat hooks without an `enabled` field as enabled by default.
 - For each remaining hook, do **not** attempt to interpret or evaluate hook `condition` expressions:
-  - If the hook has no `condition` field, or it is null/empty, treat the hook as executable
-  - If the hook defines a non-empty `condition`, skip the hook and leave condition evaluation to the HookExecutor implementation
+    - If the hook has no `condition` field, or it is null/empty, treat the hook as executable
+    - If the hook defines a non-empty `condition`, skip the hook and leave condition evaluation to the HookExecutor implementation
 - For each executable hook, output the following based on its `optional` flag:
-  - **Optional hook** (`optional: true`):
+    - **Optional hook** (`optional: true`):
 
-    ```
-    ## Extension Hooks
+        ```
+        ## Extension Hooks
 
-    **Optional Hook**: {extension}
-    Command: `/{command}`
-    Description: {description}
+        **Optional Hook**: {extension}
+        Command: `/{command}`
+        Description: {description}
 
-    Prompt: {prompt}
-    To execute: `/{command}`
-    ```
+        Prompt: {prompt}
+        To execute: `/{command}`
+        ```
 
-  - **Mandatory hook** (`optional: false`):
+    - **Mandatory hook** (`optional: false`):
 
-    ```
-    ## Extension Hooks
+        ```
+        ## Extension Hooks
 
-    **Automatic Hook**: {extension}
-    Executing: `/{command}`
-    EXECUTE_COMMAND: {command}
-    ```
+        **Automatic Hook**: {extension}
+        Executing: `/{command}`
+        EXECUTE_COMMAND: {command}
+        ```
 
 - If no hooks are registered or `.specify/extensions.yml` does not exist, skip silently

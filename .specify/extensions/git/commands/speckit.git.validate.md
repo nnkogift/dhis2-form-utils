@@ -10,9 +10,9 @@ Validate that the current Git branch follows the expected feature branch naming 
 
 - Check if Git is available by running `git rev-parse --is-inside-work-tree 2>/dev/null`
 - If Git is not available, output a warning and skip validation:
-  ```
-  [specify] Warning: Git repository not detected; skipped branch validation
-  ```
+    ```
+    [specify] Warning: Git repository not detected; skipped branch validation
+    ```
 
 ## Validation Rules
 
@@ -33,8 +33,8 @@ If on a feature branch (matches either pattern):
 
 - Output: `✓ On feature branch: <branch-name>`
 - Check if the corresponding spec directory exists under `specs/`:
-  - For sequential branches, look for `specs/<prefix>-*` where prefix matches the numeric portion
-  - For timestamp branches, look for `specs/<prefix>-*` where prefix matches the `YYYYMMDD-HHMMSS` portion
+    - For sequential branches, look for `specs/<prefix>-*` where prefix matches the numeric portion
+    - For timestamp branches, look for `specs/<prefix>-*` where prefix matches the `YYYYMMDD-HHMMSS` portion
 - If spec directory exists: `✓ Spec directory found: <path>`
 - If spec directory missing: `⚠ No spec directory found for prefix <prefix>`
 

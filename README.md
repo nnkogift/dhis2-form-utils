@@ -74,16 +74,16 @@ configured automatically. For standalone apps:
 import { Provider } from '@dhis2/app-runtime';
 
 const config = {
-  baseUrl: 'https://your-dhis2-instance.org',
-  apiVersion: 41,
+    baseUrl: 'https://your-dhis2-instance.org',
+    apiVersion: 41,
 };
 
 function Root() {
-  return (
-    <Provider config={config}>
-      <App />
-    </Provider>
-  );
+    return (
+        <Provider config={config}>
+            <App />
+        </Provider>
+    );
 }
 ```
 
@@ -97,9 +97,9 @@ function Root() {
 import { EventForm } from '@dhis2-form-utils/dhis2-ui';
 
 function DataEntryPage() {
-  return (
-    <EventForm programStageId="abc123" onSuccess={(event) => console.log('submitted', event)} />
-  );
+    return (
+        <EventForm programStageId="abc123" onSuccess={(event) => console.log('submitted', event)} />
+    );
 }
 ```
 
@@ -113,20 +113,20 @@ import { useEventForm } from '@dhis2-form-utils/hooks';
 import { FormProvider } from 'react-hook-form';
 
 function CustomForm() {
-  const { form, fieldState, isLoading, submit } = useEventForm({
-    programStageId: 'abc123',
-  });
+    const { form, fieldState, isLoading, submit } = useEventForm({
+        programStageId: 'abc123',
+    });
 
-  if (isLoading) return <p>Loading...</p>;
+    if (isLoading) return <p>Loading...</p>;
 
-  return (
-    <FormProvider {...form}>
-      <form onSubmit={submit}>
-        {/* your own field components */}
-        {/* read fieldState[fieldId].hidden / .mandatory / .warning / .error */}
-      </form>
-    </FormProvider>
-  );
+    return (
+        <FormProvider {...form}>
+            <form onSubmit={submit}>
+                {/* your own field components */}
+                {/* read fieldState[fieldId].hidden / .mandatory / .warning / .error */}
+            </form>
+        </FormProvider>
+    );
 }
 ```
 
@@ -139,13 +139,13 @@ interpreted after the standard evaluation pass:
 
 ```tsx
 const { form, fieldState, submit } = useEventForm({
-  programStageId: 'abc123',
-  effectHandlers: {
-    DISPLAYTEXT: (effect, state) => {
-      // custom interpretation — e.g. parse structured data from effect.content
-      return state;
+    programStageId: 'abc123',
+    effectHandlers: {
+        DISPLAYTEXT: (effect, state) => {
+            // custom interpretation — e.g. parse structured data from effect.content
+            return state;
+        },
     },
-  },
 });
 ```
 

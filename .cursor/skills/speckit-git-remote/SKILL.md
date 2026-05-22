@@ -3,8 +3,8 @@ name: speckit-git-remote
 description: Detect Git remote URL for GitHub integration
 compatibility: Requires spec-kit project structure with .specify/ directory
 metadata:
-  author: github-spec-kit
-  source: git:commands/speckit.git.remote.md
+    author: github-spec-kit
+    source: git:commands/speckit.git.remote.md
 ---
 
 # Detect Git Remote URL
@@ -15,9 +15,9 @@ Detect the Git remote URL for integration with GitHub services (e.g., issue crea
 
 - Check if Git is available by running `git rev-parse --is-inside-work-tree 2>/dev/null`
 - If Git is not available, output a warning and return empty:
-  ```
-  [specify] Warning: Git repository not detected; cannot determine remote URL
-  ```
+    ```
+    [specify] Warning: Git repository not detected; cannot determine remote URL
+    ```
 
 ## Execution
 

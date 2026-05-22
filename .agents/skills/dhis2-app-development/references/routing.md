@@ -29,8 +29,8 @@ const programId = searchParams.get('programId');
 
 // Update a param (merges with existing params)
 setSearchParams((prev) => {
-  prev.set('programId', selectedId);
-  return prev;
+    prev.set('programId', selectedId);
+    return prev;
 });
 ```
 

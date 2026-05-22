@@ -1,33 +1,33 @@
 {
-  "name": "@dhis2-form-utils/rules",
-  "version": "0.0.0",
-  "description": "DHIS2 program rule evaluation and field state mapping for React forms",
-  "type": "module",
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "exports": {
-    ".": {
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs",
-      "types": "./dist/index.d.ts"
+    "name": "@dhis2-form-utils/rules",
+    "version": "0.0.0",
+    "description": "DHIS2 program rule evaluation and field state mapping for React forms",
+    "type": "module",
+    "main": "./dist/index.cjs",
+    "module": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+        ".": {
+            "import": "./dist/index.js",
+            "require": "./dist/index.cjs",
+            "types": "./dist/index.d.ts"
+        }
+    },
+    "files": [
+        "dist"
+    ],
+    "scripts": {
+        "build": "tsup",
+        "typecheck": "tsc --noEmit",
+        "test": "vitest run"
+    },
+    "peerDependencies": {
+        "@dhis2/rule-engine": ">=2.0.0"
+    },
+    "devDependencies": {
+        "@dhis2-form-utils/config": "workspace:*",
+        "tsup": "^8.5.1",
+        "typescript": "^5.9.3",
+        "vitest": "^4.1.7"
     }
-  },
-  "files": [
-    "dist"
-  ],
-  "scripts": {
-    "build": "tsup",
-    "typecheck": "tsc --noEmit",
-    "test": "vitest run"
-  },
-  "peerDependencies": {
-    "@dhis2/rule-engine": ">=2.0.0"
-  },
-  "devDependencies": {
-    "@dhis2-form-utils/config": "workspace:*",
-    "tsup": "^8.5.1",
-    "typescript": "^5.9.3",
-    "vitest": "^4.1.7"
-  }
 }

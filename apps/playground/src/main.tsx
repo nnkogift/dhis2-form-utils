@@ -4,25 +4,25 @@ import { createRoot } from 'react-dom/client';
 import { App } from './App';
 
 const config = {
-  baseUrl: 'https://debug.dhis2.org',
-  apiVersion: 41,
+    baseUrl: 'https://debug.dhis2.org',
+    apiVersion: 41,
 };
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
-  throw new Error('Root element #root not found');
+    throw new Error('Root element #root not found');
 }
 
 createRoot(rootElement).render(
-  <StrictMode>
-    <Provider
-      config={config}
-      userInfo={undefined}
-      plugin={false}
-      parentAlertsAdd={undefined}
-      showAlertsInPlugin={false}
-    >
-      <App />
-    </Provider>
-  </StrictMode>
+    <StrictMode>
+        <Provider
+            config={config}
+            userInfo={undefined}
+            plugin={false}
+            parentAlertsAdd={undefined}
+            showAlertsInPlugin={false}
+        >
+            <App />
+        </Provider>
+    </StrictMode>
 );
