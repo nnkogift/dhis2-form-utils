@@ -1,5 +1,11 @@
+import {
+    Dhis2ValueType,
+    ProgramRuleActionType,
+    ProgramRuleVariableSourceType,
+    type ProgramStageMetadata,
+} from '@dhis2-form-utils/metadata';
 import { describe, expect, it } from 'vitest';
-import { buildRuleEngine, buildRuleEngineContext, type ProgramStageMetadata } from './context';
+import { buildRuleEngine, buildRuleEngineContext } from './context';
 
 const metadataWithRules: ProgramStageMetadata = {
     id: 'stage-1',
@@ -9,7 +15,7 @@ const metadataWithRules: ProgramStageMetadata = {
             dataElement: {
                 id: 'age',
                 displayName: 'Age',
-                valueType: 'INTEGER',
+                valueType: Dhis2ValueType.INTEGER,
             },
         },
     ],
@@ -20,12 +26,12 @@ const metadataWithRules: ProgramStageMetadata = {
             priority: 1,
             programRuleActions: [
                 {
-                    programRuleActionType: 'SHOWWARNING',
+                    programRuleActionType: ProgramRuleActionType.SHOWWARNING,
                     content: 'Age is high',
                     dataElement: {
                         id: 'age',
                         displayName: 'Age',
-                        valueType: 'INTEGER',
+                        valueType: Dhis2ValueType.INTEGER,
                     },
                 },
             ],
@@ -38,9 +44,9 @@ const metadataWithRules: ProgramStageMetadata = {
             dataElement: {
                 id: 'age',
                 displayName: 'Age',
-                valueType: 'INTEGER',
+                valueType: Dhis2ValueType.INTEGER,
             },
-            programRuleVariableSourceType: 'DATAELEMENT_CURRENT_EVENT',
+            programRuleVariableSourceType: ProgramRuleVariableSourceType.DATAELEMENT_CURRENT_EVENT,
         },
     ],
 };
@@ -52,7 +58,7 @@ describe('buildRuleEngineContext / buildRuleEngine', () => {
         const effects = engine.evaluate({ age: 15 });
 
         expect(effects).toHaveLength(1);
-        expect(effects[0].ruleActionType).toBe('SHOWWARNING');
+        expect(effects[0].ruleActionType).toBe(ProgramRuleActionType.SHOWWARNING);
         expect(effects[0].content).toBe('Age is high');
         expect(effects[0].dataElement).toBe('age');
     });

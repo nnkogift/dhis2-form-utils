@@ -1,3 +1,4 @@
+import { ProgramRuleActionType } from '@dhis2-form-utils/metadata';
 import { describe, expect, it } from 'vitest';
 import { applyEffect, evaluateAndMap } from './evaluate';
 import { createEmptyFieldState } from './types';
@@ -7,7 +8,7 @@ describe('applyEffect', () => {
         const state = applyEffect(
             {},
             {
-                ruleActionType: 'HIDEFIELD',
+                ruleActionType: ProgramRuleActionType.HIDEFIELD,
                 dataElement: 'de1',
             }
         );
@@ -18,12 +19,12 @@ describe('applyEffect', () => {
         let state = applyEffect(
             {},
             {
-                ruleActionType: 'SETMANDATORYFIELD',
+                ruleActionType: ProgramRuleActionType.SETMANDATORYFIELD,
                 dataElement: 'de1',
             }
         );
         state = applyEffect(state, {
-            ruleActionType: 'SHOWWARNING',
+            ruleActionType: ProgramRuleActionType.SHOWWARNING,
             dataElement: 'de1',
             content: 'Check value',
         });
@@ -35,32 +36,32 @@ describe('applyEffect', () => {
         let state = applyEffect(
             {},
             {
-                ruleActionType: 'HIDEOPTION',
+                ruleActionType: ProgramRuleActionType.HIDEOPTION,
                 dataElement: 'de1',
                 optionCode: 'opt1',
             }
         );
 
         state = applyEffect(state, {
-            ruleActionType: 'SHOWOPTION',
+            ruleActionType: ProgramRuleActionType.SHOWOPTION,
             dataElement: 'de1',
             optionCode: 'opt1',
         });
 
         state = applyEffect(state, {
-            ruleActionType: 'HIDEOPTIONGROUP',
+            ruleActionType: ProgramRuleActionType.HIDEOPTIONGROUP,
             dataElement: 'de1',
             optionGroupId: 'og1',
         });
 
         state = applyEffect(state, {
-            ruleActionType: 'SHOWOPTIONGROUP',
+            ruleActionType: ProgramRuleActionType.SHOWOPTIONGROUP,
             dataElement: 'de1',
             optionGroupId: 'og1',
         });
 
         state = applyEffect(state, {
-            ruleActionType: 'HIDESECTION',
+            ruleActionType: ProgramRuleActionType.HIDESECTION,
             programStageSection: 'section-a',
         });
 
@@ -75,9 +76,19 @@ describe('evaluateAndMap', () => {
     it('folds multiple effects into field state', () => {
         const engine = {
             evaluate: () => [
-                { ruleActionType: 'HIDEFIELD', dataElement: 'hiddenField' },
-                { ruleActionType: 'SETMANDATORYFIELD', dataElement: 'requiredField' },
-                { ruleActionType: 'ASSIGN', dataElement: 'assignedField', data: 'auto' },
+                {
+                    ruleActionType: ProgramRuleActionType.HIDEFIELD,
+                    dataElement: 'hiddenField',
+                },
+                {
+                    ruleActionType: ProgramRuleActionType.SETMANDATORYFIELD,
+                    dataElement: 'requiredField',
+                },
+                {
+                    ruleActionType: ProgramRuleActionType.ASSIGN,
+                    dataElement: 'assignedField',
+                    data: 'auto',
+                },
             ],
         };
 

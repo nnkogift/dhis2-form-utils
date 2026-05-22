@@ -21,6 +21,9 @@
         "typecheck": "tsc --noEmit",
         "test": "vitest run"
     },
+    "dependencies": {
+        "@dhis2-form-utils/metadata": "workspace:*"
+    },
     "peerDependencies": {
         "@dhis2/rule-engine": ">=2.0.0"
     },

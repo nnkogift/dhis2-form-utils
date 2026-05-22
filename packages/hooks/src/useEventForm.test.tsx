@@ -1,6 +1,11 @@
 import { renderHook, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import type { ProgramStageMetadata } from '@dhis2-form-utils/metadata';
+import {
+    Dhis2ValueType,
+    ProgramRuleActionType,
+    ProgramRuleVariableSourceType,
+    type ProgramStageMetadata,
+} from '@dhis2-form-utils/metadata';
 import { useEventForm } from './useEventForm';
 
 vi.mock('@dhis2/app-runtime', () => ({
@@ -29,7 +34,7 @@ describe('useEventForm', () => {
                     dataElement: {
                         id: 'customField',
                         displayName: 'Custom',
-                        valueType: 'TEXT' as const,
+                        valueType: Dhis2ValueType.TEXT,
                     },
                 },
             ],
@@ -48,7 +53,7 @@ describe('useEventForm', () => {
                     dataElement: {
                         id: 'age',
                         displayName: 'Age',
-                        valueType: 'INTEGER',
+                        valueType: Dhis2ValueType.INTEGER,
                     },
                 },
             ],
@@ -59,12 +64,12 @@ describe('useEventForm', () => {
                     priority: 1,
                     programRuleActions: [
                         {
-                            programRuleActionType: 'SHOWWARNING',
+                            programRuleActionType: ProgramRuleActionType.SHOWWARNING,
                             content: 'Age is high',
                             dataElement: {
                                 id: 'age',
                                 displayName: 'Age',
-                                valueType: 'INTEGER',
+                                valueType: Dhis2ValueType.INTEGER,
                             },
                         },
                     ],
@@ -77,9 +82,10 @@ describe('useEventForm', () => {
                     dataElement: {
                         id: 'age',
                         displayName: 'Age',
-                        valueType: 'INTEGER',
+                        valueType: Dhis2ValueType.INTEGER,
                     },
-                    programRuleVariableSourceType: 'DATAELEMENT_CURRENT_EVENT',
+                    programRuleVariableSourceType:
+                        ProgramRuleVariableSourceType.DATAELEMENT_CURRENT_EVENT,
                 },
             ],
         };

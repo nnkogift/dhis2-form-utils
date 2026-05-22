@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-01-03T10:13:09.567Z\n"
-"PO-Revision-Date: 2026-01-03T10:13:09.567Z\n"
+"POT-Creation-Date: 2026-05-22T23:25:01.034Z\n"
+"PO-Revision-Date: 2026-05-22T23:25:01.035Z\n"
 
 msgid "ERROR"
 msgstr "ERROR"
@@ -37,3 +37,11 @@ msgstr "Value Type"
 
 msgid "Created by"
 msgstr "Created by"
+
+msgctxt "Application title"
+msgid "__MANIFEST_APP_TITLE"
+msgstr "playground"
+
+msgctxt "Application description"
+msgid "__MANIFEST_APP_DESCRIPTION"
+msgstr ""

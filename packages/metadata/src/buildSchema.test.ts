@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { buildSchema } from './buildSchema';
+import { Dhis2ValueType } from './enums';
 import type { ProgramStageMetadata } from './types';
 
 const sampleMetadata: ProgramStageMetadata = {
@@ -7,13 +8,13 @@ const sampleMetadata: ProgramStageMetadata = {
     displayName: 'Sample Stage',
     programStageDataElements: [
         {
-            dataElement: { id: 'deText', displayName: 'Name', valueType: 'TEXT' },
+            dataElement: { id: 'deText', displayName: 'Name', valueType: Dhis2ValueType.TEXT },
         },
         {
-            dataElement: { id: 'deInt', displayName: 'Age', valueType: 'INTEGER' },
+            dataElement: { id: 'deInt', displayName: 'Age', valueType: Dhis2ValueType.INTEGER },
         },
         {
-            dataElement: { id: 'deBool', displayName: 'Active', valueType: 'BOOLEAN' },
+            dataElement: { id: 'deBool', displayName: 'Active', valueType: Dhis2ValueType.BOOLEAN },
         },
     ],
 };

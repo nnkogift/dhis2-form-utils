@@ -1,11 +1,9 @@
+export { Dhis2ValueType, ProgramRuleActionType, ProgramRuleVariableSourceType } from './enums';
 export type {
-    Dhis2ValueType,
     DataElementRef,
     ProgramRule,
     ProgramRuleAction,
-    ProgramRuleActionType,
     ProgramRuleVariable,
-    ProgramRuleVariableSourceType,
     ProgramStageDataElement,
     ProgramStageMetadata,
 } from './types';

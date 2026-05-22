@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-deprecated -- @dhis2/rule-engine Kotlin/JS interop requires these APIs */
 import {
     Option,
     RuleActionJs,
@@ -16,95 +17,15 @@ import {
     RuleVariableJs,
     RuleVariableType,
 } from '@dhis2/rule-engine';
+import {
+    Dhis2ValueType,
+    ProgramRuleVariableSourceType,
+    type ProgramRule,
+    type ProgramRuleAction,
+    type ProgramRuleVariable,
+    type ProgramStageMetadata,
+} from '@dhis2-form-utils/metadata';
 import type { RuleEffect } from './evaluate';
-
-type Dhis2ValueType =
-    | 'TEXT'
-    | 'LONG_TEXT'
-    | 'INTEGER'
-    | 'INTEGER_POSITIVE'
-    | 'NUMBER'
-    | 'BOOLEAN'
-    | 'DATE'
-    | 'ORGANISATION_UNIT'
-    | 'FILE_RESOURCE';
-
-type DataElementRef = {
-    id: string;
-    displayName: string;
-    valueType: Dhis2ValueType;
-    optionSet?: {
-        options?: Array<{
-            id: string;
-            code: string;
-            displayName: string;
-        }>;
-    };
-};
-
-type ProgramRuleAction = {
-    programRuleActionType: string;
-    dataElement?: DataElementRef;
-    trackedEntityAttribute?: {
-        id: string;
-    };
-    option?: {
-        id: string;
-        code: string;
-    };
-    optionGroup?: {
-        id: string;
-    };
-    programStageSection?: {
-        id: string;
-    };
-    programSection?: {
-        id: string;
-    };
-    content?: string;
-    data?: string;
-    priority?: number;
-};
-
-type ProgramRule = {
-    id: string;
-    displayName?: string;
-    condition?: string;
-    priority?: number;
-    programRuleActions?: ProgramRuleAction[];
-};
-
-type ProgramRuleVariableSourceType =
-    | 'DATAELEMENT_PREVIOUS_EVENT'
-    | 'DATAELEMENT_CURRENT_EVENT'
-    | 'DATAELEMENT_NEWEST_EVENT_PROGRAM'
-    | 'DATAELEMENT_NEWEST_EVENT_PROGRAM_STAGE'
-    | 'CALCULATED_VALUE'
-    | 'TEI_ATTRIBUTE';
-
-type ProgramRuleVariable = {
-    id: string;
-    name: string;
-    dataElement?: DataElementRef;
-    trackedEntityAttribute?: {
-        id: string;
-    };
-    programRuleVariableSourceType?: ProgramRuleVariableSourceType;
-    useCodeForOptionSet?: boolean;
-    programStage?: {
-        id: string;
-    };
-};
-
-export type ProgramStageMetadata = {
-    id: string;
-    displayName: string;
-    programStageDataElements: Array<{
-        dataElement: DataElementRef;
-    }>;
-    programRules?: ProgramRule[];
-    programRuleVariables?: ProgramRuleVariable[];
-};
 
 const DEFAULT_EVENT_STATUS = RuleEventStatus.ACTIVE;
 const DEFAULT_ORG_UNIT = 'UNKNOWN_ORG_UNIT';
@@ -124,15 +45,15 @@ export type BuiltRuleEngine = {
     evaluate: (currentValues: Record<string, unknown>) => RuleEffect[];
 };
 
-const ruleValueTypeFromDhis2 = (valueType?: string): RuleValueType => {
+const ruleValueTypeFromDhis2 = (valueType?: Dhis2ValueType | string): RuleValueType => {
     switch (valueType) {
-        case 'NUMBER':
-        case 'INTEGER':
-        case 'INTEGER_POSITIVE':
+        case Dhis2ValueType.NUMBER:
+        case Dhis2ValueType.INTEGER:
+        case Dhis2ValueType.INTEGER_POSITIVE:
             return RuleValueType.NUMERIC;
-        case 'BOOLEAN':
+        case Dhis2ValueType.BOOLEAN:
             return RuleValueType.BOOLEAN;
-        case 'DATE':
+        case Dhis2ValueType.DATE:
             return RuleValueType.DATE;
         default:
             return RuleValueType.TEXT;
@@ -143,23 +64,23 @@ const variableTypeFromSource = (
     sourceType: ProgramRuleVariableSourceType | undefined
 ): RuleVariableType => {
     switch (sourceType) {
-        case 'DATAELEMENT_CURRENT_EVENT':
+        case ProgramRuleVariableSourceType.DATAELEMENT_CURRENT_EVENT:
             return RuleVariableType.DATAELEMENT_CURRENT_EVENT;
-        case 'DATAELEMENT_NEWEST_EVENT_PROGRAM':
+        case ProgramRuleVariableSourceType.DATAELEMENT_NEWEST_EVENT_PROGRAM:
             return RuleVariableType.DATAELEMENT_NEWEST_EVENT_PROGRAM;
-        case 'DATAELEMENT_NEWEST_EVENT_PROGRAM_STAGE':
+        case ProgramRuleVariableSourceType.DATAELEMENT_NEWEST_EVENT_PROGRAM_STAGE:
             return RuleVariableType.DATAELEMENT_NEWEST_EVENT_PROGRAM_STAGE;
-        case 'DATAELEMENT_PREVIOUS_EVENT':
+        case ProgramRuleVariableSourceType.DATAELEMENT_PREVIOUS_EVENT:
             return RuleVariableType.DATAELEMENT_PREVIOUS_EVENT;
-        case 'TEI_ATTRIBUTE':
+        case ProgramRuleVariableSourceType.TEI_ATTRIBUTE:
             return RuleVariableType.TEI_ATTRIBUTE;
-        case 'CALCULATED_VALUE':
+        case ProgramRuleVariableSourceType.CALCULATED_VALUE:
         default:
             return RuleVariableType.CALCULATED_VALUE;
     }
 };
 
-const mapDataElementOptions = (dataElement?: DataElementRef): Option[] =>
+const mapDataElementOptions = (dataElement?: ProgramRuleAction['dataElement']): Option[] =>
     dataElement?.optionSet?.options?.map(
         (option: { id: string; code: string; displayName: string }) =>
             new Option(option.displayName, option.code)

@@ -1,5 +1,5 @@
 import { InputField } from '@dhis2/ui';
-import { Controller, useFormContext } from 'react-hook-form';
+import { Controller } from 'react-hook-form';
 import { useFieldState } from '@dhis2-form-utils/hooks';
 
 export type TextInputProps = {
@@ -8,7 +8,6 @@ export type TextInputProps = {
 };
 
 export function TextInput({ name, label }: TextInputProps) {
-    const { control } = useFormContext();
     const state = useFieldState(name);
 
     if (state.hidden) return null;
@@ -16,7 +15,6 @@ export function TextInput({ name, label }: TextInputProps) {
     return (
         <Controller
             name={name}
-            control={control}
             render={({ field, fieldState: rhfState }) => {
                 const errorMessage = rhfState.error?.message ?? state.error ?? undefined;
                 const warningMessage = state.warning ?? undefined;

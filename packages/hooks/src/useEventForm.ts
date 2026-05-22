@@ -2,9 +2,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useDataQuery } from '@dhis2/app-runtime';
 import { useEffect, useMemo, useState } from 'react';
 import { useForm, type UseFormReturn } from 'react-hook-form';
-import { buildSchema } from '@dhis2-form-utils/metadata';
+import { buildSchema, Dhis2ValueType } from '@dhis2-form-utils/metadata';
 import type { ProgramStageMetadata } from '@dhis2-form-utils/metadata';
-import type { EffectHandler, FieldStateMap } from '@dhis2-form-utils/rules';
+import type { EffectHandlersMap, FieldStateMap } from '@dhis2-form-utils/rules';
 import {
     buildRuleEngine,
     buildRuleEngineContext,
@@ -17,7 +17,7 @@ export type UseEventFormOptions = {
     programStageId?: string;
     metadata?: ProgramStageMetadata;
     existingValues?: Record<string, unknown>;
-    effectHandlers?: Partial<Record<string, EffectHandler>>;
+    effectHandlers?: EffectHandlersMap;
 };
 
 export type UseEventFormReturn = {
@@ -32,7 +32,11 @@ const stubMetadata: ProgramStageMetadata = {
     displayName: 'Stub Stage',
     programStageDataElements: [
         {
-            dataElement: { id: 'sampleField', displayName: 'Sample Field', valueType: 'TEXT' },
+            dataElement: {
+                id: 'sampleField',
+                displayName: 'Sample Field',
+                valueType: Dhis2ValueType.TEXT,
+            },
         },
     ],
 };

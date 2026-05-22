@@ -1,7 +1,9 @@
+import { ProgramRuleActionType } from '@dhis2-form-utils/metadata';
 import { createEmptyFieldState, type FieldState, type FieldStateMap } from './types';
 
+/** Effect from rule-engine evaluation. Extend ProgramRuleActionType in metadata for new DHIS2 types. */
 export type RuleEffect = {
-    ruleActionType: string;
+    ruleActionType: ProgramRuleActionType | string;
     dataElement?: string | null;
     trackedEntityAttribute?: string | null;
     content?: string | null;
@@ -14,14 +16,29 @@ export type RuleEffect = {
 
 export type EffectHandler = (effect: RuleEffect, state: FieldStateMap) => FieldStateMap;
 
+export type EffectHandlersMap = Partial<Record<ProgramRuleActionType, EffectHandler>> &
+    Record<string, EffectHandler | undefined>;
+
 export type RuleEngineLike = {
     evaluate: (currentValues: Record<string, unknown>) => RuleEffect[];
 };
 
-const fieldKey = (effect: RuleEffect): string | undefined =>
-    effect.ruleActionType === 'HIDESECTION'
-        ? `section:${effect.programStageSection ?? effect.programSection ?? ''}`
-        : (effect.dataElement ?? effect.trackedEntityAttribute ?? undefined);
+const programRuleActionTypeValues = new Set<string>(Object.values(ProgramRuleActionType));
+
+const isProgramRuleActionType = (
+    value: ProgramRuleActionType | string
+): value is ProgramRuleActionType => programRuleActionTypeValues.has(value);
+
+const fieldKey = (effect: RuleEffect): string | undefined => {
+    if (
+        isProgramRuleActionType(effect.ruleActionType) &&
+        effect.ruleActionType === ProgramRuleActionType.HIDESECTION
+    ) {
+        return `section:${effect.programStageSection ?? effect.programSection ?? ''}`;
+    }
+
+    return effect.dataElement ?? effect.trackedEntityAttribute ?? undefined;
+};
 
 const ensureField = (state: FieldStateMap, key: string): FieldState => {
     if (!(key in state)) {
@@ -37,29 +54,34 @@ export const applyEffect = (state: FieldStateMap, effect: RuleEffect): FieldStat
     const field = { ...ensureField(state, key) };
     const next = { ...state, [key]: field };
 
-    switch (effect.ruleActionType) {
-        case 'HIDEFIELD':
+    const actionType = effect.ruleActionType;
+    if (!isProgramRuleActionType(actionType)) {
+        return next;
+    }
+
+    switch (actionType) {
+        case ProgramRuleActionType.HIDEFIELD:
             field.hidden = true;
             break;
-        case 'SHOWFIELD':
+        case ProgramRuleActionType.SHOWFIELD:
             field.hidden = false;
             break;
-        case 'SHOWWARNING':
+        case ProgramRuleActionType.SHOWWARNING:
             field.warning = effect.content ?? 'Warning';
             break;
-        case 'SHOWERROR':
+        case ProgramRuleActionType.SHOWERROR:
             field.error = effect.content ?? 'Error';
             break;
-        case 'SETMANDATORYFIELD':
+        case ProgramRuleActionType.SETMANDATORYFIELD:
             field.mandatory = true;
             break;
-        case 'UNSETMANDATORYFIELD':
+        case ProgramRuleActionType.UNSETMANDATORYFIELD:
             field.mandatory = false;
             break;
-        case 'ASSIGN':
+        case ProgramRuleActionType.ASSIGN:
             field.assignedValue = effect.data ?? effect.content ?? null;
             break;
-        case 'HIDEOPTION':
+        case ProgramRuleActionType.HIDEOPTION:
             if (effect.optionCode ?? effect.data) {
                 field.hiddenOptions = new Set([
                     ...field.hiddenOptions,
@@ -67,7 +89,7 @@ export const applyEffect = (state: FieldStateMap, effect: RuleEffect): FieldStat
                 ]);
             }
             break;
-        case 'SHOWOPTION':
+        case ProgramRuleActionType.SHOWOPTION:
             if (effect.optionCode ?? effect.data) {
                 const optionToShow = String(effect.optionCode ?? effect.data);
                 field.hiddenOptions = new Set(
@@ -75,7 +97,7 @@ export const applyEffect = (state: FieldStateMap, effect: RuleEffect): FieldStat
                 );
             }
             break;
-        case 'HIDEOPTIONGROUP':
+        case ProgramRuleActionType.HIDEOPTIONGROUP:
             if (effect.optionGroupId ?? effect.data) {
                 field.hiddenOptionGroups = new Set([
                     ...field.hiddenOptionGroups,
@@ -83,7 +105,7 @@ export const applyEffect = (state: FieldStateMap, effect: RuleEffect): FieldStat
                 ]);
             }
             break;
-        case 'SHOWOPTIONGROUP':
+        case ProgramRuleActionType.SHOWOPTIONGROUP:
             if (effect.optionGroupId ?? effect.data) {
                 const groupToShow = String(effect.optionGroupId ?? effect.data);
                 field.hiddenOptionGroups = new Set(
@@ -91,7 +113,7 @@ export const applyEffect = (state: FieldStateMap, effect: RuleEffect): FieldStat
                 );
             }
             break;
-        case 'HIDESECTION':
+        case ProgramRuleActionType.HIDESECTION:
             field.hidden = true;
             field.hiddenSections = new Set([
                 ...field.hiddenSections,
@@ -108,7 +130,7 @@ export const applyEffect = (state: FieldStateMap, effect: RuleEffect): FieldStat
 export function evaluateAndMap(
     engine: RuleEngineLike,
     currentValues: Record<string, unknown>,
-    effectHandlers?: Partial<Record<string, EffectHandler>>
+    effectHandlers?: EffectHandlersMap
 ): FieldStateMap {
     const effects = engine.evaluate(currentValues);
     return effects.reduce<FieldStateMap>((state, effect) => {

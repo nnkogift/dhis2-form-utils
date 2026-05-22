@@ -1,13 +1,4 @@
-export type Dhis2ValueType =
-    | 'TEXT'
-    | 'LONG_TEXT'
-    | 'INTEGER'
-    | 'INTEGER_POSITIVE'
-    | 'NUMBER'
-    | 'BOOLEAN'
-    | 'DATE'
-    | 'ORGANISATION_UNIT'
-    | 'FILE_RESOURCE';
+import type { Dhis2ValueType, ProgramRuleActionType, ProgramRuleVariableSourceType } from './enums';
 
 export type DataElementRef = {
     id: string;
@@ -33,8 +24,6 @@ export type ProgramStageMetadata = {
     programRules?: ProgramRule[];
     programRuleVariables?: ProgramRuleVariable[];
 };
-
-export type ProgramRuleActionType = string;
 
 export type ProgramRuleAction = {
     programRuleActionType: ProgramRuleActionType;
@@ -73,14 +62,6 @@ export type ProgramRule = {
     priority?: number;
     programRuleActions?: ProgramRuleAction[];
 };
-
-export type ProgramRuleVariableSourceType =
-    | 'DATAELEMENT_PREVIOUS_EVENT'
-    | 'DATAELEMENT_CURRENT_EVENT'
-    | 'DATAELEMENT_NEWEST_EVENT_PROGRAM'
-    | 'DATAELEMENT_NEWEST_EVENT_PROGRAM_STAGE'
-    | 'CALCULATED_VALUE'
-    | 'TEI_ATTRIBUTE';
 
 export type ProgramRuleVariable = {
     id: string;

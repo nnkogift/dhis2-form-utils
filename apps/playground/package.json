@@ -7,7 +7,7 @@
     "packageManager": "pnpm@10.13.1",
     "scripts": {
         "build": "d2-app-scripts build",
-        "dev": "d2-app-scripts start",
+        "dev": "d2-app-scripts start --proxy https://play.im.dhis2.org/stable-2-43-0",
         "test": "d2-app-scripts test",
         "deploy": "d2-app-scripts deploy",
         "lint": "eslint && prettier -c .",
