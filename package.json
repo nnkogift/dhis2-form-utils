@@ -10,10 +10,19 @@
         "test:watch": "vitest",
         "lint": "eslint . && prettier --check .",
         "lint:fix": "eslint . --fix && prettier --write .",
-        "typecheck": "pnpm --filter '@dhis2-form-utils/*' run typecheck && pnpm --filter playground run typecheck",
+        "typecheck": "pnpm -r --if-present run typecheck",
         "format": "prettier --write .",
         "storybook": "pnpm --filter storybook dev",
-        "playground": "pnpm --filter playground dev"
+        "playground": "pnpm --filter playground dev",
+        "precommit": "lint-staged && node scripts/typecheck-staged.mjs",
+        "prepare": "husky"
+    },
+    "lint-staged": {
+        "*.{ts,tsx}": [
+            "eslint --max-warnings=0",
+            "prettier --check"
+        ],
+        "*.{js,mjs,cjs,json,md,yml,yaml}": "prettier --check"
     },
     "devDependencies": {
         "@eslint/js": "^10.0.1",
@@ -26,7 +35,9 @@
         "eslint-plugin-react": "^7.37.5",
         "eslint-plugin-react-hooks": "^7.1.1",
         "fallow": "^2.76.0",
+        "husky": "^9.1.7",
         "jsdom": "^29.1.1",
+        "lint-staged": "^17.0.5",
         "prettier": "^3.8.3",
         "react": "^18.3.1",
         "react-dom": "^18.3.1",
