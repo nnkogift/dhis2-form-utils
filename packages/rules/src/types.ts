@@ -6,6 +6,7 @@ export type FieldState = {
     assignedValue: unknown;
     hiddenOptions: Set<string>;
     hiddenOptionGroups: Set<string>;
+    hiddenSections: Set<string>;
 };
 
 export type FieldStateMap = Record<string, FieldState>;
@@ -18,4 +19,5 @@ export const createEmptyFieldState = (): FieldState => ({
     assignedValue: null,
     hiddenOptions: new Set(),
     hiddenOptionGroups: new Set(),
+    hiddenSections: new Set(),
 });

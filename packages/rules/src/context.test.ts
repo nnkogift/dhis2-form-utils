@@ -1,0 +1,71 @@
+import { describe, expect, it } from 'vitest';
+import { buildRuleEngine, buildRuleEngineContext, type ProgramStageMetadata } from './context';
+
+const metadataWithRules: ProgramStageMetadata = {
+    id: 'stage-1',
+    displayName: 'Stage 1',
+    programStageDataElements: [
+        {
+            dataElement: {
+                id: 'age',
+                displayName: 'Age',
+                valueType: 'INTEGER',
+            },
+        },
+    ],
+    programRules: [
+        {
+            id: 'rule-1',
+            condition: '#{age} > 10',
+            priority: 1,
+            programRuleActions: [
+                {
+                    programRuleActionType: 'SHOWWARNING',
+                    content: 'Age is high',
+                    dataElement: {
+                        id: 'age',
+                        displayName: 'Age',
+                        valueType: 'INTEGER',
+                    },
+                },
+            ],
+        },
+    ],
+    programRuleVariables: [
+        {
+            id: 'var-1',
+            name: 'age',
+            dataElement: {
+                id: 'age',
+                displayName: 'Age',
+                valueType: 'INTEGER',
+            },
+            programRuleVariableSourceType: 'DATAELEMENT_CURRENT_EVENT',
+        },
+    ],
+};
+
+describe('buildRuleEngineContext / buildRuleEngine', () => {
+    it('evaluates metadata rules with the official engine', () => {
+        const context = buildRuleEngineContext(metadataWithRules);
+        const engine = buildRuleEngine(context);
+        const effects = engine.evaluate({ age: 15 });
+
+        expect(effects).toHaveLength(1);
+        expect(effects[0].ruleActionType).toBe('SHOWWARNING');
+        expect(effects[0].content).toBe('Age is high');
+        expect(effects[0].dataElement).toBe('age');
+    });
+
+    it('returns no effects when metadata has no rules', () => {
+        const context = buildRuleEngineContext({
+            id: 'stage-empty',
+            displayName: 'Empty',
+            programStageDataElements: [],
+            programRules: [],
+            programRuleVariables: [],
+        });
+        const engine = buildRuleEngine(context);
+        expect(engine.evaluate({})).toEqual([]);
+    });
+});

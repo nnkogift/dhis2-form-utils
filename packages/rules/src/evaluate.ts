@@ -1,12 +1,15 @@
 import { createEmptyFieldState, type FieldState, type FieldStateMap } from './types';
 
-/** Simplified rule effect shape for stub evaluation (mirrors @dhis2/rule-engine RuleEffect). */
 export type RuleEffect = {
     ruleActionType: string;
-    dataElement?: string;
-    trackedEntityAttribute?: string;
-    content?: string;
-    data?: string;
+    dataElement?: string | null;
+    trackedEntityAttribute?: string | null;
+    content?: string | null;
+    data?: string | null;
+    optionCode?: string | null;
+    optionGroupId?: string | null;
+    programStageSection?: string | null;
+    programSection?: string | null;
 };
 
 export type EffectHandler = (effect: RuleEffect, state: FieldStateMap) => FieldStateMap;
@@ -16,7 +19,9 @@ export type RuleEngineLike = {
 };
 
 const fieldKey = (effect: RuleEffect): string | undefined =>
-    effect.dataElement ?? effect.trackedEntityAttribute;
+    effect.ruleActionType === 'HIDESECTION'
+        ? `section:${effect.programStageSection ?? effect.programSection ?? ''}`
+        : (effect.dataElement ?? effect.trackedEntityAttribute ?? undefined);
 
 const ensureField = (state: FieldStateMap, key: string): FieldState => {
     if (!(key in state)) {
@@ -36,6 +41,9 @@ export const applyEffect = (state: FieldStateMap, effect: RuleEffect): FieldStat
         case 'HIDEFIELD':
             field.hidden = true;
             break;
+        case 'SHOWFIELD':
+            field.hidden = false;
+            break;
         case 'SHOWWARNING':
             field.warning = effect.content ?? 'Warning';
             break;
@@ -45,18 +53,50 @@ export const applyEffect = (state: FieldStateMap, effect: RuleEffect): FieldStat
         case 'SETMANDATORYFIELD':
             field.mandatory = true;
             break;
+        case 'UNSETMANDATORYFIELD':
+            field.mandatory = false;
+            break;
         case 'ASSIGN':
             field.assignedValue = effect.data ?? effect.content ?? null;
             break;
         case 'HIDEOPTION':
-            if (effect.data) {
-                field.hiddenOptions = new Set([...field.hiddenOptions, effect.data]);
+            if (effect.optionCode ?? effect.data) {
+                field.hiddenOptions = new Set([
+                    ...field.hiddenOptions,
+                    String(effect.optionCode ?? effect.data),
+                ]);
+            }
+            break;
+        case 'SHOWOPTION':
+            if (effect.optionCode ?? effect.data) {
+                const optionToShow = String(effect.optionCode ?? effect.data);
+                field.hiddenOptions = new Set(
+                    [...field.hiddenOptions].filter((optionCode) => optionCode !== optionToShow)
+                );
             }
             break;
         case 'HIDEOPTIONGROUP':
-            if (effect.data) {
-                field.hiddenOptionGroups = new Set([...field.hiddenOptionGroups, effect.data]);
+            if (effect.optionGroupId ?? effect.data) {
+                field.hiddenOptionGroups = new Set([
+                    ...field.hiddenOptionGroups,
+                    String(effect.optionGroupId ?? effect.data),
+                ]);
             }
+            break;
+        case 'SHOWOPTIONGROUP':
+            if (effect.optionGroupId ?? effect.data) {
+                const groupToShow = String(effect.optionGroupId ?? effect.data);
+                field.hiddenOptionGroups = new Set(
+                    [...field.hiddenOptionGroups].filter((groupId) => groupId !== groupToShow)
+                );
+            }
+            break;
+        case 'HIDESECTION':
+            field.hidden = true;
+            field.hiddenSections = new Set([
+                ...field.hiddenSections,
+                effect.programStageSection ?? effect.programSection ?? key.replace('section:', ''),
+            ]);
             break;
         default:
             break;

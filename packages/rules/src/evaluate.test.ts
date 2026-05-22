@@ -30,6 +30,45 @@ describe('applyEffect', () => {
         expect(state.de1.mandatory).toBe(true);
         expect(state.de1.warning).toBe('Check value');
     });
+
+    it('applies option and section visibility effects', () => {
+        let state = applyEffect(
+            {},
+            {
+                ruleActionType: 'HIDEOPTION',
+                dataElement: 'de1',
+                optionCode: 'opt1',
+            }
+        );
+
+        state = applyEffect(state, {
+            ruleActionType: 'SHOWOPTION',
+            dataElement: 'de1',
+            optionCode: 'opt1',
+        });
+
+        state = applyEffect(state, {
+            ruleActionType: 'HIDEOPTIONGROUP',
+            dataElement: 'de1',
+            optionGroupId: 'og1',
+        });
+
+        state = applyEffect(state, {
+            ruleActionType: 'SHOWOPTIONGROUP',
+            dataElement: 'de1',
+            optionGroupId: 'og1',
+        });
+
+        state = applyEffect(state, {
+            ruleActionType: 'HIDESECTION',
+            programStageSection: 'section-a',
+        });
+
+        expect(state.de1.hiddenOptions.size).toBe(0);
+        expect(state.de1.hiddenOptionGroups.size).toBe(0);
+        expect(state['section:section-a'].hidden).toBe(true);
+        expect(state['section:section-a'].hiddenSections.has('section-a')).toBe(true);
+    });
 });
 
 describe('evaluateAndMap', () => {
