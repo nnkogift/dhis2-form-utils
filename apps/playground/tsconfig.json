@@ -1,12 +1,17 @@
 {
-    "extends": "@dhis2-form-utils/config/tsconfig.base.json",
     "compilerOptions": {
         "noEmit": true,
+        "skipLibCheck": true,
+        "allowJs": true,
+        "jsx": "react",
+        "esModuleInterop": true,
+        "target": "ESNext",
+        "module": "esnext",
+        "moduleResolution": "node",
+        "baseUrl": ".",
         "paths": {
-            "@dhis2-form-utils/dhis2-ui": ["../../packages/dhis2-ui/src/index.ts"],
-            "@dhis2-form-utils/hooks": ["../../packages/hooks/src/index.ts"],
-            "@dhis2-form-utils/rules": ["../../packages/rules/src/index.ts"]
+            "@/*": ["src/*"]
         }
     },
-    "include": ["src", "e2e"]
+    "include": ["src", "types"]
 }

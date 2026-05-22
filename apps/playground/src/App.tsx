@@ -1,45 +1,94 @@
-import { TextInput } from '@dhis2-form-utils/dhis2-ui';
-import { FieldStateProvider } from '@dhis2-form-utils/hooks';
-import type { FieldStateMap } from '@dhis2-form-utils/rules';
-import { FormProvider, useForm } from 'react-hook-form';
+import { useDataQuery } from '@dhis2/app-runtime'
+import i18n from '@dhis2/d2-i18n'
+import { NoticeBox } from '@dhis2/ui'
+import React, { FC } from 'react'
+import classes from '@/App.module.css'
+import DataElementsList from '@/components/DataElementsList'
 
-const playgroundFieldState: FieldStateMap = {
-    sampleField: {
-        hidden: false,
-        mandatory: false,
-        warning: null,
-        error: null,
-        assignedValue: null,
-        hiddenOptions: new Set(),
-        hiddenOptionGroups: new Set(),
+interface QueryResults {
+    me: {
+        name: string
+    }
+}
+
+const query = {
+    me: {
+        resource: 'me',
     },
-};
+}
 
-export function App() {
-    const form = useForm({
-        defaultValues: { sampleField: '' },
-    });
+const MyApp: FC = () => {
+    const { error, loading, data } = useDataQuery<QueryResults>(query)
+
+    if (error) {
+        return <span>{i18n.t('ERROR')}</span>
+    }
+
+    if (loading) {
+        return <span>{i18n.t('Loading...')}</span>
+    }
 
     return (
-        <main style={{ maxWidth: 480, margin: '2rem auto', padding: '0 1rem' }}>
-            <h1>dhis2-form-utils Playground</h1>
-            <p>Dev sandbox for @dhis2-form-utils/dhis2-ui components.</p>
-            <FieldStateProvider value={playgroundFieldState}>
-                <FormProvider {...form}>
-                    <form
-                        onSubmit={(event) => {
-                            void form.handleSubmit((data) => {
-                                console.log('submit', data);
-                            })(event);
-                        }}
-                    >
-                        <TextInput name="sampleField" label="Sample Field" />
-                        <button type="submit" style={{ marginTop: '1rem' }}>
-                            Submit
-                        </button>
-                    </form>
-                </FormProvider>
-            </FieldStateProvider>
-        </main>
-    );
+        <div>
+            <h2>{i18n.t('Hello {{name}}', { name: data?.me?.name })}</h2>
+            <div className={classes.noticeContainer}>
+                <NoticeBox title="DHIS2 Web application">
+                    This application was scaffolded using DHIS2 app platform
+                    (with <code>npm create @dhis2/app</code>).
+                    <br />
+                    For more information, you can check the DHIS2 documentation:
+                    <ul>
+                        <li>
+                            <a
+                                target="_blank"
+                                href="https://developers.dhis2.org/docs/guides"
+                                rel="noreferrer"
+                            >
+                                Web development guides
+                            </a>
+                        </li>
+                        <li>
+                            <a
+                                target="_blank"
+                                href="https://docs.dhis2.org/en/develop/using-the-api/dhis-core-version-master/metadata.html"
+                                rel="noreferrer"
+                            >
+                                Documentation for the API{' '}
+                            </a>
+                        </li>
+                        <li>
+                            <a
+                                target="_blank"
+                                href="https://developers.dhis2.org/docs/tutorials/app-runtime-query/"
+                                rel="noreferrer"
+                            >
+                                AppRuntime and useDataQuery hook
+                            </a>
+                        </li>
+                        <li>
+                            <a
+                                target="_blank"
+                                href="https://developers.dhis2.org/docs/ui/webcomponents"
+                                rel="noreferrer"
+                            >
+                                UI Library
+                            </a>
+                        </li>
+                        <li>
+                            <a
+                                target="_blank"
+                                href="https://developers.dhis2.org/demo/"
+                                rel="noreferrer"
+                            >
+                                UI library demo
+                            </a>
+                        </li>
+                    </ul>
+                </NoticeBox>
+            </div>
+            <DataElementsList />
+        </div>
+    )
 }
+
+export default MyApp
