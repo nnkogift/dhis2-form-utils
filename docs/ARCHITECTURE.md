@@ -16,7 +16,7 @@ official DHIS2 rule engine library, rather than reimplementing it from scratch.
 
 ## Architecture Diagram
 
-![Architecture Diagram](/docs/dhis2_form_lib_architecture.svge.svg)
+![Architecture Diagram](/docs/dhis2_form_lib_architecture.svg)
 
 ---
 
@@ -25,7 +25,8 @@ official DHIS2 rule engine library, rather than reimplementing it from scratch.
 ```
 dhis2-form-utils/
 ├── apps/
-│   └── playground/              # Vite + React dev sandbox
+│   ├── playground/              # Vite + React dev sandbox
+│   └── storybook/               # Storybook — component docs + browser tests
 ├── packages/
 │   ├── rules/                   # @dhis2-form-utils/rules
 │   ├── metadata/                # @dhis2-form-utils/metadata
@@ -88,7 +89,7 @@ The `RuleEffect` model maps directly to DHIS2's `programRuleActionType`. The act
 engine natively evaluates include:
 
 | Action type           | Effect                                                        |
-|-----------------------|---------------------------------------------------------------|
+| --------------------- | ------------------------------------------------------------- |
 | `HIDEFIELD`           | Field must not be rendered                                    |
 | `HIDESECTION`         | Section must not be rendered                                  |
 | `HIDEPROGRAMSTAGE`    | Stage must not be rendered                                    |
@@ -125,16 +126,16 @@ entry aggregates all effects for that field into a single object the UI can cons
 ```ts
 // packages/rules/src/types.ts
 export type FieldState = {
-		hidden: boolean
-		mandatory: boolean
-		warning: string | null
-		error: string | null
-		assignedValue: unknown | null
-		hiddenOptions: Set<string>
-		hiddenOptionGroups: Set<string>
-}
+  hidden: boolean;
+  mandatory: boolean;
+  warning: string | null;
+  error: string | null;
+  assignedValue: unknown | null;
+  hiddenOptions: Set<string>;
+  hiddenOptionGroups: Set<string>;
+};
 
-export type FieldStateMap = Record<string, FieldState>
+export type FieldStateMap = Record<string, FieldState>;
 ```
 
 **Context assembly** — the engine requires all program rule variables to be resolved before
@@ -145,26 +146,26 @@ events). This separation keeps the expensive context-build step outside the reac
 
 ```ts
 // packages/rules/src/context.ts
-import {RuleEngineContext, RuleEngine} from '@dhis2/rule-engine'
-import type {ProgramStageMetadata} from '@dhis2-form-utils/metadata'
+import { RuleEngineContext, RuleEngine } from '@dhis2/rule-engine';
+import type { ProgramStageMetadata } from '@dhis2-form-utils/metadata';
 
 export function buildRuleEngineContext(metadata: ProgramStageMetadata): RuleEngineContext {
-		return RuleEngineContext.builder()
-				.rules(metadata.programRules)
-				.ruleVariables(metadata.programRuleVariables)
-				.build()
+  return RuleEngineContext.builder()
+    .rules(metadata.programRules)
+    .ruleVariables(metadata.programRuleVariables)
+    .build();
 }
 
 export function buildRuleEngine(
-		context: RuleEngineContext,
-		enrollmentData?: EnrollmentContext
+  context: RuleEngineContext,
+  enrollmentData?: EnrollmentContext
 ): RuleEngine {
-		const builder = context.toEngineBuilder()
-		if (enrollmentData) {
-				builder.enrollment(enrollmentData.enrollment)
-				builder.events(enrollmentData.previousEvents)
-		}
-		return builder.build()
+  const builder = context.toEngineBuilder();
+  if (enrollmentData) {
+    builder.enrollment(enrollmentData.enrollment);
+    builder.events(enrollmentData.previousEvents);
+  }
+  return builder.build();
 }
 ```
 
@@ -174,12 +175,12 @@ folds the resulting `RuleEffect` list into a `FieldStateMap`:
 ```ts
 // packages/rules/src/evaluate.ts
 export function evaluateAndMap(
-		engine: RuleEngine,
-		currentValues: Record<string, unknown>
+  engine: RuleEngine,
+  currentValues: Record<string, unknown>
 ): FieldStateMap {
-		const targetEvent = toRuleEvent(currentValues)
-		const effects = engine.evaluate(targetEvent)
-		return effects.reduce<FieldStateMap>(applyEffect, {})
+  const targetEvent = toRuleEvent(currentValues);
+  const effects = engine.evaluate(targetEvent);
+  return effects.reduce<FieldStateMap>(applyEffect, {});
 }
 ```
 
@@ -192,21 +193,18 @@ apps add interpretation logic for these patterns without forking the library.
 
 ```ts
 // packages/rules/src/evaluate.ts
-export type EffectHandler = (
-		effect: RuleEffect,
-		state: FieldStateMap
-) => FieldStateMap
+export type EffectHandler = (effect: RuleEffect, state: FieldStateMap) => FieldStateMap;
 
 export function evaluateAndMap(
-		engine: RuleEngine,
-		currentValues: Record<string, unknown>,
-		effectHandlers?: Partial<Record<string, EffectHandler>>
+  engine: RuleEngine,
+  currentValues: Record<string, unknown>,
+  effectHandlers?: Partial<Record<string, EffectHandler>>
 ): FieldStateMap {
-		const effects = engine.evaluate(toRuleEvent(currentValues))
-		return effects.reduce<FieldStateMap>((state, effect) => {
-				const custom = effectHandlers?.[effect.ruleActionType]
-				return custom ? custom(effect, state) : applyEffect(state, effect)
-		}, {})
+  const effects = engine.evaluate(toRuleEvent(currentValues));
+  return effects.reduce<FieldStateMap>((state, effect) => {
+    const custom = effectHandlers?.[effect.ruleActionType];
+    return custom ? custom(effect, state) : applyEffect(state, effect);
+  }, {});
 }
 ```
 
@@ -216,9 +214,9 @@ and returns a clean payload with hidden fields removed and `ASSIGN`-sourced valu
 
 ```ts
 export function filterPayload(
-		values: Record<string, unknown>,
-		fieldState: FieldStateMap
-): Record<string, unknown>
+  values: Record<string, unknown>,
+  fieldState: FieldStateMap
+): Record<string, unknown>;
 ```
 
 In summary: `@dhis2/rule-engine` does the expression evaluation; `@dhis2-form-utils/rules` makes
@@ -236,7 +234,7 @@ Each DHIS2 `valueType` maps to a Zod validator. Coercers normalise the raw strin
 API returns into proper JavaScript types before validation runs:
 
 | DHIS2 valueType                | Zod schema                   | Coercion               |
-|--------------------------------|------------------------------|------------------------|
+| ------------------------------ | ---------------------------- | ---------------------- |
 | `TEXT` / `LONG_TEXT`           | `z.string()`                 | None                   |
 | `INTEGER` / `INTEGER_POSITIVE` | `z.number().int()`           | `Number(value)`        |
 | `NUMBER`                       | `z.number()`                 | `parseFloat(value)`    |
@@ -250,11 +248,11 @@ returns a `ZodObject` that can be passed directly into `useForm`:
 
 ```ts
 // packages/metadata/src/buildSchema.ts
-import {z} from 'zod'
-import type {ProgramStageMetadata} from './types'
+import { z } from 'zod';
+import type { ProgramStageMetadata } from './types';
 
 export function buildSchema(metadata: ProgramStageMetadata): z.ZodObject<z.ZodRawShape> {
-		// iterates dataElements / trackedEntityAttributes, maps valueType → Zod
+  // iterates dataElements / trackedEntityAttributes, maps valueType → Zod
 }
 ```
 
@@ -283,22 +281,22 @@ owned by the runtime.
 
 ```ts
 // packages/hooks/src/queries/programStage.query.ts
-import type {Query} from '@dhis2/app-runtime'
+import type { Query } from '@dhis2/data-engine';
 
 export const programStageQuery = (id: string): Query => ({
-		programStage: {
-				resource: 'programStages',
-				id,
-				params: {
-						fields: [
-								'id,displayName',
-								'programStageDataElements[dataElement[id,displayName,valueType,optionSet[options[code,displayName]]]]',
-								'programRules[id,condition,priority,programRuleActions[programRuleActionType,dataElement,content,data]]',
-								'programRuleVariables[id,name,dataElement,programRuleVariableSourceType]',
-						].join(','),
-				},
-		},
-})
+  programStage: {
+    resource: 'programStages',
+    id,
+    params: {
+      fields: [
+        'id,displayName',
+        'programStageDataElements[dataElement[id,displayName,valueType,optionSet[options[code,displayName]]]]',
+        'programRules[id,condition,priority,programRuleActions[programRuleActionType,dataElement,content,data]]',
+        'programRuleVariables[id,name,dataElement,programRuleVariableSourceType]',
+      ].join(','),
+    },
+  },
+});
 ```
 
 For standalone applications not built on the DHIS2 App Platform, the consuming app is responsible
@@ -350,25 +348,25 @@ handles the `dataValueSets` submission format.
 ```ts
 // Simplified illustration of the reactive loop inside useEventForm
 const ruleEngineContext = useMemo(
-		() => data ? buildRuleEngineContext(data.programStage) : null,
-		[data]
-)
+  () => (data ? buildRuleEngineContext(data.programStage) : null),
+  [data]
+);
 
 const ruleEngine = useMemo(
-		() => ruleEngineContext ? buildRuleEngine(ruleEngineContext) : null,
-		[ruleEngineContext]
-)
+  () => (ruleEngineContext ? buildRuleEngine(ruleEngineContext) : null),
+  [ruleEngineContext]
+);
 
-const [fieldState, dispatch] = useReducer(fieldStateReducer, {})
+const [fieldState, dispatch] = useReducer(fieldStateReducer, {});
 
 useEffect(() => {
-		const subscription = form.watch((currentValues) => {
-				if (!ruleEngine) return
-				const nextState = evaluateAndMap(ruleEngine, currentValues, effectHandlers)
-				dispatch({type: 'SET', payload: nextState})
-		})
-		return () => subscription.unsubscribe()
-}, [form, ruleEngine, effectHandlers])
+  const subscription = form.watch((currentValues) => {
+    if (!ruleEngine) return;
+    const nextState = evaluateAndMap(ruleEngine, currentValues, effectHandlers);
+    dispatch({ type: 'SET', payload: nextState });
+  });
+  return () => subscription.unsubscribe();
+}, [form, ruleEngine, effectHandlers]);
 ```
 
 The rule engine context is built once when metadata loads. The engine itself is rebuilt only when
@@ -393,33 +391,33 @@ accept a `name` prop, read from the nearest form context, and apply `fieldState`
 
 ```tsx
 // packages/dhis2-ui/src/fields/TextInput.tsx
-import {Controller, useFormContext} from 'react-hook-form'
-import {Input} from '@dhis2/ui'
-import {useFieldState} from '@dhis2-form-utils/hooks'
+import { Controller, useFormContext } from 'react-hook-form';
+import { Input } from '@dhis2/ui';
+import { useFieldState } from '@dhis2-form-utils/hooks';
 
-type Props = { name: string; label: string }
+type Props = { name: string; label: string };
 
-export function TextInput({name, label}: Props) {
-		const {control} = useFormContext()
-		const state = useFieldState(name)
+export function TextInput({ name, label }: Props) {
+  const { control } = useFormContext();
+  const state = useFieldState(name);
 
-		if (state.hidden) return null
+  if (state.hidden) return null;
 
-		return (
-				<Controller
-						name={name}
-						control={control}
-						render={({field, fieldState: rhfState}) => (
-								<Input
-										{...field}
-										label={label}
-										required={state.mandatory}
-										warning={state.warning}
-										error={rhfState.error?.message ?? state.error}
-								/>
-						)}
-				/>
-		)
+  return (
+    <Controller
+      name={name}
+      control={control}
+      render={({ field, fieldState: rhfState }) => (
+        <Input
+          {...field}
+          label={label}
+          required={state.mandatory}
+          warning={state.warning}
+          error={rhfState.error?.message ?? state.error}
+        />
+      )}
+    />
+  );
 }
 ```
 
@@ -431,10 +429,7 @@ hook contract is identical across all three adapters.
 Composed forms that wire a hook to a full rendered field set:
 
 ```tsx
-<EventForm
-		programStageId="abc123"
-		onSuccess={(event) => console.log('submitted', event)}
-/>
+<EventForm programStageId="abc123" onSuccess={(event) => console.log('submitted', event)} />
 ```
 
 Internally `EventForm` calls `useEventForm`, iterates the metadata's data elements in section
@@ -456,10 +451,7 @@ mode is on across the board. No implicit `any`. Types are derived from Zod schem
     "strict": true,
     "moduleResolution": "bundler",
     "target": "ES2020",
-    "lib": [
-      "ES2020",
-      "DOM"
-    ],
+    "lib": ["ES2020", "DOM"],
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true
@@ -474,27 +466,24 @@ type-aware rules.
 
 ```js
 // eslint.config.js
-import tseslint from 'typescript-eslint'
-import reactPlugin from 'eslint-plugin-react'
-import reactHooksPlugin from 'eslint-plugin-react-hooks'
+import tseslint from 'typescript-eslint';
+import reactPlugin from 'eslint-plugin-react';
+import reactHooksPlugin from 'eslint-plugin-react-hooks';
 
-export default tseslint.config(
-    ...tseslint.configs.strictTypeChecked,
-    {
-        plugins: {
-            react: reactPlugin,
-            'react-hooks': reactHooksPlugin,
-        },
-        rules: {
-            'react-hooks/rules-of-hooks': 'error',
-            'react-hooks/exhaustive-deps': 'warn',
-            '@typescript-eslint/no-explicit-any': 'error',
-        },
-        languageOptions: {
-            parserOptions: {projectService: true},
-        },
-    }
-)
+export default tseslint.config(...tseslint.configs.strictTypeChecked, {
+  plugins: {
+    react: reactPlugin,
+    'react-hooks': reactHooksPlugin,
+  },
+  rules: {
+    'react-hooks/rules-of-hooks': 'error',
+    'react-hooks/exhaustive-deps': 'warn',
+    '@typescript-eslint/no-explicit-any': 'error',
+  },
+  languageOptions: {
+    parserOptions: { projectService: true },
+  },
+});
 ```
 
 ### Build

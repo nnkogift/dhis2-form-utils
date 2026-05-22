@@ -28,7 +28,7 @@ Learn more about the architecture [here](/docs/ARCHITECTURE.md)
 ## Packages
 
 | Package                      | Description                                                                                            |
-|------------------------------|--------------------------------------------------------------------------------------------------------|
+| ---------------------------- | ------------------------------------------------------------------------------------------------------ |
 | `@dhis2-form-utils/rules`    | Wraps `@dhis2/rule-engine` — adds React-form integration, typed field state, and custom action support |
 | `@dhis2-form-utils/metadata` | Converts DHIS2 metadata into Zod schemas                                                               |
 | `@dhis2-form-utils/hooks`    | Headless React hooks — composes all of the above                                                       |
@@ -71,19 +71,19 @@ All hooks must render inside a `@dhis2/app-runtime` `Provider`. On the DHIS2 App
 configured automatically. For standalone apps:
 
 ```tsx
-import {Provider} from '@dhis2/app-runtime'
+import { Provider } from '@dhis2/app-runtime';
 
 const config = {
-		baseUrl: 'https://your-dhis2-instance.org',
-		apiVersion: 41,
-}
+  baseUrl: 'https://your-dhis2-instance.org',
+  apiVersion: 41,
+};
 
 function Root() {
-		return (
-				<Provider config={config}>
-						<App/>
-				</Provider>
-		)
+  return (
+    <Provider config={config}>
+      <App />
+    </Provider>
+  );
 }
 ```
 
@@ -94,15 +94,12 @@ function Root() {
 ### Plug-and-play form
 
 ```tsx
-import {EventForm} from '@dhis2-form-utils/dhis2-ui'
+import { EventForm } from '@dhis2-form-utils/dhis2-ui';
 
 function DataEntryPage() {
-		return (
-				<EventForm
-						programStageId="abc123"
-						onSuccess={(event) => console.log('submitted', event)}
-				/>
-		)
+  return (
+    <EventForm programStageId="abc123" onSuccess={(event) => console.log('submitted', event)} />
+  );
 }
 ```
 
@@ -112,24 +109,24 @@ every field change, and handles submission — all without additional configurat
 ### Headless hook
 
 ```tsx
-import {useEventForm} from '@dhis2-form-utils/hooks'
-import {FormProvider} from 'react-hook-form'
+import { useEventForm } from '@dhis2-form-utils/hooks';
+import { FormProvider } from 'react-hook-form';
 
 function CustomForm() {
-		const {form, fieldState, isLoading, submit} = useEventForm({
-				programStageId: 'abc123',
-		})
+  const { form, fieldState, isLoading, submit } = useEventForm({
+    programStageId: 'abc123',
+  });
 
-		if (isLoading) return <p>Loading...</p>
+  if (isLoading) return <p>Loading...</p>;
 
-		return (
-				<FormProvider {...form}>
-						<form onSubmit={submit}>
-								{/* your own field components */}
-								{/* read fieldState[fieldId].hidden / .mandatory / .warning / .error */}
-						</form>
-				</FormProvider>
-		)
+  return (
+    <FormProvider {...form}>
+      <form onSubmit={submit}>
+        {/* your own field components */}
+        {/* read fieldState[fieldId].hidden / .mandatory / .warning / .error */}
+      </form>
+    </FormProvider>
+  );
 }
 ```
 
@@ -141,15 +138,15 @@ hooks accept an `effectHandlers` map to override or extend how specific action t
 interpreted after the standard evaluation pass:
 
 ```tsx
-const {form, fieldState, submit} = useEventForm({
-		programStageId: 'abc123',
-		effectHandlers: {
-				DISPLAYTEXT: (effect, state) => {
-						// custom interpretation — e.g. parse structured data from effect.content
-						return state
-				},
-		},
-})
+const { form, fieldState, submit } = useEventForm({
+  programStageId: 'abc123',
+  effectHandlers: {
+    DISPLAYTEXT: (effect, state) => {
+      // custom interpretation — e.g. parse structured data from effect.content
+      return state;
+    },
+  },
+});
 ```
 
 ### Pre-fetched metadata
@@ -158,7 +155,7 @@ If your app has already fetched program stage metadata through its own data laye
 to skip the internal fetch:
 
 ```tsx
-const {form, fieldState, submit} = useEventForm({metadata: myProgramStage})
+const { form, fieldState, submit } = useEventForm({ metadata: myProgramStage });
 ```
 
 ---
@@ -174,7 +171,7 @@ metadata (rules, rule variables, option sets). On every field change, it evaluat
 form values against that context and folds the resulting `RuleEffect` list into a `FieldStateMap`:
 
 ```ts
-fieldState['dataElementUid']
+fieldState['dataElementUid'];
 // {
 //   hidden: false,
 //   mandatory: true,
@@ -201,7 +198,7 @@ available — no corresponding change is needed in `dhis2-form-utils`.
 ## Supported hooks
 
 | Hook               | Use case                               |
-|--------------------|----------------------------------------|
+| ------------------ | -------------------------------------- |
 | `useEventForm`     | Single tracker event                   |
 | `useTrackerForm`   | Enrollment + events (tracker programs) |
 | `useDataEntryForm` | Aggregate data sets                    |
@@ -224,8 +221,12 @@ pnpm install
 # Start the playground
 pnpm --filter playground dev
 
-# Run all tests
+# Run all unit tests
 pnpm test
+
+# Storybook (component docs + browser tests)
+pnpm --filter storybook dev
+pnpm --filter storybook test
 
 # Lint
 pnpm lint

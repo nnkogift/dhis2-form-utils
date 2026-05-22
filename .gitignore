@@ -8,6 +8,19 @@ yarn-error.log*
 lerna-debug.log*
 .pnpm-debug.log*
 
+# Build outputs
+dist/
+storybook-static/
+
+# Playwright
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+
+# Vitest
+coverage/
+
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
@@ -38,6 +51,9 @@ bower_components
 
 # Compiled binary addons (https://nodejs.org/api/addons.html)
 build/Release
+
+# pnpm local store (when store-dir is inside the repo)
+.pnpm-store/
 
 # Dependency directories
 node_modules/
