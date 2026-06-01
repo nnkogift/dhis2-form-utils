@@ -9,6 +9,7 @@ on:
 jobs:
     lint:
         runs-on: ubuntu-latest
+        needs: build
         steps:
             - uses: actions/checkout@v4
             - uses: pnpm/action-setup@v4
@@ -17,6 +18,10 @@ jobs:
                   node-version: 24
                   cache: pnpm
             - run: pnpm install --frozen-lockfile
+            - uses: actions/download-artifact@v4
+              with:
+                  name: build-dist
+                  path: .
             - run: pnpm lint
 
     type-check:
