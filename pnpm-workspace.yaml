@@ -1,6 +1,8 @@
 packages:
     - 'apps/*'
     - 'packages/*'
+    - 'utils/*'
+    - 'components/*'
 allowBuilds:
     '@dhis2/cli-helpers-engine': false
     core-js-pure: false
