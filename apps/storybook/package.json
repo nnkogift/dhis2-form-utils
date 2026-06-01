@@ -28,6 +28,7 @@
         "@dhis2-form-utils/config": "workspace:*",
         "@storybook/addon-a11y": "^10.4.0",
         "@storybook/addon-docs": "^10.4.0",
+        "@storybook/addon-mcp": "^0.6.0",
         "@storybook/addon-vitest": "^10.4.0",
         "@storybook/react": "^10.4.0",
         "@storybook/react-vite": "^10.4.0",
