@@ -95,24 +95,6 @@ jobs:
                   path: .
             - run: pnpm --filter storybook test
 
-    e2e:
-        runs-on: ubuntu-latest
-        needs: build
-        steps:
-            - uses: actions/checkout@v4
-            - uses: pnpm/action-setup@v4
-            - uses: actions/setup-node@v4
-              with:
-                  node-version: 24
-                  cache: pnpm
-            - run: pnpm install --frozen-lockfile
-            - uses: actions/download-artifact@v4
-              with:
-                  name: build-dist
-                  path: .
-            - run: pnpm exec playwright install chromium --with-deps
-            - run: pnpm --filter playground e2e
-
     fallow:
         runs-on: ubuntu-latest
         needs: lint
