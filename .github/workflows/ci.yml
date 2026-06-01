@@ -78,6 +78,8 @@ jobs:
 
     storybook-test:
         runs-on: ubuntu-latest
+        container:
+            image: mcr.microsoft.com/playwright:v1.60.0-noble
         needs: build
         steps:
             - uses: actions/checkout@v4
@@ -91,7 +93,6 @@ jobs:
               with:
                   name: build-dist
                   path: .
-            - run: pnpm exec playwright install chromium --with-deps
             - run: pnpm --filter storybook test
 
     e2e:
