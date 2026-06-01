@@ -72,7 +72,9 @@ jobs:
             - uses: actions/upload-artifact@v4
               with:
                   name: build-dist
-                  path: packages/*/dist
+                  path: |
+                      utils/*/dist
+                      components/*/dist
 
     storybook-test:
         runs-on: ubuntu-latest
