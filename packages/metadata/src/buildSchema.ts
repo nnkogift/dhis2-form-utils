@@ -1,23 +1,24 @@
 import { z } from 'zod';
-import type { Dhis2ValueType, ProgramStageMetadata } from './types';
+import { Dhis2ValueType } from './enums';
+import type { ProgramStageMetadata } from './types';
 
 const valueTypeToZod = (valueType: Dhis2ValueType): z.ZodTypeAny => {
     switch (valueType) {
-        case 'TEXT':
-        case 'LONG_TEXT':
+        case Dhis2ValueType.TEXT:
+        case Dhis2ValueType.LONG_TEXT:
             return z.string();
-        case 'INTEGER':
-        case 'INTEGER_POSITIVE':
+        case Dhis2ValueType.INTEGER:
+        case Dhis2ValueType.INTEGER_POSITIVE:
             return z.coerce.number().int();
-        case 'NUMBER':
+        case Dhis2ValueType.NUMBER:
             return z.coerce.number();
-        case 'BOOLEAN':
+        case Dhis2ValueType.BOOLEAN:
             return z.coerce.boolean();
-        case 'DATE':
+        case Dhis2ValueType.DATE:
             return z.string().date();
-        case 'ORGANISATION_UNIT':
+        case Dhis2ValueType.ORGANISATION_UNIT:
             return z.string().min(11).max(11);
-        case 'FILE_RESOURCE':
+        case Dhis2ValueType.FILE_RESOURCE:
             return z.string().uuid();
         default:
             return z.unknown();

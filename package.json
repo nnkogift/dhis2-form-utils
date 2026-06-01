@@ -5,15 +5,28 @@
     "type": "module",
     "description": "Composable, design-system-agnostic form library for DHIS2 data entry in React",
     "scripts": {
-        "build": "pnpm --filter '@dhis2-form-utils/*' run build && pnpm --filter storybook build",
-        "test": "vitest run && pnpm --filter storybook test",
+        "build": "pnpm --filter '@dhis2-form-utils/*' run --if-present build && pnpm --filter storybook build",
+        "test:unit": "vitest run",
+        "test:storybook": "pnpm --filter storybook test",
+        "test": "concurrently -c 'green,blue' -n 'unit,storybook'  --kill-others-on-fail 'pnpm run test:unit' 'pnpm run test:storybook'",
         "test:watch": "vitest",
         "lint": "eslint . && prettier --check .",
+        "codeq": "fallow audit",
         "lint:fix": "eslint . --fix && prettier --write .",
-        "typecheck": "pnpm --filter '@dhis2-form-utils/*' run typecheck && pnpm --filter playground run typecheck",
+        "typecheck": "pnpm -r --if-present run typecheck",
         "format": "prettier --write .",
         "storybook": "pnpm --filter storybook dev",
-        "playground": "pnpm --filter playground dev"
+        "playground": "pnpm --filter playground dev",
+        "precommit": "lint-staged && node scripts/typecheck-staged.mjs",
+        "prepare": "husky",
+        "clean": "find . -name 'node_modules' -type d -prune -exec rm -rf '{}' +"
+    },
+    "lint-staged": {
+        "*.{ts,tsx}": [
+            "eslint --fix",
+            "prettier --write"
+        ],
+        "*.{js,mjs,cjs,json,md,yml,yaml}": "prettier --write"
     },
     "devDependencies": {
         "@eslint/js": "^10.0.1",
@@ -26,7 +39,9 @@
         "eslint-plugin-react": "^7.37.5",
         "eslint-plugin-react-hooks": "^7.1.1",
         "fallow": "^2.76.0",
+        "husky": "^9.1.7",
         "jsdom": "^29.1.1",
+        "lint-staged": "^17.0.5",
         "prettier": "^3.8.3",
         "react": "^18.3.1",
         "react-dom": "^18.3.1",
@@ -35,5 +50,8 @@
         "typescript-eslint": "^8.59.4",
         "vitest": "^4.1.7"
     },
-    "packageManager": "pnpm@11.1.2+sha512.415a1cc25974731e75455c1468371be74c5aa5fb7621b50d4056d222451609f11412f23fd602e6169f1e060466641f798597e1be961a10688836a67b16569499"
+    "packageManager": "pnpm@11.5.0+sha512.dbfcc4f81cf48597afd4bc391ffdf12c11f1a9fb83a395bfa6b0a2d9cc2fd8ffebafdb1ccbd529632153f793904c2615b7f09fe1a345473fd1c35845172a8eb1",
+    "dependencies": {
+        "concurrently": "^10.0.0"
+    }
 }
