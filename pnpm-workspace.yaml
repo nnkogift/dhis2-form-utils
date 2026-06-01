@@ -6,6 +6,7 @@ allowBuilds:
     core-js-pure: false
     esbuild: true
     fallow: false
+    msw: true
 
 # These hoists are needed for @dhis2/app-shell since it uses directly some libraries that were hoisted by yarn 1
 # This is a better alternative than pnpm's shamefullyHoist https://pnpm.io/settings#shamefullyhoist until we update the way that @dhis2/app-shell works
@@ -24,3 +25,4 @@ onlyBuiltDependencies:
     - '@dhis2/cli-helpers-engine'
     - core-js-pure
     - esbuild
+    - msw

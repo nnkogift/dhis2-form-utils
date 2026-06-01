@@ -63,6 +63,13 @@ describe('buildRuleEngineContext / buildRuleEngine', () => {
         expect(effects[0].dataElement).toBe('age');
     });
 
+    it('skips events when the condition is not met', () => {
+        const context = buildRuleEngineContext(metadataWithRules);
+        const engine = buildRuleEngine(context);
+        const effects = engine.evaluate({ age: 8 });
+        expect(effects).toHaveLength(0);
+    });
+
     it('returns no effects when metadata has no rules', () => {
         const context = buildRuleEngineContext({
             id: 'stage-empty',

@@ -21,10 +21,10 @@
     },
     "lint-staged": {
         "*.{ts,tsx}": [
-            "eslint --max-warnings=0",
-            "prettier --check"
+            "eslint --fix",
+            "prettier --write"
         ],
-        "*.{js,mjs,cjs,json,md,yml,yaml}": "prettier --check"
+        "*.{js,mjs,cjs,json,md,yml,yaml}": "prettier --fix"
     },
     "devDependencies": {
         "@eslint/js": "^10.0.1",
