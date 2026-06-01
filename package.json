@@ -6,7 +6,9 @@
     "description": "Composable, design-system-agnostic form library for DHIS2 data entry in React",
     "scripts": {
         "build": "pnpm --filter '@dhis2-form-utils/*' run build && pnpm --filter storybook build",
-        "test": "vitest run && pnpm --filter storybook test",
+        "test:unit": "vitest run",
+        "test:storybook": "pnpm --filter storybook test",
+        "test": "concurrently -c 'green,blue' -n 'unit,storybook'  --kill-others-on-fail 'pnpm run test:unit' 'pnpm run test:storybook'",
         "test:watch": "vitest",
         "lint": "eslint . && prettier --check .",
         "codeq": "fallow audit",
@@ -48,5 +50,8 @@
         "typescript-eslint": "^8.59.4",
         "vitest": "^4.1.7"
     },
-    "packageManager": "pnpm@11.5.0+sha512.dbfcc4f81cf48597afd4bc391ffdf12c11f1a9fb83a395bfa6b0a2d9cc2fd8ffebafdb1ccbd529632153f793904c2615b7f09fe1a345473fd1c35845172a8eb1"
+    "packageManager": "pnpm@11.5.0+sha512.dbfcc4f81cf48597afd4bc391ffdf12c11f1a9fb83a395bfa6b0a2d9cc2fd8ffebafdb1ccbd529632153f793904c2615b7f09fe1a345473fd1c35845172a8eb1",
+    "dependencies": {
+        "concurrently": "^10.0.0"
+    }
 }
