@@ -16,11 +16,11 @@ vi.mock('@dhis2/app-runtime', () => ({
 }));
 
 describe('useEventForm', () => {
-    it('returns form, fieldState, isLoading, and submit', () => {
+    it('returns form, store, isLoading, and submit', () => {
         const { result } = renderHook(() => useEventForm());
 
         expect(result.current.form).toBeDefined();
-        expect(result.current.fieldState).toBeDefined();
+        expect(result.current.store).toBeDefined();
         expect(result.current.isLoading).toBe(false);
         expect(typeof result.current.submit).toBe('function');
     });
@@ -44,7 +44,7 @@ describe('useEventForm', () => {
         expect(result.current.form).toBeDefined();
     });
 
-    it('reactively evaluates rules into fieldState', async () => {
+    it('reactively evaluates rules into the store', async () => {
         const metadata: ProgramStageMetadata = {
             id: 'stage-rules',
             displayName: 'Rule Stage',
@@ -98,7 +98,7 @@ describe('useEventForm', () => {
         });
 
         await waitFor(() => {
-            expect(result.current.fieldState.age.warning).toBe('Age is high');
+            expect(result.current.store.getFieldState('age')?.warning).toBe('Age is high');
         });
     });
 });

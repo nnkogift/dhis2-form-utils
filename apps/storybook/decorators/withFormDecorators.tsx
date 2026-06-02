@@ -1,8 +1,9 @@
 import { Provider } from '@dhis2/app-runtime';
-import { FieldStateProvider } from '@dhis2-form-utils/hooks';
+import { createFieldStateStore, FormStateProvider } from '@dhis2-form-utils/hooks';
 import type { FieldStateMap } from '@dhis2-form-utils/rules';
 import { createEmptyFieldState } from '@dhis2-form-utils/rules';
 import type { Decorator } from '@storybook/react';
+import { useMemo } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 
 const runtimeConfig = {
@@ -25,6 +26,7 @@ function FormWrapper({
     fieldState?: FieldStateMap;
 }) {
     const form = useForm({ defaultValues });
+    const store = useMemo(() => createFieldStateStore(fieldState), [fieldState]);
 
     return (
         <Provider
@@ -34,11 +36,11 @@ function FormWrapper({
             parentAlertsAdd={undefined}
             showAlertsInPlugin={false}
         >
-            <FieldStateProvider value={fieldState}>
+            <FormStateProvider store={store} form={form}>
                 <FormProvider {...form}>
                     <div style={{ maxWidth: 400, padding: 16 }}>{children}</div>
                 </FormProvider>
-            </FieldStateProvider>
+            </FormStateProvider>
         </Provider>
     );
 }

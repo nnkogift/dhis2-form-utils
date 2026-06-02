@@ -130,7 +130,8 @@ export const applyEffect = (state: FieldStateMap, effect: RuleEffect): FieldStat
 export function evaluateAndMap(
     engine: RuleEngineLike,
     currentValues: Record<string, unknown>,
-    effectHandlers?: EffectHandlersMap
+    effectHandlers?: EffectHandlersMap,
+    _ruleFilter?: Set<string>
 ): FieldStateMap {
     const effects = engine.evaluate(currentValues);
     return effects.reduce<FieldStateMap>((state, effect) => {
