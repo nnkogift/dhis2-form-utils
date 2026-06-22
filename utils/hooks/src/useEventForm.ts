@@ -41,8 +41,6 @@ export function useEventForm<FormValue extends DefaultFormValue = DefaultFormVal
     const formStore = useMemo(() => new FormStore(), []);
 
     const effectHandlersRef = useRef(options.effectHandlers);
-    effectHandlersRef.current = options.effectHandlers;
-
     const prevEngineRef = useRef<BuiltRuleEngine | null>(null);
     if (prevEngineRef.current !== ruleEngine) {
         if (prevEngineRef.current !== null) {
