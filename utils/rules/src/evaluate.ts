@@ -1,5 +1,13 @@
 import { ProgramRuleActionType } from '@dhis2-form-utils/metadata';
-import { createEmptyFieldState, type FieldState, type FieldStateMap } from './types';
+import { partitionEffects } from './partitionEffects';
+import { buildFeedbackMap, buildSectionMap } from './sectionFeedback';
+import {
+    createEmptyFieldState,
+    type FieldState,
+    type FieldStateMap,
+    type FeedbackMap,
+    type SectionStateMap,
+} from './types';
 
 /** Effect from rule-engine evaluation. Extend ProgramRuleActionType in metadata for new DHIS2 types. */
 export type RuleEffect = {
@@ -12,9 +20,10 @@ export type RuleEffect = {
     optionGroupId?: string | null;
     programStageSection?: string | null;
     programSection?: string | null;
+    location?: string | null;
 };
 
-export type EffectHandler = (effect: RuleEffect, state: FieldStateMap) => FieldStateMap;
+export type EffectHandler = (effect: RuleEffect) => void;
 
 export type EffectHandlersMap = Partial<Record<ProgramRuleActionType, EffectHandler>> &
     Record<string, EffectHandler | undefined>;
@@ -23,22 +32,20 @@ export type RuleEngineLike = {
     evaluate: (currentValues: Record<string, unknown>) => RuleEffect[];
 };
 
+export type EvaluateAndMapResult = {
+    fieldMap: FieldStateMap;
+    sectionMap: SectionStateMap;
+    feedback: FeedbackMap;
+};
+
 const programRuleActionTypeValues = new Set<string>(Object.values(ProgramRuleActionType));
 
 const isProgramRuleActionType = (
     value: ProgramRuleActionType | string
 ): value is ProgramRuleActionType => programRuleActionTypeValues.has(value);
 
-const fieldKey = (effect: RuleEffect): string | undefined => {
-    if (
-        isProgramRuleActionType(effect.ruleActionType) &&
-        effect.ruleActionType === ProgramRuleActionType.HIDESECTION
-    ) {
-        return `section:${effect.programStageSection ?? effect.programSection ?? ''}`;
-    }
-
-    return effect.dataElement ?? effect.trackedEntityAttribute ?? undefined;
-};
+const fieldKey = (effect: RuleEffect): string | undefined =>
+    effect.dataElement ?? effect.trackedEntityAttribute ?? undefined;
 
 const ensureField = (state: FieldStateMap, key: string): FieldState => {
     if (!(key in state)) {
@@ -71,6 +78,12 @@ export const applyEffect = (state: FieldStateMap, effect: RuleEffect): FieldStat
             break;
         case ProgramRuleActionType.SHOWERROR:
             field.error = effect.content ?? 'Error';
+            break;
+        case ProgramRuleActionType.WARNINGONCOMPLETE:
+            field.warningOnComplete = effect.content ?? 'Warning';
+            break;
+        case ProgramRuleActionType.ERRORONCOMPLETE:
+            field.errorOnComplete = effect.content ?? 'Error';
             break;
         case ProgramRuleActionType.SETMANDATORYFIELD:
             field.mandatory = true;
@@ -113,13 +126,6 @@ export const applyEffect = (state: FieldStateMap, effect: RuleEffect): FieldStat
                 );
             }
             break;
-        case ProgramRuleActionType.HIDESECTION:
-            field.hidden = true;
-            field.hiddenSections = new Set([
-                ...field.hiddenSections,
-                effect.programStageSection ?? effect.programSection ?? key.replace('section:', ''),
-            ]);
-            break;
         default:
             break;
     }
@@ -127,14 +133,27 @@ export const applyEffect = (state: FieldStateMap, effect: RuleEffect): FieldStat
     return next;
 };
 
+export function buildFieldMap(effects: RuleEffect[]): FieldStateMap {
+    return effects.reduce<FieldStateMap>((state, effect) => applyEffect(state, effect), {});
+}
+
 export function evaluateAndMap(
     engine: RuleEngineLike,
     currentValues: Record<string, unknown>,
     effectHandlers?: EffectHandlersMap
-): FieldStateMap {
+): EvaluateAndMapResult {
     const effects = engine.evaluate(currentValues);
-    return effects.reduce<FieldStateMap>((state, effect) => {
-        const custom = effectHandlers?.[effect.ruleActionType];
-        return custom ? custom(effect, state) : applyEffect(state, effect);
-    }, {});
+    const { fieldEffects, sectionEffects, feedbackEffects } = partitionEffects(effects);
+
+    const fieldMap = buildFieldMap(fieldEffects);
+    const sectionMap = buildSectionMap(sectionEffects);
+    const feedback = buildFeedbackMap(feedbackEffects);
+
+    if (effectHandlers) {
+        for (const effect of effects) {
+            effectHandlers[effect.ruleActionType]?.(effect);
+        }
+    }
+
+    return { fieldMap, sectionMap, feedback };
 }

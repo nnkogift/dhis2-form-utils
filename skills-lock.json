@@ -1,11 +1,35 @@
 {
     "version": 1,
     "skills": {
+        "coding-standards": {
+            "source": "nnkogift/personal-skills",
+            "sourceType": "github",
+            "skillPath": "coding-standards/SKILL.md",
+            "computedHash": "fce619ebddb0946e33fccab47e88282828c552c94963639318748578368b0e27"
+        },
+        "dev-tooling": {
+            "source": "nnkogift/personal-skills",
+            "sourceType": "github",
+            "skillPath": "dev-tooling/SKILL.md",
+            "computedHash": "bab6b5d27530a6c4f53b4d84e8b277e1686b4b7b163473205cf2b71b1f52f56d"
+        },
         "dhis2-app-development": {
             "source": "devotta-labs/dhis2-app-skills",
             "sourceType": "github",
             "skillPath": "skills/dhis2-app-dev/SKILL.md",
             "computedHash": "d5d12c957d0e11b194107bd09d87ad281a9e5dcb4e1d6569cab1eeabc0453b5c"
+        },
+        "dhis2-apps": {
+            "source": "dhis2/ai-devtools",
+            "sourceType": "github",
+            "skillPath": "src/skills/dhis2-apps/SKILL.md",
+            "computedHash": "1e0937be16cf5174603c750d0372008c50a3dd72bd130d47ec72d32cbcb31ece"
+        },
+        "forming": {
+            "source": "nnkogift/personal-skills",
+            "sourceType": "github",
+            "skillPath": "forming/SKILL.md",
+            "computedHash": "0c5e0e11bbb3e594d1af2ebb8ea3ad88b86e60992788d6c56b9df776c913ebda"
         },
         "ui-ux-pro-max": {
             "source": "nextlevelbuilder/ui-ux-pro-max-skill",

@@ -1,6 +1,7 @@
 import { ProgramRuleActionType } from '@dhis2-form-utils/metadata';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { applyEffect, evaluateAndMap } from './evaluate';
+import { partitionEffects } from './partitionEffects';
 import { createEmptyFieldState } from './types';
 
 describe('applyEffect', () => {
@@ -32,7 +33,25 @@ describe('applyEffect', () => {
         expect(state.de1.warning).toBe('Check value');
     });
 
-    it('applies option and section visibility effects', () => {
+    it('sets completion-time warnings and errors', () => {
+        let state = applyEffect(
+            {},
+            {
+                ruleActionType: ProgramRuleActionType.WARNINGONCOMPLETE,
+                dataElement: 'de1',
+                content: 'Complete warning',
+            }
+        );
+        state = applyEffect(state, {
+            ruleActionType: ProgramRuleActionType.ERRORONCOMPLETE,
+            dataElement: 'de1',
+            content: 'Complete error',
+        });
+        expect(state.de1.warningOnComplete).toBe('Complete warning');
+        expect(state.de1.errorOnComplete).toBe('Complete error');
+    });
+
+    it('applies option visibility effects', () => {
         let state = applyEffect(
             {},
             {
@@ -60,20 +79,47 @@ describe('applyEffect', () => {
             optionGroupId: 'og1',
         });
 
-        state = applyEffect(state, {
-            ruleActionType: ProgramRuleActionType.HIDESECTION,
-            programStageSection: 'section-a',
-        });
-
         expect(state.de1.hiddenOptions.size).toBe(0);
         expect(state.de1.hiddenOptionGroups.size).toBe(0);
-        expect(state['section:section-a'].hidden).toBe(true);
-        expect(state['section:section-a'].hiddenSections.has('section-a')).toBe(true);
+    });
+
+    it('ignores HIDESECTION (handled by partition)', () => {
+        const state = applyEffect(
+            {},
+            {
+                ruleActionType: ProgramRuleActionType.HIDESECTION,
+                programStageSection: 'section-a',
+            }
+        );
+        expect(Object.keys(state)).toHaveLength(0);
+    });
+});
+
+describe('partitionEffects', () => {
+    it('routes effects into field, section, feedback, and passthrough buckets', () => {
+        const effects = [
+            { ruleActionType: ProgramRuleActionType.HIDEFIELD, dataElement: 'de1' },
+            { ruleActionType: ProgramRuleActionType.HIDESECTION, programStageSection: 'sec1' },
+            {
+                ruleActionType: ProgramRuleActionType.DISPLAYTEXT,
+                content: 'Label',
+                data: 'Value',
+                location: 'feedback',
+            },
+            { ruleActionType: ProgramRuleActionType.SENDMESSAGE },
+        ];
+
+        const result = partitionEffects(effects);
+
+        expect(result.fieldEffects).toHaveLength(1);
+        expect(result.sectionEffects).toHaveLength(1);
+        expect(result.feedbackEffects).toHaveLength(1);
+        expect(result.passthroughEffects).toHaveLength(1);
     });
 });
 
 describe('evaluateAndMap', () => {
-    it('folds multiple effects into field state', () => {
+    it('folds multiple effects into three maps', () => {
         const engine = {
             evaluate: () => [
                 {
@@ -89,6 +135,16 @@ describe('evaluateAndMap', () => {
                     dataElement: 'assignedField',
                     data: 'auto',
                 },
+                {
+                    ruleActionType: ProgramRuleActionType.HIDESECTION,
+                    programStageSection: 'section-a',
+                },
+                {
+                    ruleActionType: ProgramRuleActionType.DISPLAYTEXT,
+                    content: 'Info',
+                    data: 'Details',
+                    location: 'feedback',
+                },
             ],
         };
 
@@ -98,31 +154,27 @@ describe('evaluateAndMap', () => {
             assignedField: '',
         });
 
-        expect(result.hiddenField.hidden).toBe(true);
-        expect(result.requiredField.mandatory).toBe(true);
-        expect(result.assignedField.assignedValue).toBe('auto');
+        expect(result.fieldMap.hiddenField.hidden).toBe(true);
+        expect(result.fieldMap.requiredField.mandatory).toBe(true);
+        expect(result.fieldMap.assignedField.assignedValue).toBe('auto');
+        expect(result.sectionMap['section-a'].hidden).toBe(true);
+        expect(result.feedback['feedback:Info']).toEqual({
+            type: 'text',
+            content: 'Info',
+            value: 'Details',
+            location: 'feedback',
+        });
     });
 
-    it('supports custom effect handlers', () => {
+    it('invokes custom effect handlers for passthrough effects', () => {
+        const handler = vi.fn();
         const engine = {
-            evaluate: () => [{ ruleActionType: 'CUSTOM', dataElement: 'de1' }],
+            evaluate: () => [{ ruleActionType: ProgramRuleActionType.SENDMESSAGE }],
         };
 
-        const result = evaluateAndMap(
-            engine,
-            {},
-            {
-                CUSTOM: (effect, state) => {
-                    const key = effect.dataElement ?? '';
-                    return {
-                        ...state,
-                        [key]: { ...createEmptyFieldState(), warning: 'custom' },
-                    };
-                },
-            }
-        );
+        evaluateAndMap(engine, {}, { SENDMESSAGE: handler });
 
-        expect(result.de1.warning).toBe('custom');
+        expect(handler).toHaveBeenCalledTimes(1);
     });
 });
 
