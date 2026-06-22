@@ -109,23 +109,27 @@ every field change, and handles submission — all without additional configurat
 ### Headless hook
 
 ```tsx
-import { useEventForm } from '@dhis2-form-utils/hooks';
+import {
+    FormStateProvider,
+    useEventForm,
+    useFieldState,
+    useSectionState,
+    useFormFeedback,
+} from '@dhis2-form-utils/hooks';
 import { FormProvider } from 'react-hook-form';
 
 function CustomForm() {
-    const { form, fieldState, isLoading, submit } = useEventForm({
+    const { form, formStore, submit } = useEventForm({
         programStageId: 'abc123',
+        metadata: myProgramStage,
     });
 
-    if (isLoading) return <p>Loading...</p>;
-
     return (
-        <FormProvider {...form}>
-            <form onSubmit={submit}>
-                {/* your own field components */}
-                {/* read fieldState[fieldId].hidden / .mandatory / .warning / .error */}
-            </form>
-        </FormProvider>
+        <FormStateProvider formStore={formStore} form={form}>
+            <FormProvider {...form}>
+                <form onSubmit={submit}>{/* field components using useFieldState */}</form>
+            </FormProvider>
+        </FormStateProvider>
     );
 }
 ```
@@ -138,12 +142,13 @@ hooks accept an `effectHandlers` map to override or extend how specific action t
 interpreted after the standard evaluation pass:
 
 ```tsx
-const { form, fieldState, submit } = useEventForm({
+const { form, formStore, submit } = useEventForm({
     programStageId: 'abc123',
+    metadata: myProgramStage,
     effectHandlers: {
-        DISPLAYTEXT: (effect, state) => {
-            // custom interpretation — e.g. parse structured data from effect.content
-            return state;
+        SENDMESSAGE: (effect) => {
+            // custom side-effect handling
+            void effect;
         },
     },
 });
@@ -155,7 +160,10 @@ If your app has already fetched program stage metadata through its own data laye
 to skip the internal fetch:
 
 ```tsx
-const { form, fieldState, submit } = useEventForm({ metadata: myProgramStage });
+const { form, formStore, submit } = useEventForm({
+    programStageId: 'abc123',
+    metadata: myProgramStage,
+});
 ```
 
 ---
@@ -203,7 +211,7 @@ available — no corresponding change is needed in `dhis2-form-utils`.
 | `useTrackerForm`   | Enrollment + events (tracker programs) |
 | `useDataEntryForm` | Aggregate data sets                    |
 
-All hooks share the same return shape: `{ form, fieldState, isLoading, submit }`.
+All hooks share the same return shape: `{ form, formStore, fieldStore, nonFieldStore, submit }`.
 
 ---
 

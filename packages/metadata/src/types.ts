@@ -52,6 +52,7 @@ export type ProgramRuleAction = {
     };
     content?: string;
     data?: string;
+    location?: string;
     priority?: number;
 };
 

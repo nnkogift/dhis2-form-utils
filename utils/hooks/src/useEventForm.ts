@@ -1,121 +1,69 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useDataQuery } from '@dhis2/app-runtime';
-import { debounce } from 'lodash-es';
-import { useEffect, useLayoutEffect, useMemo, useRef } from 'react';
-import { useForm, type UseFormReturn } from 'react-hook-form';
-import { buildSchema, Dhis2ValueType } from '@dhis2-form-utils/metadata';
+import { useMemo, useRef } from 'react';
+import { DefaultValues, Resolver, useForm, type UseFormReturn } from 'react-hook-form';
 import type { ProgramStageMetadata } from '@dhis2-form-utils/metadata';
-import type { EffectHandlersMap, FieldStateMap } from '@dhis2-form-utils/rules';
-import {
-    buildRuleEngine,
-    buildRuleEngineContext,
-    evaluateAndMap,
-    filterPayload,
-} from '@dhis2-form-utils/rules';
-import { programStageQuery } from './queries/programStage.query';
-import { createFieldStateStore, type FieldStateStore } from './store/fieldStateStore';
+import { buildSchema } from '@dhis2-form-utils/metadata';
+import type { BuiltRuleEngine, EffectHandlersMap } from '@dhis2-form-utils/rules';
+import { buildRuleEngine, buildRuleEngineContext, filterPayload } from '@dhis2-form-utils/rules';
+import { FormStore } from './formStore';
+import type { FieldStateStore } from './store/fieldStateStore';
+import type { NonFieldStateStore } from './store/nonFieldStateStore';
 
-export type UseEventFormOptions = {
-    programStageId?: string;
-    metadata?: ProgramStageMetadata;
-    existingValues?: Record<string, unknown>;
+export type DefaultFormValue = Record<string, string>;
+
+export type UseEventFormOptions<FormValue extends DefaultFormValue = DefaultFormValue> = {
+    programStageId: string;
+    metadata: ProgramStageMetadata;
+    existingValues?: Partial<FormValue>;
     effectHandlers?: EffectHandlersMap;
 };
 
-export type UseEventFormReturn = {
-    form: UseFormReturn<Record<string, unknown>>;
-    store: FieldStateStore;
-    isLoading: boolean;
+export type UseEventFormReturn<FormValue extends DefaultFormValue = DefaultFormValue> = {
+    form: UseFormReturn<FormValue>;
+    formStore: FormStore;
+    fieldStore: FieldStateStore;
+    nonFieldStore: NonFieldStateStore;
     submit: () => void;
 };
 
-const stubMetadata: ProgramStageMetadata = {
-    id: 'stub-stage',
-    displayName: 'Stub Stage',
-    programStageDataElements: [
-        {
-            dataElement: {
-                id: 'sampleField',
-                displayName: 'Sample Field',
-                valueType: Dhis2ValueType.TEXT,
-            },
-        },
-    ],
-};
-
-export function useEventForm(options: UseEventFormOptions = {}): UseEventFormReturn {
-    const shouldFetchMetadata = !options.metadata && Boolean(options.programStageId);
-    const { data, loading } = useDataQuery<{ programStage: ProgramStageMetadata }>(
-        programStageQuery(options.programStageId ?? ''),
-        {
-            lazy: !shouldFetchMetadata,
-        }
-    );
-
-    const metadata = options.metadata ?? data?.programStage ?? stubMetadata;
+export function useEventForm<FormValue extends DefaultFormValue = DefaultFormValue>(
+    options: UseEventFormOptions<FormValue>
+): UseEventFormReturn<FormValue> {
+    const metadata = useMemo(() => options.metadata, [options.metadata]);
     const schema = useMemo(() => buildSchema(metadata), [metadata]);
-
-    const form = useForm<Record<string, unknown>>({
-        resolver: zodResolver(schema),
-        defaultValues: options.existingValues ?? {},
+    const form = useForm<FormValue>({
+        resolver: zodResolver(schema) as unknown as Resolver<FormValue>,
+        defaultValues: options.existingValues as DefaultValues<FormValue>,
     });
 
     const ruleEngineContext = useMemo(() => buildRuleEngineContext(metadata), [metadata]);
     const ruleEngine = useMemo(() => buildRuleEngine(ruleEngineContext), [ruleEngineContext]);
-    const store = useMemo(() => createFieldStateStore(), []);
+    const formStore = useMemo(() => new FormStore(), []);
+
     const effectHandlersRef = useRef(options.effectHandlers);
-    useLayoutEffect(() => {
-        effectHandlersRef.current = options.effectHandlers;
-    }, [options.effectHandlers]);
-    const prevAssignmentsRef = useRef<Record<string, unknown>>({});
+    effectHandlersRef.current = options.effectHandlers;
 
-    useEffect(() => {
-        const evaluate = (values: Record<string, unknown>) => {
-            const nextState: FieldStateMap = evaluateAndMap(
+    const prevEngineRef = useRef<BuiltRuleEngine | null>(null);
+    if (prevEngineRef.current !== ruleEngine) {
+        if (prevEngineRef.current !== null) {
+            formStore.reinit(
+                form as UseFormReturn<Record<string, unknown>>,
                 ruleEngine,
-                values,
-                effectHandlersRef.current
+                effectHandlersRef
             );
-
-            for (const [fieldId, state] of Object.entries(nextState)) {
-                if (fieldId.startsWith('section:')) {
-                    continue;
-                }
-
-                if (state.assignedValue === null || state.assignedValue === undefined) {
-                    continue;
-                }
-
-                if (prevAssignmentsRef.current[fieldId] === state.assignedValue) continue;
-
-                prevAssignmentsRef.current[fieldId] = state.assignedValue;
-                form.setValue(fieldId, state.assignedValue, {
-                    shouldDirty: false,
-                    shouldTouch: false,
-                    shouldValidate: false,
-                });
-            }
-
-            store.setState(nextState);
-        };
-
-        const debounced = debounce(evaluate, 40);
-
-        evaluate(form.getValues());
-
-        const unsub = form.subscribe({
-            formState: { values: true },
-            callback: ({ values }) => {
-                debounced(values);
-            },
-        });
-
-        return unsub;
-    }, [ruleEngine, store, form]);
+        } else {
+            formStore.init(
+                form as UseFormReturn<Record<string, unknown>>,
+                ruleEngine,
+                effectHandlersRef
+            );
+        }
+        prevEngineRef.current = ruleEngine;
+    }
 
     const submit = () => {
         void form.handleSubmit((values) => {
-            const payload = filterPayload(values, store.getSnapshot());
+            const payload = filterPayload(values, formStore.fieldStore.getSnapshot());
             void payload;
             // Stub: real implementation will call useDataMutation
         })();
@@ -123,8 +71,9 @@ export function useEventForm(options: UseEventFormOptions = {}): UseEventFormRet
 
     return {
         form,
-        store,
-        isLoading: loading,
+        formStore,
+        fieldStore: formStore.fieldStore,
+        nonFieldStore: formStore.nonFieldStore,
         submit,
     };
 }

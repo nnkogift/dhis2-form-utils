@@ -3,8 +3,10 @@ import type { FieldState, FieldStateMap } from '@dhis2-form-utils/rules';
 type Listener = () => void;
 
 export type FieldStateStore = {
+    getFieldSnapshot: (fieldId: string) => FieldState | undefined;
     getFieldState: (fieldId: string) => FieldState | undefined;
     getSnapshot: () => FieldStateMap;
+    subscribe: (fieldId: string, listener: Listener) => () => void;
     subscribeField: (fieldId: string, listener: Listener) => () => void;
     subscribeAll: (listener: Listener) => () => void;
     setState: (next: FieldStateMap) => void;
@@ -15,10 +17,11 @@ export function createFieldStateStore(initial: FieldStateMap = {}): FieldStateSt
     const fieldListeners = new Map<string, Set<Listener>>();
     const globalListeners = new Set<Listener>();
 
-    return {
+    const store: FieldStateStore = {
+        getFieldSnapshot: (fieldId) => state[fieldId],
         getFieldState: (fieldId) => state[fieldId],
         getSnapshot: () => state,
-
+        subscribe: (fieldId, listener) => store.subscribeField(fieldId, listener),
         subscribeField: (fieldId, listener) => {
             let listeners = fieldListeners.get(fieldId);
             if (!listeners) {
@@ -31,14 +34,12 @@ export function createFieldStateStore(initial: FieldStateMap = {}): FieldStateSt
                 fieldListeners.get(fieldId)?.delete(listener);
             };
         },
-
         subscribeAll: (listener) => {
             globalListeners.add(listener);
             return () => {
                 globalListeners.delete(listener);
             };
         },
-
         setState: (next) => {
             const prev = state;
             const merged: FieldStateMap = {};
@@ -65,7 +66,6 @@ export function createFieldStateStore(initial: FieldStateMap = {}): FieldStateSt
                 }
             }
 
-            // Important: ensure referential identity is preserved for unchanged fields.
             state = merged;
 
             if (!changed.size) {
@@ -82,6 +82,8 @@ export function createFieldStateStore(initial: FieldStateMap = {}): FieldStateSt
             });
         },
     };
+
+    return store;
 }
 
 function shallowEqualFieldState(a: FieldState, b: FieldState): boolean {
@@ -90,10 +92,11 @@ function shallowEqualFieldState(a: FieldState, b: FieldState): boolean {
         a.mandatory === b.mandatory &&
         a.warning === b.warning &&
         a.error === b.error &&
+        a.warningOnComplete === b.warningOnComplete &&
+        a.errorOnComplete === b.errorOnComplete &&
         Object.is(a.assignedValue, b.assignedValue) &&
         equalSet(a.hiddenOptions, b.hiddenOptions) &&
-        equalSet(a.hiddenOptionGroups, b.hiddenOptionGroups) &&
-        equalSet(a.hiddenSections, b.hiddenSections)
+        equalSet(a.hiddenOptionGroups, b.hiddenOptionGroups)
     );
 }
 
