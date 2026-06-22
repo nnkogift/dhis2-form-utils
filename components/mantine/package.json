@@ -26,6 +26,7 @@
     },
     "peerDependencies": {
         "@mantine/core": ">=7.0.0",
+        "@mantine/hooks": ">=7.0.0",
         "react": ">=18.0.0",
         "react-dom": ">=18.0.0",
         "react-hook-form": ">=7.0.0"
@@ -33,6 +34,7 @@
     "devDependencies": {
         "@dhis2-form-utils/config": "workspace:*",
         "@mantine/core": "^7.17.8",
+        "@mantine/hooks": "^7.17.8",
         "@types/react": "^18.3.29",
         "@types/react-dom": "^18.3.7",
         "react": "^18.3.1",

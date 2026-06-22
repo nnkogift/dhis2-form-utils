@@ -1,7 +1,8 @@
 {
     "extends": "@dhis2-form-utils/config/tsconfig.base.json",
     "compilerOptions": {
-        "noEmit": true
+        "noEmit": true,
+        "resolveJsonModule": true
     },
-    "include": [".storybook", "stories", "decorators"]
+    "include": [".storybook", "stories", "decorators", "fixtures", "components", "interactions"]
 }

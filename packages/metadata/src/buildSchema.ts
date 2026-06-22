@@ -1,34 +1,54 @@
+import type { ValueType } from '@dhis2/api-types/v43';
 import { z } from 'zod';
-import { Dhis2ValueType } from './enums';
 import type { ProgramStageMetadata } from './types';
 
-const valueTypeToZod = (valueType: Dhis2ValueType): z.ZodTypeAny => {
+const valueTypeToZod = (valueType: ValueType | undefined): z.ZodTypeAny => {
     switch (valueType) {
-        case Dhis2ValueType.TEXT:
-        case Dhis2ValueType.LONG_TEXT:
+        case 'TEXT':
+        case 'LONG_TEXT':
+        case 'MULTI_TEXT':
+        case 'LETTER':
+        case 'PHONE_NUMBER':
+        case 'EMAIL':
+        case 'URL':
+        case 'USERNAME':
+        case 'TIME':
+        case 'COORDINATE':
+        case 'AGE':
+        case 'GEOJSON':
             return z.string();
-        case Dhis2ValueType.INTEGER:
-        case Dhis2ValueType.INTEGER_POSITIVE:
+        case 'INTEGER':
+        case 'INTEGER_POSITIVE':
+        case 'INTEGER_NEGATIVE':
+        case 'INTEGER_ZERO_OR_POSITIVE':
             return z.coerce.number().int();
-        case Dhis2ValueType.NUMBER:
+        case 'NUMBER':
+        case 'UNIT_INTERVAL':
+        case 'PERCENTAGE':
             return z.coerce.number();
-        case Dhis2ValueType.BOOLEAN:
+        case 'BOOLEAN':
+        case 'TRUE_ONLY':
             return z.coerce.boolean();
-        case Dhis2ValueType.DATE:
+        case 'DATE':
+        case 'DATETIME':
             return z.string().date();
-        case Dhis2ValueType.ORGANISATION_UNIT:
+        case 'ORGANISATION_UNIT':
             return z.string().min(11).max(11);
-        case Dhis2ValueType.FILE_RESOURCE:
+        case 'FILE_RESOURCE':
+        case 'IMAGE':
             return z.string().uuid();
+        case 'REFERENCE':
         default:
-            return z.unknown();
+            return z.string();
     }
 };
 
 export function buildSchema(metadata: ProgramStageMetadata): z.ZodObject<z.ZodRawShape> {
     const shape: z.ZodRawShape = {};
 
-    for (const { dataElement } of metadata.programStageDataElements) {
+    for (const psde of metadata.programStageDataElements ?? []) {
+        const dataElement = psde.dataElement;
+        if (!dataElement?.id) continue;
         shape[dataElement.id] = valueTypeToZod(dataElement.valueType);
     }
 

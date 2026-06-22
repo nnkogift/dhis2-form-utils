@@ -18,7 +18,7 @@ export type FormDecoratorOptions = {
     feedback?: FeedbackMap;
 };
 
-function FormWrapper({
+export function FormWrapper({
     children,
     defaultValues = {},
     fieldState = {},

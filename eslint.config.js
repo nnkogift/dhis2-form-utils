@@ -1,3 +1,6 @@
+// For more info, see https://github.com/storybookjs/eslint-plugin-storybook#configuration-flat-config-format
+import storybook from 'eslint-plugin-storybook';
+
 import js from '@eslint/js';
 import reactPlugin from 'eslint-plugin-react';
 import reactHooksPlugin from 'eslint-plugin-react-hooks';
@@ -61,5 +64,25 @@ export default tseslint.config(
                 process: 'readonly',
             },
         },
-    }
+    },
+    {
+        files: [
+            'apps/storybook/interactions/**/*.{ts,tsx}',
+            'apps/storybook/stories/**/*.{ts,tsx}',
+            'apps/storybook/decorators/**/*.{ts,tsx}',
+            'apps/storybook/fixtures/**/*.{ts,tsx}',
+            'apps/storybook/components/**/*.{ts,tsx}',
+        ],
+        rules: {
+            '@typescript-eslint/no-unsafe-assignment': 'off',
+            '@typescript-eslint/no-unsafe-call': 'off',
+            '@typescript-eslint/no-unsafe-member-access': 'off',
+            '@typescript-eslint/no-unsafe-argument': 'off',
+            '@typescript-eslint/no-unsafe-return': 'off',
+            '@typescript-eslint/restrict-template-expressions': 'off',
+            '@typescript-eslint/no-unnecessary-condition': 'off',
+            '@typescript-eslint/no-deprecated': 'off',
+        },
+    },
+    storybook.configs['flat/recommended']
 );

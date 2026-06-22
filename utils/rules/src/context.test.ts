@@ -1,5 +1,4 @@
 import {
-    Dhis2ValueType,
     ProgramRuleActionType,
     ProgramRuleVariableSourceType,
     type ProgramStageMetadata,
@@ -7,7 +6,7 @@ import {
 import { describe, expect, it } from 'vitest';
 import { buildRuleEngine, buildRuleEngineContext } from './context';
 
-const metadataWithRules: ProgramStageMetadata = {
+const metadataWithRules = {
     id: 'stage-1',
     displayName: 'Stage 1',
     programStageDataElements: [
@@ -15,7 +14,7 @@ const metadataWithRules: ProgramStageMetadata = {
             dataElement: {
                 id: 'age',
                 displayName: 'Age',
-                valueType: Dhis2ValueType.INTEGER,
+                valueType: 'INTEGER' as const,
             },
         },
     ],
@@ -31,7 +30,7 @@ const metadataWithRules: ProgramStageMetadata = {
                     dataElement: {
                         id: 'age',
                         displayName: 'Age',
-                        valueType: Dhis2ValueType.INTEGER,
+                        valueType: 'INTEGER' as const,
                     },
                 },
             ],
@@ -44,12 +43,12 @@ const metadataWithRules: ProgramStageMetadata = {
             dataElement: {
                 id: 'age',
                 displayName: 'Age',
-                valueType: Dhis2ValueType.INTEGER,
+                valueType: 'INTEGER' as const,
             },
             programRuleVariableSourceType: ProgramRuleVariableSourceType.DATAELEMENT_CURRENT_EVENT,
         },
     ],
-};
+} as ProgramStageMetadata;
 
 describe('buildRuleEngineContext / buildRuleEngine', () => {
     it('evaluates metadata rules with the official engine', () => {

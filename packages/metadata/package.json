@@ -15,6 +15,7 @@
     },
     "devDependencies": {
         "@dhis2-form-utils/config": "workspace:*",
+        "@dhis2/api-types": "43.0.0-beta.daa0d8e",
         "typescript": "^5.9.3",
         "vitest": "^4.1.7"
     }
