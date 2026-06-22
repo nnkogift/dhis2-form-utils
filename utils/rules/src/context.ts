@@ -18,7 +18,6 @@ import {
     RuleVariableType,
 } from '@dhis2/rule-engine';
 import {
-    Dhis2ValueType,
     ProgramRuleVariableSourceType,
     type ProgramRule,
     type ProgramRuleAction,
@@ -45,15 +44,22 @@ export type BuiltRuleEngine = {
     evaluate: (currentValues: Record<string, unknown>) => RuleEffect[];
 };
 
-const ruleValueTypeFromDhis2 = (valueType?: Dhis2ValueType | string): RuleValueType => {
+const ruleValueTypeFromDhis2 = (valueType?: string): RuleValueType => {
     switch (valueType) {
-        case Dhis2ValueType.NUMBER:
-        case Dhis2ValueType.INTEGER:
-        case Dhis2ValueType.INTEGER_POSITIVE:
+        case 'NUMBER':
+        case 'INTEGER':
+        case 'INTEGER_POSITIVE':
+        case 'INTEGER_NEGATIVE':
+        case 'INTEGER_ZERO_OR_POSITIVE':
+        case 'UNIT_INTERVAL':
+        case 'PERCENTAGE':
             return RuleValueType.NUMERIC;
-        case Dhis2ValueType.BOOLEAN:
+        case 'BOOLEAN':
+        case 'TRUE_ONLY':
             return RuleValueType.BOOLEAN;
-        case Dhis2ValueType.DATE:
+        case 'DATE':
+        case 'DATETIME':
+        case 'AGE':
             return RuleValueType.DATE;
         default:
             return RuleValueType.TEXT;
@@ -80,11 +86,15 @@ const variableTypeFromSource = (
     }
 };
 
-const mapDataElementOptions = (dataElement?: ProgramRuleAction['dataElement']): Option[] =>
-    dataElement?.optionSet?.options?.map(
-        (option: { id: string; code: string; displayName: string }) =>
-            new Option(option.displayName, option.code)
-    ) ?? [];
+type OptionRef = { id?: string; code?: string; displayName?: string };
+type DataElementWithOptions = { optionSet?: { options?: OptionRef[] } };
+
+const mapDataElementOptions = (dataElement?: DataElementWithOptions): Option[] =>
+    dataElement?.optionSet?.options?.map((option) => {
+        const displayName = option.displayName ?? option.code ?? '';
+        const code = option.code ?? '';
+        return new Option(displayName, code);
+    }) ?? [];
 
 const toStringValue = (value: unknown, fallback: string): string => {
     if (typeof value === 'string') return value;
@@ -100,9 +110,11 @@ const toActionValues = (action: ProgramRuleAction): Map<string, string> => {
         values.set('trackedEntityAttribute', action.trackedEntityAttribute.id);
     }
     if (action.content) values.set('content', action.content);
-    if (action.option?.code) values.set('optionCode', action.option.code);
-    if (action.option?.id) values.set('optionId', action.option.id);
-    if (action.optionGroup?.id) values.set('optionGroupId', action.optionGroup.id);
+    const option = action.option as OptionRef | undefined;
+    const optionGroup = action.optionGroup as { id?: string; displayName?: string } | undefined;
+    if (option?.code) values.set('optionCode', option.code);
+    if (option?.id) values.set('optionId', option.id);
+    if (optionGroup?.id) values.set('optionGroupId', optionGroup.id);
     if (action.programStageSection?.id)
         values.set('programStageSection', action.programStageSection.id);
     if (action.programSection?.id) values.set('programSection', action.programSection.id);
@@ -122,20 +134,20 @@ const toRuleAction = (action: ProgramRuleAction): RuleActionJs =>
 const toRule = (rule: ProgramRule): RuleJs =>
     new RuleJs(
         rule.condition ?? 'true',
-        (rule.programRuleActions ?? []).map(toRuleAction),
-        rule.id,
+        (rule.programRuleActions ?? []).map((action) => toRuleAction(action as ProgramRuleAction)),
+        rule.id ?? '',
         rule.displayName ?? null,
         null,
         rule.priority ?? null
     );
 
 const toRuleVariableField = (variable: ProgramRuleVariable): string =>
-    variable.dataElement?.id ?? variable.trackedEntityAttribute?.id ?? variable.name;
+    variable.dataElement?.id ?? variable.trackedEntityAttribute?.id ?? variable.name ?? '';
 
 const toRuleVariable = (variable: ProgramRuleVariable): RuleVariableJs =>
     new RuleVariableJs(
         variableTypeFromSource(variable.programRuleVariableSourceType),
-        variable.name,
+        variable.name ?? '',
         variable.useCodeForOptionSet ?? false,
         mapDataElementOptions(variable.dataElement),
         toRuleVariableField(variable),
@@ -186,8 +198,8 @@ const toRuleEvent = (
 ): RuleEventJs =>
     new RuleEventJs(
         toStringValue(currentValues.event, 'current-event'),
-        metadata.id,
-        metadata.displayName,
+        metadata.id ?? '',
+        metadata.displayName ?? '',
         DEFAULT_EVENT_STATUS,
         toRuleDate(currentValues.eventDate),
         RuleInstant.now(),

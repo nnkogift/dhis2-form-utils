@@ -1,0 +1,997 @@
+# `useFieldControl` — Implementation Plan
+
+## Context & Scope
+
+This plan covers the headless field control hook, the full `valueType → widget` mapping,
+and the per-library renderer packages for `@dhis2-form-utils`.
+
+The hook sits inside `@dhis2-form-utils/hooks` and is consumed by every UI adapter
+package (`ui-dhis2`, `ui-mantine`, `ui-material`). It is the single bridge between
+DHIS2 metadata, React Hook Form, and the program-rule field state store.
+
+---
+
+## 1. DHIS2 Metadata Structures
+
+### 1a. `ProgramStageDataElement` (PSDE)
+
+Returned from:
+
+```
+GET /api/programStages/{id}
+  ?fields=programStageDataElements[
+      id,
+      compulsory,
+      allowProvidedElsewhere,
+      allowFutureDate,
+      displayInReports,
+      renderType,
+      dataElement[
+        id,displayName,displayFormName,valueType,description,
+        optionSet[id,options[id,code,displayName]]
+      ]
+    ]
+```
+
+Shape:
+
+```ts
+type ProgramStageDataElement = {
+    id: string;
+    compulsory: boolean; // maps → required
+    allowProvidedElsewhere: boolean; // shows "provided elsewhere" toggle
+    allowFutureDate: boolean;
+    displayInReports: boolean;
+    renderType?: {
+        MOBILE?: { type: RenderTypeHint };
+        DESKTOP?: { type: RenderTypeHint };
+    };
+    dataElement: {
+        id: string;
+        displayName: string;
+        displayFormName: string; // preferred label for forms
+        valueType: ValueType;
+        description?: string;
+        optionSet?: {
+            id: string;
+            options: Array<{ id: string; code: string; displayName: string }>;
+        };
+    };
+};
+```
+
+### 1b. `ProgramTrackedEntityAttribute` (PTEA)
+
+Returned from:
+
+```
+GET /api/programs/{id}
+  ?fields=programTrackedEntityAttributes[
+      id,
+      mandatory,
+      displayInList,
+      allowFutureDate,
+      searchable,
+      renderType,
+      trackedEntityAttribute[
+        id,displayName,displayFormName,valueType,description,
+        unique,generated,pattern,
+        optionSet[id,options[id,code,displayName]]
+      ]
+    ]
+```
+
+Shape:
+
+```ts
+type ProgramTrackedEntityAttribute = {
+    id: string;
+    mandatory: boolean; // maps → required
+    displayInList: boolean;
+    allowFutureDate: boolean;
+    searchable: boolean;
+    renderType?: {
+        MOBILE?: { type: RenderTypeHint };
+        DESKTOP?: { type: RenderTypeHint };
+    };
+    trackedEntityAttribute: {
+        id: string;
+        displayName: string;
+        displayFormName: string;
+        valueType: ValueType;
+        description?: string;
+        unique: boolean;
+        generated: boolean; // auto-generated → render as read-only
+        pattern?: string;
+        optionSet?: {
+            id: string;
+            options: Array<{ id: string; code: string; displayName: string }>;
+        };
+    };
+};
+```
+
+### 1c. Full `ValueType` Union
+
+```ts
+type ValueType =
+    // Numeric
+    | 'INTEGER'
+    | 'NUMBER'
+    | 'UNIT_INTERVAL'
+    | 'PERCENTAGE'
+    | 'INTEGER_POSITIVE'
+    | 'INTEGER_NEGATIVE'
+    | 'INTEGER_ZERO_OR_POSITIVE'
+    // Text
+    | 'TEXT'
+    | 'LONG_TEXT'
+    | 'LETTER'
+    | 'PHONE_NUMBER'
+    | 'EMAIL'
+    | 'URL'
+    | 'USERNAME'
+    // Boolean
+    | 'BOOLEAN'
+    | 'TRUE_ONLY'
+    // Temporal
+    | 'DATE'
+    | 'DATETIME'
+    | 'TIME'
+    | 'AGE'
+    // Organisational
+    | 'ORGANISATION_UNIT'
+    // Files / media
+    | 'FILE_RESOURCE'
+    | 'IMAGE'
+    // Spatial
+    | 'COORDINATE';
+```
+
+> **Source:** `@dhis2/api-types` — import types from there, never hand-write them.
+> Where a type is missing from the package, extend manually as documented in the
+> project's `@dhis2/api-types` ADR.
+
+---
+
+## 2. Normalised `FieldConfig` Type
+
+All downstream consumers (the hook, validation, UI adapters) work with `FieldConfig`.
+They never receive the raw DHIS2 API shapes.
+
+```ts
+// packages/hooks/src/fields/fieldConfig.ts
+
+export type FieldConfig = {
+    /** UID of the underlying DataElement or TrackedEntityAttribute */
+    id: string;
+
+    /**
+     * Source type. Determines how the value is keyed when submitted
+     * to the tracker API (dataValues vs attributes array).
+     */
+    fieldKind: 'dataElement' | 'trackedEntityAttribute';
+
+    /** Display label — prefers displayFormName, falls back to displayName */
+    label: string;
+
+    /** Optional longer description shown as help text */
+    description?: string;
+
+    /** DHIS2 value type — single source of truth for widget selection */
+    valueType: ValueType;
+
+    /** Whether the field is required (compulsory / mandatory) */
+    required: boolean;
+
+    /** Whether future dates are allowed (date fields) */
+    allowFutureDate: boolean;
+
+    /** Present when the field is a select/radio — drives widget selection */
+    optionSet?: {
+        id: string;
+        options: ReadonlyArray<{
+            id: string;
+            code: string;
+            label: string; // displayName, renamed for consumer ergonomics
+        }>;
+    };
+
+    /**
+     * TEA only — value is auto-generated by the server.
+     * When true, the field renders as read-only.
+     */
+    generated?: boolean;
+
+    /** PSDE only — show "provided elsewhere" checkbox alongside field */
+    allowProvidedElsewhere?: boolean;
+
+    /**
+     * Platform render hint from the API (DESKTOP key takes priority).
+     * UI adapters MAY use this to switch between e.g. DROPDOWN vs RADIO.
+     * Adapters are not required to support every variant.
+     */
+    renderTypeHint?: RenderTypeHint;
+};
+
+export type RenderTypeHint =
+    | 'DEFAULT'
+    | 'DROPDOWN'
+    | 'RADIO'
+    | 'CHECK_BOX'
+    | 'VERTICAL_RADIOBUTTONS'
+    | 'HORIZONTAL_RADIOBUTTONS'
+    | 'VERTICAL_CHECKBOXES'
+    | 'HORIZONTAL_CHECKBOXES'
+    | 'ICONS_AS_BUTTONS'
+    | 'TOGGLE'
+    | 'SLIDER'
+    | 'LINEAR_SCALE'
+    | 'SIGNATURE'
+    | 'QR_SCAN';
+```
+
+### Normaliser Functions
+
+```ts
+// packages/hooks/src/fields/fieldConfig.ts (continued)
+
+export function fromProgramStageDataElement(psde: ProgramStageDataElement): FieldConfig {
+    const de = psde.dataElement;
+    return {
+        id: de.id,
+        fieldKind: 'dataElement',
+        label: de.displayFormName || de.displayName,
+        description: de.description,
+        valueType: de.valueType,
+        required: psde.compulsory,
+        allowFutureDate: psde.allowFutureDate,
+        allowProvidedElsewhere: psde.allowProvidedElsewhere,
+        optionSet: de.optionSet
+            ? {
+                  id: de.optionSet.id,
+                  options: de.optionSet.options.map((o) => ({
+                      id: o.id,
+                      code: o.code,
+                      label: o.displayName,
+                  })),
+              }
+            : undefined,
+        renderTypeHint: psde.renderType?.DESKTOP?.type ?? psde.renderType?.MOBILE?.type,
+    };
+}
+
+export function fromProgramTrackedEntityAttribute(
+    ptea: ProgramTrackedEntityAttribute
+): FieldConfig {
+    const tea = ptea.trackedEntityAttribute;
+    return {
+        id: tea.id,
+        fieldKind: 'trackedEntityAttribute',
+        label: tea.displayFormName || tea.displayName,
+        description: tea.description,
+        valueType: tea.valueType,
+        required: ptea.mandatory,
+        allowFutureDate: ptea.allowFutureDate,
+        generated: tea.generated,
+        optionSet: tea.optionSet
+            ? {
+                  id: tea.optionSet.id,
+                  options: tea.optionSet.options.map((o) => ({
+                      id: o.id,
+                      code: o.code,
+                      label: o.displayName,
+                  })),
+              }
+            : undefined,
+        renderTypeHint: ptea.renderType?.DESKTOP?.type ?? ptea.renderType?.MOBILE?.type,
+    };
+}
+```
+
+---
+
+## 3. Widget Kind Mapping
+
+```ts
+// packages/hooks/src/fields/widgetKind.ts
+
+export type WidgetKind =
+    | 'text' // TEXT, LETTER, URL, USERNAME
+    | 'longText' // LONG_TEXT
+    | 'number' // NUMBER, UNIT_INTERVAL
+    | 'integer' // INTEGER, INTEGER_POSITIVE, INTEGER_NEGATIVE, INTEGER_ZERO_OR_POSITIVE
+    | 'percentage' // PERCENTAGE
+    | 'email' // EMAIL
+    | 'phone' // PHONE_NUMBER
+    | 'boolean' // BOOLEAN — yes/no/clear
+    | 'trueOnly' // TRUE_ONLY — single checkbox
+    | 'date' // DATE
+    | 'datetime' // DATETIME
+    | 'time' // TIME
+    | 'age' // AGE — date-of-birth picker with computed age display
+    | 'select' // any valueType WITH an optionSet (single-select)
+    | 'orgUnit' // ORGANISATION_UNIT
+    | 'coordinate' // COORDINATE — lat/lng pair stored as "lat,lng" string
+    | 'file' // FILE_RESOURCE
+    | 'image' // IMAGE
+    | 'unsupported'; // graceful fallback — renders nothing
+
+export function resolveWidgetKind(config: FieldConfig): WidgetKind {
+    // Option set always wins — regardless of the underlying value type
+    if (config.optionSet) return 'select';
+
+    switch (config.valueType) {
+        case 'TEXT':
+        case 'LETTER':
+        case 'URL':
+        case 'USERNAME':
+            return 'text';
+        case 'LONG_TEXT':
+            return 'longText';
+        case 'EMAIL':
+            return 'email';
+        case 'PHONE_NUMBER':
+            return 'phone';
+        case 'NUMBER':
+        case 'UNIT_INTERVAL':
+            return 'number';
+        case 'INTEGER':
+        case 'INTEGER_POSITIVE':
+        case 'INTEGER_NEGATIVE':
+        case 'INTEGER_ZERO_OR_POSITIVE':
+            return 'integer';
+        case 'PERCENTAGE':
+            return 'percentage';
+        case 'BOOLEAN':
+            return 'boolean';
+        case 'TRUE_ONLY':
+            return 'trueOnly';
+        case 'DATE':
+            return 'date';
+        case 'DATETIME':
+            return 'datetime';
+        case 'TIME':
+            return 'time';
+        case 'AGE':
+            return 'age';
+        case 'COORDINATE':
+            return 'coordinate';
+        case 'FILE_RESOURCE':
+            return 'file';
+        case 'IMAGE':
+            return 'image';
+        case 'ORGANISATION_UNIT':
+            return 'orgUnit';
+        default:
+            return 'unsupported';
+    }
+}
+```
+
+---
+
+## 4. Field Validation
+
+```ts
+// packages/hooks/src/fields/fieldValidation.ts
+import { z } from 'zod';
+import type { FieldConfig } from './fieldConfig';
+
+/**
+ * Derives a Zod schema for a single field from its FieldConfig.
+ * The schema is passed into useController's `rules` via zodResolver,
+ * or used standalone for programmatic validation.
+ */
+export function buildFieldSchema(config: FieldConfig): z.ZodTypeAny {
+    let base: z.ZodTypeAny;
+
+    if (config.optionSet) {
+        // Option set — value must be one of the defined codes
+        const codes = config.optionSet.options.map((o) => o.code) as [string, ...string[]];
+        base = z.enum(codes);
+    } else {
+        switch (config.valueType) {
+            case 'INTEGER':
+                base = z.string().regex(/^-?\d+$/, 'Must be a whole number');
+                break;
+            case 'INTEGER_POSITIVE':
+                base = z
+                    .string()
+                    .regex(/^\d+$/, 'Must be a positive whole number')
+                    .refine((v) => parseInt(v, 10) > 0, 'Must be greater than zero');
+                break;
+            case 'INTEGER_NEGATIVE':
+                base = z
+                    .string()
+                    .regex(/^-\d+$/, 'Must be a negative whole number')
+                    .refine((v) => parseInt(v, 10) < 0, 'Must be less than zero');
+                break;
+            case 'INTEGER_ZERO_OR_POSITIVE':
+                base = z
+                    .string()
+                    .regex(/^\d+$/, 'Must be zero or a positive whole number')
+                    .refine((v) => parseInt(v, 10) >= 0, 'Must be zero or greater');
+                break;
+            case 'NUMBER':
+            case 'UNIT_INTERVAL':
+                base = z.string().regex(/^-?\d+(\.\d+)?$/, 'Must be a number');
+                break;
+            case 'PERCENTAGE':
+                base = z
+                    .string()
+                    .regex(/^\d+(\.\d+)?$/, 'Must be a number')
+                    .refine(
+                        (v) => parseFloat(v) >= 0 && parseFloat(v) <= 100,
+                        'Must be between 0 and 100'
+                    );
+                break;
+            case 'EMAIL':
+                base = z.string().email('Invalid email address');
+                break;
+            case 'PHONE_NUMBER':
+                base = z.string().regex(/^\+?[\d\s\-()+]+$/, 'Invalid phone number');
+                break;
+            case 'DATE':
+                base = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be YYYY-MM-DD');
+                break;
+            case 'DATETIME':
+                base = z.string().datetime({ message: 'Invalid date-time' });
+                break;
+            case 'BOOLEAN':
+                base = z.enum(['true', 'false', '']);
+                break;
+            case 'TRUE_ONLY':
+                base = z.enum(['true', '']);
+                break;
+            default:
+                base = z.string();
+        }
+    }
+
+    // Required vs optional
+    return config.required ? base : (base as z.ZodString).optional().or(z.literal(''));
+}
+```
+
+---
+
+## 5. `useFieldControl` Hook
+
+### Why `useController` instead of `useFormContext`
+
+| Concern                  | `useFormContext` + `register`                                   | `useController`                                      |
+| ------------------------ | --------------------------------------------------------------- | ---------------------------------------------------- |
+| Value subscription       | Manual `getValues()` point-in-time read — stale between renders | Reactive: `field.value` always current               |
+| Change handling          | Must normalise to `{ target: { value } }` manually              | `field.onChange(value)` — accepts raw value directly |
+| Blur tracking            | Manual `field.onBlur` via register                              | Provided by `useController`                          |
+| Ref / focus-on-error     | Must thread through `register` ref                              | `field.ref` provided directly                        |
+| Validation errors        | Must read `formState.errors[name]` separately                   | `fieldState.error` scoped to this field              |
+| Double-registration risk | High — easy to spread both `register` and other props           | Zero — `useController` owns registration             |
+
+`useController` is the idiomatic RHF API for controlled external components, which is
+exactly what every DHIS2 widget is.
+
+### Hook Signature
+
+```ts
+// packages/hooks/src/fields/useFieldControl.ts
+
+import { useMemo } from 'react';
+import { useController } from 'react-hook-form';
+import type { Control, RegisterOptions } from 'react-hook-form';
+import {
+    fromProgramStageDataElement,
+    fromProgramTrackedEntityAttribute,
+    type FieldConfig,
+} from './fieldConfig';
+import { resolveWidgetKind, type WidgetKind } from './widgetKind';
+import { buildFieldSchema } from './fieldValidation';
+import { useFieldState } from '../store/useFieldState';
+
+// ── Input discriminated union ──────────────────────────────────────────────
+
+export type FieldControlInput =
+    | { kind: 'dataElement'; config: ProgramStageDataElement; control: Control }
+    | { kind: 'trackedEntityAttribute'; config: ProgramTrackedEntityAttribute; control: Control };
+
+// ── Return type ────────────────────────────────────────────────────────────
+
+export type FieldControlReturn = {
+    /** Stable UID of the DataElement or TrackedEntityAttribute */
+    fieldId: string;
+
+    /** Normalised descriptor — pass to UI adapter widgets */
+    fieldConfig: FieldConfig;
+
+    /** Resolved widget kind — drives the dispatcher switch */
+    widgetKind: WidgetKind;
+
+    // ── react-hook-form field props (from useController) ─────────────────────
+    /**
+     * Spread directly onto the controlled input element.
+     *
+     * - `field.value`    — current value (always up to date)
+     * - `field.onChange` — call with the raw new value (string)
+     * - `field.onBlur`   — call on blur
+     * - `field.name`     — registered field name
+     * - `field.ref`      — forward to input ref so RHF can focus on error
+     */
+    field: {
+        value: string;
+        onChange: (value: string) => void;
+        onBlur: () => void;
+        name: string;
+        ref: React.Ref<unknown>;
+    };
+
+    // ── RHF field-level validation state ────────────────────────────────────
+    fieldState: {
+        invalid: boolean;
+        isTouched: boolean;
+        isDirty: boolean;
+        /** Zod / RHF validation error for this field */
+        error?: { message?: string };
+    };
+
+    // ── Program rule state (from FieldStateStore via useSyncExternalStore) ───
+    isHidden: boolean;
+    /**
+     * True if the field is read-only:
+     * - generated TEA (server-assigned value)
+     * - program rule ASSIGN action has locked the value
+     */
+    isDisabled: boolean;
+    /**
+     * Mandatory = base required flag OR elevated by a program rule.
+     * UI adapters must respect this over fieldConfig.required.
+     */
+    isMandatory: boolean;
+    hasWarning: boolean;
+    hasError: boolean;
+    warningMessage?: string;
+    errorMessage?: string;
+};
+```
+
+### Implementation
+
+```ts
+export function useFieldControl(input: FieldControlInput): FieldControlReturn {
+    // 1. Normalise raw DHIS2 metadata → FieldConfig
+    //    useMemo keyed on config.id: configs are reference-stable from the
+    //    parent form hook and only change when switching to a different entity.
+    const fieldConfig: FieldConfig = useMemo(
+        () =>
+            input.kind === 'dataElement'
+                ? fromProgramStageDataElement(input.config)
+                : fromProgramTrackedEntityAttribute(input.config),
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [input.config.id]
+    );
+
+    // 2. Resolve which widget to render
+    const widgetKind = useMemo(() => resolveWidgetKind(fieldConfig), [fieldConfig]);
+
+    // 3. Program rule state — per-field subscription via useSyncExternalStore
+    //    (FieldStateStore, established in the form-state architecture doc)
+    const ruleState = useFieldState(fieldConfig.id);
+
+    // 4. Build RHF validation rules from the Zod schema
+    //    isMandatory can be elevated by a program rule, so we pass the union.
+    const isMandatory = fieldConfig.required || ruleState.isMandatory;
+    const zodSchema = useMemo(
+        () => buildFieldSchema({ ...fieldConfig, required: isMandatory }),
+        [fieldConfig, isMandatory]
+    );
+
+    const rules: RegisterOptions = {
+        validate: (value: string) => {
+            const result = zodSchema.safeParse(value);
+            return result.success ? true : (result.error.errors[0]?.message ?? 'Invalid value');
+        },
+    };
+
+    // 5. useController — single registration, reactive value, scoped fieldState
+    const { field: rhfField, fieldState } = useController({
+        name: fieldConfig.id,
+        control: input.control,
+        defaultValue: '',
+        rules,
+    });
+
+    // 6. Expose a typed onChange that accepts a raw string value.
+    //    useController's onChange accepts any value directly — no need to wrap
+    //    in a synthetic event.
+    const field = {
+        value: (rhfField.value ?? '') as string,
+        onChange: rhfField.onChange, // (value: string) => void
+        onBlur: rhfField.onBlur,
+        name: rhfField.name,
+        ref: rhfField.ref,
+    };
+
+    return {
+        fieldId: fieldConfig.id,
+        fieldConfig,
+        widgetKind,
+        field,
+        fieldState,
+        // Program rule state
+        isHidden: ruleState.isHidden,
+        isDisabled: (fieldConfig.generated ?? false) || ruleState.isDisabled,
+        isMandatory,
+        hasWarning: !!ruleState.warningMessage,
+        hasError: !!ruleState.errorMessage,
+        warningMessage: ruleState.warningMessage,
+        errorMessage: ruleState.errorMessage,
+    };
+}
+```
+
+### Key Design Decisions
+
+**`useController` owns the registration.**
+Do not call `register()` anywhere in the same component tree for the same field name.
+`useController` handles this internally.
+
+**`field.onChange` accepts raw values.**
+Unlike `register`'s `onChange` which expects a DOM `ChangeEvent`, `useController`'s
+`field.onChange` accepts the value directly. Widget adapters call:
+
+```ts
+// ✅ correct — raw value
+field.onChange('some-value');
+field.onChange(true);
+
+// ❌ wrong — do not wrap in a synthetic event
+field.onChange({ target: { value: 'some-value' } });
+```
+
+**`control` is passed explicitly.**
+The hook receives `control` from the parent form hook (`useEventForm`, `useEnrollmentForm`).
+This avoids implicit `FormProvider` context coupling and makes the dependency explicit,
+which is essential for testability.
+
+**No `useEffect` anywhere.**
+Program rule state flows from `FieldStateStore` via `useSyncExternalStore` inside
+`useFieldState`. The hook is pure render-time logic.
+
+**`isMandatory` union.**
+The required flag is the logical OR of `fieldConfig.required` (static metadata) and
+`ruleState.isMandatory` (dynamic program rule). This union is computed once here and
+flows down as `isMandatory` — adapters never inspect both independently.
+
+---
+
+## 6. UI Adapter Pattern
+
+### Dispatcher Component
+
+Each library package exports a single dispatcher component. It calls `useFieldControl`
+and switches on `widgetKind`. This is the component consumers render.
+
+```tsx
+// packages/ui-dhis2/src/fields/Dhis2Field.tsx
+import { useFieldControl, type FieldControlInput } from '@dhis2-form-utils/hooks';
+import {
+    TextField,
+    LongTextField,
+    NumberField,
+    IntegerField,
+    PercentageField,
+    EmailField,
+    PhoneField,
+    BooleanField,
+    TrueOnlyField,
+    DateField,
+    DateTimeField,
+    TimeField,
+    AgeField,
+    SelectField,
+    CoordinateField,
+    OrgUnitField,
+    FileField,
+    ImageField,
+} from './widgets';
+import type { Control } from 'react-hook-form';
+
+type Props = {
+    field: Omit<FieldControlInput, 'control'>;
+    control: Control;
+};
+
+export function Dhis2Field({ field, control }: Props) {
+    const controlReturn = useFieldControl({ ...field, control });
+
+    if (controlReturn.isHidden) return null;
+
+    switch (controlReturn.widgetKind) {
+        case 'text':
+            return <TextField control={controlReturn} />;
+        case 'longText':
+            return <LongTextField control={controlReturn} />;
+        case 'email':
+            return <EmailField control={controlReturn} />;
+        case 'phone':
+            return <PhoneField control={controlReturn} />;
+        case 'number':
+            return <NumberField control={controlReturn} />;
+        case 'integer':
+            return <IntegerField control={controlReturn} />;
+        case 'percentage':
+            return <PercentageField control={controlReturn} />;
+        case 'boolean':
+            return <BooleanField control={controlReturn} />;
+        case 'trueOnly':
+            return <TrueOnlyField control={controlReturn} />;
+        case 'date':
+            return <DateField control={controlReturn} />;
+        case 'datetime':
+            return <DateTimeField control={controlReturn} />;
+        case 'time':
+            return <TimeField control={controlReturn} />;
+        case 'age':
+            return <AgeField control={controlReturn} />;
+        case 'select':
+            return <SelectField control={controlReturn} />;
+        case 'coordinate':
+            return <CoordinateField control={controlReturn} />;
+        case 'orgUnit':
+            return <OrgUnitField control={controlReturn} />;
+        case 'file':
+            return <FileField control={controlReturn} />;
+        case 'image':
+            return <ImageField control={controlReturn} />;
+        case 'unsupported':
+            return null;
+    }
+}
+```
+
+### Widget Contract
+
+All widgets across all UI libraries receive `FieldControlReturn`. This is the boundary
+between the headless hook layer and the visual layer.
+
+```tsx
+// Shared type — defined in @dhis2-form-utils/hooks and re-exported
+type WidgetProps = {
+    control: FieldControlReturn;
+};
+```
+
+### Example Widget — `TextField` (DHIS2 UI)
+
+```tsx
+// packages/ui-dhis2/src/fields/widgets/TextField.tsx
+import { InputField } from '@dhis2/ui';
+import type { WidgetProps } from '@dhis2-form-utils/hooks';
+
+export function TextField({ control }: WidgetProps) {
+    const {
+        fieldConfig,
+        field,
+        fieldState,
+        isMandatory,
+        hasError,
+        hasWarning,
+        errorMessage,
+        warningMessage,
+        isDisabled,
+    } = control;
+
+    // Precedence: program rule error > program rule warning > RHF validation error
+    const validationText = errorMessage ?? fieldState.error?.message ?? warningMessage;
+
+    return (
+        <InputField
+            label={fieldConfig.label}
+            helpText={fieldConfig.description}
+            required={isMandatory}
+            disabled={isDisabled}
+            error={hasError || fieldState.invalid}
+            warning={hasWarning && !hasError}
+            validationText={validationText}
+            value={field.value}
+            onChange={({ value }: { value: string }) => field.onChange(value)}
+            onBlur={field.onBlur}
+            name={field.name}
+            inputRef={field.ref}
+        />
+    );
+}
+```
+
+> Note: `@dhis2/ui`'s `InputField.onChange` receives `{ value }` — the adapter
+> unwraps it before calling `field.onChange(value)` so the hook always receives a
+> plain string.
+
+---
+
+## 7. `valueType` → Widget → Component Map
+
+| `valueType`                         | `widgetKind` | DHIS2 UI                        | Mantine                          | Material UI                 |
+| ----------------------------------- | ------------ | ------------------------------- | -------------------------------- | --------------------------- |
+| `TEXT`, `LETTER`, `URL`, `USERNAME` | `text`       | `InputField`                    | `TextInput`                      | `TextField`                 |
+| `LONG_TEXT`                         | `longText`   | `TextAreaField`                 | `Textarea`                       | `TextField multiline`       |
+| `EMAIL`                             | `email`      | `InputField type=email`         | `TextInput type=email`           | `TextField type=email`      |
+| `PHONE_NUMBER`                      | `phone`      | `InputField type=tel`           | `TextInput type=tel`             | `TextField type=tel`        |
+| `NUMBER`, `UNIT_INTERVAL`           | `number`     | `InputField type=number`        | `NumberInput`                    | `TextField type=number`     |
+| `INTEGER`, `INTEGER_*`              | `integer`    | `InputField type=number step=1` | `NumberInput allowDecimal=false` | `TextField type=number`     |
+| `PERCENTAGE`                        | `percentage` | `InputField` + `%` suffix       | `NumberInput` + `%`              | `TextField` + `%` adornment |
+| `BOOLEAN`                           | `boolean`    | `SingleSelectField` (Yes/No/—)  | `SegmentedControl`               | `ToggleButtonGroup`         |
+| `TRUE_ONLY`                         | `trueOnly`   | `Checkbox`                      | `Checkbox`                       | `Checkbox`                  |
+| `DATE`                              | `date`       | `CalendarInput`                 | `DateInput`                      | `DatePicker`                |
+| `DATETIME`                          | `datetime`   | custom composite                | `DateTimePicker`                 | `DateTimePicker`            |
+| `TIME`                              | `time`       | `InputField type=time`          | `TimeInput`                      | `TimePicker`                |
+| `AGE`                               | `age`        | `CalendarInput` + age display   | `DateInput` + age display        | `DatePicker` + age display  |
+| any + `optionSet`                   | `select`     | `SingleSelectField`             | `Select`                         | `Select`                    |
+| `COORDINATE`                        | `coordinate` | Two `InputField` (lat + lng)    | Two `NumberInput`                | Two `TextField`             |
+| `FILE_RESOURCE`                     | `file`       | `FileInputField`                | `FileInput`                      | `Button` file type          |
+| `IMAGE`                             | `image`      | `FileInputField` + preview      | `FileInput` + preview            | `Button` file + preview     |
+| `ORGANISATION_UNIT`                 | `orgUnit`    | DHIS2 `OrgUnitField`            | Custom tree picker               | Custom tree picker          |
+
+---
+
+## 8. Package & File Structure
+
+```
+packages/
+├── hooks/
+│   └── src/
+│       ├── fields/
+│       │   ├── fieldConfig.ts              ← FieldConfig type + normalisers
+│       │   ├── widgetKind.ts               ← WidgetKind + resolveWidgetKind
+│       │   ├── fieldValidation.ts          ← Zod schema derivation per valueType
+│       │   ├── useFieldControl.ts          ← THE hook
+│       │   └── useFieldControl.test.ts     ← Vitest tests
+│       ├── store/
+│       │   ├── fieldStateStore.ts          ← existing (from arch doc)
+│       │   └── useFieldState.ts            ← existing (from arch doc)
+│       └── index.ts                        ← re-export public surface
+│
+├── ui-dhis2/                               ← @dhis2-form-utils/ui-dhis2
+│   └── src/
+│       ├── fields/
+│       │   ├── Dhis2Field.tsx              ← dispatcher
+│       │   └── widgets/
+│       │       ├── TextField.tsx
+│       │       ├── LongTextField.tsx
+│       │       ├── NumberField.tsx
+│       │       ├── IntegerField.tsx
+│       │       ├── PercentageField.tsx
+│       │       ├── EmailField.tsx
+│       │       ├── PhoneField.tsx
+│       │       ├── BooleanField.tsx
+│       │       ├── TrueOnlyField.tsx
+│       │       ├── DateField.tsx
+│       │       ├── DateTimeField.tsx
+│       │       ├── TimeField.tsx
+│       │       ├── AgeField.tsx
+│       │       ├── SelectField.tsx
+│       │       ├── CoordinateField.tsx
+│       │       ├── OrgUnitField.tsx
+│       │       ├── FileField.tsx
+│       │       └── ImageField.tsx
+│       └── index.ts
+│
+├── ui-mantine/                             ← @dhis2-form-utils/ui-mantine
+│   └── src/fields/                         ← same structure
+│
+└── ui-material/                            ← @dhis2-form-utils/ui-material
+    └── src/fields/                         ← same structure
+```
+
+### Public Surface of `@dhis2-form-utils/hooks`
+
+```ts
+// packages/hooks/src/index.ts (fields additions)
+export type { FieldConfig, RenderTypeHint } from './fields/fieldConfig';
+export type { WidgetKind } from './fields/widgetKind';
+export type { FieldControlInput, FieldControlReturn } from './fields/useFieldControl';
+export { useFieldControl } from './fields/useFieldControl';
+export { resolveWidgetKind } from './fields/widgetKind';
+export { buildFieldSchema } from './fields/fieldValidation';
+```
+
+---
+
+## 9. Vitest Test Plan
+
+```ts
+// packages/hooks/src/fields/useFieldControl.test.ts
+
+import { renderHook } from '@testing-library/react';
+import { useForm } from 'react-hook-form';
+import { useFieldControl } from './useFieldControl';
+import { makeWrapper } from '../test/makeWrapper'; // FormProvider wrapper
+
+describe('useFieldControl', () => {
+    it('resolves widgetKind to select when optionSet is present, regardless of valueType', () => {
+        // Arrange: INTEGER data element WITH an optionSet
+        // Assert: widgetKind === 'select'
+    });
+
+    it('resolves widgetKind correctly for plain TEXT data element', () => {
+        // Assert: widgetKind === 'text'
+    });
+
+    it('exposes field.value as an empty string when no default is provided', () => {
+        // Assert: field.value === ''
+    });
+
+    it('marks isMandatory when program rule elevates mandatory (fieldConfig.required = false)', () => {
+        // Arrange: mock useFieldState to return { isMandatory: true }
+        // Assert: isMandatory === true, fieldConfig.required === false
+    });
+
+    it('sets isDisabled when generated is true on a TrackedEntityAttribute', () => {
+        // Arrange: PTEA config with generated = true
+        // Assert: isDisabled === true
+    });
+
+    it('isHidden reflects fieldState.isHidden from the FieldStateStore', () => {
+        // Arrange: mock useFieldState to return { isHidden: true }
+        // Assert: isHidden === true
+    });
+
+    it('validates against Zod schema — invalid INTEGER value fails', () => {
+        // Arrange: INTEGER field, field.onChange('not-a-number')
+        // Assert: fieldState.error is defined with appropriate message
+    });
+
+    it('returns unsupported widgetKind for an unknown valueType', () => {
+        // Arrange: cast an unrecognised valueType string
+        // Assert: widgetKind === 'unsupported'
+    });
+});
+```
+
+---
+
+## 10. Delivery Phases
+
+### Phase 1 — Core hook (unblocks all adapter work)
+
+| File                             | Package |
+| -------------------------------- | ------- |
+| `fields/fieldConfig.ts`          | `hooks` |
+| `fields/widgetKind.ts`           | `hooks` |
+| `fields/fieldValidation.ts`      | `hooks` |
+| `fields/useFieldControl.ts`      | `hooks` |
+| `fields/useFieldControl.test.ts` | `hooks` |
+| `index.ts` updates               | `hooks` |
+
+### Phase 2 — DHIS2 UI adapter
+
+`Dhis2Field` dispatcher + all widget components. Priority order within this phase:
+
+1. `text`, `longText`, `integer`, `number`, `percentage` — most commonly used
+2. `boolean`, `trueOnly`, `select` — second most common
+3. `date`, `datetime`, `time`, `age` — temporal
+4. `coordinate`, `file`, `image`, `orgUnit` — complex / specialist
+
+### Phase 3 — Mantine adapter
+
+Same widget structure, Mantine primitives. Phase 2 dispatcher pattern copied verbatim
+except for the import paths and component names.
+
+### Phase 4 — Material UI adapter
+
+Same as Phase 3 for MUI primitives.
+
+---
+
+## 11. Open Questions
+
+These do not block Phase 1 or the dispatcher skeleton, but must be resolved before
+the relevant widgets are written.
+
+| #   | Question                                                                                                                                                                                                            | Impact                                        |
+| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------- |
+| 1   | **`AGE` storage** — does the field store a date-of-birth string (`DATE` format) and compute age client-side for display, or store the actual age in years? DHIS2 practice is date-of-birth, but needs confirmation. | `AgeField` widget implementation              |
+| 2   | **`COORDINATE` serialisation** — does the field store as `"lat,lng"` (single string, DHIS2 convention) or are lat and lng submitted as separate form values that are serialised on submit?                          | `CoordinateField` and tracker payload builder |
+| 3   | **`renderTypeHint` enforcement** — should the hook enforce hints (e.g. RADIO vs DROPDOWN for option sets), or is it purely advisory for UI adapter authors?                                                         | All option-set widgets                        |
+| 4   | **`ORGANISATION_UNIT` data fetching** — the org unit picker requires a hierarchy query. Should the `OrgUnitField` widget trigger its own `useDataQuery`, or should the parent form pre-fetch and pass options down? | `OrgUnitField` in all adapters                |
+| 5   | **`multiSelect`** — DHIS2 has `MULTI_TEXT` in newer versions and some programmes use multi-select option sets. Should `WidgetKind` include `'multiSelect'` now, or defer until there is a concrete use case?        | `widgetKind.ts`, all `SelectField` widgets    |

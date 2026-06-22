@@ -35,9 +35,10 @@
         "zod": ">=3.0.0"
     },
     "devDependencies": {
+        "@dhis2-form-utils/config": "workspace:*",
+        "@dhis2/api-types": "43.0.0-beta.daa0d8e",
         "@dhis2/app-runtime": "^3.17.0",
         "@dhis2/data-engine": "^3.17.0",
-        "@dhis2-form-utils/config": "workspace:*",
         "@hookform/resolvers": "^5.2.2",
         "@testing-library/react": "^16.3.2",
         "@types/lodash-es": "^4.17.12",

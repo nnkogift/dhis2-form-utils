@@ -1,7 +1,6 @@
 import { renderHook, waitFor } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import {
-    Dhis2ValueType,
     ProgramRuleActionType,
     ProgramRuleVariableSourceType,
     type ProgramStageMetadata,
@@ -28,7 +27,7 @@ describe('useEventForm', () => {
     });
 
     it('reactively evaluates field rules into the field store', async () => {
-        const metadata: ProgramStageMetadata = {
+        const metadata = {
             id: 'stage-rules',
             displayName: 'Rule Stage',
             programStageDataElements: [
@@ -36,7 +35,7 @@ describe('useEventForm', () => {
                     dataElement: {
                         id: 'age',
                         displayName: 'Age',
-                        valueType: Dhis2ValueType.INTEGER,
+                        valueType: 'INTEGER' as const,
                     },
                 },
             ],
@@ -52,7 +51,7 @@ describe('useEventForm', () => {
                             dataElement: {
                                 id: 'age',
                                 displayName: 'Age',
-                                valueType: Dhis2ValueType.INTEGER,
+                                valueType: 'INTEGER' as const,
                             },
                         },
                     ],
@@ -65,13 +64,13 @@ describe('useEventForm', () => {
                     dataElement: {
                         id: 'age',
                         displayName: 'Age',
-                        valueType: Dhis2ValueType.INTEGER,
+                        valueType: 'INTEGER' as const,
                     },
                     programRuleVariableSourceType:
                         ProgramRuleVariableSourceType.DATAELEMENT_CURRENT_EVENT,
                 },
             ],
-        };
+        } as ProgramStageMetadata;
 
         const { result } = renderHook(() =>
             useEventForm({ programStageId: 'stage-rules', metadata })
@@ -88,7 +87,7 @@ describe('useEventForm', () => {
     });
 
     it('evaluates section and feedback rule effects into non-field store', async () => {
-        const metadata: ProgramStageMetadata = {
+        const metadata = {
             ...baseMetadata,
             programRules: [
                 {
@@ -109,7 +108,7 @@ describe('useEventForm', () => {
                     ],
                 },
             ],
-        };
+        } as ProgramStageMetadata;
 
         const { result } = renderHook(() => useEventForm({ programStageId: 'stage-1', metadata }));
 

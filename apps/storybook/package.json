@@ -1,5 +1,5 @@
 {
-    "name": "storybook",
+    "name": "@dhis2-form-utils/storybook",
     "version": "0.0.0",
     "private": true,
     "type": "module",
@@ -12,6 +12,7 @@
         "@dhis2-form-utils/dhis2-ui": "workspace:*",
         "@dhis2-form-utils/hooks": "workspace:*",
         "@dhis2-form-utils/mantine": "workspace:*",
+        "@dhis2-form-utils/metadata": "workspace:*",
         "@dhis2-form-utils/mui": "workspace:*",
         "@dhis2-form-utils/rules": "workspace:*",
         "@dhis2/app-runtime": "^3.17.0",
@@ -19,19 +20,20 @@
         "@emotion/react": "^11.14.0",
         "@emotion/styled": "^11.14.1",
         "@mantine/core": "^7.17.8",
+        "@mantine/hooks": "^7.17.8",
         "@mui/material": "^9.0.1",
+        "dayjs": "^1.11.21",
         "react": "^18.3.1",
         "react-dom": "^18.3.1",
         "react-hook-form": "^7.76.0"
     },
     "devDependencies": {
         "@dhis2-form-utils/config": "workspace:*",
-        "@storybook/addon-a11y": "^10.4.0",
-        "@storybook/addon-docs": "^10.4.0",
+        "@storybook/addon-a11y": "^10.4.6",
+        "@storybook/addon-docs": "^10.4.6",
         "@storybook/addon-mcp": "^0.6.0",
-        "@storybook/addon-vitest": "^10.4.0",
-        "@storybook/react": "^10.4.0",
-        "@storybook/react-vite": "^10.4.0",
+        "@storybook/addon-vitest": "^10.4.6",
+        "@storybook/react-vite": "^10.4.6",
         "@types/react": "^18.3.29",
         "@types/react-dom": "^18.3.7",
         "@vitest/browser": "^4.1.8",
@@ -40,10 +42,11 @@
         "msw": "^2.14.6",
         "msw-storybook-addon": "^2.0.7",
         "playwright": "^1.60.0",
-        "storybook": "^10.4.0",
+        "storybook": "^10.4.6",
         "typescript": "^5.9.3",
         "vite": "^8.0.16",
-        "vitest": "^4.1.7"
+        "vitest": "^4.1.7",
+        "eslint-plugin-storybook": "10.4.6"
     },
     "msw": {
         "workerDirectory": [

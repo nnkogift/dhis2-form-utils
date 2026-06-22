@@ -1,8 +1,5 @@
-export {
-    Dhis2ValueType,
-    ProgramRuleActionType,
-    ProgramRuleVariableSourceType,
-} from '@dhis2-form-utils/metadata';
+export { ProgramRuleActionType, ProgramRuleVariableSourceType } from '@dhis2-form-utils/metadata';
+export type { ValueType } from '@dhis2/api-types/v43';
 export type {
     FieldState,
     FieldStateMap,
