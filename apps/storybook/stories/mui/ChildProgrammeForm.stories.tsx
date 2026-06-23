@@ -16,7 +16,7 @@ function MuiChildProgrammeForm() {
 }
 
 const meta = {
-    title: 'mui/ChildProgrammeForm',
+    title: 'mui/Child Programme Form Example',
     component: MuiChildProgrammeForm,
     tags: ['autodocs'],
     decorators: [

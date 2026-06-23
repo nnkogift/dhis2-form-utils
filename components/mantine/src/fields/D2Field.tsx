@@ -1,4 +1,4 @@
-import { useFieldControl, type FieldControlInput } from '@dhis2-form-utils/hooks';
+import { type FieldControlInput, useFieldControl } from '@dhis2-form-utils/hooks';
 import type { Control } from 'react-hook-form';
 import {
     D2AgeField,

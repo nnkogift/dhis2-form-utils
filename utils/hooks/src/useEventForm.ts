@@ -1,39 +1,37 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMemo, useRef } from 'react';
-import { DefaultValues, Resolver, useForm, type UseFormReturn } from 'react-hook-form';
+import { Resolver, useForm, type UseFormReturn } from 'react-hook-form';
 import type { ProgramStageMetadata } from '@dhis2-form-utils/metadata';
 import { buildSchema } from '@dhis2-form-utils/metadata';
 import type { BuiltRuleEngine, EffectHandlersMap } from '@dhis2-form-utils/rules';
-import { buildRuleEngine, buildRuleEngineContext, filterPayload } from '@dhis2-form-utils/rules';
+import { buildRuleEngine, buildRuleEngineContext } from '@dhis2-form-utils/rules';
 import { FormStore } from './formStore';
-import type { FieldStateStore } from './store/fieldStateStore';
-import type { NonFieldStateStore } from './store/nonFieldStateStore';
 
 export type DefaultFormValue = Record<string, string>;
 
-export type UseEventFormOptions<FormValue extends DefaultFormValue = DefaultFormValue> = {
+export type UseEventFormOptions = {
     programStageId: string;
     metadata: ProgramStageMetadata;
-    existingValues?: Partial<FormValue>;
     effectHandlers?: EffectHandlersMap;
 };
 
 export type UseEventFormReturn<FormValue extends DefaultFormValue = DefaultFormValue> = {
     form: UseFormReturn<FormValue>;
     formStore: FormStore;
-    fieldStore: FieldStateStore;
-    nonFieldStore: NonFieldStateStore;
-    submit: () => void;
 };
 
-export function useEventForm<FormValue extends DefaultFormValue = DefaultFormValue>(
-    options: UseEventFormOptions<FormValue>
-): UseEventFormReturn<FormValue> {
+export function useEventForm<FormValue extends DefaultFormValue = DefaultFormValue>({
+    options,
+    formOptions,
+}: {
+    options: UseEventFormOptions;
+    formOptions?: Omit<Parameters<typeof useForm<FormValue>>[0], 'resolver'>;
+}): UseEventFormReturn<FormValue> {
     const metadata = useMemo(() => options.metadata, [options.metadata]);
     const schema = useMemo(() => buildSchema(metadata), [metadata]);
     const form = useForm<FormValue>({
+        ...(formOptions ?? {}),
         resolver: zodResolver(schema) as unknown as Resolver<FormValue>,
-        defaultValues: options.existingValues as DefaultValues<FormValue>,
     });
 
     const ruleEngineContext = useMemo(() => buildRuleEngineContext(metadata), [metadata]);
@@ -59,19 +57,8 @@ export function useEventForm<FormValue extends DefaultFormValue = DefaultFormVal
         prevEngineRef.current = ruleEngine;
     }
 
-    const submit = () => {
-        void form.handleSubmit((values) => {
-            const payload = filterPayload(values, formStore.fieldStore.getSnapshot());
-            void payload;
-            // Stub: real implementation will call useDataMutation
-        })();
-    };
-
     return {
         form,
         formStore,
-        fieldStore: formStore.fieldStore,
-        nonFieldStore: formStore.nonFieldStore,
-        submit,
     };
 }

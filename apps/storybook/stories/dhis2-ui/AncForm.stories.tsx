@@ -13,7 +13,7 @@ function Dhis2AncForm() {
 }
 
 const meta = {
-    title: 'dhis2-ui/AncForm',
+    title: 'dhis2-ui/ANC Form Example',
     component: Dhis2AncForm,
     tags: ['autodocs'],
     decorators: [

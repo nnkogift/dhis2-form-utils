@@ -1,8 +1,8 @@
 import { Provider } from '@dhis2/app-runtime';
 import { FormStateProvider, useEventForm } from '@dhis2-form-utils/hooks';
 import type { ProgramStageMetadata } from '@dhis2-form-utils/metadata';
-import type { Decorator } from '@storybook/react';
-import { createContext, useContext, useMemo, type ReactNode } from 'react';
+import type { Decorator } from '@storybook/react-vite';
+import { createContext, type ReactNode, useContext, useMemo } from 'react';
 import { FormProvider, type UseFormReturn } from 'react-hook-form';
 
 const runtimeConfig = {
@@ -11,7 +11,6 @@ const runtimeConfig = {
 };
 
 type EventFormStoryContextValue = {
-    submit: () => void;
     metadata: ProgramStageMetadata;
 };
 
@@ -40,10 +39,14 @@ export function EventFormWrapper({
     children: ReactNode;
 } & EventFormDecoratorOptions) {
     const stableMetadata = useMemo(() => metadata, [metadata]);
-    const { form, formStore, submit } = useEventForm({
-        programStageId,
-        metadata: stableMetadata,
-        existingValues: defaultValues,
+    const { form, formStore } = useEventForm({
+        options: {
+            programStageId,
+            metadata: stableMetadata,
+        },
+        formOptions: {
+            defaultValues,
+        },
     });
 
     return (
@@ -59,7 +62,7 @@ export function EventFormWrapper({
                 form={form as UseFormReturn<Record<string, unknown>>}
             >
                 <FormProvider {...form}>
-                    <EventFormStoryContext.Provider value={{ submit, metadata: stableMetadata }}>
+                    <EventFormStoryContext.Provider value={{ metadata: stableMetadata }}>
                         <div style={{ maxWidth: 480, padding: 16 }}>{children}</div>
                     </EventFormStoryContext.Provider>
                 </FormProvider>

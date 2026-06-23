@@ -17,7 +17,7 @@ function MantineChildProgrammeForm() {
 }
 
 const meta = {
-    title: 'mantine/ChildProgrammeForm',
+    title: 'mantine/Child Programme Form Example',
     component: MantineChildProgrammeForm,
     tags: ['autodocs'],
     decorators: [

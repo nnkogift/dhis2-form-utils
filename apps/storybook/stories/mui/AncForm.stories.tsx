@@ -13,7 +13,7 @@ function MuiAncForm() {
 }
 
 const meta = {
-    title: 'mui/AncForm',
+    title: 'mui/ANC Form Example',
     component: MuiAncForm,
     tags: ['autodocs'],
     decorators: [

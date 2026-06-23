@@ -1,10 +1,10 @@
 import {
     createContext,
+    type ReactNode,
     useCallback,
     useContext,
-    useRef,
+    useMemo,
     useSyncExternalStore,
-    type ReactNode,
 } from 'react';
 import type { UseFormReturn } from 'react-hook-form';
 import {
@@ -33,45 +33,17 @@ export type FormStateProviderProps = {
     children: ReactNode;
 };
 
-function MountTracker({ onUnmount, children }: { onUnmount: () => void; children: ReactNode }) {
-    const onUnmountRef = useRef(onUnmount);
-    onUnmountRef.current = onUnmount;
-
-    const ref = useCallback((node: HTMLSpanElement | null) => {
-        if (node === null) {
-            onUnmountRef.current();
-        }
-    }, []);
-
-    return (
-        <span ref={ref} style={{ display: 'contents' }}>
-            {children}
-        </span>
-    );
-}
-
 export function FormStateProvider({ formStore, form, children }: FormStateProviderProps) {
-    const valueRef = useRef<FormStateContextValue | null>(null);
-    if (!valueRef.current) {
-        valueRef.current = {
+    const value = useMemo(() => {
+        return {
             form,
             fieldStore: formStore.fieldStore,
             nonFieldStore: formStore.nonFieldStore,
             formStore,
         };
-    }
+    }, [form]);
 
-    return (
-        <MountTracker
-            onUnmount={() => {
-                formStore.destroy();
-            }}
-        >
-            <FormStateContext.Provider value={valueRef.current}>
-                {children}
-            </FormStateContext.Provider>
-        </MountTracker>
-    );
+    return <FormStateContext.Provider value={value}>{children}</FormStateContext.Provider>;
 }
 
 export function useFormStateContext(): FormStateContextValue {

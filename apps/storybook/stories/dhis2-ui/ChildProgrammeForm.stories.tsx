@@ -16,7 +16,7 @@ function Dhis2ChildProgrammeForm() {
 }
 
 const meta = {
-    title: 'dhis2-ui/ChildProgrammeForm',
+    title: 'dhis2-ui/Child Programme Form Example',
     component: Dhis2ChildProgrammeForm,
     tags: ['autodocs'],
     decorators: [

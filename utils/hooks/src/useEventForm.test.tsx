@@ -16,14 +16,16 @@ const baseMetadata: ProgramStageMetadata = {
 describe('useEventForm', () => {
     it('returns form, stores, and submit', () => {
         const { result } = renderHook(() =>
-            useEventForm({ programStageId: 'stage-1', metadata: baseMetadata })
+            useEventForm({
+                options: {
+                    programStageId: 'stage-1',
+                    metadata: baseMetadata,
+                },
+            })
         );
 
         expect(result.current.form).toBeDefined();
         expect(result.current.formStore).toBeDefined();
-        expect(result.current.fieldStore).toBeDefined();
-        expect(result.current.nonFieldStore).toBeDefined();
-        expect(typeof result.current.submit).toBe('function');
     });
 
     it('reactively evaluates field rules into the field store', async () => {
@@ -73,7 +75,7 @@ describe('useEventForm', () => {
         } as ProgramStageMetadata;
 
         const { result } = renderHook(() =>
-            useEventForm({ programStageId: 'stage-rules', metadata })
+            useEventForm({ options: { programStageId: 'stage-rules', metadata } })
         );
 
         result.current.form.setValue('age', '15', {
@@ -82,7 +84,9 @@ describe('useEventForm', () => {
         });
 
         await waitFor(() => {
-            expect(result.current.fieldStore.getFieldSnapshot('age')?.warning).toBe('Age is high');
+            expect(result.current.formStore.fieldStore.getFieldSnapshot('age')?.warning).toBe(
+                'Age is high'
+            );
         });
     });
 
@@ -110,13 +114,22 @@ describe('useEventForm', () => {
             ],
         } as ProgramStageMetadata;
 
-        const { result } = renderHook(() => useEventForm({ programStageId: 'stage-1', metadata }));
+        const { result } = renderHook(() =>
+            useEventForm({
+                options: {
+                    programStageId: 'stage-1',
+                    metadata,
+                },
+            })
+        );
 
         await waitFor(() => {
-            expect(result.current.nonFieldStore.getSectionSnapshot('section-a')?.hidden).toBe(true);
-            expect(result.current.nonFieldStore.getFeedbackSnapshot()['feedback:Note'].value).toBe(
-                'Hidden section active'
-            );
+            expect(
+                result.current.formStore.nonFieldStore.getSectionSnapshot('section-a')?.hidden
+            ).toBe(true);
+            expect(
+                result.current.formStore.nonFieldStore.getFeedbackSnapshot()['feedback:Note'].value
+            ).toBe('Hidden section active');
         });
     });
 });

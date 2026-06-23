@@ -14,7 +14,7 @@ function MantineAncForm() {
 }
 
 const meta = {
-    title: 'mantine/AncForm',
+    title: 'mantine/ANC Form Example',
     component: MantineAncForm,
     tags: ['autodocs'],
     decorators: [
