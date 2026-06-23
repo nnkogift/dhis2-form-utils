@@ -41,7 +41,7 @@ export function FormStateProvider({ formStore, form, children }: FormStateProvid
             nonFieldStore: formStore.nonFieldStore,
             formStore,
         };
-    }, [form]);
+    }, [form, formStore]);
 
     return <FormStateContext.Provider value={value}>{children}</FormStateContext.Provider>;
 }

@@ -11,7 +11,7 @@ import {
 
 /** Effect from rule-engine evaluation. Extend ProgramRuleActionType in metadata for new DHIS2 types. */
 export type RuleEffect = {
-    ruleActionType: ProgramRuleActionType | string;
+    ruleActionType: ProgramRuleActionType;
     dataElement?: string | null;
     trackedEntityAttribute?: string | null;
     content?: string | null;
@@ -40,9 +40,8 @@ export type EvaluateAndMapResult = {
 
 const programRuleActionTypeValues = new Set<string>(Object.values(ProgramRuleActionType));
 
-const isProgramRuleActionType = (
-    value: ProgramRuleActionType | string
-): value is ProgramRuleActionType => programRuleActionTypeValues.has(value);
+const isProgramRuleActionType = (value: ProgramRuleActionType): value is ProgramRuleActionType =>
+    programRuleActionTypeValues.has(value);
 
 const fieldKey = (effect: RuleEffect): string | undefined =>
     effect.dataElement ?? effect.trackedEntityAttribute ?? undefined;

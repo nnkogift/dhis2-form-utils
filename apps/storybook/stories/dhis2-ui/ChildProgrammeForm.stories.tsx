@@ -73,7 +73,3 @@ export const HighApgarHidesComment: Story = {
 export const SelectField: Story = {
     play: plays.selectArvAtBirth,
 };
-
-export const Submit: Story = {
-    play: plays.submitForm,
-};

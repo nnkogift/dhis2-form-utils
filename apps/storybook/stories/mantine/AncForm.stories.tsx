@@ -58,7 +58,3 @@ export const HighHemoglobinError: Story = {
 export const NonSmokerHidesCounselling: Story = {
     play: plays.nonSmokerHidesCounselling,
 };
-
-export const Submit: Story = {
-    play: plays.submitForm,
-};
