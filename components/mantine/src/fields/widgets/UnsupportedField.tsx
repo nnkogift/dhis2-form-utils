@@ -9,7 +9,7 @@ export function D2UnsupportedField({ control }: WidgetProps) {
     return (
         <TextInput
             name={field.name}
-            value={field.value}
+            value={field.value as string}
             label={fieldConfig.label}
             description={`Widget not yet implemented: ${widgetKind}`}
             required={isMandatory}

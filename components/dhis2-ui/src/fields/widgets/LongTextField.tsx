@@ -9,7 +9,7 @@ export function D2LongTextField({ control }: WidgetProps) {
     return (
         <TextAreaField
             name={field.name}
-            value={field.value}
+            value={field.value as string}
             label={fieldConfig.label}
             helpText={fieldConfig.description}
             required={isMandatory}

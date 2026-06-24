@@ -21,7 +21,7 @@ export function D2TextField({ control, type, multiline }: WidgetProps & D2TextFi
     return (
         <TextField
             name={field.name}
-            value={field.value}
+            value={field.value as string}
             label={fieldConfig.label}
             helperText={hasError ? validationText : fieldConfig.description}
             required={isMandatory}
@@ -66,7 +66,7 @@ export function D2PercentageField({ control }: WidgetProps) {
     return (
         <TextField
             name={field.name}
-            value={field.value}
+            value={field.value as string}
             label={fieldConfig.label}
             helperText={hasError ? validationText : fieldConfig.description}
             required={isMandatory}
@@ -105,7 +105,7 @@ function computeAgeFromDob(dob: string): string {
 }
 
 export function D2AgeField({ control }: WidgetProps) {
-    const age = computeAgeFromDob(control.field.value);
+    const age = computeAgeFromDob(control.field.value as string);
     const description = [control.fieldConfig.description, age ? `Age: ${age} years` : undefined]
         .filter(Boolean)
         .join(' · ');
@@ -130,7 +130,7 @@ export function D2BooleanField({ control }: WidgetProps) {
     return (
         <ToggleButtonGroup
             exclusive
-            value={field.value}
+            value={field.value as string}
             disabled={isDisabled}
             onChange={(_event, value: string | null) => {
                 field.onChange(value ?? '');
@@ -182,7 +182,7 @@ export function D2SelectField({ control }: WidgetProps) {
             helperText={hasError ? validationText : fieldConfig.description}
             required={isMandatory}
             disabled={isDisabled}
-            value={field.value}
+            value={field.value as string}
             error={hasError}
             onChange={(event) => {
                 field.onChange(event.target.value);
@@ -207,7 +207,7 @@ export function D2UnsupportedField({ control }: WidgetProps) {
     return (
         <TextField
             name={field.name}
-            value={field.value}
+            value={field.value as string}
             label={fieldConfig.label}
             helperText={`Widget not yet implemented: ${widgetKind}`}
             required={isMandatory}

@@ -23,7 +23,7 @@ export function D2BooleanField({ control }: WidgetProps) {
             warning={hasWarning}
             error={hasError}
             validationText={validationText}
-            selected={field.value}
+            selected={field.value as string}
             onChange={({ selected }) => {
                 field.onChange(selected);
             }}
@@ -98,7 +98,7 @@ export function D2SelectField({ control }: WidgetProps) {
             warning={hasWarning}
             error={hasError}
             validationText={validationText}
-            selected={field.value}
+            selected={field.value as string}
             onChange={({ selected }) => {
                 field.onChange(selected);
             }}

@@ -13,7 +13,7 @@ export function D2TextField({ control, type }: WidgetProps & D2TextFieldOptions)
     return (
         <TextInput
             name={field.name}
-            value={field.value}
+            value={field.value as string}
             label={fieldConfig.label}
             description={fieldConfig.description}
             required={isMandatory}
@@ -35,7 +35,7 @@ export function D2LongTextField({ control }: WidgetProps) {
     return (
         <Textarea
             name={field.name}
-            value={field.value}
+            value={field.value as string}
             label={fieldConfig.label}
             description={fieldConfig.description}
             required={isMandatory}
@@ -78,7 +78,7 @@ export function D2DateField(props: WidgetProps) {
 }
 
 export function D2AgeField({ control }: WidgetProps) {
-    const age = computeAgeFromDob(control.field.value);
+    const age = computeAgeFromDob(control.field.value as string);
     const description = [control.fieldConfig.description, age ? `Age: ${age} years` : undefined]
         .filter(Boolean)
         .join(' · ');

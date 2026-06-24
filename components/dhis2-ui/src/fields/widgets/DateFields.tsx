@@ -9,7 +9,7 @@ export function D2DateField({ control }: WidgetProps) {
     return (
         <InputField
             name={field.name}
-            value={field.value}
+            value={field.value as string}
             label={fieldConfig.label}
             helpText={fieldConfig.description}
             required={isMandatory}
@@ -39,7 +39,7 @@ function computeAgeFromDob(dob: string): string {
 }
 
 export function D2AgeField({ control }: WidgetProps) {
-    const age = computeAgeFromDob(control.field.value);
+    const age = computeAgeFromDob(control.field.value as string);
     const helpText = [control.fieldConfig.description, age ? `Age: ${age} years` : undefined]
         .filter(Boolean)
         .join(' · ');

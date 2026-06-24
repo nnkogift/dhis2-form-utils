@@ -11,7 +11,7 @@ export function D2BooleanField({ control }: WidgetProps) {
     return (
         <SegmentedControl
             name={field.name}
-            value={field.value}
+            value={field.value as string}
             disabled={isDisabled}
             data={[
                 { label: 'Yes', value: 'true' },
@@ -65,7 +65,7 @@ export function D2SelectField({ control }: WidgetProps) {
                 name={field.name}
                 label={fieldConfig.label}
                 description={fieldConfig.description}
-                value={field.value}
+                value={field.value as string}
                 required={isMandatory}
                 onChange={(value) => {
                     field.onChange(value);
@@ -93,7 +93,7 @@ export function D2SelectField({ control }: WidgetProps) {
             required={isMandatory}
             disabled={isDisabled}
             data={options}
-            value={field.value || null}
+            value={(field.value as string) || null}
             error={hasError ? validationText : undefined}
             onChange={(value) => {
                 field.onChange(value ?? '');
