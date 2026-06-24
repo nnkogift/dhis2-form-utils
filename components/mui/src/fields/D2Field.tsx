@@ -1,5 +1,4 @@
-import { useFieldControl, type FieldControlInput } from '@dhis2-form-utils/hooks';
-import type { Control } from 'react-hook-form';
+import { type FieldControlInput, useFieldControl } from '@dhis2-form-utils/hooks';
 import {
     D2AgeField,
     D2BooleanField,
@@ -18,12 +17,11 @@ import {
 } from './widgets';
 
 export type D2FieldProps = {
-    field: Omit<FieldControlInput, 'control'>;
-    control: Control<Record<string, string>>;
+    field: FieldControlInput;
 };
 
-export function D2Field({ field, control }: D2FieldProps) {
-    const fieldControl = useFieldControl({ ...field, control });
+export function D2Field({ field }: D2FieldProps) {
+    const fieldControl = useFieldControl({ ...field });
 
     if (fieldControl.isHidden) return null;
 

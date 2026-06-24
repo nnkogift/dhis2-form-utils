@@ -25,6 +25,7 @@ import {
     type ProgramStageMetadata,
 } from '@dhis2-form-utils/metadata';
 import type { RuleEffect } from './evaluate';
+import { ProgramRuleActionType } from '@dhis2/api-types';
 
 const DEFAULT_EVENT_STATUS = RuleEventStatus.ACTIVE;
 const DEFAULT_ORG_UNIT = 'UNKNOWN_ORG_UNIT';
@@ -216,7 +217,7 @@ const toRuleEvent = (
 const normalizeEffect = (effect: RuleEffectJs): RuleEffect => {
     const values = effect.ruleAction.values;
     return {
-        ruleActionType: effect.ruleAction.type,
+        ruleActionType: effect.ruleAction.type as ProgramRuleActionType,
         content: values.get('content') ?? null,
         dataElement: values.get('dataElement') ?? null,
         trackedEntityAttribute: values.get('trackedEntityAttribute') ?? null,

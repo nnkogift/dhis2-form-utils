@@ -4,5 +4,13 @@
         "noEmit": true,
         "resolveJsonModule": true
     },
-    "include": [".storybook", "stories", "decorators", "fixtures", "components", "interactions"]
+    "include": [
+        ".storybook",
+        "stories",
+        "decorators",
+        "fixtures",
+        "components",
+        "interactions",
+        "vitest.config.ts"
+    ]
 }

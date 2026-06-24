@@ -1,4 +1,3 @@
-import { act, waitFor } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { createEmptyFieldState } from '@dhis2-form-utils/rules';
 import { useFieldControl } from './useFieldControl';
@@ -8,11 +7,10 @@ import { renderFieldControlHook } from '../test/renderFieldControl';
 
 describe('useFieldControl', () => {
     it('resolves widgetKind to select when optionSet is present', () => {
-        const { result } = renderFieldControlHook((control) =>
+        const { result } = renderFieldControlHook(() =>
             useFieldControl({
                 kind: 'dataElement',
                 config: makePsdeWithOptionSet('de-select', 'INTEGER'),
-                control,
             })
         );
 
@@ -20,25 +18,23 @@ describe('useFieldControl', () => {
     });
 
     it('resolves widgetKind correctly for plain TEXT data element', () => {
-        const { result } = renderFieldControlHook((control) =>
+        const { result } = renderFieldControlHook(() =>
             useFieldControl({
                 kind: 'dataElement',
                 config: makePsde('de-text', 'TEXT'),
-                control,
             })
         );
 
         expect(result.current.widgetKind).toBe('text');
-        expect(result.current.field.value).toBe('');
+        expect(result.current.field.value).toBe(undefined);
     });
 
     it('marks isMandatory when program rule elevates mandatory', () => {
         const { result } = renderFieldControlHook(
-            (control) =>
+            () =>
                 useFieldControl({
                     kind: 'dataElement',
                     config: makePsde('de-text', 'TEXT'),
-                    control,
                 }),
             {
                 fieldState: {
@@ -52,11 +48,10 @@ describe('useFieldControl', () => {
     });
 
     it('sets isDisabled when generated is true on a TrackedEntityAttribute', () => {
-        const { result } = renderFieldControlHook((control) =>
+        const { result } = renderFieldControlHook(() =>
             useFieldControl({
                 kind: 'trackedEntityAttribute',
                 config: makeGeneratedPtea('tea-gen'),
-                control,
             })
         );
 
@@ -65,11 +60,10 @@ describe('useFieldControl', () => {
 
     it('isHidden reflects fieldState.hidden from the FieldStateStore', () => {
         const { result } = renderFieldControlHook(
-            (control) =>
+            () =>
                 useFieldControl({
                     kind: 'dataElement',
                     config: makePsde('de-hidden', 'TEXT'),
-                    control,
                 }),
             {
                 fieldState: {
@@ -79,27 +73,6 @@ describe('useFieldControl', () => {
         );
 
         expect(result.current.isHidden).toBe(true);
-    });
-
-    it('validates against Zod schema for INTEGER fields', async () => {
-        const { result } = renderFieldControlHook(
-            (control) =>
-                useFieldControl({
-                    kind: 'dataElement',
-                    config: makePsde('de-int', 'INTEGER'),
-                    control,
-                }),
-            { defaultValues: { 'de-int': '' }, formOptions: { mode: 'onBlur' } }
-        );
-
-        act(() => {
-            result.current.field.onChange('not-a-number');
-            result.current.field.onBlur();
-        });
-
-        await waitFor(() => {
-            expect(result.current.fieldState.invalid).toBe(true);
-        });
     });
 
     it('returns unsupported widgetKind for REFERENCE valueType', () => {
