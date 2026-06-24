@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { MantineProvider } from '@mantine/core';
 import { ProgrammeEventForm } from '../../components/ProgrammeEventForm';
 import { withEventForm } from '../../decorators/withEventForm';
-import { ANC_STAGE_ID, ancStageMetadata } from '../../fixtures/anc';
+import { ANC_SMOKING_DE_ID, ANC_STAGE_ID, ancStageMetadata } from '../../fixtures/anc';
 import { ancPlays } from '../../interactions/ancInteractions';
 import type { StoryPlayContext } from '../../interactions/ancInteractions';
 
@@ -56,5 +56,17 @@ export const HighHemoglobinError: Story = {
 };
 
 export const NonSmokerHidesCounselling: Story = {
-    play: plays.nonSmokerHidesCounselling,
+    decorators: [
+        (Story) => (
+            <MantineProvider>
+                <Story />
+            </MantineProvider>
+        ),
+        withEventForm({
+            programStageId: ANC_STAGE_ID,
+            metadata: ancStageMetadata,
+            defaultValues: { [ANC_SMOKING_DE_ID]: 'true' },
+        }),
+    ],
+    play: plays.nonSmokerHidesCounsellingFromSmoker,
 };

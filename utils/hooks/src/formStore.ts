@@ -60,13 +60,16 @@ export class FormStore {
             this.nonFieldStore.setState(next.sectionMap, next.feedback);
         };
 
-        this.debouncedEvaluate = debounce(evaluate, DEBOUNCE_MS);
+        this.debouncedEvaluate = debounce(() => {
+            if (!this.form) return;
+            evaluate(this.form.getValues());
+        }, DEBOUNCE_MS);
         evaluate(form.getValues());
 
         this.unsubscribe = form.subscribe({
             formState: { values: true },
-            callback: ({ values }) => {
-                this.debouncedEvaluate?.(values);
+            callback: () => {
+                this.debouncedEvaluate?.();
             },
         });
     }

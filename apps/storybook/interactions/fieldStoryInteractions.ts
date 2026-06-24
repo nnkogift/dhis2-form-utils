@@ -97,7 +97,20 @@ async function pickSelectOption(
     await userEvent.click(await screen.findByRole('option', { name: optionLabel }));
 }
 
-async function pickBooleanYes(adapter: FieldStoryAdapter, canvasElement: HTMLElement) {
+async function clickMantineBooleanSegment(control: HTMLElement, optionLabel: 'Yes' | 'No') {
+    await userEvent.click(within(control).getByText(optionLabel));
+    const value = optionLabel === 'Yes' ? 'true' : 'false';
+    const input = control.querySelector(`input[type="radio"][value="${value}"]`);
+    if (input instanceof HTMLInputElement && !input.checked) {
+        input.click();
+    }
+}
+
+async function pickBooleanYes(
+    adapter: FieldStoryAdapter,
+    canvasElement: HTMLElement,
+    widgetKind: WidgetKind = 'boolean'
+) {
     const canvas = canvasOf(canvasElement);
 
     if (adapter === 'dhis2-ui') {
@@ -107,7 +120,8 @@ async function pickBooleanYes(adapter: FieldStoryAdapter, canvasElement: HTMLEle
     }
 
     if (adapter === 'mantine') {
-        await userEvent.click(canvas.getByRole('radio', { name: 'Yes' }));
+        const control = canvas.getByLabelText(labelPattern(widgetKind));
+        await clickMantineBooleanSegment(control, 'Yes');
         return;
     }
 
@@ -182,8 +196,8 @@ export function fieldStoryPlays(adapter: FieldStoryAdapter) {
         await pickSelectOption(adapter, canvasElement, 'select', 'Option A');
     };
 
-    const booleanYes: PlayFunction<FieldStoryArgs> = async ({ canvasElement }) => {
-        await pickBooleanYes(adapter, canvasElement);
+    const booleanYes: PlayFunction<FieldStoryArgs> = async ({ canvasElement, args }) => {
+        await pickBooleanYes(adapter, canvasElement, args?.widgetKind ?? 'boolean');
     };
 
     const dateInput: PlayFunction<FieldStoryArgs> = async ({ canvasElement }) => {

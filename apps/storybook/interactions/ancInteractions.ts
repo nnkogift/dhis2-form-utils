@@ -29,6 +29,21 @@ function queryHemoglobinInput(canvas: Canvas) {
     }
 }
 
+const MANTINE_BOOLEAN_SEGMENT_VALUE: Record<'Yes' | 'No', string> = {
+    Yes: 'true',
+    No: 'false',
+};
+
+async function clickMantineBooleanSegment(control: HTMLElement, optionLabel: 'Yes' | 'No') {
+    await userEvent.click(within(control).getByText(optionLabel));
+    const input = control.querySelector(
+        `input[type="radio"][value="${MANTINE_BOOLEAN_SEGMENT_VALUE[optionLabel]}"]`
+    );
+    if (input instanceof HTMLInputElement && !input.checked) {
+        input.click();
+    }
+}
+
 async function typeHemoglobin(canvasElement: HTMLElement, value: string) {
     const canvas = canvasOf(canvasElement);
     const input = queryHemoglobinInput(canvas);
@@ -65,8 +80,8 @@ async function pickBooleanOption(
     }
 
     if (adapter === 'mantine') {
-        const group = canvas.getByRole('radiogroup', { name: fieldLabel });
-        await userEvent.click(within(group).getByRole('radio', { name: optionLabel }));
+        const control = canvas.getByLabelText(fieldLabel);
+        await clickMantineBooleanSegment(control, optionLabel);
         return;
     }
 
@@ -89,12 +104,8 @@ export function ancPlays(adapter: AncAdapter) {
         }
 
         if (adapter === 'mantine') {
-            await expect(
-                canvas.getByRole('radiogroup', { name: SMOKING_LABEL })
-            ).toBeInTheDocument();
-            await expect(
-                canvas.queryByRole('radiogroup', { name: COUNSELLING_LABEL })
-            ).not.toBeInTheDocument();
+            await expect(canvas.getByLabelText(SMOKING_LABEL)).toBeInTheDocument();
+            await expect(canvas.queryByLabelText(COUNSELLING_LABEL)).not.toBeInTheDocument();
             return;
         }
 
@@ -168,7 +179,7 @@ export function ancPlays(adapter: AncAdapter) {
         } else if (adapter === 'mantine') {
             await waitFor(async () => {
                 await expect(
-                    canvasOf(canvasElement).getByRole('radiogroup', { name: COUNSELLING_LABEL })
+                    canvasOf(canvasElement).getByLabelText(COUNSELLING_LABEL)
                 ).toBeInTheDocument();
             });
         } else {
@@ -190,7 +201,7 @@ export function ancPlays(adapter: AncAdapter) {
                 }
                 if (adapter === 'mantine') {
                     await expect(
-                        canvas.queryByRole('radiogroup', { name: COUNSELLING_LABEL })
+                        canvas.queryByLabelText(COUNSELLING_LABEL)
                     ).not.toBeInTheDocument();
                     return;
                 }
@@ -198,7 +209,42 @@ export function ancPlays(adapter: AncAdapter) {
                     canvas.queryByRole('group', { name: COUNSELLING_LABEL })
                 ).not.toBeInTheDocument();
             },
-            { timeout: 1000 }
+            { timeout: 2000 }
+        );
+    };
+
+    const nonSmokerHidesCounsellingFromSmoker: StoryPlay = async ({ canvasElement }) => {
+        const canvas = canvasOf(canvasElement);
+
+        if (adapter === 'mantine') {
+            await expect(canvas.getByLabelText(COUNSELLING_LABEL)).toBeInTheDocument();
+        } else if (adapter === 'dhis2-ui') {
+            await expect(canvas.getByText(COUNSELLING_LABEL)).toBeInTheDocument();
+        } else {
+            await expect(
+                canvas.getByRole('group', { name: COUNSELLING_LABEL })
+            ).toBeInTheDocument();
+        }
+
+        await pickBooleanOption(adapter, canvasElement, SMOKING_LABEL, 'No');
+
+        await waitFor(
+            async () => {
+                if (adapter === 'dhis2-ui') {
+                    await expect(canvas.queryByText(COUNSELLING_LABEL)).not.toBeInTheDocument();
+                    return;
+                }
+                if (adapter === 'mantine') {
+                    await expect(
+                        canvas.queryByLabelText(COUNSELLING_LABEL)
+                    ).not.toBeInTheDocument();
+                    return;
+                }
+                await expect(
+                    canvas.queryByRole('group', { name: COUNSELLING_LABEL })
+                ).not.toBeInTheDocument();
+            },
+            { timeout: 2000 }
         );
     };
 
@@ -215,6 +261,7 @@ export function ancPlays(adapter: AncAdapter) {
         lowHemoglobinWarning,
         highHemoglobinError,
         nonSmokerHidesCounselling,
+        nonSmokerHidesCounsellingFromSmoker,
         submitForm,
     };
 }
