@@ -68,8 +68,8 @@ export class FormStore {
 
         this.unsubscribe = form.subscribe({
             formState: { values: true },
-            callback: () => {
-                this.debouncedEvaluate?.({});
+            callback: (values) => {
+                this.debouncedEvaluate?.(values);
             },
         });
     }
