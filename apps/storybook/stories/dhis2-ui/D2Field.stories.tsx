@@ -1,7 +1,6 @@
 import { D2Field } from '@dhis2-form-utils/dhis2-ui';
 import type { WidgetKind } from '@dhis2-form-utils/hooks';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { useFormContext } from 'react-hook-form';
 import { makeFieldPsde } from '../../fixtures/fieldMetadata';
 import {
     fieldStoryArgTypes,
@@ -14,13 +13,7 @@ import { fieldStateFor, withFormDecorators } from '../../decorators/withFormDeco
 const plays = fieldStoryPlays('dhis2-ui');
 
 function FieldStory({ widgetKind }: { widgetKind: WidgetKind }) {
-    const { control } = useFormContext<Record<string, string>>();
-    return (
-        <D2Field
-            field={{ kind: 'dataElement', config: makeFieldPsde(widgetKind) }}
-            control={control}
-        />
-    );
+    return <D2Field field={{ kind: 'dataElement', config: makeFieldPsde(widgetKind) }} />;
 }
 
 const meta: Meta<typeof FieldStory> = {
@@ -60,7 +53,6 @@ export const Hidden: Story = {
 };
 
 function DisabledFieldStory() {
-    const { control } = useFormContext<Record<string, string>>();
     return (
         <D2Field
             field={{
@@ -77,7 +69,6 @@ function DisabledFieldStory() {
                     },
                 },
             }}
-            control={control}
         />
     );
 }

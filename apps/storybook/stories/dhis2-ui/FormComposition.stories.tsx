@@ -3,13 +3,10 @@ import { createEmptyFieldState } from '@dhis2-form-utils/rules';
 import type { FieldStateMap } from '@dhis2-form-utils/rules';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect } from 'storybook/test';
-import { useFormContext } from 'react-hook-form';
 import { makeFieldPsde } from '../../fixtures/fieldMetadata';
 import { withFormDecorators } from '../../decorators/withFormDecorators';
 
 function ThreeFieldForm() {
-    const { control } = useFormContext<Record<string, string>>();
-
     return (
         <div>
             <D2Field
@@ -24,7 +21,6 @@ function ThreeFieldForm() {
                         },
                     }),
                 }}
-                control={control}
             />
             <D2Field
                 field={{
@@ -38,7 +34,6 @@ function ThreeFieldForm() {
                         },
                     }),
                 }}
-                control={control}
             />
             <D2Field
                 field={{
@@ -52,7 +47,6 @@ function ThreeFieldForm() {
                         },
                     }),
                 }}
-                control={control}
             />
         </div>
     );

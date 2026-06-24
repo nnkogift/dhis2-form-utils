@@ -19,7 +19,7 @@ pnpm build
 pnpm test                # All unit tests + Storybook browser tests
 pnpm test:watch          # Unit tests in watch mode
 pnpm --filter rules test              # Test a single package
-pnpm exec vitest run packages/rules   # Also works
+pnpm exec vitest run utils/rules   # Also works
 
 # End-to-end
 pnpm --filter playground e2e
@@ -41,14 +41,16 @@ Three-layer monorepo. Dependency direction is strictly downward — UI adapters 
 ```
 apps/playground              # Vite dev sandbox
 apps/storybook               # Storybook: component docs + browser tests
-packages/
+utils/
   rules/                     # @dhis2-form-utils/rules
-  metadata/                  # @dhis2-form-utils/metadata
   hooks/                     # @dhis2-form-utils/hooks
+packages/
+  metadata/                  # @dhis2-form-utils/metadata
+  config/                    # Shared tsconfig.base.json
+components/
   dhis2-ui/                  # UI adapter — @dhis2/ui
   mantine/                   # UI adapter — Mantine
   mui/                       # UI adapter — Material UI
-  config/                    # Shared tsconfig.base.json
 ```
 
 ### `@dhis2-form-utils/rules`
@@ -67,17 +69,40 @@ Converts DHIS2 metadata into Zod schemas via `buildSchema(metadata)`. Each `valu
 
 ### `@dhis2-form-utils/hooks`
 
-Composes rules, metadata, and `@dhis2/app-runtime` into three headless hooks that all return `{ form, fieldState, isLoading, submit }`:
+Composes rules, metadata, and React Hook Form. **`useEventForm` is the only form hook implemented
+today**; `useTrackerForm` and `useDataEntryForm` are planned.
 
-- `useEventForm` — single tracker event
-- `useTrackerForm` — enrollment + events
-- `useDataEntryForm` — aggregate data sets
+```ts
+const { form, formStore } = useEventForm({
+    options: { programStageId, metadata, effectHandlers? },
+    formOptions?, // RHF options minus resolver
+});
+```
 
-The reactive loop: `buildRuleEngineContext` runs once on metadata load; `buildRuleEngine` rebuilds only when enrollment context changes; `evaluateAndMap` runs on every `form.watch()` emission (pure, synchronous).
+Returns `{ form, formStore }`. The caller must:
+
+1. Fetch metadata (or use exported `programStageQuery` with `useDataQuery`)
+2. Wrap children in `FormStateProvider` + RHF `FormProvider`
+3. Implement submit (e.g. `filterPayload` + `useDataMutation`)
+
+**Companion hooks** (require `FormStateProvider`):
+
+- `useFieldControl` — field components: metadata + RHF + rule state
+- `useFieldState` — per-field rule state (lower-level)
+- `useSectionState` — section visibility
+- `useFormFeedback` — feedback / indicator widgets
+
+**Reactive loop:** `buildRuleEngineContext` runs once per metadata; `FormStore` subscribes to
+`form.subscribe` (debounced 40ms), calls `evaluateFormState` → `evaluateAndMap`, and pushes
+results into `fieldStore` and `nonFieldStore`. No `useEffect` or `form.watch` in the hooks package.
+
+See `docs/form-state-architecture.md` for store internals.
 
 ### UI adapter packages (`dhis2-ui`, `mantine`, `mui`)
 
-Each exports thin field components (Controller wrapper + `useFieldState`) and composed plug-and-play `EventForm` / `TrackerForm` components. The hook contract is identical across all three adapters — only the underlying design system component differs.
+Each exports `D2Field` (dispatcher calling `useFieldControl`), `FormSection`, and `FormFeedback`.
+Widgets receive `WidgetProps = { control: FieldControlReturn }` and use `resolveFieldValidation`.
+Plug-and-play `EventForm` / `TrackerForm` components are planned but not yet exported.
 
 ## Key constraints
 

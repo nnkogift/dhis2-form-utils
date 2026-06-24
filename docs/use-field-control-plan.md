@@ -1,5 +1,21 @@
 # `useFieldControl` — Implementation Plan
 
+> **Status: Implemented.** Canonical API: [`utils/hooks/src/fields/useFieldControl.ts`](../utils/hooks/src/fields/useFieldControl.ts).
+
+## As-built deltas
+
+| Plan                                  | As built                                                  |
+| ------------------------------------- | --------------------------------------------------------- |
+| `packages/hooks/` paths               | `utils/hooks/src/fields/`                                 |
+| Pass `control` into `useFieldControl` | `useController()` via `FormProvider` — no `control` param |
+| `Dhis2Field` / `ui-dhis2` naming      | `D2Field` in `components/dhis2-ui`                        |
+| `ruleState.isMandatory`               | `ruleState.mandatory`                                     |
+| `useEnrollmentForm`                   | Does not exist                                            |
+
+The sections below are retained as historical design reference.
+
+---
+
 ## Context & Scope
 
 This plan covers the headless field control hook, the full `valueType → widget` mapping,
