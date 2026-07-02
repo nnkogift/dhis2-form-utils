@@ -15,7 +15,6 @@ import {
 import { PAGE_SIZE_OPTIONS } from '@/hooks/buildProgramListUrl'
 import type { Pager, Program } from '@/types/program'
 import { formatProgramType } from '@/utils/formatProgramType'
-import classes from './ProgramListTable.module.css'
 
 type ProgramListTableProps = {
     programs: Program[]
@@ -53,7 +52,7 @@ export function ProgramListTable({
     const isLastPage = pageCount > 0 ? page >= pageCount : true
 
     return (
-        <div className={classes.tableContainer}>
+        <div className="overflow-x-auto mt-dp4">
             <DataTable>
                 <DataTableHead>
                     <DataTableRow>
@@ -89,7 +88,7 @@ export function ProgramListTable({
                             return (
                                 <DataTableRow
                                     key={program.id}
-                                    className={classes.clickableRow}
+                                    className="cursor-pointer hover:bg-dhis2-grey-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-dhis2-teal-400 focus-visible:-outline-offset-2"
                                     tabIndex={0}
                                     onClick={activate}
                                     onKeyDown={(event) => {
@@ -107,7 +106,7 @@ export function ProgramListTable({
                                     </DataTableCell>
                                     <DataTableCell
                                         large
-                                        className={classes.idCell}
+                                        className="font-mono text-xs text-dhis2-grey-700"
                                     >
                                         {program.id}
                                     </DataTableCell>
@@ -117,7 +116,7 @@ export function ProgramListTable({
                     ) : (
                         <DataTableRow>
                             <DataTableCell colSpan="4">
-                                <div className={classes.emptyState}>
+                                <div className="py-dp32 px-dp24 text-center text-dhis2-grey-700">
                                     {i18n.t(
                                         'No programs found. Try adjusting your search or filter.'
                                     )}
@@ -130,7 +129,7 @@ export function ProgramListTable({
                     <DataTableFoot>
                         <DataTableRow>
                             <DataTableCell colSpan="4">
-                                <div className={classes.paginationRow}>
+                                <div className="pt-dp16 pb-dp8">
                                     <Pagination
                                         page={page}
                                         pageSize={pageSize}

@@ -7,7 +7,6 @@ import {
     SingleSelectOption,
 } from '@dhis2/ui'
 import type { ProgramTypeFilter } from '@/types/program'
-import classes from './ProgramListFilters.module.css'
 
 const SEARCH_DEBOUNCE_MS = 300
 
@@ -43,8 +42,8 @@ export function ProgramListFilters({
     }, [localSearch, onSearchChange, search])
 
     return (
-        <div className={classes.filters}>
-            <div className={classes.searchField}>
+        <div className="flex flex-wrap gap-dp16 items-end md:gap-dp24">
+            <div className="flex-[1_1_280px] min-w-0">
                 <InputField
                     label={i18n.t('Search programs')}
                     placeholder={i18n.t('Search by name, code, or ID')}
@@ -54,7 +53,7 @@ export function ProgramListFilters({
                     }}
                 />
             </div>
-            <div className={classes.typeField}>
+            <div className="flex-[0_1_240px] min-w-[200px]">
                 <SingleSelectField
                     label={i18n.t('Program type')}
                     selected={type}
@@ -71,7 +70,7 @@ export function ProgramListFilters({
                 </SingleSelectField>
             </div>
             {localSearch ? (
-                <div className={classes.clearButton}>
+                <div className="flex-none pb-dp4">
                     <Button
                         small
                         secondary

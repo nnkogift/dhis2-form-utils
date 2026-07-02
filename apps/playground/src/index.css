@@ -1,1 +1,90 @@
 @import 'tailwindcss';
+
+/*
+ * Mirrors the spacers and colors from @dhis2/ui-constants (v10.15.1) so
+ * components can use Tailwind utilities instead of the runtime
+ * spacer and color custom properties injected by @dhis2/ui.
+ */
+@theme {
+    --spacing-dp4: 4px;
+    --spacing-dp8: 8px;
+    --spacing-dp12: 12px;
+    --spacing-dp16: 16px;
+    --spacing-dp24: 24px;
+    --spacing-dp32: 32px;
+    --spacing-dp48: 48px;
+    --spacing-dp64: 64px;
+    --spacing-dp96: 96px;
+    --spacing-dp128: 128px;
+    --spacing-dp192: 192px;
+    --spacing-dp256: 256px;
+    --spacing-dp384: 384px;
+    --spacing-dp512: 512px;
+    --spacing-dp640: 640px;
+
+    --color-dhis2-blue-900: #093371;
+    --color-dhis2-blue-800: #0d47a1;
+    --color-dhis2-blue-700: #1565c0;
+    --color-dhis2-blue-600: #147cd7;
+    --color-dhis2-blue-500: #2196f3;
+    --color-dhis2-blue-400: #42a5f5;
+    --color-dhis2-blue-300: #90caf9;
+    --color-dhis2-blue-200: #c5e3fc;
+    --color-dhis2-blue-100: #e3f2fd;
+    --color-dhis2-blue-050: #f5fbff;
+
+    --color-dhis2-teal-900: #00332b;
+    --color-dhis2-teal-800: #004d40;
+    --color-dhis2-teal-700: #00695c;
+    --color-dhis2-teal-600: #00796b;
+    --color-dhis2-teal-500: #00897b;
+    --color-dhis2-teal-400: #009688;
+    --color-dhis2-teal-300: #4db6ac;
+    --color-dhis2-teal-200: #b2dfdb;
+    --color-dhis2-teal-100: #e0f2f1;
+    --color-dhis2-teal-050: #f1f9f9;
+
+    --color-dhis2-red-900: #330202;
+    --color-dhis2-red-800: #891515;
+    --color-dhis2-red-700: #b71c1c;
+    --color-dhis2-red-600: #c62828;
+    --color-dhis2-red-500: #d32f2f;
+    --color-dhis2-red-400: #f44336;
+    --color-dhis2-red-300: #e57373;
+    --color-dhis2-red-200: #ffcdd2;
+    --color-dhis2-red-100: #ffe5e8;
+    --color-dhis2-red-050: #fff5f6;
+
+    --color-dhis2-yellow-900: #6f3205;
+    --color-dhis2-yellow-800: #bb460d;
+    --color-dhis2-yellow-700: #e56408;
+    --color-dhis2-yellow-600: #ff8302;
+    --color-dhis2-yellow-500: #ff9302;
+    --color-dhis2-yellow-400: #ffa902;
+    --color-dhis2-yellow-300: #ffc324;
+    --color-dhis2-yellow-200: #ffe082;
+    --color-dhis2-yellow-100: #ffecb3;
+    --color-dhis2-yellow-050: #fff8e1;
+
+    --color-dhis2-green-900: #103713;
+    --color-dhis2-green-800: #1b5e20;
+    --color-dhis2-green-700: #2e7d32;
+    --color-dhis2-green-600: #388e3c;
+    --color-dhis2-green-500: #43a047;
+    --color-dhis2-green-400: #4caf50;
+    --color-dhis2-green-300: #a5d6a7;
+    --color-dhis2-green-200: #c8e6c9;
+    --color-dhis2-green-100: #e8f5e9;
+    --color-dhis2-green-050: #f4fbf4;
+
+    --color-dhis2-grey-900: #212934;
+    --color-dhis2-grey-800: #404b5a;
+    --color-dhis2-grey-700: #4a5768;
+    --color-dhis2-grey-600: #6c7787;
+    --color-dhis2-grey-500: #a0adba;
+    --color-dhis2-grey-400: #d5dde5;
+    --color-dhis2-grey-300: #e8edf2;
+    --color-dhis2-grey-200: #f3f5f7;
+    --color-dhis2-grey-100: #f8f9fa;
+    --color-dhis2-grey-050: #fbfcfd;
+}

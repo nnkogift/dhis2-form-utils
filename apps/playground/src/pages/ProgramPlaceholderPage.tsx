@@ -10,7 +10,6 @@ import {
     type ProgramListParams,
 } from '@/types/program'
 import { formatProgramType } from '@/utils/formatProgramType'
-import classes from './ProgramPlaceholderPage.module.css'
 
 type ProgramQueryResult = {
     program: Program
@@ -50,8 +49,11 @@ export function ProgramPlaceholderPage() {
 
     if (error || !program) {
         return (
-            <div className={classes.page}>
-                <Link className={classes.backLink} to={backUrl}>
+            <div className="flex flex-col gap-dp16 pb-dp24">
+                <Link
+                    className="text-dhis2-teal-700 no-underline font-medium hover:underline"
+                    to={backUrl}
+                >
                     {i18n.t('Back to programs')}
                 </Link>
                 <NoticeBox error title={i18n.t('Error')}>
@@ -71,13 +73,16 @@ export function ProgramPlaceholderPage() {
         : i18n.t('Event data entry form — coming soon')
 
     return (
-        <div className={classes.page}>
-            <Link className={classes.backLink} to={backUrl}>
+        <div className="flex flex-col gap-dp16 pb-dp24">
+            <Link
+                className="text-dhis2-teal-700 no-underline font-medium hover:underline"
+                to={backUrl}
+            >
                 {i18n.t('Back to programs')}
             </Link>
             <h2>{program.displayName}</h2>
-            <div className={classes.meta}>
-                <span className={classes.code}>{program.code}</span>
+            <div className="flex flex-wrap gap-dp8 items-center text-dhis2-grey-700">
+                <span className="font-mono">{program.code}</span>
                 <Tag>{formatProgramType(program.programType)}</Tag>
             </div>
             <NoticeBox title={placeholderTitle}>{placeholderMessage}</NoticeBox>

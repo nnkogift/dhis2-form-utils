@@ -7,7 +7,6 @@ import { ProgramListTable } from '@/components/programs/ProgramListTable'
 import { useProgramListParams } from '@/hooks/useProgramListParams'
 import { usePrograms } from '@/hooks/usePrograms'
 import type { Program, ProgramListParams } from '@/types/program'
-import classes from './ProgramListPage.module.css'
 
 export function ProgramListPage() {
     const navigate = useNavigate()
@@ -45,12 +44,12 @@ export function ProgramListPage() {
     }
 
     return (
-        <div className={classes.page}>
-            <header className={classes.pageHeader}>
-                <h2 className={classes.pageTitle}>{i18n.t('Programs')}</h2>
+        <div className="flex flex-col gap-dp24 pb-dp32 md:gap-dp32">
+            <header>
+                <h2 className="m-0">{i18n.t('Programs')}</h2>
             </header>
             <section
-                className={classes.toolbar}
+                className="flex flex-col gap-dp8"
                 aria-label={i18n.t('Program filters')}
             >
                 <ProgramListFilters
@@ -60,7 +59,7 @@ export function ProgramListPage() {
                     onTypeChange={setType}
                 />
             </section>
-            <section className={classes.content}>
+            <section className="flex flex-col gap-dp16">
                 {error ? (
                     <NoticeBox error title={i18n.t('Error')}>
                         {i18n.t('Error loading programs')}
