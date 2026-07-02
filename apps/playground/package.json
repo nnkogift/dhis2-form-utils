@@ -1,6 +1,6 @@
 {
     "name": "playground",
-    "version": "1.0.0",
+    "version": "0.0.0",
     "description": "",
     "license": "BSD-3-Clause",
     "private": true,
@@ -25,11 +25,13 @@
         "@dhis2/config-eslint": "^0.2.2",
         "@dhis2/config-prettier": "^0.2.2",
         "@eslint/compat": "^2.1.0",
+        "@tailwindcss/vite": "^4.3.2",
         "@types/jest": "^30.0.0",
         "@types/react": "^19.2.7",
         "@types/react-dom": "^19.2.3",
         "eslint": "^10.4.0",
         "prettier": "^3.8.3",
+        "tailwindcss": "^4.3.2",
         "typescript": "^5.9.3",
         "vite": "^8.0.16"
     }

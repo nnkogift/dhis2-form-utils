@@ -1,3 +1,4 @@
+import '@/index.css'
 import React from 'react'
 import { HashRouter, Route, Routes } from 'react-router'
 import AboutPage from '@/components/About'
