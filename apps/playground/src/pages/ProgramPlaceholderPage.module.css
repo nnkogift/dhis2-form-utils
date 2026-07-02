@@ -1,0 +1,28 @@
+.page {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacers-dp16);
+    padding-block-end: var(--spacers-dp24);
+}
+
+.backLink {
+    color: var(--colors-teal700);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.backLink:hover {
+    text-decoration: underline;
+}
+
+.meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacers-dp8);
+    align-items: center;
+    color: var(--colors-grey700);
+}
+
+.code {
+    font-family: monospace;
+}

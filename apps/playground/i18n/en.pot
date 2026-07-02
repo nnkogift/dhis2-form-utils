@@ -5,38 +5,77 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-05-22T23:25:01.034Z\n"
-"PO-Revision-Date: 2026-05-22T23:25:01.035Z\n"
+"POT-Creation-Date: 2026-07-01T08:19:11.170Z\n"
+"PO-Revision-Date: 2026-07-01T08:19:11.170Z\n"
 
-msgid "ERROR"
-msgstr "ERROR"
+msgid "Search programs"
+msgstr "Search programs"
 
-msgid "Loading..."
-msgstr "Loading..."
+msgid "Search by name, code, or ID"
+msgstr "Search by name, code, or ID"
 
-msgid "Hello {{name}}"
-msgstr "Hello {{name}}"
+msgid "Program type"
+msgstr "Program type"
 
-msgid "Error"
-msgstr "Error"
+msgid "All"
+msgstr "All"
 
-msgid "Error loading the data elements"
-msgstr "Error loading the data elements"
+msgid "Registration"
+msgstr "Registration"
 
-msgid "ID"
-msgstr "ID"
+msgid "Event"
+msgstr "Event"
+
+msgid "Clear search"
+msgstr "Clear search"
 
 msgid "Name"
 msgstr "Name"
 
-msgid "Domain"
-msgstr "Domain"
+msgid "Code"
+msgstr "Code"
 
-msgid "Value Type"
-msgstr "Value Type"
+msgid "Type"
+msgstr "Type"
 
-msgid "Created by"
-msgstr "Created by"
+msgid "ID"
+msgstr "ID"
+
+msgid "No programs found. Try adjusting your search or filter."
+msgstr "No programs found. Try adjusting your search or filter."
+
+msgid "Programs"
+msgstr "Programs"
+
+msgid "Program filters"
+msgstr "Program filters"
+
+msgid "Error"
+msgstr "Error"
+
+msgid "Error loading programs"
+msgstr "Error loading programs"
+
+msgid "Back to programs"
+msgstr "Back to programs"
+
+msgid "Program not found"
+msgstr "Program not found"
+
+msgid "Registration data entry form"
+msgstr "Registration data entry form"
+
+msgid "Event data entry form"
+msgstr "Event data entry form"
+
+msgid "Registration data entry form — coming soon"
+msgstr "Registration data entry form — coming soon"
+
+msgid "Event data entry form — coming soon"
+msgstr "Event data entry form — coming soon"
+
+msgid "Open form"
+msgstr "Open form"
 
 msgctxt "Application title"
 msgid "__MANIFEST_APP_TITLE"

@@ -1,0 +1,27 @@
+.filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacers-dp16);
+    align-items: flex-end;
+}
+
+.searchField {
+    flex: 1 1 280px;
+    min-width: 0;
+}
+
+.typeField {
+    flex: 0 1 240px;
+    min-width: 200px;
+}
+
+.clearButton {
+    flex: 0 0 auto;
+    padding-block-end: var(--spacers-dp4);
+}
+
+@media (min-width: 768px) {
+    .filters {
+        gap: var(--spacers-dp24);
+    }
+}

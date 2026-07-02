@@ -1,9 +1,9 @@
 import React from 'react'
 import { HashRouter, Route, Routes } from 'react-router'
-import App from '@/App'
 import classes from '@/App.module.css'
 import AboutPage from '@/components/About'
-import AppMenu from '@/components/AppMenu'
+import { ProgramListPage } from '@/pages/ProgramListPage'
+import { ProgramPlaceholderPage } from '@/pages/ProgramPlaceholderPage'
 
 const AppWrapper = () => {
     return (
@@ -13,12 +13,13 @@ const AppWrapper = () => {
         otherwise it will interfer with the server-side routing
         */}
             <HashRouter>
-                <div className={classes.sidebar}>
-                    <AppMenu />
-                </div>
                 <div className={classes.main}>
                     <Routes>
-                        <Route path="/" element={<App />} />
+                        <Route path="/" element={<ProgramListPage />} />
+                        <Route
+                            path="/programs/:programId"
+                            element={<ProgramPlaceholderPage />}
+                        />
                         <Route path="/about" element={<AboutPage />} />
                     </Routes>
                 </div>
