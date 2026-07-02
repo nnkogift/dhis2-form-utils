@@ -1,7 +1,6 @@
 import { D2Field } from '@dhis2-form-utils/mui';
 import type { WidgetKind } from '@dhis2-form-utils/hooks';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { useFormContext } from 'react-hook-form';
 import { makeFieldPsde } from '../../fixtures/fieldMetadata';
 import {
     fieldStoryArgTypes,
@@ -13,13 +12,7 @@ import { fieldStoryPlays } from '../../interactions/fieldStoryInteractions';
 const plays = fieldStoryPlays('mui');
 
 function FieldStory({ widgetKind }: { widgetKind: WidgetKind }) {
-    const { control } = useFormContext<Record<string, string>>();
-    return (
-        <D2Field
-            field={{ kind: 'dataElement', config: makeFieldPsde(widgetKind) }}
-            control={control}
-        />
-    );
+    return <D2Field field={{ kind: 'dataElement', config: makeFieldPsde(widgetKind) }} />;
 }
 
 const meta: Meta<typeof FieldStory> = {

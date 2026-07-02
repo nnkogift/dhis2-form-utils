@@ -27,14 +27,16 @@ dhis2-form-utils/
 ├── apps/
 │   ├── playground/              # Vite + React dev sandbox
 │   └── storybook/               # Storybook — component docs + browser tests
-├── packages/
+├── utils/
 │   ├── rules/                   # @dhis2-form-utils/rules
+│   └── hooks/                   # @dhis2-form-utils/hooks
+├── packages/
 │   ├── metadata/                # @dhis2-form-utils/metadata
-│   ├── hooks/                   # @dhis2-form-utils/hooks
+│   └── config/                  # Shared tsconfig + ESLint config
+├── components/
 │   ├── dhis2-ui/                # @dhis2-form-utils/dhis2-ui
 │   ├── mantine/                 # @dhis2-form-utils/mantine
-│   ├── mui/                     # @dhis2-form-utils/mui
-│   └── config/                  # Shared tsconfig + ESLint config
+│   └── mui/                     # @dhis2-form-utils/mui
 ├── pnpm-workspace.yaml
 └── eslint.config.js
 ```
@@ -273,14 +275,14 @@ any DHIS2 application. It provides:
   beneath it
 
 Because `@dhis2/app-runtime`'s `Provider` owns the connection configuration, `dhis2-form-utils`
-needs no equivalent setup of its own. The hooks package calls `useDataQuery` and `useDataMutation`
-internally to fetch program metadata and submit form payloads, but the transport layer is entirely
-owned by the runtime.
+needs no equivalent setup of its own. The hooks package exports a `programStageQuery` helper for
+fetching metadata via `useDataQuery`; the consuming application is responsible for fetching
+metadata and posting submissions via `useDataMutation`.
 
 ### Query pattern inside hooks
 
 ```ts
-// packages/hooks/src/queries/programStage.query.ts
+// utils/hooks/src/queries/programStage.query.ts
 import type { Query } from '@dhis2/data-engine';
 
 export const programStageQuery = (id: string): Query => ({
@@ -307,133 +309,165 @@ before any hook from this library is called.
 
 ## Layer 2 — Headless Hooks (`@dhis2-form-utils/hooks`)
 
-This package composes `@dhis2-form-utils/rules`, `@dhis2-form-utils/metadata`, and
-`@dhis2/app-runtime` into hooks that manage the full lifecycle of a DHIS2 form: metadata fetching,
-context and engine construction, schema generation, form initialisation, reactive rule evaluation,
-and submission.
+This package composes `@dhis2-form-utils/rules`, `@dhis2-form-utils/metadata`, and React Hook Form
+into hooks that manage schema generation, form initialisation, and reactive rule evaluation.
 
-### Primary hooks
+Only **`useEventForm`** is implemented today. `useTrackerForm` and `useDataEntryForm` are planned.
 
-**`useEventForm(options)`**
+For the full store design (external stores, debounced evaluation, selective re-renders), see
+[form-state-architecture.md](./form-state-architecture.md).
 
-For single-event data entry. Fetches a program stage, builds the rule engine context once, then
-re-evaluates rules reactively on every field change via `form.watch()`.
+### Primary hook
 
-```ts
-const {
-		form,          // React Hook Form UseFormReturn
-		fieldState,    // FieldStateMap — hidden, mandatory, warning, error, assignedValue per field
-		isLoading,
-		submit,
-} = useEventForm({
-		programStageId: 'abc123',
-		existingValues? : Record<string, unknown>,
-		effectHandlers? : Partial<Record<string, EffectHandler>>,  // custom action overrides
-})
-```
+**`useEventForm({ options, formOptions? })`**
 
-**`useTrackerForm(options)`**
-
-For tracker programs — enrollment plus one or more events. Passes the full enrollment context
-(enrollment attributes, previous events) into `buildRuleEngine` so that rules that reference data
-from earlier events evaluate correctly.
-
-**`useDataEntryForm(options)`**
-
-For aggregate data entry. Accepts a data set ID and period, builds a section-aware schema, and
-handles the `dataValueSets` submission format.
-
-### Rule reactivity inside a hook
+For single-event data entry. Accepts pre-fetched program stage metadata, builds the rule engine
+context and engine synchronously, and wires a `FormStore` that evaluates rules on value changes.
 
 ```ts
-// Simplified illustration of the reactive loop inside useEventForm
-const ruleEngineContext = useMemo(
-    () => (data ? buildRuleEngineContext(data.programStage) : null),
-    [data]
-);
-
-const ruleEngine = useMemo(
-    () => (ruleEngineContext ? buildRuleEngine(ruleEngineContext) : null),
-    [ruleEngineContext]
-);
-
-const [fieldState, dispatch] = useReducer(fieldStateReducer, {});
-
-useEffect(() => {
-    const subscription = form.watch((currentValues) => {
-        if (!ruleEngine) return;
-        const nextState = evaluateAndMap(ruleEngine, currentValues, effectHandlers);
-        dispatch({ type: 'SET', payload: nextState });
-    });
-    return () => subscription.unsubscribe();
-}, [form, ruleEngine, effectHandlers]);
+const { form, formStore } = useEventForm({
+    options: {
+        programStageId: 'abc123',
+        metadata: programStageMetadata,
+        effectHandlers?: EffectHandlersMap,
+    },
+    formOptions?: {
+        defaultValues?: Record<string, unknown>,
+        // any other RHF useForm options except resolver
+    },
+});
 ```
 
-The rule engine context is built once when metadata loads. The engine itself is rebuilt only when
-enrollment context changes. Expression evaluation happens on every `watch` emission but is a pure
-synchronous operation — it does not trigger additional renders beyond the `dispatch` that follows.
+| Return property | Type            | Purpose                                    |
+| --------------- | --------------- | ------------------------------------------ |
+| `form`          | `UseFormReturn` | React Hook Form instance with Zod resolver |
+| `formStore`     | `FormStore`     | Owns rule evaluation and external stores   |
+
+Wrap children in `FormStateProvider` and RHF `FormProvider` before rendering fields:
+
+```tsx
+<FormStateProvider formStore={formStore} form={form}>
+    <FormProvider {...form}>
+        {/* D2Field or custom components using useFieldControl */}
+    </FormProvider>
+</FormStateProvider>
+```
+
+**Planned hooks:**
+
+- **`useTrackerForm`** — enrollment plus events; passes enrollment context into `buildRuleEngine`
+- **`useDataEntryForm`** — aggregate data sets; section-aware schema and `dataValueSets` submission
+
+### Rule reactivity inside `useEventForm`
+
+Rule evaluation happens outside React's lifecycle in `FormStore`:
+
+```ts
+// utils/hooks/src/formStore.ts — simplified
+class FormStore {
+    readonly fieldStore = createFieldStateStore();
+    readonly nonFieldStore = createNonFieldStateStore();
+
+    init(form, engine, effectHandlersRef) {
+        const evaluate = (values) => {
+            const next = evaluateFormState(engine, values, effectHandlersRef.current);
+            this.applyAssignments(next.fieldMap); // ASSIGN via form.setValue
+            this.fieldStore.setState(next.fieldMap);
+            this.nonFieldStore.setState(next.sectionMap, next.feedback);
+        };
+
+        this.debouncedEvaluate = debounce(() => evaluate(form.getValues()), 40);
+        evaluate(form.getValues());
+
+        form.subscribe({
+            formState: { values: true },
+            callback: () => this.debouncedEvaluate(),
+        });
+    }
+}
+```
+
+The rule engine context is built once per metadata object. Evaluation is debounced (40ms) and
+pushes results into per-field and non-field external stores. Field components subscribe via
+`useFieldControl` or `useFieldState` and only re-render when their own state changes.
 
 ### Submission
 
-At submission time, the hook calls `filterPayload` from `@dhis2-form-utils/rules` to strip hidden
-fields and substitute assigned values before passing the clean payload to `useDataMutation`.
+Submission is the caller's responsibility. Use `filterPayload` from `@dhis2-form-utils/rules` to
+strip hidden fields and substitute assigned values, then post via `useDataMutation`:
+
+```ts
+const onSubmit = form.handleSubmit((values) => {
+    const payload = filterPayload(values, formStore.fieldStore.getSnapshot());
+    // mutate(payload)
+});
+```
+
+Built-in `submit` on the hook is planned for a future release.
 
 ---
 
 ## Layer 1 — UI Adapters
 
-Each adapter package exports two categories of components.
+Each adapter package exports field dispatchers, section wrappers, and feedback panels.
 
 ### Field components
 
-Thin wrappers connecting a design system's native input to React Hook Form's `Controller`. They
-accept a `name` prop, read from the nearest form context, and apply `fieldState`:
+`D2Field` is a thin dispatcher that calls `useFieldControl` and routes to the correct widget by
+`valueType`. Widgets receive a single `control: FieldControlReturn` prop:
 
 ```tsx
-// packages/dhis2-ui/src/fields/TextInput.tsx
-import { Controller, useFormContext } from 'react-hook-form';
-import { Input } from '@dhis2/ui';
-import { useFieldState } from '@dhis2-form-utils/hooks';
+// components/dhis2-ui/src/fields/D2Field.tsx
+import { useFieldControl } from '@dhis2-form-utils/hooks';
 
-type Props = { name: string; label: string };
+export function D2Field({ field }: { field: FieldControlInput }) {
+    const control = useFieldControl(field);
+    if (control.isHidden) return null;
 
-export function TextInput({ name, label }: Props) {
-    const { control } = useFormContext();
-    const state = useFieldState(name);
+    switch (control.widgetKind) {
+        case 'text':
+            return <D2TextField control={control} />;
+        // ... other widget kinds
+    }
+}
+```
 
-    if (state.hidden) return null;
+```tsx
+// components/dhis2-ui/src/fields/widgets/TextField.tsx
+import { resolveFieldValidation, type WidgetProps } from '@dhis2-form-utils/hooks';
+
+export function D2TextField({ control }: WidgetProps) {
+    const { fieldConfig, field, isMandatory, isDisabled } = control;
+    const { validationText, hasError, hasWarning } = resolveFieldValidation(control);
 
     return (
-        <Controller
-            name={name}
-            control={control}
-            render={({ field, fieldState: rhfState }) => (
-                <Input
-                    {...field}
-                    label={label}
-                    required={state.mandatory}
-                    warning={state.warning}
-                    error={rhfState.error?.message ?? state.error}
-                />
-            )}
+        <InputField
+            name={field.name}
+            value={field.value as string}
+            label={fieldConfig.label}
+            required={isMandatory}
+            disabled={isDisabled}
+            warning={hasWarning}
+            error={hasError}
+            validationText={validationText}
+            onChange={({ value }) => field.onChange(value ?? '')}
+            onBlur={field.onBlur}
         />
     );
 }
 ```
 
-The same pattern is implemented in `@dhis2-form-utils/mantine` and `@dhis2-form-utils/mui`. The
-hook contract is identical across all three adapters.
+The same `D2Field` + `useFieldControl` pattern is implemented in `@dhis2-form-utils/mantine` and
+`@dhis2-form-utils/mui`. Only the design-system widget implementations differ.
 
-### Plug-and-play form components
+`useFieldState(fieldId)` is exported for advanced use cases but is not called directly by adapter
+field components — `useFieldControl` composes it internally.
 
-Composed forms that wire a hook to a full rendered field set:
+### Composed form components
 
-```tsx
-<EventForm programStageId="abc123" onSuccess={(event) => console.log('submitted', event)} />
-```
-
-Internally `EventForm` calls `useEventForm`, iterates the metadata's data elements in section
-order, and renders the appropriate field component for each value type.
+Plug-and-play `EventForm` and `TrackerForm` components that wire a hook to a full rendered field
+set are planned but not yet exported. Today, compose `useEventForm` + `FormStateProvider` +
+`D2Field` as shown in the [README](../README.md).
 
 ---
 

@@ -23,4 +23,6 @@ export type { PartitionedEffects } from './partitionEffects';
 export { buildSectionMap, buildFeedbackMap, feedbackItemKey } from './sectionFeedback';
 export type { EnrollmentContext, RuleEngineContext, BuiltRuleEngine } from './context';
 export { buildRuleEngineContext, buildRuleEngine } from './context';
+export type { EnrollmentRuleEngineContext } from './enrollmentContext';
+export { buildEnrollmentRuleEngineContext, buildEnrollmentRuleEngine } from './enrollmentContext';
 export { filterPayload } from './filterPayload';

@@ -10,4 +10,10 @@ export default defineConfig([
     {
         extends: [config],
     },
+    {
+        rules: {
+            // eslint-plugin-import/order crashes on ESLint 10 for @dhis2 imports
+            'import/order': 'off',
+        },
+    },
 ])

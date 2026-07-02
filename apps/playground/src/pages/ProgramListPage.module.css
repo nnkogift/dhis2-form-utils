@@ -1,0 +1,28 @@
+.page {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacers-dp24);
+    padding-block-end: var(--spacers-dp32);
+}
+
+.pageTitle {
+    margin: 0;
+}
+
+.toolbar {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacers-dp8);
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacers-dp16);
+}
+
+@media (min-width: 768px) {
+    .page {
+        gap: var(--spacers-dp32);
+    }
+}

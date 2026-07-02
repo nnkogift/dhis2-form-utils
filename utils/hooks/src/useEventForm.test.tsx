@@ -14,7 +14,7 @@ const baseMetadata: ProgramStageMetadata = {
 };
 
 describe('useEventForm', () => {
-    it('returns form, stores, and submit', () => {
+    it('returns form and formStore', () => {
         const { result } = renderHook(() =>
             useEventForm({
                 options: {

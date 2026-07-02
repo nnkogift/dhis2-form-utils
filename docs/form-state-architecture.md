@@ -2,7 +2,7 @@
 
 **Package:** `@dhis2-form-utils/hooks`  
 **Primary file:** `useEventForm.ts`  
-**Status:** Performance refactor in progress
+**Status:** Implemented (Phase 1)
 
 ---
 
@@ -299,7 +299,7 @@ class FieldStateStore {
 }
 ```
 
-Field components subscribe via `useFieldState(fieldId)` which uses `useSyncExternalStore` with a per-field selector. Only the field whose state changed re-renders.
+Field components subscribe via `useFieldControl`, which internally calls `useFieldState(fieldId)` with `useSyncExternalStore` and a per-field selector. Only the field whose state changed re-renders.
 
 ### Layer 4: NonFieldStateStore
 
@@ -376,7 +376,7 @@ type FormStateContextValue = {
 ## Consumer hooks
 
 ```ts
-// useFieldState.ts — field components
+// FormStateContext.tsx — useFieldState
 function useFieldState(fieldId: string): FieldState | undefined {
     const { fieldStore } = useFormStateContext();
     return useSyncExternalStore(
@@ -496,22 +496,25 @@ function stableMap<T extends Record<string, object>>(prev: T, next: T): T {
 ## File structure
 
 ```
-packages/hooks/src/
+utils/hooks/src/
 ├── formStore.ts              # FormStore class — owns bridge init, holds both stores
-├── fieldStateStore.ts        # FieldStateStore — per-field listener registry
-├── nonFieldStateStore.ts     # NonFieldStateStore — section + feedback listener registry
-├── FormStateContext.tsx       # Context: { form, fieldStore, nonFieldStore }
-├── useFieldState.ts           # Per-field useSyncExternalStore hook
-├── useSectionState.ts         # Per-section useSyncExternalStore hook
-├── useFormFeedback.ts         # Feedback map useSyncExternalStore hook
-├── useEventForm.ts            # Public hook — creates FormStore, exposes submit/isLoading
-├── evaluateAndMap.ts          # Rule evaluation with referential stability
-└── partitionEffects.ts        # Pure function: RuleEffect[] → three buckets
+├── store/
+│   ├── fieldStateStore.ts    # FieldStateStore — per-field listener registry
+│   └── nonFieldStateStore.ts # NonFieldStateStore — section + feedback listener registry
+├── FormStateContext.tsx      # Provider + useFieldState, useSectionState, useFormFeedback
+├── useEventForm.ts           # Public hook — creates FormStore, returns { form, formStore }
+├── evaluateFormState.ts      # Thin wrapper over evaluateAndMap
+├── fields/
+│   └── useFieldControl.ts    # Field components — metadata + RHF + useFieldState
+└── stableMap.ts              # Referential stability helper (exported, unused in eval path)
 ```
+
+Referential stability for selective notification is enforced in the **stores**
+(`fieldStateStore.setState`, `nonFieldStateStore.setState`), not in `evaluateAndMap` itself.
 
 UI adapter packages:
 
-- Field components call `useFieldState(fieldId)`
+- `D2Field` calls `useFieldControl` (which calls `useFieldState` internally)
 - Section wrapper components call `useSectionState(sectionId)`
 - Feedback panel components call `useFormFeedback()`
 
@@ -557,25 +560,24 @@ With this index, the bridge passes only changed field IDs to `evaluateAndMap`, w
 
 ## Completion checklist
 
-- [ ] `formStore.ts` — `FormStore` class: owns bridge init, constructs both stores, wires `form.subscribe` outside React
-- [ ] `fieldStateStore.ts` — per-field listener registry with selective notification
-- [ ] `nonFieldStateStore.ts` — per-section + global feedback listener registry
-- [ ] `FormStateContext.tsx` — stable `{ form, fieldStore, nonFieldStore }`, never updates after mount
-- [ ] `useFieldState.ts` — `useSyncExternalStore` + per-field selector
-- [ ] `useSectionState.ts` — `useSyncExternalStore` + per-section selector
-- [ ] `useFormFeedback.ts` — `useSyncExternalStore` for feedback map
-- [ ] `partitionEffects.ts` — pure function routing `RuleEffect[]` to three buckets
-- [ ] `evaluateAndMap.ts` — referential stability across all three output maps
-- [ ] `useEventForm.ts` — creates `FormStore`, exposes public API, no `useEffect`
-- [ ] UI adapter field components — call `useFieldState(fieldId)`
-- [ ] UI adapter section components — call `useSectionState(sectionId)`
-- [ ] UI adapter feedback panels — call `useFormFeedback()`
-- [ ] `shouldValidate: false` on all rule-driven `setValue` calls
-- [ ] No `form.watch` calls remain anywhere in the package
-- [ ] No `useEffect` calls remain anywhere in the package
+- [x] `formStore.ts` — `FormStore` class: owns bridge init, constructs both stores, wires `form.subscribe` outside React
+- [x] `fieldStateStore.ts` — per-field listener registry with selective notification
+- [x] `nonFieldStateStore.ts` — per-section + global feedback listener registry
+- [x] `FormStateContext.tsx` — stable `{ form, fieldStore, nonFieldStore }`, never updates after mount
+- [x] `useFieldState` in `FormStateContext.tsx` — `useSyncExternalStore` + per-field selector
+- [x] `useSectionState` in `FormStateContext.tsx` — `useSyncExternalStore` + per-section selector
+- [x] `useFormFeedback` in `FormStateContext.tsx` — `useSyncExternalStore` for feedback map
+- [x] `partitionEffects.ts` in rules package — pure function routing `RuleEffect[]` to three buckets
+- [x] `useEventForm.ts` — creates `FormStore`, exposes `{ form, formStore }`, no `useEffect`
+- [x] `useFieldControl` — field components call this (composes `useFieldState` + `useController`)
+- [x] UI adapter section components — call `useSectionState(sectionId)`
+- [x] UI adapter feedback panels — call `useFormFeedback()`
+- [x] `shouldValidate: false` on all rule-driven `setValue` calls
+- [x] No `form.watch` calls remain anywhere in the package
+- [x] No `useEffect` calls remain anywhere in the package
 - [ ] React DevTools Profiler confirms: typing in Field A does not trigger re-renders in Fields B–Z, section wrappers, or feedback panels
-- [ ] Vitest: per-field selective notification fires only for changed fields
-- [ ] Vitest: per-section selective notification fires only for changed sections
-- [ ] Vitest: feedback listeners fire only when feedback map changes
-- [ ] Vitest: `setValue` feedback loop does not occur
+- [x] Vitest: per-field selective notification fires only for changed fields
+- [x] Vitest: per-section selective notification fires only for changed sections
+- [x] Vitest: feedback listeners fire only when feedback map changes
+- [x] Vitest: `setValue` feedback loop does not occur
 - [ ] Vitest: `effectHandlers` ref captures latest handlers without subscription churn

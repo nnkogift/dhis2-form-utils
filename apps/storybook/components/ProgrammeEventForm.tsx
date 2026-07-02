@@ -1,12 +1,10 @@
 import type { FieldControlInput } from '@dhis2-form-utils/hooks';
-import type { Control } from 'react-hook-form';
 import { useFormContext } from 'react-hook-form';
 import type { ComponentType } from 'react';
 import { useEventFormStory } from '../decorators/withEventForm';
 
 export type EventFormFieldProps = {
-    field: Omit<FieldControlInput, 'control'>;
-    control: Control<Record<string, string>>;
+    field: FieldControlInput;
 };
 
 type ProgrammeEventFormProps = {
@@ -15,27 +13,22 @@ type ProgrammeEventFormProps = {
 };
 
 export function ProgrammeEventForm({ Field, submitLabel = 'Save' }: ProgrammeEventFormProps) {
-    const { control } = useFormContext<Record<string, string>>();
-    const { submit, metadata } = useEventFormStory();
+    const { handleSubmit } = useFormContext<Record<string, string>>();
+    const { metadata } = useEventFormStory();
 
     return (
         <form
             onSubmit={(event) => {
-                event.preventDefault();
-                submit();
+                void handleSubmit((values) => {
+                    void values;
+                })(event);
             }}
         >
             {(metadata.programStageDataElements ?? []).map((psde) => {
                 const fieldId = psde.dataElement?.id;
                 if (!fieldId) return null;
 
-                return (
-                    <Field
-                        key={fieldId}
-                        field={{ kind: 'dataElement', config: psde }}
-                        control={control}
-                    />
-                );
+                return <Field key={fieldId} field={{ kind: 'dataElement', config: psde }} />;
             })}
             <button type="submit" style={{ marginTop: 16 }}>
                 {submitLabel}

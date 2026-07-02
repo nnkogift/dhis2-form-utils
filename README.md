@@ -91,43 +91,89 @@ function Root() {
 
 ## Quick start
 
-### Plug-and-play form
+### Composed form with UI adapter
+
+Fetch program stage metadata in your app (or use the exported `programStageQuery` helper with
+`useDataQuery`), then wire the hook, providers, and field components:
 
 ```tsx
-import { EventForm } from '@dhis2-form-utils/dhis2-ui';
-
-function DataEntryPage() {
-    return (
-        <EventForm programStageId="abc123" onSuccess={(event) => console.log('submitted', event)} />
-    );
-}
-```
-
-The component fetches its own metadata, builds the rule engine context, evaluates program rules on
-every field change, and handles submission — all without additional configuration.
-
-### Headless hook
-
-```tsx
-import {
-    FormStateProvider,
-    useEventForm,
-    useFieldState,
-    useSectionState,
-    useFormFeedback,
-} from '@dhis2-form-utils/hooks';
+import { FormStateProvider, useEventForm } from '@dhis2-form-utils/hooks';
+import { D2Field } from '@dhis2-form-utils/dhis2-ui';
+import { filterPayload } from '@dhis2-form-utils/rules';
+import type { ProgramStageMetadata } from '@dhis2-form-utils/metadata';
 import { FormProvider } from 'react-hook-form';
 
-function CustomForm() {
-    const { form, formStore, submit } = useEventForm({
-        programStageId: 'abc123',
-        metadata: myProgramStage,
+function EventEntryForm({ metadata }: { metadata: ProgramStageMetadata }) {
+    const { form, formStore } = useEventForm({
+        options: {
+            programStageId: metadata.id,
+            metadata,
+        },
+        formOptions: {
+            defaultValues: {
+                /* fieldUid: value */
+            },
+        },
+    });
+
+    const onSubmit = form.handleSubmit((values) => {
+        const payload = filterPayload(values, formStore.fieldStore.getSnapshot());
+        // post payload via useDataMutation in your app
+        void payload;
     });
 
     return (
         <FormStateProvider formStore={formStore} form={form}>
             <FormProvider {...form}>
-                <form onSubmit={submit}>{/* field components using useFieldState */}</form>
+                <form onSubmit={onSubmit}>
+                    {(metadata.programStageDataElements ?? []).map((psde) => (
+                        <D2Field
+                            key={psde.dataElement.id}
+                            field={{ kind: 'dataElement', config: psde }}
+                        />
+                    ))}
+                    <button type="submit">Save</button>
+                </form>
+            </FormProvider>
+        </FormStateProvider>
+    );
+}
+```
+
+`D2Field` calls `useFieldControl` internally — it merges DHIS2 metadata, React Hook Form state,
+and per-field rule-engine state into a single widget contract. The same pattern works with
+`@dhis2-form-utils/mantine` and `@dhis2-form-utils/mui`.
+
+### Headless hook
+
+The same hook works without a UI adapter. Use `useFieldControl` in custom field components, or
+`useFieldState` / `useSectionState` / `useFormFeedback` for lower-level access to rule state:
+
+```tsx
+import {
+    FormStateProvider,
+    useEventForm,
+    useFieldControl,
+    useSectionState,
+    useFormFeedback,
+} from '@dhis2-form-utils/hooks';
+import { FormProvider } from 'react-hook-form';
+
+function CustomField({ psde }) {
+    const control = useFieldControl({ kind: 'dataElement', config: psde });
+    if (control.isHidden) return null;
+    // render your own input using control.field, control.isMandatory, etc.
+}
+
+function CustomForm({ metadata }) {
+    const { form, formStore } = useEventForm({
+        options: { programStageId: metadata.id, metadata },
+    });
+
+    return (
+        <FormStateProvider formStore={formStore} form={form}>
+            <FormProvider {...form}>
+                <form onSubmit={form.handleSubmit(() => {})}>{/* CustomField or D2Field */}</form>
             </FormProvider>
         </FormStateProvider>
     );
@@ -137,32 +183,22 @@ function CustomForm() {
 ### Custom rule action handlers
 
 Some DHIS2 implementations use standard action types like `DISPLAYTEXT` or `ASSIGN` in
-non-standard ways — for example, passing machine-readable instructions to a custom widget. The
-hooks accept an `effectHandlers` map to override or extend how specific action types are
-interpreted after the standard evaluation pass:
+non-standard ways — for example, passing machine-readable instructions to a custom widget. Pass an
+`effectHandlers` map in `options` to handle specific action types after the standard evaluation
+pass:
 
 ```tsx
-const { form, formStore, submit } = useEventForm({
-    programStageId: 'abc123',
-    metadata: myProgramStage,
-    effectHandlers: {
-        SENDMESSAGE: (effect) => {
-            // custom side-effect handling
-            void effect;
+const { form, formStore } = useEventForm({
+    options: {
+        programStageId: metadata.id,
+        metadata,
+        effectHandlers: {
+            SENDMESSAGE: (effect) => {
+                // custom side-effect handling
+                void effect;
+            },
         },
     },
-});
-```
-
-### Pre-fetched metadata
-
-If your app has already fetched program stage metadata through its own data layer, pass it directly
-to skip the internal fetch:
-
-```tsx
-const { form, formStore, submit } = useEventForm({
-    programStageId: 'abc123',
-    metadata: myProgramStage,
 });
 ```
 
@@ -174,12 +210,17 @@ const { form, formStore, submit } = useEventForm({
 Android apps — to evaluate program rules. The library does not reimplement rule expression parsing
 or variable resolution.
 
-When a form hook initialises, it builds a `RuleEngineContext` once from the fetched program
-metadata (rules, rule variables, option sets). On every field change, it evaluates the current
-form values against that context and folds the resulting `RuleEffect` list into a `FieldStateMap`:
+When `useEventForm` initialises, it builds a `RuleEngineContext` from the supplied program stage
+metadata (rules, rule variables, option sets). A `FormStore` subscribes to form value changes
+(debounced at 40ms), evaluates the current values, and pushes results into external stores:
+
+- **Per-field state** — `formStore.fieldStore`, read via `useFieldState(fieldId)` or
+  `useFieldControl`
+- **Section visibility and feedback widgets** — `formStore.nonFieldStore`, read via
+  `useSectionState(sectionId)` and `useFormFeedback()`
 
 ```ts
-fieldState['dataElementUid'];
+const ruleState = useFieldState('dataElementUid');
 // {
 //   hidden: false,
 //   mandatory: true,
@@ -194,24 +235,35 @@ fieldState['dataElementUid'];
 All standard DHIS2 action types are handled: `HIDEFIELD`, `HIDESECTION`, `ASSIGN`,
 `SHOWWARNING`, `SHOWERROR`, `WARNINGONCOMPLETE`, `ERRORONCOMPLETE`, `SETMANDATORYFIELD`,
 `HIDEOPTION`, `HIDEOPTIONGROUP`, `SHOWOPTION`, `SHOWOPTIONGROUP`, `DISPLAYTEXT`, and
-`DISPLAYKEYVALUEPAIR`. At submission time, hidden fields are stripped and assigned values are
-substituted before the payload is sent.
+`DISPLAYKEYVALUEPAIR`. At submission time, call `filterPayload` from `@dhis2-form-utils/rules`
+to strip hidden fields and substitute assigned values before posting the payload.
 
 Because the evaluation is built on `@dhis2/rule-engine` rather than a custom implementation, any
 new rule action types or expression functions that DHIS2 adds to the engine are automatically
 available — no corresponding change is needed in `dhis2-form-utils`.
 
+See [form state architecture](/docs/form-state-architecture.md) for the full store design.
+
 ---
 
 ## Supported hooks
 
-| Hook               | Use case                               |
-| ------------------ | -------------------------------------- |
-| `useEventForm`     | Single tracker event                   |
-| `useTrackerForm`   | Enrollment + events (tracker programs) |
-| `useDataEntryForm` | Aggregate data sets                    |
+| Hook               | Status    | Use case                               |
+| ------------------ | --------- | -------------------------------------- |
+| `useEventForm`     | Available | Single tracker event                   |
+| `useTrackerForm`   | Planned   | Enrollment + events (tracker programs) |
+| `useDataEntryForm` | Planned   | Aggregate data sets                    |
 
-All hooks share the same return shape: `{ form, formStore, fieldStore, nonFieldStore, submit }`.
+`useEventForm` returns `{ form, formStore }`. Rule state stores live on `formStore`
+(`formStore.fieldStore`, `formStore.nonFieldStore`) and are consumed through
+`FormStateProvider` and the companion hooks below.
+
+| Companion hook    | Purpose                                   |
+| ----------------- | ----------------------------------------- |
+| `useFieldControl` | Field components — metadata + RHF + rules |
+| `useFieldState`   | Per-field rule state (lower-level)        |
+| `useSectionState` | Per-section visibility from `HIDESECTION` |
+| `useFormFeedback` | Feedback / indicator widget content       |
 
 ---
 
