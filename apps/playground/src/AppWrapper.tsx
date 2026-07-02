@@ -7,16 +7,18 @@ import { ProgramPlaceholderPage } from '@/pages/ProgramPlaceholderPage'
 
 const AppWrapper = () => {
     return (
-        <HashRouter>
-            <Routes>
-                <Route path="/" element={<ProgramListPage />} />
-                <Route
-                    path="/programs/:programId"
-                    element={<ProgramPlaceholderPage />}
-                />
-                <Route path="/about" element={<AboutPage />} />
-            </Routes>
-        </HashRouter>
+        <div className="p-4">
+            <HashRouter>
+                <Routes>
+                    <Route path="/" element={<ProgramListPage />} />
+                    <Route
+                        path="/programs/:programId"
+                        element={<ProgramPlaceholderPage />}
+                    />
+                    <Route path="/about" element={<AboutPage />} />
+                </Routes>
+            </HashRouter>
+        </div>
     )
 }
 

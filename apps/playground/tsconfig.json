@@ -7,11 +7,11 @@
         "esModuleInterop": true,
         "target": "ESNext",
         "module": "esnext",
-        "moduleResolution": "node",
+        "moduleResolution": "bundler",
         "baseUrl": ".",
         "paths": {
             "@/*": ["src/*"]
         }
     },
-    "include": ["src", "types"]
+    "include": ["src", "types", "viteConfigExtensions.mts"]
 }
