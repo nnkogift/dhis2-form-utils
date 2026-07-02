@@ -57,7 +57,9 @@ components/
 
 Wraps `@dhis2/rule-engine` (DHIS2's official Kotlin/JS rule engine) — never reimplements rule logic. Key exports:
 
-- `evaluateAndMap(engine, values, effectHandlers?)` — pure function; runs the engine against current form values, folds `RuleEffect[]` into a `FieldStateMap` keyed by data element UID
+- `evaluateAndMap(engine, values, effectHandlers?)` — pure function; runs the engine against current form values, folds `RuleEffect[]` into a `FieldStateMap` keyed by data element or TEA uid
+- `buildRuleEngineContext` / `buildRuleEngine` — event/stage evaluation via `evaluateEvent`
+- `buildEnrollmentRuleEngineContext` / `buildEnrollmentRuleEngine` — tracker registration via `evaluateEnrollment`
 - `filterPayload(values, fieldState)` — strips hidden fields and substitutes ASSIGN values before submission
 - `FieldStateMap` / `FieldState` — the typed shape consumed by all hooks and UI components
 
@@ -65,25 +67,43 @@ Wraps `@dhis2/rule-engine` (DHIS2's official Kotlin/JS rule engine) — never re
 
 ### `@dhis2-form-utils/metadata`
 
-Converts DHIS2 metadata into Zod schemas via `buildSchema(metadata)`. Each `valueType` maps to a Zod validator with coercers that normalise raw API strings to JS types. The Zod schema is passed directly to `useForm` via `@hookform/resolvers/zod`.
+Converts DHIS2 metadata into Zod schemas:
+
+- `buildSchema(metadata)` — program stage event forms (data elements keyed by DE uid)
+- `buildTrackerSchema(metadata)` — tracker registration forms (TEA fields + `orgUnit`, `enrolledAt`, conditional `occurredAt`)
+
+Each `valueType` maps to a Zod validator. Event `buildSchema` uses coercion; tracker `buildTrackerSchema` uses string validators (form values are flat strings). The Zod schema is passed directly to `useForm` via `@hookform/resolvers/zod`.
+
+`TrackerProgramMetadata` is the program-level metadata shape for registration (TEAs, enrollment date flags, expanded program rules).
 
 ### `@dhis2-form-utils/hooks`
 
-Composes rules, metadata, and React Hook Form. **`useEventForm` is the only form hook implemented
-today**; `useTrackerForm` and `useDataEntryForm` are planned.
+Composes rules, metadata, and React Hook Form.
+
+**Form hooks:**
+
+- `useEventForm` — program stage event data entry (data elements, `evaluateEvent`)
+- `useTrackerForm` — tracker registration only (TEAs + enrollment system fields, `evaluateEnrollment`)
 
 ```ts
 const { form, formStore } = useEventForm({
     options: { programStageId, metadata, effectHandlers? },
     formOptions?, // RHF options minus resolver
 });
+
+const { form, formStore } = useTrackerForm({
+    options: { programId, metadata: trackerMetadata, effectHandlers? },
+    formOptions?,
+});
 ```
 
 Returns `{ form, formStore }`. The caller must:
 
-1. Fetch metadata (or use exported `programStageQuery` with `useDataQuery`)
+1. Fetch metadata (program stage: `programStageQuery` + `useDataQuery`; tracker: caller-owned program fetch)
 2. Wrap children in `FormStateProvider` + RHF `FormProvider`
 3. Implement submit (e.g. `filterPayload` + `useDataMutation`)
+
+**Tracker submission** (caller-owned): split flat values into `trackedEntities[].attributes` (TEA uids) and `enrollments[]` system fields (`orgUnit`, `enrolledAt`, optional `occurredAt`). Use `filterPayload(values, formStore.fieldStore.getSnapshot())` to strip rule-hidden TEAs. See `docs/use-tracker-form.md`.
 
 **Companion hooks** (require `FormStateProvider`):
 
@@ -92,7 +112,7 @@ Returns `{ form, formStore }`. The caller must:
 - `useSectionState` — section visibility
 - `useFormFeedback` — feedback / indicator widgets
 
-**Reactive loop:** `buildRuleEngineContext` runs once per metadata; `FormStore` subscribes to
+**Reactive loop:** `buildRuleEngineContext` or `buildEnrollmentRuleEngineContext` runs once per metadata; `FormStore` subscribes to
 `form.subscribe` (debounced 40ms), calls `evaluateFormState` → `evaluateAndMap`, and pushes
 results into `fieldStore` and `nonFieldStore`. No `useEffect` or `form.watch` in the hooks package.
 

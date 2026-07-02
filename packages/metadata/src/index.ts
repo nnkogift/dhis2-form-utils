@@ -10,6 +10,11 @@ export type {
     ProgramTrackedEntityAttribute,
     TrackedEntityAttributeRef,
 } from './types';
+export type {
+    ExpandedProgramRule,
+    ExpandedProgramRuleAction,
+    TrackerProgramMetadata,
+} from './trackerTypes';
 export {
     DATA_ELEMENT_REF_FIELDS,
     PROGRAM_STAGE_DATA_ELEMENT_FIELDS,
@@ -18,3 +23,4 @@ export {
     programStageQueryFields,
 } from './fieldFilters';
 export { buildSchema } from './buildSchema';
+export { buildTrackerSchema } from './buildTrackerSchema';

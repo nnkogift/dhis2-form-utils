@@ -17,6 +17,13 @@ export { stableMap } from './stableMap';
 export { programStageQuery } from './queries/programStage.query';
 export { useEventForm } from './useEventForm';
 export type { UseEventFormOptions, UseEventFormReturn } from './useEventForm';
+export { useTrackerForm } from './useTrackerForm';
+export type { UseTrackerFormOptions, UseTrackerFormReturn } from './useTrackerForm';
+export type {
+    ExpandedProgramRule,
+    ExpandedProgramRuleAction,
+    TrackerProgramMetadata,
+} from '@dhis2-form-utils/metadata';
 export type { FieldConfig, RenderTypeHint } from './fields/fieldConfig';
 export type { WidgetKind } from './fields/widgetKind';
 export type { FieldControlInput, FieldControlReturn, WidgetProps } from './fields/useFieldControl';

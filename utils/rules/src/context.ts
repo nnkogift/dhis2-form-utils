@@ -13,7 +13,6 @@ import {
     RuleJs,
     RuleLocalDate,
     RuleSupplementaryDataJs,
-    RuleValueType,
     RuleVariableJs,
     RuleVariableType,
 } from '@dhis2/rule-engine';
@@ -26,6 +25,7 @@ import {
 } from '@dhis2-form-utils/metadata';
 import type { RuleEffect } from './evaluate';
 import { ProgramRuleActionType } from '@dhis2/api-types';
+import { ruleValueTypeFromDhis2 } from './ruleValueType';
 
 const DEFAULT_EVENT_STATUS = RuleEventStatus.ACTIVE;
 const DEFAULT_ORG_UNIT = 'UNKNOWN_ORG_UNIT';
@@ -43,28 +43,6 @@ export type RuleEngineContext = {
 
 export type BuiltRuleEngine = {
     evaluate: (currentValues: Record<string, unknown>) => RuleEffect[];
-};
-
-const ruleValueTypeFromDhis2 = (valueType?: string): RuleValueType => {
-    switch (valueType) {
-        case 'NUMBER':
-        case 'INTEGER':
-        case 'INTEGER_POSITIVE':
-        case 'INTEGER_NEGATIVE':
-        case 'INTEGER_ZERO_OR_POSITIVE':
-        case 'UNIT_INTERVAL':
-        case 'PERCENTAGE':
-            return RuleValueType.NUMERIC;
-        case 'BOOLEAN':
-        case 'TRUE_ONLY':
-            return RuleValueType.BOOLEAN;
-        case 'DATE':
-        case 'DATETIME':
-        case 'AGE':
-            return RuleValueType.DATE;
-        default:
-            return RuleValueType.TEXT;
-    }
 };
 
 const variableTypeFromSource = (
