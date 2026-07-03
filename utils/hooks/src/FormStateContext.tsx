@@ -58,6 +58,11 @@ export function useFormStateContext<
     return ctx as FormStateContextValue<T>;
 }
 
+export function useFormStore(): FormStore {
+    const { formStore } = useFormStateContext();
+    return formStore;
+}
+
 export function useFieldStore(): FieldStateStore {
     const { formStore } = useFormStateContext();
     return useMemo(() => formStore.fieldStore, [formStore.fieldStore]);

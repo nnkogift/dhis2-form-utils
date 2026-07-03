@@ -5,10 +5,13 @@ import { partitionEffects } from './partitionEffects';
 import { createEmptyFieldState } from './types';
 
 describe('applyEffect', () => {
+    const ruleId = 'test-rule';
+
     it('hides a field on HIDEFIELD', () => {
         const state = applyEffect(
             {},
             {
+                ruleId,
                 ruleActionType: ProgramRuleActionType.HIDEFIELD,
                 dataElement: 'de1',
             }
@@ -20,11 +23,13 @@ describe('applyEffect', () => {
         let state = applyEffect(
             {},
             {
+                ruleId,
                 ruleActionType: ProgramRuleActionType.SETMANDATORYFIELD,
                 dataElement: 'de1',
             }
         );
         state = applyEffect(state, {
+            ruleId,
             ruleActionType: ProgramRuleActionType.SHOWWARNING,
             dataElement: 'de1',
             content: 'Check value',
@@ -37,12 +42,14 @@ describe('applyEffect', () => {
         let state = applyEffect(
             {},
             {
+                ruleId,
                 ruleActionType: ProgramRuleActionType.WARNINGONCOMPLETE,
                 dataElement: 'de1',
                 content: 'Complete warning',
             }
         );
         state = applyEffect(state, {
+            ruleId,
             ruleActionType: ProgramRuleActionType.ERRORONCOMPLETE,
             dataElement: 'de1',
             content: 'Complete error',
@@ -55,6 +62,7 @@ describe('applyEffect', () => {
         let state = applyEffect(
             {},
             {
+                ruleId,
                 ruleActionType: ProgramRuleActionType.HIDEOPTION,
                 dataElement: 'de1',
                 optionCode: 'opt1',
@@ -62,18 +70,21 @@ describe('applyEffect', () => {
         );
 
         state = applyEffect(state, {
+            ruleId,
             ruleActionType: ProgramRuleActionType.SHOWOPTION,
             dataElement: 'de1',
             optionCode: 'opt1',
         });
 
         state = applyEffect(state, {
+            ruleId,
             ruleActionType: ProgramRuleActionType.HIDEOPTIONGROUP,
             dataElement: 'de1',
             optionGroupId: 'og1',
         });
 
         state = applyEffect(state, {
+            ruleId,
             ruleActionType: ProgramRuleActionType.SHOWOPTIONGROUP,
             dataElement: 'de1',
             optionGroupId: 'og1',
@@ -87,6 +98,7 @@ describe('applyEffect', () => {
         const state = applyEffect(
             {},
             {
+                ruleId,
                 ruleActionType: ProgramRuleActionType.HIDESECTION,
                 programStageSection: 'section-a',
             }
@@ -96,17 +108,24 @@ describe('applyEffect', () => {
 });
 
 describe('partitionEffects', () => {
+    const ruleId = 'test-rule';
+
     it('routes effects into field, section, feedback, and passthrough buckets', () => {
         const effects = [
-            { ruleActionType: ProgramRuleActionType.HIDEFIELD, dataElement: 'de1' },
-            { ruleActionType: ProgramRuleActionType.HIDESECTION, programStageSection: 'sec1' },
+            { ruleId, ruleActionType: ProgramRuleActionType.HIDEFIELD, dataElement: 'de1' },
             {
+                ruleId,
+                ruleActionType: ProgramRuleActionType.HIDESECTION,
+                programStageSection: 'sec1',
+            },
+            {
+                ruleId,
                 ruleActionType: ProgramRuleActionType.DISPLAYTEXT,
                 content: 'Label',
                 data: 'Value',
                 location: 'feedback',
             },
-            { ruleActionType: ProgramRuleActionType.SENDMESSAGE },
+            { ruleId, ruleActionType: ProgramRuleActionType.SENDMESSAGE },
         ];
 
         const result = partitionEffects(effects);
@@ -119,33 +138,41 @@ describe('partitionEffects', () => {
 });
 
 describe('evaluateAndMap', () => {
+    const ruleId = 'test-rule';
+
     it('folds multiple effects into three maps', () => {
+        const engineEffects = [
+            {
+                ruleId,
+                ruleActionType: ProgramRuleActionType.HIDEFIELD,
+                dataElement: 'hiddenField',
+            },
+            {
+                ruleId,
+                ruleActionType: ProgramRuleActionType.SETMANDATORYFIELD,
+                dataElement: 'requiredField',
+            },
+            {
+                ruleId,
+                ruleActionType: ProgramRuleActionType.ASSIGN,
+                dataElement: 'assignedField',
+                data: 'auto',
+            },
+            {
+                ruleId,
+                ruleActionType: ProgramRuleActionType.HIDESECTION,
+                programStageSection: 'section-a',
+            },
+            {
+                ruleId,
+                ruleActionType: ProgramRuleActionType.DISPLAYTEXT,
+                content: 'Info',
+                data: 'Details',
+                location: 'feedback',
+            },
+        ];
         const engine = {
-            evaluate: () => [
-                {
-                    ruleActionType: ProgramRuleActionType.HIDEFIELD,
-                    dataElement: 'hiddenField',
-                },
-                {
-                    ruleActionType: ProgramRuleActionType.SETMANDATORYFIELD,
-                    dataElement: 'requiredField',
-                },
-                {
-                    ruleActionType: ProgramRuleActionType.ASSIGN,
-                    dataElement: 'assignedField',
-                    data: 'auto',
-                },
-                {
-                    ruleActionType: ProgramRuleActionType.HIDESECTION,
-                    programStageSection: 'section-a',
-                },
-                {
-                    ruleActionType: ProgramRuleActionType.DISPLAYTEXT,
-                    content: 'Info',
-                    data: 'Details',
-                    location: 'feedback',
-                },
-            ],
+            evaluate: () => engineEffects,
         };
 
         const result = evaluateAndMap(engine, {
@@ -164,12 +191,13 @@ describe('evaluateAndMap', () => {
             value: 'Details',
             location: 'feedback',
         });
+        expect(result.effects).toEqual(engineEffects);
     });
 
     it('invokes custom effect handlers for passthrough effects', () => {
         const handler = vi.fn();
         const engine = {
-            evaluate: () => [{ ruleActionType: ProgramRuleActionType.SENDMESSAGE }],
+            evaluate: () => [{ ruleId, ruleActionType: ProgramRuleActionType.SENDMESSAGE }],
         };
 
         evaluateAndMap(engine, {}, { SENDMESSAGE: handler });

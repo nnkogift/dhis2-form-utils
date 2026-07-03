@@ -1,10 +1,13 @@
 export {
     FormStateProvider,
     useFormStateContext,
+    useFormStore,
     useFieldState,
     useSectionState,
     useFormFeedback,
 } from './FormStateContext';
+export type { RuleTraceEntry, TraceEffect } from './buildTraceEntry';
+export { buildTraceEntry } from './buildTraceEntry';
 export type { FormStateProviderProps, FormStateContextValue } from './FormStateContext';
 export type { FieldStateStore } from './store/fieldStateStore';
 export { createFieldStateStore } from './store/fieldStateStore';

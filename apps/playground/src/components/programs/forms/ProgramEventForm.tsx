@@ -1,5 +1,6 @@
 import { useDataEngine } from '@dhis2/app-runtime'
 import { FormFeedback } from '@dhis2-form-utils/dhis2-ui'
+import { RuleDevtoolsPanel } from '@dhis2-form-utils/devtools'
 import { FormStateProvider, useEventForm } from '@dhis2-form-utils/hooks'
 import type {
     EventProgramMetadata,
@@ -95,6 +96,12 @@ export function ProgramEventForm({
                     successTitle={i18n.t('Event saved')}
                 />
             </form>
+            <RuleDevtoolsPanel
+                resolveRuleName={(ruleId) =>
+                    program.programRules?.find((rule) => rule.id === ruleId)
+                        ?.name
+                }
+            />
         </FormStateProvider>
     )
 }

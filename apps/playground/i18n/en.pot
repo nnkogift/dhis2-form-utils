@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-07-03T08:18:33.917Z\n"
-"PO-Revision-Date: 2026-07-03T08:18:33.917Z\n"
+"POT-Creation-Date: 2026-07-03T14:06:24.856Z\n"
+"PO-Revision-Date: 2026-07-03T14:06:24.856Z\n"
 
 msgid "Search programs"
 msgstr "Search programs"
@@ -47,6 +47,9 @@ msgstr "Event date"
 msgid "This field is required"
 msgstr "This field is required"
 
+msgid "Section"
+msgstr "Section"
+
 msgid "Organisation unit is required"
 msgstr "Organisation unit is required"
 
@@ -62,17 +65,8 @@ msgstr "Could not save event"
 msgid "Event saved"
 msgstr "Event saved"
 
-msgid "No program stage available"
-msgstr "No program stage available"
-
 msgid "This event program does not have a program stage to render."
 msgstr "This event program does not have a program stage to render."
-
-msgid "Could not load event form"
-msgstr "Could not load event form"
-
-msgid "The event program metadata could not be loaded."
-msgstr "The event program metadata could not be loaded."
 
 msgid "Saved"
 msgstr "Saved"
@@ -104,9 +98,6 @@ msgid ""
 msgstr ""
 "This tracker program does not expose any tracked entity attributes to "
 "capture."
-
-msgid "Section"
-msgstr "Section"
 
 msgid "Date of enrollment"
 msgstr "Date of enrollment"

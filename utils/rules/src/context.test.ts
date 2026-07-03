@@ -69,6 +69,7 @@ describe('buildRuleEngineContext / buildRuleEngine', () => {
         const effects = engine.evaluate({ age: 15 });
 
         expect(effects).toHaveLength(1);
+        expect(effects[0].ruleId).toBe('rule-1');
         expect(effects[0].ruleActionType).toBe(ProgramRuleActionType.SHOWWARNING);
         expect(effects[0].content).toBe('Age is high');
         expect(effects[0].dataElement).toBe('age');

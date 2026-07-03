@@ -1,5 +1,6 @@
 import { useDataEngine } from '@dhis2/app-runtime'
 import { FormFeedback } from '@dhis2-form-utils/dhis2-ui'
+import { RuleDevtoolsPanel } from '@dhis2-form-utils/devtools'
 import {
     FormStateProvider,
     type TrackerProgramMetadata,
@@ -112,6 +113,12 @@ export function ProgramRegistrationForm({
                     />
                 </form>
             </FormProvider>
+            <RuleDevtoolsPanel
+                resolveRuleName={(ruleId) =>
+                    metadata.programRules?.find((rule) => rule.id === ruleId)
+                        ?.name
+                }
+            />
         </FormStateProvider>
     )
 }

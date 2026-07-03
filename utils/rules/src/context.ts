@@ -216,6 +216,7 @@ const toRuleEvent = (
 const normalizeEffect = (effect: RuleEffectJs): RuleEffect => {
     const values = effect.ruleAction.values;
     return {
+        ruleId: effect.ruleId,
         ruleActionType: effect.ruleAction.type as ProgramRuleActionType,
         content: values.get('content') ?? null,
         dataElement: values.get('dataElement') ?? null,

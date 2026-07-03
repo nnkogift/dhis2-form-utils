@@ -44,6 +44,7 @@ apps/storybook               # Storybook: component docs + browser tests
 utils/
   rules/                     # @dhis2-form-utils/rules
   hooks/                     # @dhis2-form-utils/hooks
+  devtools/                  # @dhis2-form-utils/devtools (optional, dev-only)
 packages/
   metadata/                  # @dhis2-form-utils/metadata
   config/                    # Shared tsconfig.base.json
@@ -111,12 +112,26 @@ Returns `{ form, formStore }`. The caller must:
 - `useFieldState` — per-field rule state (lower-level)
 - `useSectionState` — section visibility
 - `useFormFeedback` — feedback / indicator widgets
+- `useFormStore` — access `FormStore` from context (used by devtools)
+
+**Rule trace (devtools):** `FormStore.subscribeTrace(listener)` emits `RuleTraceEntry` objects after each evaluation cycle when listeners are attached (no-op otherwise). Types: `RuleTraceEntry`, `buildTraceEntry`. See `docs/dev-tools.md`.
 
 **Reactive loop:** `buildRuleEngineContext` or `buildEnrollmentRuleEngineContext` runs once per metadata; `FormStore` subscribes to
 `form.subscribe` (debounced 40ms), calls `evaluateFormState` → `evaluateAndMap`, and pushes
 results into `fieldStore` and `nonFieldStore`. No `useEffect` or `form.watch` in the hooks package.
 
 See `docs/form-state-architecture.md` for store internals.
+
+### `@dhis2-form-utils/devtools`
+
+Optional developer-facing package for debugging program rules. Wired in the playground only — not for production form bundles.
+
+- `RuleDevtoolsPanel` — side panel with **Trace** (reverse-chronological rule evaluation log) and **Graph** (`@xyflow/react` dependency graph built from observed firings)
+- Optional `resolveRuleName` prop for human-readable rule labels
+- Requires `FormStateProvider` in the tree; attaches to `FormStore` internally via `subscribeTrace`
+- Import styles: `@dhis2-form-utils/devtools/style.css` and `@xyflow/react/dist/style.css`
+
+See `docs/dev-tools.md` for architecture.
 
 ### UI adapter packages (`dhis2-ui`, `mantine`, `mui`)
 
