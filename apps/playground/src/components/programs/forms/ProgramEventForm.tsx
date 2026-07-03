@@ -85,23 +85,29 @@ export function ProgramEventForm({
 
     return (
         <FormStateProvider<EventFormValues> formStore={formStore} form={form}>
-            <form onSubmit={handleSubmit} className="flex flex-col gap-dp16">
-                <EventSystemFields orgUnits={orgUnits} />
-                <FormFeedback />
-                <EventFormFields metadata={stageMetadata} />
-                <ProgramFormActions
-                    submitLabel={i18n.t('Save event')}
-                    errorTitle={i18n.t('Could not save event')}
-                    successMessage={successMessage}
-                    successTitle={i18n.t('Event saved')}
+            <div className="flex h-full w-full flex-1 gap-dp16">
+                <form
+                    onSubmit={handleSubmit}
+                    className="flex flex-1 flex-col gap-dp16"
+                >
+                    <EventSystemFields orgUnits={orgUnits} />
+                    <FormFeedback />
+                    <EventFormFields metadata={stageMetadata} />
+                    <ProgramFormActions
+                        submitLabel={i18n.t('Save event')}
+                        errorTitle={i18n.t('Could not save event')}
+                        successMessage={successMessage}
+                        successTitle={i18n.t('Event saved')}
+                    />
+                </form>
+                <RuleDevtoolsPanel
+                    metadata={{
+                        formKind: 'event',
+                        metadata: program,
+                        programStageId,
+                    }}
                 />
-            </form>
-            <RuleDevtoolsPanel
-                resolveRuleName={(ruleId) =>
-                    program.programRules?.find((rule) => rule.id === ruleId)
-                        ?.name
-                }
-            />
+            </div>
         </FormStateProvider>
     )
 }

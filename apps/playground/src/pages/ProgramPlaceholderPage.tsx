@@ -53,7 +53,7 @@ export function ProgramPlaceholderPage() {
     }
 
     return (
-        <div className="flex flex-col gap-dp16 pb-dp24">
+        <div className="flex flex-col gap-dp16 pb-dp24 h-full">
             <Link
                 className="text-dhis2-teal-700 no-underline font-medium hover:underline"
                 to={backUrl}

@@ -13,6 +13,7 @@ import { NoticeBox } from '@dhis2/ui';
 import type { RuleTraceEntry } from '@dhis2-form-utils/hooks';
 import type { FormStore } from '@dhis2-form-utils/hooks';
 import { buildGraphFromTrace, type GraphNode, type RuleDependencyGraph } from './buildGraph';
+import type { DevtoolsLabelLookup } from './createLabelLookup';
 import { getGraphNodeClassName, getLegendSwatchClassName } from './graphNodeStyles';
 import { translate } from './i18n';
 
@@ -31,7 +32,7 @@ type RuleGraphViewProps = {
     formValues: Record<string, unknown>;
     selectedEntryId: string | null;
     highlightRuleId: string | null;
-    resolveRuleName?: (ruleId: string) => string | undefined;
+    labelLookup?: DevtoolsLabelLookup;
 };
 
 const KIND_COLUMNS: Record<GraphNode['kind'], number> = {
@@ -155,7 +156,7 @@ function toFlowGraph(
         const index = kindCounters[node.kind];
         kindCounters[node.kind] += 1;
         const position = layoutNode(node, index);
-        const rawFieldId = node.kind === 'field' ? node.label : undefined;
+        const rawFieldId = node.kind === 'field' ? node.id.slice('field:'.length) : undefined;
         const assignedValue = rawFieldId ? fieldState[rawFieldId].assignedValue : undefined;
         const formValue = rawFieldId ? formValues[rawFieldId] : undefined;
         const displayValue = formatDisplayValue(assignedValue) ?? formatDisplayValue(formValue);
@@ -226,12 +227,9 @@ export function RuleGraphView({
     formValues,
     selectedEntryId,
     highlightRuleId,
-    resolveRuleName,
+    labelLookup,
 }: RuleGraphViewProps) {
-    const graph = useMemo(
-        () => buildGraphFromTrace(entries, resolveRuleName),
-        [entries, resolveRuleName]
-    );
+    const graph = useMemo(() => buildGraphFromTrace(entries, labelLookup), [entries, labelLookup]);
 
     const highlightedKeys = useMemo(() => {
         if (!selectedEntryId && !highlightRuleId) {

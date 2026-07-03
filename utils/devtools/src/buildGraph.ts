@@ -1,4 +1,5 @@
 import type { RuleTraceEntry } from '@dhis2-form-utils/hooks';
+import type { DevtoolsLabelLookup } from './createLabelLookup';
 
 export type GraphNodeKind = 'field' | 'section' | 'feedback' | 'rule';
 
@@ -29,7 +30,7 @@ const edgeKey = (source: string, ruleId: string, target: string, effectType?: st
 export function accumulateGraph(
     previous: RuleDependencyGraph,
     entry: RuleTraceEntry,
-    resolveRuleName?: (ruleId: string) => string | undefined
+    labelLookup?: DevtoolsLabelLookup
 ): RuleDependencyGraph {
     const nodes = new Map(previous.nodes.map((node) => [node.id, node]));
     const edges = new Map(previous.edges.map((edge) => [edge.id, edge]));
@@ -43,15 +44,19 @@ export function accumulateGraph(
     };
 
     for (const fieldId of entry.changedFields) {
-        ensureNode('field', fieldId, fieldId);
+        ensureNode('field', fieldId, labelLookup?.resolveFieldName(fieldId) ?? fieldId);
     }
 
     for (const ruleResult of entry.ruleResults) {
-        const ruleLabel = resolveRuleName?.(ruleResult.ruleId) ?? ruleResult.ruleId;
+        const ruleLabel = labelLookup?.resolveRuleName(ruleResult.ruleId) ?? ruleResult.ruleId;
         const ruleNodeId = ensureNode('rule', ruleResult.ruleId, ruleLabel);
 
         for (const fieldId of entry.changedFields) {
-            const fieldNodeId = ensureNode('field', fieldId, fieldId);
+            const fieldNodeId = ensureNode(
+                'field',
+                fieldId,
+                labelLookup?.resolveFieldName(fieldId) ?? fieldId
+            );
             const id = edgeKey(fieldNodeId, ruleResult.ruleId, ruleNodeId, 'read');
             const existing = edges.get(id);
             edges.set(id, {
@@ -71,7 +76,15 @@ export function accumulateGraph(
                       ? 'feedback'
                       : 'field';
 
-            const targetNodeId = ensureNode(targetKind, effect.targetId, effect.targetId);
+            const targetNodeId = ensureNode(
+                targetKind,
+                effect.targetId,
+                targetKind === 'section'
+                    ? (labelLookup?.resolveSectionName(effect.targetId) ?? effect.targetId)
+                    : targetKind === 'field'
+                      ? (labelLookup?.resolveFieldName(effect.targetId) ?? effect.targetId)
+                      : effect.targetId
+            );
             const id = edgeKey(ruleNodeId, ruleResult.ruleId, targetNodeId, effect.type);
             const existing = edges.get(id);
             edges.set(id, {
@@ -92,10 +105,10 @@ export function accumulateGraph(
 
 export function buildGraphFromTrace(
     entries: readonly RuleTraceEntry[],
-    resolveRuleName?: (ruleId: string) => string | undefined
+    labelLookup?: DevtoolsLabelLookup
 ): RuleDependencyGraph {
     return entries.reduce<RuleDependencyGraph>(
-        (graph, entry) => accumulateGraph(graph, entry, resolveRuleName),
+        (graph, entry) => accumulateGraph(graph, entry, labelLookup),
         { nodes: [], edges: [] }
     );
 }

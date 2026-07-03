@@ -113,12 +113,7 @@ export function ProgramRegistrationForm({
                     />
                 </form>
             </FormProvider>
-            <RuleDevtoolsPanel
-                resolveRuleName={(ruleId) =>
-                    metadata.programRules?.find((rule) => rule.id === ruleId)
-                        ?.name
-                }
-            />
+            <RuleDevtoolsPanel metadata={{ formKind: 'tracker', metadata }} />
         </FormStateProvider>
     )
 }

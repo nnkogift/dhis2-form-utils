@@ -1,2 +1,2 @@
 export { RuleDevtoolsPanel } from './RuleDevtoolsPanel';
-export type { RuleDevtoolsPanelProps } from './RuleDevtoolsPanel';
+export type { RuleDevtoolsPanelProps, RuleDevtoolsMetadata } from './RuleDevtoolsPanel';

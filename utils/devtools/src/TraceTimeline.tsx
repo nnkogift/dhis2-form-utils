@@ -7,8 +7,9 @@ import {
     NoticeBox,
     Tag,
 } from '@dhis2/ui';
-import type { RuleTraceEntry } from '@dhis2-form-utils/hooks';
+import type { RuleTraceEntry, TraceEffect } from '@dhis2-form-utils/hooks';
 import { useEffect, useState } from 'react';
+import type { DevtoolsLabelLookup } from './createLabelLookup';
 import { getEffectTagClassName } from './effectStyles';
 import { formatAgo } from './formatAgo';
 import { translate } from './i18n';
@@ -19,8 +20,37 @@ type TraceTimelineProps = {
     highlightRuleId: string | null;
     onSelectEntry: (entryId: string) => void;
     onHighlightRule: (ruleId: string | null) => void;
-    resolveRuleName?: (ruleId: string) => string | undefined;
+    labelLookup?: DevtoolsLabelLookup;
 };
+
+function resolveLabel(
+    id: string,
+    resolver?: (value: string) => string
+): { label: string; showId: boolean } {
+    const label = resolver?.(id) ?? id;
+    return { label, showId: label !== id };
+}
+
+function resolveEffectTargetLabel(
+    effect: TraceEffect,
+    labelLookup?: DevtoolsLabelLookup
+): { label: string; showId: boolean } {
+    if (effect.type === 'HIDESECTION') {
+        return resolveLabel(
+            effect.targetId,
+            labelLookup ? (id) => labelLookup.resolveSectionName(id) : undefined
+        );
+    }
+
+    if (effect.type === 'DISPLAYTEXT' || effect.type === 'DISPLAYKEYVALUEPAIR') {
+        return { label: effect.targetId, showId: false };
+    }
+
+    return resolveLabel(
+        effect.targetId,
+        labelLookup ? (id) => labelLookup.resolveFieldName(id) : undefined
+    );
+}
 
 export function TraceTimeline({
     entries,
@@ -28,7 +58,7 @@ export function TraceTimeline({
     highlightRuleId,
     onSelectEntry,
     onHighlightRule,
-    resolveRuleName,
+    labelLookup,
 }: TraceTimelineProps) {
     const [expandedIds, setExpandedIds] = useState<ReadonlySet<string>>(() => new Set());
 
@@ -162,15 +192,29 @@ export function TraceTimeline({
                                                 {translate('Changed fields')}
                                             </h3>
                                             <div className="flex flex-wrap gap-dp8">
-                                                {entry.changedFields.map((fieldId) => (
-                                                    <Tag
-                                                        key={fieldId}
-                                                        neutral
-                                                        className="max-w-full break-all font-mono text-xs"
-                                                    >
-                                                        {fieldId}
-                                                    </Tag>
-                                                ))}
+                                                {entry.changedFields.map((fieldId) => {
+                                                    const { label, showId } = resolveLabel(
+                                                        fieldId,
+                                                        labelLookup
+                                                            ? (id) =>
+                                                                  labelLookup.resolveFieldName(id)
+                                                            : undefined
+                                                    );
+
+                                                    return (
+                                                        <div
+                                                            key={fieldId}
+                                                            className="flex max-w-full flex-col gap-0.5"
+                                                        >
+                                                            <Tag
+                                                                neutral
+                                                                className={`max-w-full break-words text-xs ${showId ? '' : 'font-mono break-all'}`}
+                                                            >
+                                                                {label}
+                                                            </Tag>
+                                                        </div>
+                                                    );
+                                                })}
                                             </div>
                                         </section>
                                     )}
@@ -190,11 +234,13 @@ export function TraceTimeline({
                                             ) : null}
                                             <div className="flex flex-col gap-dp12">
                                                 {entry.ruleResults.map((result, index) => {
-                                                    const displayName =
-                                                        resolveRuleName?.(result.ruleId) ??
-                                                        result.ruleId;
-                                                    const showRuleId =
-                                                        displayName !== result.ruleId;
+                                                    const { label: displayName } = resolveLabel(
+                                                        result.ruleId,
+                                                        labelLookup
+                                                            ? (id) =>
+                                                                  labelLookup.resolveRuleName(id)
+                                                            : undefined
+                                                    );
 
                                                     return (
                                                         <div
@@ -222,37 +268,44 @@ export function TraceTimeline({
                                                                 >
                                                                     {displayName}
                                                                 </Chip>
-                                                                {showRuleId ? (
-                                                                    <span className="break-all ps-0.5 font-mono text-[0.6875rem] leading-[1.4] text-dhis2-grey-600">
-                                                                        {result.ruleId}
-                                                                    </span>
-                                                                ) : null}
                                                             </div>
                                                             <ul className="m-0 flex list-none flex-col gap-dp12 p-0">
-                                                                {result.effects.map((effect) => (
-                                                                    <li
-                                                                        key={`${effect.type}-${effect.targetId}-${effect.data ?? ''}`}
-                                                                        className="flex flex-col gap-dp4"
-                                                                    >
-                                                                        <div className="flex flex-wrap items-baseline gap-dp8">
-                                                                            <Tag
-                                                                                className={getEffectTagClassName(
-                                                                                    effect.type
-                                                                                )}
-                                                                            >
-                                                                                {effect.type}
-                                                                            </Tag>
-                                                                            <span className="break-all font-mono text-[0.8125rem] leading-[1.45] text-dhis2-grey-800">
-                                                                                {effect.targetId}
-                                                                            </span>
-                                                                        </div>
-                                                                        {effect.data ? (
-                                                                            <p className="m-0 ps-dp4 text-[0.8125rem] leading-[1.45] break-words text-dhis2-grey-600">
-                                                                                {effect.data}
-                                                                            </p>
-                                                                        ) : null}
-                                                                    </li>
-                                                                ))}
+                                                                {result.effects.map((effect) => {
+                                                                    const {
+                                                                        label: targetLabel,
+                                                                        showId: showTargetId,
+                                                                    } = resolveEffectTargetLabel(
+                                                                        effect,
+                                                                        labelLookup
+                                                                    );
+
+                                                                    return (
+                                                                        <li
+                                                                            key={`${effect.type}-${effect.targetId}-${effect.data ?? ''}`}
+                                                                            className="flex flex-col gap-dp4"
+                                                                        >
+                                                                            <div className="flex flex-wrap items-baseline gap-dp8">
+                                                                                <Tag
+                                                                                    className={getEffectTagClassName(
+                                                                                        effect.type
+                                                                                    )}
+                                                                                >
+                                                                                    {effect.type}
+                                                                                </Tag>
+                                                                                <span
+                                                                                    className={`break-words text-[0.8125rem] leading-[1.45] text-dhis2-grey-800 ${showTargetId ? '' : 'break-all font-mono'}`}
+                                                                                >
+                                                                                    {targetLabel}
+                                                                                </span>
+                                                                            </div>
+                                                                            {effect.data ? (
+                                                                                <p className="m-0 ps-dp4 text-[0.8125rem] leading-[1.45] break-words text-dhis2-grey-600">
+                                                                                    {effect.data}
+                                                                                </p>
+                                                                            ) : null}
+                                                                        </li>
+                                                                    );
+                                                                })}
                                                             </ul>
                                                         </div>
                                                     );

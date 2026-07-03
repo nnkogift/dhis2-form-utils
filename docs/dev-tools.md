@@ -127,7 +127,7 @@ Bounded ring buffer (default 200) avoids unbounded memory growth in a long dev s
 
 ## 5. Wiring in a consuming app
 
-`RuleDevtoolsPanel` takes **no props**. It reads `FormStore` from context and owns its trace store internally:
+`RuleDevtoolsPanel` reads `FormStore` from context and owns its trace store internally. Pass optional `metadata` for human-readable rule, field, and section labels:
 
 ```tsx
 const { form, formStore } = useEventForm({ options });
@@ -135,17 +135,35 @@ const { form, formStore } = useEventForm({ options });
 return (
     <FormStateProvider formStore={formStore} form={form}>
         <FormProvider {...form}>{/* ...form fields... */}</FormProvider>
-        <RuleDevtoolsPanel />
+        <RuleDevtoolsPanel
+            metadata={{
+                formKind: 'event',
+                metadata: program,
+                programStageId,
+            }}
+        />
     </FormStateProvider>
 );
 ```
+
+For tracker registration forms:
+
+```tsx
+<RuleDevtoolsPanel metadata={{ formKind: 'tracker', metadata: trackerMetadata }} />
+```
+
+Without `metadata`, all labels fall back to raw UIDs — the panel is fully functional either way.
 
 This works because `FormStateProvider` already receives the `formStore` instance as a prop. Exposing it through context via a `useFormStore()` hook — alongside the existing `useFieldState` / `useSectionState` / `useFormFeedback` — is a small, additive addition to `FormStateContext`.
 
 ```tsx
 // devtools/src/RuleDevtoolsPanel.tsx
-function RuleDevtoolsPanel() {
+function RuleDevtoolsPanel({ metadata }: RuleDevtoolsPanelProps) {
     const formStore = useFormStore(); // from @dhis2-form-utils/hooks context
+    const labelLookup = useMemo(
+        () => (metadata ? createLabelLookup(metadata) : undefined),
+        [metadata]
+    );
     const traceStore = useMemo(() => attachRuleDevtools(formStore), [formStore]);
 
     useEffect(() => () => traceStore.dispose(), [traceStore]);
@@ -167,15 +185,15 @@ Built entirely from the `RuleTraceEntry` stream, accumulated over the session:
 - Edges are deduplicated by `(source, ruleId, target, effectType)` — repeated firings strengthen an existing edge rather than duplicating it. Edge thickness or a fire-count badge is a natural cheap addition here.
 - The graph is empty until the user interacts with the form. The UI states this plainly rather than implying a complete picture (§2).
 
-**Rule labeling:** rules are labeled by `ruleId` by default. An optional, decorative-only prop covers the common case where a human-readable name is wanted:
+**Labeling:** rules, fields, and sections are labeled by UID by default. Pass optional `metadata` (a discriminated union for event or tracker forms) to resolve display names from program metadata — same label fallbacks as `fieldConfig.ts` (`displayFormName ?? displayName ?? id` for data elements; `formName ?? displayName ?? id` for TEAs). System field keys (`orgUnit`, `enrolledAt`, …) stay as raw IDs. Naming is strictly optional and cosmetic.
 
 ```ts
 <RuleDevtoolsPanel
-    resolveRuleName={(ruleId) => programStageMetadata.programRules.find(r => r.id === ruleId)?.name}
+    metadata={{ formKind: 'event', metadata: program, programStageId }}
 />
 ```
 
-`resolveRuleName` is the one optional prop the panel accepts — everything required to function (`FormStore`, the trace store) is read internally via `useFormStore()`, per §5. Naming stays strictly optional and cosmetic — the graph and timeline are fully functional without it.
+Everything required to function (`FormStore`, the trace store) is read internally via `useFormStore()`, per §5.
 
 Clicking a trace-timeline entry highlights the exact rule-node and edges that entry contributed, since they're already in the same accumulated graph.
 
@@ -194,7 +212,7 @@ Clicking a trace-timeline entry highlights the exact rule-node and edges that en
 1. **`@xyflow/react` outside core no-new-deps rule** — confirmed. Scoped to optional `devtools` package only; never imported by `hooks` or `rules`.
 2. **`subscribeTrace()` + `useFormStore()`** — implemented. Trace emission is a no-op when no listeners are attached.
 3. **Ring buffer** — default 200 entries; overridable via internal `attachRuleDevtools({ maxEntries })`.
-4. **`resolveRuleName`** — included in v1; playground wires it from `program.programRules`.
+4. **`metadata` prop** — optional discriminated union for event/tracker program metadata; resolves rule, field, and section labels internally.
 5. **`useTrackerForm`** — no special handling; same `FormStore` attach point.
 
 ---

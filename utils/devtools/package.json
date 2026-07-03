@@ -19,11 +19,13 @@
     ],
     "scripts": {
         "build": "tsup && tailwindcss -i ./src/tailwind.css -o ./dist/index.css --minify",
+        "dev": "concurrently -n tsup,css -c blue,magenta \"tsup --watch\" \"tailwindcss -i ./src/tailwind.css -o ./dist/index.css --watch\"",
         "typecheck": "tsc --noEmit",
         "test": "vitest run"
     },
     "dependencies": {
         "@dhis2-form-utils/hooks": "workspace:*",
+        "@dhis2-form-utils/metadata": "workspace:*",
         "@xyflow/react": "^12.11.1"
     },
     "peerDependencies": {
@@ -38,6 +40,7 @@
         "@dhis2/ui": "^10.15.1",
         "@tailwindcss/cli": "^4.3.2",
         "@testing-library/react": "^16.3.2",
+        "concurrently": "^10.0.0",
         "@types/react": "^18.3.29",
         "@types/react-dom": "^18.3.7",
         "jsdom": "^29.1.1",

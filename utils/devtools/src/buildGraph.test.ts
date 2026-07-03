@@ -1,6 +1,7 @@
 import type { RuleTraceEntry } from '@dhis2-form-utils/hooks';
 import { describe, expect, it } from 'vitest';
 import { accumulateGraph, buildGraphFromTrace } from './buildGraph';
+import type { DevtoolsLabelLookup } from './createLabelLookup';
 
 const entry: RuleTraceEntry = {
     id: 'entry-1',
@@ -23,17 +24,21 @@ const entry: RuleTraceEntry = {
     ],
 };
 
+const labelLookup: DevtoolsLabelLookup = {
+    resolveRuleName: (id) => (id === 'rule-1' ? 'Age warning rule' : id),
+    resolveFieldName: (id) => (id === 'age' ? 'Age (years)' : id),
+    resolveSectionName: (id) => (id === 'section-a' ? 'Clinical data' : id),
+};
+
 describe('buildGraphFromTrace', () => {
     it('accumulates nodes and edges from trace entries', () => {
-        const graph = buildGraphFromTrace([entry], (id) =>
-            id === 'rule-1' ? 'Age warning rule' : undefined
-        );
+        const graph = buildGraphFromTrace([entry], labelLookup);
 
         expect(graph.nodes).toEqual(
             expect.arrayContaining([
-                { id: 'field:age', kind: 'field', label: 'age' },
+                { id: 'field:age', kind: 'field', label: 'Age (years)' },
                 { id: 'rule:rule-1', kind: 'rule', label: 'Age warning rule' },
-                { id: 'section:section-a', kind: 'section', label: 'section-a' },
+                { id: 'section:section-a', kind: 'section', label: 'Clinical data' },
             ])
         );
 
