@@ -1,19 +1,14 @@
 import React from 'react'
 import { Link, useLocation, useParams } from 'react-router'
-import { useDataQuery } from '@dhis2/app-runtime'
 import i18n from '@dhis2/d2-i18n'
-import { Button, Center, CircularLoader, NoticeBox, Tag } from '@dhis2/ui'
+import { Center, CircularLoader, NoticeBox, Tag } from '@dhis2/ui'
+import { ProgramEventFormScreen } from '@/components/programs/forms/ProgramEventFormScreen'
+import { ProgramRegistrationFormScreen } from '@/components/programs/forms/ProgramRegistrationFormScreen'
 import { buildProgramListUrl } from '@/hooks/buildProgramListUrl'
-import {
-    PROGRAM_TYPE,
-    type Program,
-    type ProgramListParams,
-} from '@/types/program'
+import { useAccessibleOrgUnits } from '@/hooks/useAccessibleOrgUnits'
+import { useProgramHeader } from '@/hooks/useProgramHeader'
+import { PROGRAM_TYPE, type ProgramListParams } from '@/types/program'
 import { formatProgramType } from '@/utils/formatProgramType'
-
-type ProgramQueryResult = {
-    program: Program
-}
 
 type PlaceholderLocationState = {
     listParams?: ProgramListParams
@@ -25,21 +20,15 @@ export function ProgramPlaceholderPage() {
     const listParams = (location.state as PlaceholderLocationState | null)
         ?.listParams
     const backUrl = listParams ? buildProgramListUrl(listParams) : '/'
-
-    const query = {
-        program: {
-            resource: 'programs',
-            id: programId,
-            params: {
-                fields: 'id,displayName,code,programType',
-            },
-        },
-    }
-
-    const { data, error, loading } = useDataQuery<ProgramQueryResult>(query)
+    const { data, error, loading } = useProgramHeader(programId)
+    const {
+        orgUnits,
+        loading: orgUnitsLoading,
+        error: orgUnitsError,
+    } = useAccessibleOrgUnits()
     const program = data?.program
 
-    if (loading) {
+    if (loading || orgUnitsLoading) {
         return (
             <Center>
                 <CircularLoader />
@@ -63,15 +52,6 @@ export function ProgramPlaceholderPage() {
         )
     }
 
-    const isRegistration =
-        program.programType === PROGRAM_TYPE.WITH_REGISTRATION
-    const placeholderTitle = isRegistration
-        ? i18n.t('Registration data entry form')
-        : i18n.t('Event data entry form')
-    const placeholderMessage = isRegistration
-        ? i18n.t('Registration data entry form — coming soon')
-        : i18n.t('Event data entry form — coming soon')
-
     return (
         <div className="flex flex-col gap-dp16 pb-dp24">
             <Link
@@ -85,15 +65,36 @@ export function ProgramPlaceholderPage() {
                 <span className="font-mono">{program.code}</span>
                 <Tag>{formatProgramType(program.programType)}</Tag>
             </div>
-            <NoticeBox title={placeholderTitle}>{placeholderMessage}</NoticeBox>
-            <Button secondary small disabled>
-                {i18n.t('Open form')}
-            </Button>
-            {/*
-              Future integration:
-              - WITH_REGISTRATION → useTrackerForm (registration data entry)
-              - WITHOUT_REGISTRATION → useEventForm + first programStage
-            */}
+            {orgUnitsError ? (
+                <NoticeBox
+                    error
+                    title={i18n.t('Could not load organisation units')}
+                >
+                    {i18n.t(
+                        'The current user organisation units could not be loaded for data entry.'
+                    )}
+                </NoticeBox>
+            ) : null}
+            {!orgUnitsError && orgUnits.length === 0 ? (
+                <NoticeBox title={i18n.t('No organisation units available')}>
+                    {i18n.t(
+                        'The current user does not have any accessible organisation units for this playground.'
+                    )}
+                </NoticeBox>
+            ) : null}
+            {!orgUnitsError && orgUnits.length > 0 ? (
+                program.programType === PROGRAM_TYPE.WITH_REGISTRATION ? (
+                    <ProgramRegistrationFormScreen
+                        programId={program.id}
+                        orgUnits={orgUnits}
+                    />
+                ) : (
+                    <ProgramEventFormScreen
+                        program={program}
+                        orgUnits={orgUnits}
+                    />
+                )
+            ) : null}
         </div>
     )
 }

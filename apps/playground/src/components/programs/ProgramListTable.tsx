@@ -1,4 +1,4 @@
-import React, { KeyboardEvent } from 'react'
+import React from 'react'
 import i18n from '@dhis2/d2-i18n'
 import {
     Center,
@@ -27,16 +27,6 @@ type ProgramListTableProps = {
     onProgramSelect: (program: Program) => void
 }
 
-function handleRowKeyDown(
-    event: KeyboardEvent<HTMLTableRowElement>,
-    onActivate: () => void
-) {
-    if (event.key === 'Enter' || event.key === ' ') {
-        event.preventDefault()
-        onActivate()
-    }
-}
-
 export function ProgramListTable({
     programs,
     pager,
@@ -56,17 +46,11 @@ export function ProgramListTable({
             <DataTable>
                 <DataTableHead>
                     <DataTableRow>
-                        <DataTableColumnHeader large>
+                        <DataTableColumnHeader>
                             {i18n.t('Name')}
                         </DataTableColumnHeader>
-                        <DataTableColumnHeader large>
-                            {i18n.t('Code')}
-                        </DataTableColumnHeader>
-                        <DataTableColumnHeader large>
+                        <DataTableColumnHeader>
                             {i18n.t('Type')}
-                        </DataTableColumnHeader>
-                        <DataTableColumnHeader large>
-                            {i18n.t('ID')}
                         </DataTableColumnHeader>
                     </DataTableRow>
                 </DataTableHead>
@@ -81,41 +65,22 @@ export function ProgramListTable({
                         </DataTableRow>
                     ) : programs.length > 0 ? (
                         programs.map((program) => {
-                            const activate = () => {
-                                onProgramSelect(program)
-                            }
-
                             return (
-                                <DataTableRow
-                                    key={program.id}
-                                    className="cursor-pointer hover:bg-dhis2-grey-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-dhis2-teal-400 focus-visible:-outline-offset-2"
-                                    tabIndex={0}
-                                    onClick={activate}
-                                    onKeyDown={(event) => {
-                                        handleRowKeyDown(event, activate)
-                                    }}
-                                >
-                                    <DataTableCell large>
+                                <DataTableRow key={program.id}>
+                                    <DataTableCell
+                                        onClick={() => onProgramSelect(program)}
+                                    >
                                         {program.displayName}
                                     </DataTableCell>
-                                    <DataTableCell large>
-                                        {program.code}
-                                    </DataTableCell>
-                                    <DataTableCell large>
+                                    <DataTableCell>
                                         {formatProgramType(program.programType)}
-                                    </DataTableCell>
-                                    <DataTableCell
-                                        large
-                                        className="font-mono text-xs text-dhis2-grey-700"
-                                    >
-                                        {program.id}
                                     </DataTableCell>
                                 </DataTableRow>
                             )
                         })
                     ) : (
                         <DataTableRow>
-                            <DataTableCell colSpan="4">
+                            <DataTableCell colSpan="2">
                                 <div className="py-dp32 px-dp24 text-center text-dhis2-grey-700">
                                     {i18n.t(
                                         'No programs found. Try adjusting your search or filter.'
@@ -128,8 +93,8 @@ export function ProgramListTable({
                 {!loading && pageCount > 0 ? (
                     <DataTableFoot>
                         <DataTableRow>
-                            <DataTableCell colSpan="4">
-                                <div className="pt-dp16 pb-dp8">
+                            <DataTableCell colSpan="2">
+                                <div className="p-4">
                                     <Pagination
                                         page={page}
                                         pageSize={pageSize}

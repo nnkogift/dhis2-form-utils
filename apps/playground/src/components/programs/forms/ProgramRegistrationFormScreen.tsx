@@ -1,0 +1,51 @@
+import i18n from '@dhis2/d2-i18n'
+import { Center, CircularLoader, NoticeBox } from '@dhis2/ui'
+import { useTrackerProgramMetadata } from '@/hooks/useTrackerProgramMetadata'
+import type { OrgUnit } from '@/types/program'
+import { ProgramRegistrationForm } from './ProgramRegistrationForm'
+
+type ProgramRegistrationFormScreenProps = {
+    programId: string
+    orgUnits: OrgUnit[]
+}
+
+export function ProgramRegistrationFormScreen({
+    programId,
+    orgUnits,
+}: ProgramRegistrationFormScreenProps) {
+    const { data, error, loading } = useTrackerProgramMetadata(programId)
+
+    if (loading) {
+        return (
+            <Center>
+                <CircularLoader />
+            </Center>
+        )
+    }
+
+    if (error || !data?.program) {
+        return (
+            <NoticeBox error title={i18n.t('Could not load registration form')}>
+                {i18n.t('The tracker program metadata could not be loaded.')}
+            </NoticeBox>
+        )
+    }
+
+    if (data.program.programTrackedEntityAttributes.length === 0) {
+        return (
+            <NoticeBox title={i18n.t('No attributes configured')}>
+                {i18n.t(
+                    'This tracker program does not expose any tracked entity attributes to capture.'
+                )}
+            </NoticeBox>
+        )
+    }
+
+    return (
+        <ProgramRegistrationForm
+            programId={programId}
+            metadata={data.program}
+            orgUnits={orgUnits}
+        />
+    )
+}

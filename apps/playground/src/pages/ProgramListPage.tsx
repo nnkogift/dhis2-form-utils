@@ -46,7 +46,7 @@ export function ProgramListPage() {
     return (
         <div className="flex flex-col gap-dp24 pb-dp32 md:gap-dp32">
             <header>
-                <h2 className="m-0">{i18n.t('Programs')}</h2>
+                <h2 className="m-0 text-2xl">{i18n.t('Programs')}</h2>
             </header>
             <section
                 className="flex flex-col gap-dp8"
