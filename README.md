@@ -93,20 +93,43 @@ function Root() {
 
 ### Composed form with UI adapter
 
-Fetch program stage metadata in your app (or use the exported `programStageQuery` helper with
-`useDataQuery`), then wire the hook, providers, and field components:
+Fetch event program metadata via `GET /api/programs/{id}/metadata` (use the exported
+`programMetadataExportQuery` helper with `useDataQuery`, then `resolveEventProgramMetadata`), then
+wire the hook, providers, and field components:
 
 ```tsx
-import { FormStateProvider, useEventForm } from '@dhis2-form-utils/hooks';
+import {
+    FormStateProvider,
+    useEventForm,
+    programMetadataExportQuery,
+} from '@dhis2-form-utils/hooks';
 import { D2Field } from '@dhis2-form-utils/dhis2-ui';
 import { filterPayload } from '@dhis2-form-utils/rules';
-import type { ProgramStageMetadata } from '@dhis2-form-utils/metadata';
+import {
+    resolveEventProgramMetadata,
+    selectProgramStage,
+    type EventProgramMetadata,
+} from '@dhis2-form-utils/metadata';
+import { useDataQuery } from '@dhis2/app-runtime';
 import { FormProvider } from 'react-hook-form';
 
-function EventEntryForm({ metadata }: { metadata: ProgramStageMetadata }) {
+function EventEntryForm({
+    programId,
+    programStageId,
+}: {
+    programId: string;
+    programStageId: string;
+}) {
+    const { data } = useDataQuery(programMetadataExportQuery(programId));
+    const metadata: EventProgramMetadata | undefined = data?.programMetadata
+        ? resolveEventProgramMetadata(data.programMetadata, programId)
+        : undefined;
+    if (!metadata) return null;
+
+    const stageMetadata = selectProgramStage(metadata, programStageId);
     const { form, formStore } = useEventForm({
         options: {
-            programStageId: metadata.id,
+            programStageId,
             metadata,
         },
         formOptions: {
@@ -126,7 +149,7 @@ function EventEntryForm({ metadata }: { metadata: ProgramStageMetadata }) {
         <FormStateProvider formStore={formStore} form={form}>
             <FormProvider {...form}>
                 <form onSubmit={onSubmit}>
-                    {(metadata.programStageDataElements ?? []).map((psde) => (
+                    {(stageMetadata?.programStageDataElements ?? []).map((psde) => (
                         <D2Field
                             key={psde.dataElement.id}
                             field={{ kind: 'dataElement', config: psde }}

@@ -1,6 +1,7 @@
-import type { ProgramStageMetadata } from '@dhis2-form-utils/metadata';
+import type { EventProgramMetadata, ProgramStageMetadata } from '@dhis2-form-utils/metadata';
 import childProgrammeExport from './child-programme.json';
 import {
+    resolveMetadataExportEventProgram,
     resolveMetadataExportProgram,
     resolveMetadataExportStage,
     type MetadataExport,
@@ -19,14 +20,19 @@ export const CHILD_REGISTRATION_DEFAULT_ORG_UNIT = 'DiszpKrYNg8';
 const childExport = childProgrammeExport as MetadataExport;
 
 export function resolveChildProgrammeStage(stageId: string): ProgramStageMetadata {
-    return resolveMetadataExportStage(childExport, stageId, 'child-programme');
+    return resolveMetadataExportStage(childExport, stageId);
+}
+
+export function resolveChildProgrammeEventProgram(): EventProgramMetadata {
+    return resolveMetadataExportEventProgram(childExport, CHILD_PROGRAMME_PROGRAM_ID);
 }
 
 export function resolveChildProgrammeProgram(programId: string) {
-    return resolveMetadataExportProgram(childExport, programId, 'child-programme');
+    return resolveMetadataExportProgram(childExport, programId);
 }
 
 export const childProgrammeStageMetadata = resolveChildProgrammeStage(CHILD_PROGRAMME_STAGE_ID);
+export const childProgrammeEventProgramMetadata = resolveChildProgrammeEventProgram();
 export const childProgrammeProgramMetadata = resolveChildProgrammeProgram(
     CHILD_PROGRAMME_PROGRAM_ID
 );

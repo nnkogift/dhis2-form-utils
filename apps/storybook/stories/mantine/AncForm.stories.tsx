@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { MantineProvider } from '@mantine/core';
 import { ProgrammeEventForm } from '../../components/ProgrammeEventForm';
 import { withEventForm } from '../../decorators/withEventForm';
-import { ANC_SMOKING_DE_ID, ANC_STAGE_ID, ancStageMetadata } from '../../fixtures/anc';
+import { ANC_SMOKING_DE_ID, ANC_STAGE_ID, ancEventProgramMetadata } from '../../fixtures/anc';
 import { ancPlays } from '../../interactions/ancInteractions';
 import type { StoryPlayContext } from '../../interactions/ancInteractions';
 
@@ -25,7 +25,7 @@ const meta = {
         ),
         withEventForm({
             programStageId: ANC_STAGE_ID,
-            metadata: ancStageMetadata,
+            metadata: ancEventProgramMetadata,
         }),
     ],
 } satisfies Meta<typeof MantineAncForm>;
@@ -64,7 +64,7 @@ export const NonSmokerHidesCounselling: Story = {
         ),
         withEventForm({
             programStageId: ANC_STAGE_ID,
-            metadata: ancStageMetadata,
+            metadata: ancEventProgramMetadata,
             defaultValues: { [ANC_SMOKING_DE_ID]: 'true' },
         }),
     ],

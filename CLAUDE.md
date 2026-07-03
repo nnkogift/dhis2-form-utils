@@ -99,7 +99,7 @@ const { form, formStore } = useTrackerForm({
 
 Returns `{ form, formStore }`. The caller must:
 
-1. Fetch metadata (program stage: `programStageQuery` + `useDataQuery`; tracker: caller-owned program fetch)
+1. Fetch metadata (event/tracker: `programMetadataExportQuery` + `useDataQuery`, then `resolveEventProgramMetadata` / `resolveTrackerProgramMetadata`; stage-only: `programStageQuery`)
 2. Wrap children in `FormStateProvider` + RHF `FormProvider`
 3. Implement submit (e.g. `filterPayload` + `useDataMutation`)
 

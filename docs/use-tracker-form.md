@@ -48,7 +48,7 @@ The DHIS2 Tracker data model has three layers:
 
 ### `TrackerProgramMetadata`
 
-This is the pre-fetched metadata the caller passes to `useTrackerForm`. It mirrors the role of `ProgramStageMetadata` in `useEventForm` — a typed, minimal projection of what the API returns, shaped for what the hook actually needs. The caller owns the fetch; the hook owns nothing about data loading.
+This is the pre-fetched metadata the caller passes to `useTrackerForm`. It mirrors the role of `EventProgramMetadata` in `useEventForm` — a typed, minimal projection of what the API returns, shaped for what the hook actually needs. The caller owns the fetch; the hook owns nothing about data loading.
 
 All types are derived from `@dhis2/api-types/v43`. No DHIS2 types are hand-written in this library.
 

@@ -6,7 +6,7 @@ import { ProgramEventFormScreen } from '@/components/programs/forms/ProgramEvent
 import { ProgramRegistrationFormScreen } from '@/components/programs/forms/ProgramRegistrationFormScreen'
 import { buildProgramListUrl } from '@/hooks/buildProgramListUrl'
 import { useAccessibleOrgUnits } from '@/hooks/useAccessibleOrgUnits'
-import { useProgramHeader } from '@/hooks/useProgramHeader'
+import { useEventProgramMetadata } from '@/hooks/useEventProgramMetadata'
 import { PROGRAM_TYPE, type ProgramListParams } from '@/types/program'
 import { formatProgramType } from '@/utils/formatProgramType'
 
@@ -20,7 +20,7 @@ export function ProgramPlaceholderPage() {
     const listParams = (location.state as PlaceholderLocationState | null)
         ?.listParams
     const backUrl = listParams ? buildProgramListUrl(listParams) : '/'
-    const { data, error, loading } = useProgramHeader(programId)
+    const { data, error, loading } = useEventProgramMetadata(programId)
     const {
         orgUnits,
         loading: orgUnitsLoading,

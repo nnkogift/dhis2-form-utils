@@ -7,7 +7,7 @@ import { withEventForm } from '../../decorators/withEventForm';
 import { childProgrammePlays } from '../../interactions/childProgrammeInteractions';
 import {
     CHILD_PROGRAMME_STAGE_ID,
-    childProgrammeStageMetadata,
+    childProgrammeEventProgramMetadata,
 } from '../../fixtures/childProgramme';
 
 const plays = childProgrammePlays('mantine');
@@ -28,7 +28,7 @@ const meta = {
         ),
         withEventForm({
             programStageId: CHILD_PROGRAMME_STAGE_ID,
-            metadata: childProgrammeStageMetadata,
+            metadata: childProgrammeEventProgramMetadata,
         }),
     ],
 } satisfies Meta<typeof MantineChildProgrammeForm>;

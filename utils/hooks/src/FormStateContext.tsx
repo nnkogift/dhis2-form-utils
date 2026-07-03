@@ -39,7 +39,7 @@ export function FormStateProvider<T extends Record<string, unknown> = Record<str
     return (
         <FormStateContext.Provider
             value={{
-                form,
+                form: form as UseFormReturn<Record<string, unknown>>,
                 formStore,
             }}
         >
@@ -55,7 +55,7 @@ export function useFormStateContext<
     if (!ctx) {
         throw new Error('useFormStateContext must be used inside FormStateProvider');
     }
-    return ctx;
+    return ctx as FormStateContextValue<T>;
 }
 
 export function useFieldStore(): FieldStateStore {

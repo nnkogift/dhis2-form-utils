@@ -1,94 +1,52 @@
 import { useDataQuery } from '@dhis2/app-runtime'
 import type { TrackerProgramMetadata } from '@dhis2-form-utils/hooks'
+import {
+    resolveTrackerProgramMetadata,
+    type ProgramMetadataExport,
+} from '@dhis2-form-utils/metadata'
 import { useMemo } from 'react'
+
+type ProgramMetadataExportQueryResult = {
+    programMetadata: ProgramMetadataExport
+}
 
 type TrackerProgramMetadataQueryResult = {
     program: TrackerProgramMetadata
 }
 
-const TRACKER_PROGRAM_METADATA_FIELDS = [
-    'id',
-    'displayName',
-    'trackedEntityType[id]',
-    'displayIncidentDate',
-    'selectEnrollmentDatesInFuture',
-    'selectIncidentDatesInFuture',
-    'displayEnrollmentDateLabel',
-    'displayIncidentDateLabel',
-    'programTrackedEntityAttributes[' +
-        [
-            'id',
-            'mandatory',
-            'allowFutureDate',
-            'searchable',
-            'displayInList',
-            'sortOrder',
-            'renderType',
-            'renderOptionsAsRadio',
-            'trackedEntityAttribute[' +
-                [
-                    'id',
-                    'displayName',
-                    'formName',
-                    'valueType',
-                    'optionSet[id,options[id,code,displayName]]',
-                    'unique',
-                    'generated',
-                    'fieldMask',
-                    'confidential',
-                    'orgunitScope',
-                ].join(',') +
-                ']',
-        ].join(',') +
-        ']',
-    'programRules[' +
-        [
-            'id',
-            'name',
-            'condition',
-            'priority',
-            'programStage[id]',
-            'programRuleActions[' +
-                [
-                    'id',
-                    'programRuleActionType',
-                    'data',
-                    'content',
-                    'location',
-                    'trackedEntityAttribute[id]',
-                    'programStageSection[id]',
-                ].join(',') +
-                ']',
-        ].join(',') +
-        ']',
-    'programRuleVariables[' +
-        [
-            'id',
-            'name',
-            'programRuleVariableSourceType',
-            'trackedEntityAttribute[id]',
-            'valueType',
-            'useCodeForOptionSet',
-        ].join(',') +
-        ']',
-    'programSections[id,displayName,sortOrder,trackedEntityAttributes[id]]',
-].join(',')
-
 export function useTrackerProgramMetadata(programId?: string) {
     const query = useMemo(
         () => ({
-            program: {
+            programMetadata: {
                 resource: 'programs',
-                id: programId,
+                id: programId ? `${programId}/metadata` : undefined,
                 params: {
-                    fields: TRACKER_PROGRAM_METADATA_FIELDS,
+                    skipSharing: true,
                 },
             },
         }),
         [programId]
     )
 
-    return useDataQuery<TrackerProgramMetadataQueryResult>(query, {
+    const result = useDataQuery<ProgramMetadataExportQueryResult>(query, {
         lazy: !programId,
     })
+
+    const program = useMemo(() => {
+        if (!programId || !result.data?.programMetadata) {
+            return undefined
+        }
+
+        return resolveTrackerProgramMetadata(
+            result.data.programMetadata,
+            programId
+        )
+    }, [programId, result.data])
+
+    return {
+        ...result,
+        data: program
+            ? ({ program } satisfies TrackerProgramMetadataQueryResult)
+            : undefined,
+    }
 }

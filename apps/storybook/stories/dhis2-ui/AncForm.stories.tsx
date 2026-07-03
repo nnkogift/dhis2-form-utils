@@ -2,7 +2,7 @@ import { D2Field } from '@dhis2-form-utils/dhis2-ui';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { ProgrammeEventForm } from '../../components/ProgrammeEventForm';
 import { withEventForm } from '../../decorators/withEventForm';
-import { ANC_STAGE_ID, ancStageMetadata } from '../../fixtures/anc';
+import { ANC_STAGE_ID, ancEventProgramMetadata } from '../../fixtures/anc';
 import { ancPlays } from '../../interactions/ancInteractions';
 import type { StoryPlayContext } from '../../interactions/ancInteractions';
 
@@ -19,7 +19,7 @@ const meta = {
     decorators: [
         withEventForm({
             programStageId: ANC_STAGE_ID,
-            metadata: ancStageMetadata,
+            metadata: ancEventProgramMetadata,
         }),
     ],
 } satisfies Meta<typeof Dhis2AncForm>;

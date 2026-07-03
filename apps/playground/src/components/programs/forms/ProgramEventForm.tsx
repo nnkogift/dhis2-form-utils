@@ -1,11 +1,14 @@
 import { useDataEngine } from '@dhis2/app-runtime'
 import { FormFeedback } from '@dhis2-form-utils/dhis2-ui'
 import { FormStateProvider, useEventForm } from '@dhis2-form-utils/hooks'
-import type { ProgramStageMetadata } from '@dhis2-form-utils/metadata'
+import type {
+    EventProgramMetadata,
+    ProgramStageMetadata,
+} from '@dhis2-form-utils/metadata'
 import { filterPayload } from '@dhis2-form-utils/rules'
 import i18n from '@dhis2/d2-i18n'
-import { useMemo, useState } from 'react'
-import type { OrgUnit, ProgramHeader } from '@/types/program'
+import { useState } from 'react'
+import type { OrgUnit } from '@/types/program'
 import { formatDhis2Error } from '@/utils/formatDhis2Error'
 import {
     buildEventPayload,
@@ -16,8 +19,8 @@ import { EventSystemFields } from './EventSystemFields'
 import { ProgramFormActions } from './ProgramFormActions'
 
 type ProgramEventFormProps = {
-    program: ProgramHeader
-    metadata: ProgramStageMetadata
+    program: EventProgramMetadata
+    stageMetadata: ProgramStageMetadata
     programStageId: string
     orgUnits: OrgUnit[]
 }
@@ -28,27 +31,23 @@ function createTodayValue() {
 
 export function ProgramEventForm({
     program,
-    metadata,
+    stageMetadata,
     programStageId,
     orgUnits,
 }: ProgramEventFormProps) {
     const dataEngine = useDataEngine()
-    const stableMetadata = useMemo(() => metadata, [metadata])
-    const defaultValues = useMemo<EventFormValues>(
-        () => ({
-            orgUnit: '',
-            occurredAt: createTodayValue(),
-        }),
-        []
-    )
+
     const { form, formStore } = useEventForm<EventFormValues>({
         options: {
             programStageId,
-            metadata: stableMetadata,
+            metadata: program,
         },
         formOptions: {
             mode: 'onBlur',
-            defaultValues,
+            defaultValues: {
+                orgUnit: '',
+                occurredAt: createTodayValue(),
+            },
         },
     })
     const [successMessage, setSuccessMessage] = useState<string>()
@@ -88,7 +87,7 @@ export function ProgramEventForm({
             <form onSubmit={handleSubmit} className="flex flex-col gap-dp16">
                 <EventSystemFields orgUnits={orgUnits} />
                 <FormFeedback />
-                <EventFormFields metadata={metadata} />
+                <EventFormFields metadata={stageMetadata} />
                 <ProgramFormActions
                     submitLabel={i18n.t('Save event')}
                     errorTitle={i18n.t('Could not save event')}

@@ -4,10 +4,10 @@ import { MemoryRouter, Route, Routes } from 'react-router'
 import { ProgramEventFormScreen } from '@/components/programs/forms/ProgramEventFormScreen'
 import { ProgramRegistrationFormScreen } from '@/components/programs/forms/ProgramRegistrationFormScreen'
 import { useAccessibleOrgUnits } from '@/hooks/useAccessibleOrgUnits'
-import { useProgramHeader } from '@/hooks/useProgramHeader'
+import { useEventProgramMetadata } from '@/hooks/useEventProgramMetadata'
 import { ProgramPlaceholderPage } from './ProgramPlaceholderPage'
 
-jest.mock('@/hooks/useProgramHeader')
+jest.mock('@/hooks/useEventProgramMetadata')
 jest.mock('@/hooks/useAccessibleOrgUnits')
 jest.mock('@/components/programs/forms/ProgramEventFormScreen', () => ({
     ProgramEventFormScreen: jest.fn(() => <div>Event form screen</div>),
@@ -18,7 +18,7 @@ jest.mock('@/components/programs/forms/ProgramRegistrationFormScreen', () => ({
     )),
 }))
 
-const mockedUseProgramHeader = jest.mocked(useProgramHeader)
+const mockedUseEventProgramMetadata = jest.mocked(useEventProgramMetadata)
 const mockedUseAccessibleOrgUnits = jest.mocked(useAccessibleOrgUnits)
 
 function renderPage() {
@@ -53,7 +53,7 @@ describe('ProgramPlaceholderPage', () => {
     })
 
     it('renders the event form flow for event programs', () => {
-        mockedUseProgramHeader.mockReturnValue({
+        mockedUseEventProgramMetadata.mockReturnValue({
             data: {
                 program: {
                     id: 'Program12345',
@@ -62,8 +62,14 @@ describe('ProgramPlaceholderPage', () => {
                     shortName: 'IPM',
                     programType: 'WITHOUT_REGISTRATION',
                     programStages: [
-                        { id: 'Stage1234567', displayName: 'Stage 1' },
+                        {
+                            id: 'Stage1234567',
+                            displayName: 'Stage 1',
+                            programStageDataElements: [],
+                        },
                     ],
+                    programRules: [],
+                    programRuleVariables: [],
                 },
             },
             error: undefined,
@@ -81,7 +87,7 @@ describe('ProgramPlaceholderPage', () => {
     })
 
     it('renders the registration flow for tracker programs', () => {
-        mockedUseProgramHeader.mockReturnValue({
+        mockedUseEventProgramMetadata.mockReturnValue({
             data: {
                 program: {
                     id: 'Program12345',
@@ -89,10 +95,15 @@ describe('ProgramPlaceholderPage', () => {
                     code: 'CHILD',
                     shortName: 'CHILD',
                     programType: 'WITH_REGISTRATION',
-                    trackedEntityType: { id: 'TrackedEntity1' },
                     programStages: [
-                        { id: 'Stage1234567', displayName: 'Stage 1' },
+                        {
+                            id: 'Stage1234567',
+                            displayName: 'Stage 1',
+                            programStageDataElements: [],
+                        },
                     ],
+                    programRules: [],
+                    programRuleVariables: [],
                 },
             },
             error: undefined,
@@ -110,7 +121,7 @@ describe('ProgramPlaceholderPage', () => {
     })
 
     it('shows a notice when no organisation units are available', () => {
-        mockedUseProgramHeader.mockReturnValue({
+        mockedUseEventProgramMetadata.mockReturnValue({
             data: {
                 program: {
                     id: 'Program12345',
@@ -118,10 +129,15 @@ describe('ProgramPlaceholderPage', () => {
                     code: 'CHILD',
                     shortName: 'CHILD',
                     programType: 'WITH_REGISTRATION',
-                    trackedEntityType: { id: 'TrackedEntity1' },
                     programStages: [
-                        { id: 'Stage1234567', displayName: 'Stage 1' },
+                        {
+                            id: 'Stage1234567',
+                            displayName: 'Stage 1',
+                            programStageDataElements: [],
+                        },
                     ],
+                    programRules: [],
+                    programRuleVariables: [],
                 },
             },
             error: undefined,

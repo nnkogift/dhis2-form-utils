@@ -1,8 +1,9 @@
 import { D2Field, FormSection } from '@dhis2-form-utils/dhis2-ui'
 import type { TrackerProgramMetadata } from '@dhis2-form-utils/hooks'
 import type { ProgramTrackedEntityAttribute } from '@dhis2-form-utils/metadata'
-import i18n from '@dhis2/d2-i18n'
+import { resolveFormSectionLayout } from '@dhis2-form-utils/metadata'
 import { useMemo } from 'react'
+import { defaultSectionTitle, FormSectionCard } from './FormSectionCard'
 
 type RegistrationFormFieldsProps = {
     metadata: TrackerProgramMetadata
@@ -22,6 +23,18 @@ function toFieldConfig(
     } as unknown as ProgramTrackedEntityAttribute
 }
 
+function renderTeaField(fieldConfig: ProgramTrackedEntityAttribute) {
+    return (
+        <D2Field
+            key={fieldConfig.id}
+            field={{
+                kind: 'trackedEntityAttribute',
+                config: fieldConfig,
+            }}
+        />
+    )
+}
+
 export function RegistrationFormFields({
     metadata,
 }: RegistrationFormFieldsProps) {
@@ -36,79 +49,59 @@ export function RegistrationFormFields({
                 .map(toFieldConfig),
         [metadata.programTrackedEntityAttributes]
     )
-    const sections = useMemo(
-        () =>
-            (metadata.programSections ?? [])
-                .slice()
-                .sort(
-                    (left, right) =>
-                        (left.sortOrder ?? 0) - (right.sortOrder ?? 0)
-                ),
-        [metadata.programSections]
-    )
-    const sectionFieldIds = useMemo(
-        () =>
-            new Set(
-                sections.flatMap((section) =>
-                    section.trackedEntityAttributes.map(
-                        (attribute) => attribute.id
-                    )
-                )
-            ),
-        [sections]
-    )
-    const fieldsById = useMemo(
+    const sections = metadata.programSections ?? []
+    const fieldsByTeaId = useMemo(
         () =>
             new Map(
-                fieldConfigs.map((fieldConfig) => [fieldConfig.id, fieldConfig])
+                fieldConfigs.map((fieldConfig) => [
+                    fieldConfig.trackedEntityAttribute.id,
+                    fieldConfig,
+                ])
             ),
         [fieldConfigs]
     )
-    const unsectionedFields = useMemo(
-        () =>
-            fieldConfigs.filter(
-                (fieldConfig) =>
-                    !sectionFieldIds.has(fieldConfig.trackedEntityAttribute.id)
-            ),
-        [fieldConfigs, sectionFieldIds]
-    )
+
+    if (sections.length === 0) {
+        return <>{fieldConfigs.map(renderTeaField)}</>
+    }
+
+    const layout = resolveFormSectionLayout({
+        sections,
+        fields: fieldConfigs,
+        getSectionId: (section) => section.id,
+        getSectionDisplayName: (section) => section.displayName,
+        getSortOrder: (section) => section.sortOrder ?? 0,
+        getSectionItemIds: (section) =>
+            section.trackedEntityAttributes.map((attribute) => attribute.id),
+        getFieldId: (fieldConfig) => fieldConfig.trackedEntityAttribute.id,
+    })
 
     return (
         <>
-            {sections.map((section) => (
+            {layout.sections.map((section) => (
                 <FormSection key={section.id} sectionId={section.id}>
-                    <section className="flex flex-col gap-dp16 rounded border border-dhis2-grey-400 p-dp16">
-                        <h3 className="m-0 text-lg font-medium">
-                            {section.displayName ?? i18n.t('Section')}
-                        </h3>
-                        {section.trackedEntityAttributes.map((attribute) => {
-                            const fieldConfig = fieldsById.get(attribute.id)
+                    <FormSectionCard
+                        title={defaultSectionTitle(section.displayName)}
+                    >
+                        {section.itemIds.map((teaId) => {
+                            const fieldConfig = fieldsByTeaId.get(teaId)
                             if (!fieldConfig) {
                                 return null
                             }
 
-                            return (
-                                <D2Field
-                                    key={attribute.id}
-                                    field={{
-                                        kind: 'trackedEntityAttribute',
-                                        config: fieldConfig,
-                                    }}
-                                />
-                            )
+                            return renderTeaField(fieldConfig)
                         })}
-                    </section>
+                    </FormSectionCard>
                 </FormSection>
             ))}
-            {unsectionedFields.map((fieldConfig) => (
-                <D2Field
-                    key={fieldConfig.id}
-                    field={{
-                        kind: 'trackedEntityAttribute',
-                        config: fieldConfig,
-                    }}
-                />
-            ))}
+            {layout.unsectionedItemIds.map((teaId) => {
+                const fieldConfig = fieldsByTeaId.get(teaId)
+                if (!fieldConfig) {
+                    return null
+                }
+
+                return renderTeaField(fieldConfig)
+            })}
         </>
     )
 }

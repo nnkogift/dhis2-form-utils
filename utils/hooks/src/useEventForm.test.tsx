@@ -3,15 +3,24 @@ import { describe, expect, it } from 'vitest';
 import {
     ProgramRuleActionType,
     ProgramRuleVariableSourceType,
-    type ProgramStageMetadata,
+    type EventProgramMetadata,
 } from '@dhis2-form-utils/metadata';
 import { useEventForm } from './useEventForm';
 
-const baseMetadata: ProgramStageMetadata = {
-    id: 'stage-1',
-    displayName: 'Stage',
-    programStageDataElements: [],
-};
+const baseMetadata = {
+    id: 'program-1',
+    displayName: 'Program',
+    programType: 'WITHOUT_REGISTRATION',
+    programStages: [
+        {
+            id: 'stage-1',
+            displayName: 'Stage',
+            programStageDataElements: [],
+        },
+    ],
+    programRules: [],
+    programRuleVariables: [],
+} as unknown as EventProgramMetadata;
 
 describe('useEventForm', () => {
     it('returns form and formStore', () => {
@@ -30,15 +39,22 @@ describe('useEventForm', () => {
 
     it('reactively evaluates field rules into the field store', async () => {
         const metadata = {
-            id: 'stage-rules',
-            displayName: 'Rule Stage',
-            programStageDataElements: [
+            id: 'program-rules',
+            displayName: 'Rule Program',
+            programType: 'WITHOUT_REGISTRATION',
+            programStages: [
                 {
-                    dataElement: {
-                        id: 'age',
-                        displayName: 'Age',
-                        valueType: 'INTEGER' as const,
-                    },
+                    id: 'stage-rules',
+                    displayName: 'Rule Stage',
+                    programStageDataElements: [
+                        {
+                            dataElement: {
+                                id: 'age',
+                                displayName: 'Age',
+                                valueType: 'INTEGER' as const,
+                            },
+                        },
+                    ],
                 },
             ],
             programRules: [
@@ -72,7 +88,7 @@ describe('useEventForm', () => {
                         ProgramRuleVariableSourceType.DATAELEMENT_CURRENT_EVENT,
                 },
             ],
-        } as ProgramStageMetadata;
+        } as unknown as EventProgramMetadata;
 
         const { result } = renderHook(() =>
             useEventForm({ options: { programStageId: 'stage-rules', metadata } })
@@ -112,7 +128,7 @@ describe('useEventForm', () => {
                     ],
                 },
             ],
-        } as ProgramStageMetadata;
+        } as unknown as EventProgramMetadata;
 
         const { result } = renderHook(() =>
             useEventForm({

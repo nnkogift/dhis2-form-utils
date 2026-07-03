@@ -1,6 +1,7 @@
 import { Provider } from '@dhis2/app-runtime';
 import { FormStateProvider, useEventForm } from '@dhis2-form-utils/hooks';
-import type { ProgramStageMetadata } from '@dhis2-form-utils/metadata';
+import type { EventProgramMetadata } from '@dhis2-form-utils/metadata';
+import { selectProgramStage } from '@dhis2-form-utils/metadata';
 import type { Decorator } from '@storybook/react-vite';
 import { createContext, type ReactNode, useContext, useMemo } from 'react';
 import { FormProvider, type UseFormReturn } from 'react-hook-form';
@@ -11,7 +12,8 @@ const runtimeConfig = {
 };
 
 type EventFormStoryContextValue = {
-    metadata: ProgramStageMetadata;
+    metadata: EventProgramMetadata;
+    stageMetadata: ReturnType<typeof selectProgramStage>;
 };
 
 const EventFormStoryContext = createContext<EventFormStoryContextValue | null>(null);
@@ -26,7 +28,7 @@ export function useEventFormStory(): EventFormStoryContextValue {
 
 export type EventFormDecoratorOptions = {
     programStageId: string;
-    metadata: ProgramStageMetadata;
+    metadata: EventProgramMetadata;
     defaultValues?: Record<string, string>;
 };
 
@@ -39,6 +41,10 @@ export function EventFormWrapper({
     children: ReactNode;
 } & EventFormDecoratorOptions) {
     const stableMetadata = useMemo(() => metadata, [metadata]);
+    const stageMetadata = useMemo(
+        () => selectProgramStage(stableMetadata, programStageId),
+        [stableMetadata, programStageId]
+    );
     const { form, formStore } = useEventForm({
         options: {
             programStageId,
@@ -62,7 +68,9 @@ export function EventFormWrapper({
                 form={form as UseFormReturn<Record<string, unknown>>}
             >
                 <FormProvider {...form}>
-                    <EventFormStoryContext.Provider value={{ metadata: stableMetadata }}>
+                    <EventFormStoryContext.Provider
+                        value={{ metadata: stableMetadata, stageMetadata }}
+                    >
                         <div style={{ maxWidth: 480, padding: 16 }}>{children}</div>
                     </EventFormStoryContext.Provider>
                 </FormProvider>

@@ -1,8 +1,8 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMemo, useRef } from 'react';
 import { Resolver, useForm, type UseFormReturn } from 'react-hook-form';
-import type { ProgramStageMetadata } from '@dhis2-form-utils/metadata';
-import { buildSchema } from '@dhis2-form-utils/metadata';
+import type { EventProgramMetadata, ProgramStageMetadata } from '@dhis2-form-utils/metadata';
+import { buildSchema, selectProgramStage } from '@dhis2-form-utils/metadata';
 import type { BuiltRuleEngine, EffectHandlersMap } from '@dhis2-form-utils/rules';
 import { buildRuleEngine, buildRuleEngineContext } from '@dhis2-form-utils/rules';
 import { FormStore } from './formStore';
@@ -11,7 +11,7 @@ export type DefaultFormValue = Record<string, string>;
 
 export type UseEventFormOptions = {
     programStageId: string;
-    metadata: ProgramStageMetadata;
+    metadata: EventProgramMetadata;
     effectHandlers?: EffectHandlersMap;
 };
 
@@ -28,13 +28,36 @@ export function useEventForm<FormValue extends DefaultFormValue = DefaultFormVal
     formOptions?: Omit<Parameters<typeof useForm<FormValue>>[0], 'resolver'>;
 }): UseEventFormReturn<FormValue> {
     const metadata = useMemo(() => options.metadata, [options.metadata]);
-    const schema = useMemo(() => buildSchema(metadata), [metadata]);
+    const programStageId = options.programStageId;
+    const stageMetadata = useMemo(
+        () => selectProgramStage(metadata, programStageId),
+        [metadata, programStageId]
+    );
+    const resolvedStageMetadata = useMemo(
+        () =>
+            stageMetadata ??
+            ({
+                id: programStageId,
+                programStageDataElements: [],
+            } as unknown as ProgramStageMetadata),
+        [stageMetadata, programStageId]
+    );
+    const schema = useMemo(() => buildSchema(resolvedStageMetadata), [resolvedStageMetadata]);
     const form = useForm<FormValue>({
         ...(formOptions ?? {}),
         resolver: zodResolver(schema) as unknown as Resolver<FormValue>,
     });
 
-    const ruleEngineContext = useMemo(() => buildRuleEngineContext(metadata), [metadata]);
+    const ruleEngineContext = useMemo(
+        () =>
+            buildRuleEngineContext({
+                stageMetadata: resolvedStageMetadata,
+                programRules: metadata.programRules,
+                programRuleVariables: metadata.programRuleVariables,
+                programStageId,
+            }),
+        [metadata, programStageId, resolvedStageMetadata]
+    );
     const ruleEngine = useMemo(() => buildRuleEngine(ruleEngineContext), [ruleEngineContext]);
     const formStore = useMemo(() => new FormStore(), []);
 
