@@ -30,6 +30,7 @@
         "zod": "^3.25.76"
     },
     "devDependencies": {
+        "@dhis2-form-utils/config": "workspace:*",
         "@dhis2/cli-app-scripts": "^12.11.1",
         "@dhis2/config-eslint": "^0.2.2",
         "@dhis2/config-prettier": "^0.2.2",

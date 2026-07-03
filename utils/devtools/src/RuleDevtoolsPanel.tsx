@@ -4,7 +4,6 @@ import { useFormStateContext, useFormStore } from '@dhis2-form-utils/hooks';
 import type { RuleTraceEntry } from '@dhis2-form-utils/hooks';
 import { useCallback, useEffect, useMemo, useState, useSyncExternalStore } from 'react';
 import { attachRuleDevtools } from './attach';
-import './devtools.css';
 import { formatAgo } from './formatAgo';
 import { RuleGraphView } from './RuleGraphView';
 import { TraceTimeline } from './TraceTimeline';
@@ -67,14 +66,14 @@ export function RuleDevtoolsPanel({ resolveRuleName }: RuleDevtoolsPanelProps) {
 
     return (
         <div
-            className={`rule-devtools-drawer-shell ${
-                open ? 'rule-devtools-drawer-shell--open' : ''
+            className={`fixed inset-y-0 end-0 z-[1000] h-full pointer-events-none ${
+                open ? 'pointer-events-auto' : ''
             }`}
         >
             {!open ? (
                 <button
                     type="button"
-                    className="rule-devtools-edge-toggle"
+                    className="absolute top-1/2 end-0 -translate-y-1/2 pointer-events-auto flex items-center justify-center w-8 min-h-[72px] py-dp8 border border-dhis2-grey-300 border-e-0 rounded-s bg-white text-dhis2-grey-800 cursor-pointer shadow-[-2px_0_12px_rgb(0_0_0/10%)] hover:bg-dhis2-grey-100 focus-visible:outline-2 focus-visible:outline-dhis2-teal-600 focus-visible:outline-offset-2"
                     aria-label={translate('Open rule devtools')}
                     onClick={() => {
                         setOpen(true);
@@ -85,17 +84,24 @@ export function RuleDevtoolsPanel({ resolveRuleName }: RuleDevtoolsPanelProps) {
             ) : null}
 
             <aside
-                className="rule-devtools-drawer"
+                className={`absolute inset-y-0 end-0 flex w-[420px] min-w-[320px] max-w-[min(92vw,560px)] resize-x flex-col overflow-hidden bg-dhis2-grey-050 border-s border-dhis2-grey-300 shadow-[-4px_0_24px_rgb(0_0_0/12%)] transition-transform duration-[220ms] ease-out motion-reduce:transition-none ${
+                    open ? 'translate-x-0' : 'translate-x-full'
+                }`}
                 aria-label={translate('Rule devtools')}
                 aria-hidden={!open}
             >
-                <header className="rule-devtools-header">
-                    <div className="rule-devtools-header-text">
-                        <div className="rule-devtools-title-row">
-                            <span className="rule-devtools-status-dot" aria-hidden="true" />
-                            <h2 className="rule-devtools-title">{translate('Rule devtools')}</h2>
+                <header className="flex shrink-0 items-start justify-between gap-dp12 border-b border-dhis2-grey-200 bg-white px-dp16 pt-dp16 pb-dp12">
+                    <div className="flex min-w-0 flex-col gap-dp4">
+                        <div className="flex items-center gap-dp8">
+                            <span
+                                className="size-2 shrink-0 rounded-full bg-dhis2-teal-600"
+                                aria-hidden="true"
+                            />
+                            <h2 className="m-0 text-base font-bold leading-[1.35] text-dhis2-grey-900">
+                                {translate('Rule devtools')}
+                            </h2>
                         </div>
-                        <p className="rule-devtools-subtitle">
+                        <p className="m-0 text-[0.8125rem] leading-normal text-dhis2-grey-700">
                             {entries.length
                                 ? translate(
                                       '{{evaluations}} evaluations · {{rules}} rules observed',
@@ -120,7 +126,7 @@ export function RuleDevtoolsPanel({ resolveRuleName }: RuleDevtoolsPanelProps) {
                     />
                 </header>
 
-                <div className="rule-devtools-tabs">
+                <div className="shrink-0 border-b border-dhis2-grey-200 bg-white px-dp16">
                     <TabBar>
                         <Tab
                             selected={tab === 'trace'}
@@ -142,8 +148,8 @@ export function RuleDevtoolsPanel({ resolveRuleName }: RuleDevtoolsPanelProps) {
                 </div>
 
                 {selectedEntry || highlightedRuleName ? (
-                    <div className="rule-devtools-selection-bar">
-                        <span className="rule-devtools-selection-text">
+                    <div className="mx-dp16 mt-dp12 flex shrink-0 items-center justify-between gap-dp12 rounded border border-dhis2-teal-400 bg-dhis2-teal-050 p-dp12 text-[0.8125rem] leading-[1.45] text-dhis2-grey-900">
+                        <span className="min-w-0">
                             {selectedEntry
                                 ? translate('Highlighting evaluation {{time}}', {
                                       time: formatAgo(selectedEntry.timestamp),
@@ -166,7 +172,7 @@ export function RuleDevtoolsPanel({ resolveRuleName }: RuleDevtoolsPanelProps) {
                     </div>
                 ) : null}
 
-                <div className="rule-devtools-body">
+                <div className="min-h-0 flex-1 overflow-auto bg-dhis2-grey-050 p-dp16">
                     {tab === 'trace' ? (
                         <TraceTimeline
                             entries={entries}
