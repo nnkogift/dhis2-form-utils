@@ -13,6 +13,7 @@ import { NoticeBox } from '@dhis2/ui';
 import type { RuleTraceEntry } from '@dhis2-form-utils/hooks';
 import type { FormStore } from '@dhis2-form-utils/hooks';
 import { buildGraphFromTrace, type GraphNode, type RuleDependencyGraph } from './buildGraph';
+import { getGraphNodeClassName, getLegendSwatchClassName } from './graphNodeStyles';
 import { translate } from './i18n';
 
 type FieldStateMap = ReturnType<FormStore['fieldStore']['getSnapshot']>;
@@ -63,16 +64,16 @@ function layoutNode(node: GraphNode, indexWithinKind: number): { x: number; y: n
 
 function RuleGraphNode({ data }: NodeProps<Node<RuleNodeData>>) {
     return (
-        <div
-            className={`rule-devtools-graph-node rule-devtools-graph-node--${data.kind} ${
-                data.highlighted ? '' : 'rule-devtools-graph-node--dimmed'
-            }`}
-        >
+        <div className={getGraphNodeClassName(data.kind, data.highlighted)}>
             <Handle type="target" position={Position.Left} />
-            <span className="rule-devtools-graph-node-kind">{KIND_LABELS[data.kind]}</span>
-            <div className="rule-devtools-graph-node-label">{data.label}</div>
+            <span className="mb-dp4 block text-[0.625rem] font-semibold uppercase leading-none tracking-wide text-dhis2-grey-600">
+                {KIND_LABELS[data.kind]}
+            </span>
+            <div className="break-words font-semibold leading-[1.3]">{data.label}</div>
             {data.value !== undefined ? (
-                <div className="rule-devtools-graph-node-value">{data.value}</div>
+                <div className="mt-dp4 border-t border-dhis2-grey-200 pt-dp4 font-mono text-[0.6875rem] break-all text-dhis2-grey-700">
+                    {data.value}
+                </div>
             ) : null}
             <Handle type="source" position={Position.Right} />
         </div>
@@ -183,7 +184,7 @@ function toFlowGraph(
             target: edge.target,
             label: edge.effectType === 'read' ? 'read' : edge.effectType,
             animated: isHighlighted && edge.effectType !== 'read',
-            className: isHighlighted ? undefined : 'rule-devtools-graph-edge--dimmed',
+            className: isHighlighted ? undefined : 'opacity-25',
             style: {
                 strokeWidth: Math.min(1 + edge.fireCount, 4),
             },
@@ -202,12 +203,16 @@ function GraphLegend() {
     ];
 
     return (
-        <div className="rule-devtools-graph-legend" aria-hidden="true">
+        <div
+            className="flex shrink-0 flex-wrap gap-x-dp16 gap-y-dp8 border-b border-dhis2-grey-200 bg-white px-dp16 py-dp12"
+            aria-hidden="true"
+        >
             {items.map((item) => (
-                <span key={item.kind} className="rule-devtools-legend-item">
-                    <span
-                        className={`rule-devtools-legend-swatch rule-devtools-legend-swatch--${item.kind}`}
-                    />
+                <span
+                    key={item.kind}
+                    className="inline-flex items-center gap-dp8 text-xs text-dhis2-grey-800"
+                >
+                    <span className={getLegendSwatchClassName(item.kind)} />
                     {item.label}
                 </span>
             ))}
@@ -260,7 +265,7 @@ export function RuleGraphView({
 
     if (!graph.nodes.length) {
         return (
-            <div className="rule-devtools-notice">
+            <div className="p-dp8">
                 <NoticeBox title={translate('No rule relationships yet')}>
                     {translate(
                         'Interact with the form to build the dependency graph. Only rules and effects that have fired during this session are shown.'
@@ -271,9 +276,9 @@ export function RuleGraphView({
     }
 
     return (
-        <div className="rule-devtools-graph-layout">
+        <div className="flex h-full min-h-[480px] flex-1 flex-col overflow-hidden rounded-md border border-dhis2-grey-200 bg-white">
             <GraphLegend />
-            <div className="rule-devtools-graph-canvas">
+            <div className="min-h-[360px] flex-1 bg-white">
                 <ReactFlow nodes={nodes} edges={edges} nodeTypes={nodeTypes} fitView>
                     <Background gap={16} size={1} />
                     <Controls showInteractive={false} />

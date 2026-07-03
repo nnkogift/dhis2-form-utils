@@ -18,7 +18,7 @@
         "dist"
     ],
     "scripts": {
-        "build": "tsup",
+        "build": "tsup && tailwindcss -i ./src/tailwind.css -o ./dist/index.css --minify",
         "typecheck": "tsc --noEmit",
         "test": "vitest run"
     },
@@ -36,12 +36,14 @@
         "@dhis2-form-utils/config": "workspace:*",
         "@dhis2/d2-i18n": "^1.2.0",
         "@dhis2/ui": "^10.15.1",
+        "@tailwindcss/cli": "^4.3.2",
         "@testing-library/react": "^16.3.2",
         "@types/react": "^18.3.29",
         "@types/react-dom": "^18.3.7",
         "jsdom": "^29.1.1",
         "react": "^18.3.1",
         "react-dom": "^18.3.1",
+        "tailwindcss": "^4.3.2",
         "tsup": "^8.5.1",
         "typescript": "^5.9.3",
         "vitest": "^4.1.7"

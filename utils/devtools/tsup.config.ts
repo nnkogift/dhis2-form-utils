@@ -7,10 +7,4 @@ export default defineConfig({
     sourcemap: true,
     clean: true,
     external: ['react', 'react-dom', '@dhis2/ui', '@dhis2/d2-i18n', '@xyflow/react'],
-    esbuildOptions(options) {
-        options.loader = {
-            ...options.loader,
-            '.css': 'css',
-        };
-    },
 });
