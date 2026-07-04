@@ -2,9 +2,9 @@ import { Button, Tab, TabBar } from '@dhis2/ui';
 import { translate } from './i18n';
 import type { RuleTraceEntry } from '@dhis2-form-utils/hooks';
 import { useFormStateContext, useFormStore } from '@dhis2-form-utils/hooks';
-import { useCallback, useEffect, useMemo, useState, useSyncExternalStore } from 'react';
-import { attachRuleDevtools } from './attach';
+import { useCallback, useMemo, useState, useSyncExternalStore } from 'react';
 import { createLabelLookup, type RuleDevtoolsMetadata } from './createLabelLookup';
+import { useRuleTraceStore } from './RuleDevtoolsScope';
 import { formatAgo } from './formatAgo';
 import { RuleGraphView } from './RuleGraphView';
 import { TraceTimeline } from './TraceTimeline';
@@ -30,7 +30,7 @@ function countObservedRules(entries: readonly RuleTraceEntry[]): number {
 export function RuleDevtoolsPanel({ metadata }: RuleDevtoolsPanelProps) {
     const formStore = useFormStore();
     const { form } = useFormStateContext();
-    const traceStore = useMemo(() => attachRuleDevtools(formStore), [formStore]);
+    const traceStore = useRuleTraceStore();
     const labelLookup = useMemo(
         () => (metadata ? createLabelLookup(metadata) : undefined),
         [metadata]
@@ -38,12 +38,6 @@ export function RuleDevtoolsPanel({ metadata }: RuleDevtoolsPanelProps) {
     const [tab, setTab] = useState<DevtoolsTab>('trace');
     const [selectedEntryId, setSelectedEntryId] = useState<string | null>(null);
     const [highlightRuleId, setHighlightRuleId] = useState<string | null>(null);
-
-    useEffect(() => {
-        return () => {
-            traceStore.dispose();
-        };
-    }, [traceStore]);
 
     const entries = useSyncExternalStore(
         useCallback((listener) => traceStore.subscribe(listener), [traceStore]),

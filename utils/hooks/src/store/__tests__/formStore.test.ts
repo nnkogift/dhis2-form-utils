@@ -2,6 +2,7 @@ import { describe, expect, it, vi, afterEach } from 'vitest';
 import { ProgramRuleActionType } from '@dhis2-form-utils/metadata';
 import { createRef } from 'react';
 import type { UseFormReturn } from 'react-hook-form';
+import type { RuleTraceEntry } from '../../buildTraceEntry';
 import { FormStore } from '../../formStore';
 
 describe('FormStore', () => {
@@ -78,8 +79,7 @@ describe('FormStore', () => {
         expect((form.subscribe as ReturnType<typeof vi.fn>).mock.calls.length).toBe(subscribeCalls);
     });
 
-    it('does not emit trace entries when no trace listeners are attached', () => {
-        const listener = vi.fn();
+    it('replays cached trace entry when listener attaches after init', () => {
         const engine = {
             evaluate: () => [
                 {
@@ -99,7 +99,14 @@ describe('FormStore', () => {
         const store = new FormStore();
         store.init(form, engine, createRef());
 
-        expect(listener).not.toHaveBeenCalled();
+        const entries: RuleTraceEntry[] = [];
+        store.subscribeTrace((entry) => {
+            entries.push(entry);
+        });
+
+        expect(entries).toHaveLength(1);
+        expect(entries[0]?.changedFields).toEqual([]);
+        expect(entries[0]?.ruleResults[0]?.ruleId).toBe('rule-1');
     });
 
     it('emits trace entries with changedFields when listeners are attached', () => {

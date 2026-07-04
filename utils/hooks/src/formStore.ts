@@ -24,9 +24,13 @@ export class FormStore {
     private effectHandlersRef: RefObject<EffectHandlersMap | undefined> | null = null;
     private pendingChangedFields = new Set<string>();
     private traceListeners = new Set<TraceListener>();
+    private lastTraceEntry: RuleTraceEntry | null = null;
 
     subscribeTrace(listener: TraceListener): () => void {
         this.traceListeners.add(listener);
+        if (this.lastTraceEntry) {
+            listener(this.lastTraceEntry);
+        }
         return () => {
             this.traceListeners.delete(listener);
         };
@@ -110,14 +114,17 @@ export class FormStore {
         this.effectHandlersRef = null;
         this.prevAssignments = {};
         this.pendingChangedFields.clear();
+        this.lastTraceEntry = null;
     }
 
     private maybeEmitTrace(changedFields: string[], effects: RuleEffect[]): void {
+        const entry = buildTraceEntry(changedFields, effects);
+        this.lastTraceEntry = entry;
+
         if (this.traceListeners.size === 0) {
             return;
         }
 
-        const entry = buildTraceEntry(changedFields, effects);
         for (const listener of this.traceListeners) {
             listener(entry);
         }

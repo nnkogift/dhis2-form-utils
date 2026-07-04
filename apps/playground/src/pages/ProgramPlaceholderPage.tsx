@@ -1,14 +1,13 @@
 import React from 'react'
 import { Link, useLocation, useParams } from 'react-router'
 import i18n from '@dhis2/d2-i18n'
-import { Center, CircularLoader, NoticeBox, Tag } from '@dhis2/ui'
+import { Center, CircularLoader, NoticeBox } from '@dhis2/ui'
 import { ProgramEventFormScreen } from '@/components/programs/forms/ProgramEventFormScreen'
 import { ProgramRegistrationFormScreen } from '@/components/programs/forms/ProgramRegistrationFormScreen'
 import { buildProgramListUrl } from '@/hooks/buildProgramListUrl'
 import { useAccessibleOrgUnits } from '@/hooks/useAccessibleOrgUnits'
 import { useEventProgramMetadata } from '@/hooks/useEventProgramMetadata'
 import { PROGRAM_TYPE, type ProgramListParams } from '@/types/program'
-import { formatProgramType } from '@/utils/formatProgramType'
 
 type PlaceholderLocationState = {
     listParams?: ProgramListParams
@@ -54,17 +53,6 @@ export function ProgramPlaceholderPage() {
 
     return (
         <div className="flex flex-col gap-dp16 pb-dp24 h-full">
-            <Link
-                className="text-dhis2-teal-700 no-underline font-medium hover:underline"
-                to={backUrl}
-            >
-                {i18n.t('Back to programs')}
-            </Link>
-            <h2>{program.displayName}</h2>
-            <div className="flex flex-wrap gap-dp8 items-center text-dhis2-grey-700">
-                <span className="font-mono">{program.code}</span>
-                <Tag>{formatProgramType(program.programType)}</Tag>
-            </div>
             {orgUnitsError ? (
                 <NoticeBox
                     error
@@ -83,17 +71,19 @@ export function ProgramPlaceholderPage() {
                 </NoticeBox>
             ) : null}
             {!orgUnitsError && orgUnits.length > 0 ? (
-                program.programType === PROGRAM_TYPE.WITH_REGISTRATION ? (
-                    <ProgramRegistrationFormScreen
-                        programId={program.id}
-                        orgUnits={orgUnits}
-                    />
-                ) : (
-                    <ProgramEventFormScreen
-                        program={program}
-                        orgUnits={orgUnits}
-                    />
-                )
+                <div className="flex min-h-0 flex-1 flex-col">
+                    {program.programType === PROGRAM_TYPE.WITH_REGISTRATION ? (
+                        <ProgramRegistrationFormScreen
+                            programId={program.id}
+                            orgUnits={orgUnits}
+                        />
+                    ) : (
+                        <ProgramEventFormScreen
+                            program={program}
+                            orgUnits={orgUnits}
+                        />
+                    )}
+                </div>
             ) : null}
         </div>
     )

@@ -1,6 +1,10 @@
 import { useDataEngine } from '@dhis2/app-runtime'
 import { FormFeedback } from '@dhis2-form-utils/dhis2-ui'
-import { RuleDevtoolsPanel } from '@dhis2-form-utils/devtools'
+import {
+    ProgramRulesPanel,
+    RuleDevtoolsPanel,
+    RuleDevtoolsScope,
+} from '@dhis2-form-utils/devtools'
 import { FormStateProvider, useEventForm } from '@dhis2-form-utils/hooks'
 import type {
     EventProgramMetadata,
@@ -8,7 +12,7 @@ import type {
 } from '@dhis2-form-utils/metadata'
 import { filterPayload } from '@dhis2-form-utils/rules'
 import i18n from '@dhis2/d2-i18n'
-import { useState } from 'react'
+import React, { useState } from 'react'
 import type { OrgUnit } from '@/types/program'
 import { formatDhis2Error } from '@/utils/formatDhis2Error'
 import {
@@ -18,6 +22,7 @@ import {
 import { EventFormFields } from './EventFormFields'
 import { EventSystemFields } from './EventSystemFields'
 import { ProgramFormActions } from './ProgramFormActions'
+import { Link } from 'react-router'
 
 type ProgramEventFormProps = {
     program: EventProgramMetadata
@@ -85,29 +90,47 @@ export function ProgramEventForm({
 
     return (
         <FormStateProvider<EventFormValues> formStore={formStore} form={form}>
-            <div className="flex h-full w-full flex-1 gap-dp16">
-                <form
-                    onSubmit={handleSubmit}
-                    className="flex flex-1 flex-col gap-dp16"
-                >
-                    <EventSystemFields orgUnits={orgUnits} />
-                    <FormFeedback />
-                    <EventFormFields metadata={stageMetadata} />
-                    <ProgramFormActions
-                        submitLabel={i18n.t('Save event')}
-                        errorTitle={i18n.t('Could not save event')}
-                        successMessage={successMessage}
-                        successTitle={i18n.t('Event saved')}
+            <RuleDevtoolsScope formStore={formStore}>
+                <div className="flex h-full w-full flex-1 gap-dp16 min-h-0">
+                    <ProgramRulesPanel
+                        metadata={{
+                            formKind: 'event',
+                            metadata: program,
+                            programStageId,
+                        }}
                     />
-                </form>
-                <RuleDevtoolsPanel
-                    metadata={{
-                        formKind: 'event',
-                        metadata: program,
-                        programStageId,
-                    }}
-                />
-            </div>
+                    <form
+                        onSubmit={handleSubmit}
+                        className="flex min-w-0 flex-1 flex-col gap-dp16"
+                    >
+                        <Link
+                            className="text-dhis2-teal-700 no-underline font-medium hover:underline"
+                            to="/"
+                        >
+                            {i18n.t('Back to programs')}
+                        </Link>
+                        <h2 className="text-2xl font-bold">
+                            {program.displayName}
+                        </h2>
+                        <EventSystemFields orgUnits={orgUnits} />
+                        <FormFeedback />
+                        <EventFormFields metadata={stageMetadata} />
+                        <ProgramFormActions
+                            submitLabel={i18n.t('Save event')}
+                            errorTitle={i18n.t('Could not save event')}
+                            successMessage={successMessage}
+                            successTitle={i18n.t('Event saved')}
+                        />
+                    </form>
+                    <RuleDevtoolsPanel
+                        metadata={{
+                            formKind: 'event',
+                            metadata: program,
+                            programStageId,
+                        }}
+                    />
+                </div>
+            </RuleDevtoolsScope>
         </FormStateProvider>
     )
 }

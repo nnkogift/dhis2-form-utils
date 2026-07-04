@@ -42,10 +42,12 @@ export function ProgramRegistrationFormScreen({
     }
 
     return (
-        <ProgramRegistrationForm
-            programId={programId}
-            metadata={data.program}
-            orgUnits={orgUnits}
-        />
+        <div className="flex min-h-0 flex-1 flex-col">
+            <ProgramRegistrationForm
+                programId={programId}
+                metadata={data.program}
+                orgUnits={orgUnits}
+            />
+        </div>
     )
 }

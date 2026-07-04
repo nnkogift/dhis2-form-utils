@@ -157,7 +157,10 @@ function toFlowGraph(
         kindCounters[node.kind] += 1;
         const position = layoutNode(node, index);
         const rawFieldId = node.kind === 'field' ? node.id.slice('field:'.length) : undefined;
-        const assignedValue = rawFieldId ? fieldState[rawFieldId].assignedValue : undefined;
+        const assignedValue =
+            rawFieldId && rawFieldId in fieldState
+                ? fieldState[rawFieldId].assignedValue
+                : undefined;
         const formValue = rawFieldId ? formValues[rawFieldId] : undefined;
         const displayValue = formatDisplayValue(assignedValue) ?? formatDisplayValue(formValue);
 

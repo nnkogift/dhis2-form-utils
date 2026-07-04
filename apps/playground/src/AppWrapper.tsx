@@ -9,7 +9,7 @@ import { ProgramPlaceholderPage } from '@/pages/ProgramPlaceholderPage'
 
 const AppWrapper = () => {
     return (
-        <div className="p-4">
+        <div className="p-4 h-full">
             <HashRouter>
                 <Routes>
                     <Route path="/" element={<ProgramListPage />} />

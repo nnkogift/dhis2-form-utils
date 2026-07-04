@@ -29,11 +29,13 @@ export function ProgramEventFormScreen({
     }
 
     return (
-        <ProgramEventForm
-            program={program}
-            stageMetadata={stageMetadata}
-            programStageId={programStageId}
-            orgUnits={orgUnits}
-        />
+        <div className="flex min-h-0 flex-1 flex-col">
+            <ProgramEventForm
+                program={program}
+                stageMetadata={stageMetadata}
+                programStageId={programStageId}
+                orgUnits={orgUnits}
+            />
+        </div>
     )
 }

@@ -5,12 +5,13 @@
 A developer-facing tool that answers, for any running `dhis2-form-utils` form:
 **"why did this field/section/feedback area just change, and what else has this rule affected?"**
 
-Two views, driven by one data source:
+Two views on the right, plus a rules catalog on the left, driven by one trace stream:
 
+- **Program rules** — a metadata-driven catalog of all rules for the current program/stage: name, configured actions, and condition expression. Rules that fired in the **latest** evaluation cycle are highlighted (teal accent).
 - **Trace timeline** — a reverse-chronological log of every evaluation cycle: which field(s) changed, which rules fired, what effects they produced.
 - **Dependency graph** — a node/edge visualization of fields, sections, feedback areas, and the rules connecting them, built up from what's actually been observed.
 
-Ships as a new package, `@dhis2-form-utils/devtools`, attached directly to a running form's `FormStore` via a side panel.
+Ships as a new package, `@dhis2-form-utils/devtools`, attached directly to a running form's `FormStore` via side panels.
 
 ---
 
@@ -65,22 +66,26 @@ class FormStore {
 
     private traceListeners = new Set<(entry: RuleTraceEntry) => void>();
 
+    private lastTraceEntry: RuleTraceEntry | null = null;
+
     subscribeTrace(listener: (entry: RuleTraceEntry) => void): () => void {
         this.traceListeners.add(listener);
+        if (this.lastTraceEntry) listener(this.lastTraceEntry); // replay for late attach
         return () => this.traceListeners.delete(listener);
     }
 
     // inside the existing debounced evaluate(), alongside the existing
     // fieldStore.setState(...) / nonFieldStore.setState(...) calls:
     private maybeEmitTrace(changedFields: string[], effects: RuleEffectJs[]) {
-        if (this.traceListeners.size === 0) return; // no-op when nobody's attached
-        const entry = buildTraceEntry(changedFields, effects); // groups effects by ruleId
+        const entry = buildTraceEntry(changedFields, effects);
+        this.lastTraceEntry = entry;
+        if (this.traceListeners.size === 0) return;
         for (const listener of this.traceListeners) listener(entry);
     }
 }
 ```
 
-Attaching at the store level rather than threading a prop through hook options means devtools works with any hook built on `FormStore` — `useEventForm`, `useTrackerForm`, and any future hook — with zero changes to those hooks' public APIs. Neither hook needs to know devtools exists. The `traceListeners.size === 0` check keeps this a genuine no-op — no trace object is even constructed — when nothing is attached, so production forms pay nothing for this existing.
+Attaching at the store level rather than threading a prop through hook options means devtools works with any hook built on `FormStore` — `useEventForm`, `useTrackerForm`, and any future hook — with zero changes to those hooks' public APIs. Neither hook needs to know devtools exists. When no listeners are attached, `maybeEmitTrace` still caches the latest entry but does not notify — so devtools attached after the initial mount evaluation (the common playground case) receives the on-load firings via replay on `subscribeTrace`.
 
 ---
 
@@ -121,27 +126,30 @@ function createRuleTraceStore(maxEntries: number): RuleTraceStore;
 
 Bounded ring buffer (default 200) avoids unbounded memory growth in a long dev session. In-memory only — no persistence, no browser storage; there's no reason a devtool needs to survive a page reload.
 
-`attachRuleDevtools` and `createRuleTraceStore` are internal to the `devtools` package — called once, inside `RuleDevtoolsPanel` itself (§5), not exported for consuming apps to wire up by hand.
+`attachRuleDevtools` and `createRuleTraceStore` are internal to the `devtools` package — wired once inside `RuleDevtoolsScope` (§5), not exported for consuming apps to wire up by hand.
 
 ---
 
 ## 5. Wiring in a consuming app
 
-`RuleDevtoolsPanel` reads `FormStore` from context and owns its trace store internally. Pass optional `metadata` for human-readable rule, field, and section labels:
+Wrap the form and both devtools panels in `RuleDevtoolsScope` so they share a single trace subscription:
 
 ```tsx
 const { form, formStore } = useEventForm({ options });
 
 return (
     <FormStateProvider formStore={formStore} form={form}>
-        <FormProvider {...form}>{/* ...form fields... */}</FormProvider>
-        <RuleDevtoolsPanel
-            metadata={{
-                formKind: 'event',
-                metadata: program,
-                programStageId,
-            }}
-        />
+        <RuleDevtoolsScope formStore={formStore}>
+            <div className="flex h-full flex-1 gap-dp16 min-h-0">
+                <ProgramRulesPanel
+                    metadata={{ formKind: 'event', metadata: program, programStageId }}
+                />
+                <FormProvider {...form}>{/* ...form fields... */}</FormProvider>
+                <RuleDevtoolsPanel
+                    metadata={{ formKind: 'event', metadata: program, programStageId }}
+                />
+            </div>
+        </RuleDevtoolsScope>
     </FormStateProvider>
 );
 ```
@@ -149,31 +157,35 @@ return (
 For tracker registration forms:
 
 ```tsx
-<RuleDevtoolsPanel metadata={{ formKind: 'tracker', metadata: trackerMetadata }} />
+<RuleDevtoolsScope formStore={formStore}>
+    <ProgramRulesPanel metadata={{ formKind: 'tracker', metadata: trackerMetadata }} />
+    {/* form */}
+    <RuleDevtoolsPanel metadata={{ formKind: 'tracker', metadata: trackerMetadata }} />
+</RuleDevtoolsScope>
 ```
 
-Without `metadata`, all labels fall back to raw UIDs — the panel is fully functional either way.
+`ProgramRulesPanel` lists all rules from metadata (filtered by stage for event forms). Active highlight is derived from the latest `RuleTraceEntry`: any `ruleId` in `ruleResults` is marked active. The engine only reports rules that fired with effects — a rule whose condition is false produces no trace and stays unhighlighted.
 
-This works because `FormStateProvider` already receives the `formStore` instance as a prop. Exposing it through context via a `useFormStore()` hook — alongside the existing `useFieldState` / `useSectionState` / `useFormFeedback` — is a small, additive addition to `FormStateContext`.
+Without `metadata`, rule names and action targets fall back to raw UIDs — both panels are fully functional either way.
+
+`RuleDevtoolsPanel` reads `FormStore` from context and the shared trace store from `RuleDevtoolsScope`. Pass optional `metadata` for human-readable rule, field, and section labels:
 
 ```tsx
 // devtools/src/RuleDevtoolsPanel.tsx
 function RuleDevtoolsPanel({ metadata }: RuleDevtoolsPanelProps) {
     const formStore = useFormStore(); // from @dhis2-form-utils/hooks context
+    const traceStore = useRuleTraceStore(); // from RuleDevtoolsScope
     const labelLookup = useMemo(
         () => (metadata ? createLabelLookup(metadata) : undefined),
         [metadata]
     );
-    const traceStore = useMemo(() => attachRuleDevtools(formStore), [formStore]);
-
-    useEffect(() => () => traceStore.dispose(), [traceStore]);
 
     // reads traceStore for the timeline/graph, and formStore (via useFieldState /
     // useSectionState / useFormFeedback) to annotate graph nodes with current values
 }
 ```
 
-The panel creating and disposing its own trace store — rather than the consuming app doing it and passing both stores down as props — keeps the integration to a single `<RuleDevtoolsPanel />` line, and means nothing about attaching or cleaning up the trace subscription leaks into application code. The `useEffect` here is inside the `devtools` package's own React component, not inside `dhis2-form-utils/hooks` — the library's hard constraint (no `useEffect` for subscriptions) governs the core store-wiring code in `hooks`, not a devtools UI component built on top of it.
+`RuleDevtoolsScope` creates and disposes the trace store on mount/unmount — consuming apps do not attach or clean up trace subscriptions themselves. The `useEffect` for disposal lives inside the `devtools` package's React components, not inside `dhis2-form-utils/hooks`.
 
 ---
 
@@ -199,9 +211,11 @@ Clicking a trace-timeline entry highlights the exact rule-node and edges that en
 
 ---
 
-## 7. UI shell — side panel
+## 7. UI shell — side panels
 
-- `<RuleDevtoolsPanel>` — persistent side panel (not a floating overlay), toggle button, resizable width, two tabs: **Trace** and **Graph**.
+- `<ProgramRulesPanel>` — left catalog of all program rules from metadata (name, configured actions, condition). Highlights rules active in the latest evaluation cycle.
+- `<RuleDevtoolsPanel>` — right panel with two tabs: **Trace** and **Graph**.
+- `<RuleDevtoolsScope>` — wraps both panels; owns the shared trace store subscription.
 - Graph rendered with **`@xyflow/react`** (v12.11.1, current — verified against npm: the package was renamed from `reactflow` in v12, `ReactFlow` is now a named import, and a separate stylesheet import is required).
 - This is the one new runtime dependency in this design, scoped entirely to the optional `devtools` package — never imported by `hooks`, never in a production form bundle.
 
