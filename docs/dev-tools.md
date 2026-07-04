@@ -214,9 +214,9 @@ Clicking a trace-timeline entry highlights the exact rule-node and edges that en
 ## 7. UI shell — side panels
 
 - `<ProgramRulesPanel>` — left catalog of all program rules from metadata (name, configured actions, condition). Highlights rules active in the latest evaluation cycle.
-- `<RuleDevtoolsPanel>` — right panel with two tabs: **Trace** and **Graph**.
+- `<RuleDevtoolsPanel>` — right panel with two tabs: **Trace** and **Graph**. The Graph tab includes a fullscreen expand button that opens the dependency graph in a large modal.
 - `<RuleDevtoolsScope>` — wraps both panels; owns the shared trace store subscription.
-- Graph rendered with **`@xyflow/react`** (v12.11.1, current — verified against npm: the package was renamed from `reactflow` in v12, `ReactFlow` is now a named import, and a separate stylesheet import is required).
+- Graph rendered with **`@xyflow/react`** (v12.11.1). React Flow styles are bundled into `@dhis2-form-utils/devtools/style.css` — consumers need only that single stylesheet import.
 - This is the one new runtime dependency in this design, scoped entirely to the optional `devtools` package — never imported by `hooks`, never in a production form bundle.
 
 ---

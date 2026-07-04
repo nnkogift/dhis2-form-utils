@@ -1,7 +1,7 @@
-import { IconCheckmarkCircle16, NoticeBox, Tag } from '@dhis2/ui';
+import { IconCheckmarkCircle16, NoticeBox } from '@dhis2/ui';
 import { useCallback, useMemo, useSyncExternalStore } from 'react';
+import { EffectBadge } from './EffectBadge';
 import { createLabelLookup, type RuleDevtoolsMetadata } from './createLabelLookup';
-import { getEffectTagClassName } from './effectStyles';
 import { formatRuleActionSummary } from './formatRuleActionSummary';
 import { translate } from './i18n';
 import { resolveProgramRulesList } from './resolveProgramRulesList';
@@ -108,14 +108,12 @@ export function ProgramRulesPanel({ metadata }: ProgramRulesPanelProps) {
                                                         labelLookup
                                                     );
                                                     return (
-                                                        <Tag
+                                                        <EffectBadge
                                                             key={`${rule.id}-action-${String(index)}`}
-                                                            className={getEffectTagClassName(
-                                                                summary.type
-                                                            )}
+                                                            type={summary.type}
                                                         >
                                                             {formatActionLabel(summary)}
-                                                        </Tag>
+                                                        </EffectBadge>
                                                     );
                                                 })}
                                             </div>

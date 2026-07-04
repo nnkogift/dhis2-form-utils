@@ -131,7 +131,7 @@ Optional developer-facing package for debugging program rules. Wired in the play
 - `RuleDevtoolsPanel` — right panel with **Trace** (reverse-chronological rule evaluation log) and **Graph** (`@xyflow/react` dependency graph built from observed firings)
 - Optional `metadata` prop (`RuleDevtoolsMetadata`) for human-readable rule, field, and section labels
 - Requires `FormStateProvider` in the tree; attaches to `FormStore` via `RuleDevtoolsScope` + `subscribeTrace`
-- Import styles: `@dhis2-form-utils/devtools/style.css` (Tailwind-compiled utilities) and `@xyflow/react/dist/style.css`
+- Import styles: `@dhis2-form-utils/devtools/style.css` (includes Tailwind utilities and bundled `@xyflow/react` graph styles)
 
 See `docs/dev-tools.md` for architecture.
 

@@ -1,11 +1,13 @@
-import { Button, Tab, TabBar } from '@dhis2/ui';
+import { Button, IconFullscreen16, Tab, TabBar } from '@dhis2/ui';
 import { translate } from './i18n';
 import type { RuleTraceEntry } from '@dhis2-form-utils/hooks';
 import { useFormStateContext, useFormStore } from '@dhis2-form-utils/hooks';
 import { useCallback, useMemo, useState, useSyncExternalStore } from 'react';
+import { buildGraphFromTrace } from './buildGraph';
 import { createLabelLookup, type RuleDevtoolsMetadata } from './createLabelLookup';
 import { useRuleTraceStore } from './RuleDevtoolsScope';
 import { formatAgo } from './formatAgo';
+import { RuleGraphModal } from './RuleGraphModal';
 import { RuleGraphView } from './RuleGraphView';
 import { TraceTimeline } from './TraceTimeline';
 
@@ -38,6 +40,7 @@ export function RuleDevtoolsPanel({ metadata }: RuleDevtoolsPanelProps) {
     const [tab, setTab] = useState<DevtoolsTab>('trace');
     const [selectedEntryId, setSelectedEntryId] = useState<string | null>(null);
     const [highlightRuleId, setHighlightRuleId] = useState<string | null>(null);
+    const [graphModalOpen, setGraphModalOpen] = useState(false);
 
     const entries = useSyncExternalStore(
         useCallback((listener) => traceStore.subscribe(listener), [traceStore]),
@@ -63,6 +66,51 @@ export function RuleDevtoolsPanel({ metadata }: RuleDevtoolsPanelProps) {
         }
         return labelLookup?.resolveRuleName(highlightRuleId) ?? highlightRuleId;
     }, [highlightRuleId, labelLookup]);
+
+    const graphHasNodes = useMemo(
+        () => buildGraphFromTrace(entries, labelLookup).nodes.length > 0,
+        [entries, labelLookup]
+    );
+
+    const graphSubtitle = useMemo(() => {
+        if (selectedEntry && highlightedRuleName) {
+            return translate('Highlighting evaluation {{time}} · Rule: {{name}}', {
+                time: formatAgo(selectedEntry.timestamp),
+                name: highlightedRuleName,
+            });
+        }
+        if (selectedEntry) {
+            return translate('Highlighting evaluation {{time}}', {
+                time: formatAgo(selectedEntry.timestamp),
+            });
+        }
+        if (highlightedRuleName) {
+            return translate('Rule: {{name}}', { name: highlightedRuleName });
+        }
+        return null;
+    }, [highlightedRuleName, selectedEntry]);
+
+    const graphProps = {
+        entries,
+        fieldState,
+        formValues: form.getValues(),
+        selectedEntryId,
+        highlightRuleId,
+        labelLookup,
+    };
+
+    const expandGraphButton = (
+        <button
+            type="button"
+            className="inline-flex size-11 min-h-11 min-w-11 shrink-0 cursor-pointer items-center justify-center rounded border border-dhis2-grey-300 bg-white text-dhis2-grey-800 hover:bg-dhis2-grey-100 focus-visible:outline-2 focus-visible:outline-dhis2-teal-600 focus-visible:outline-offset-1"
+            aria-label={translate('Open graph in full screen')}
+            onClick={() => {
+                setGraphModalOpen(true);
+            }}
+        >
+            <IconFullscreen16 />
+        </button>
+    );
 
     return (
         <aside
@@ -158,15 +206,21 @@ export function RuleDevtoolsPanel({ metadata }: RuleDevtoolsPanelProps) {
                     />
                 ) : (
                     <RuleGraphView
-                        entries={entries}
-                        fieldState={fieldState}
-                        formValues={form.getValues()}
-                        selectedEntryId={selectedEntryId}
-                        highlightRuleId={highlightRuleId}
-                        labelLookup={labelLookup}
+                        {...graphProps}
+                        headerActions={graphHasNodes ? expandGraphButton : undefined}
                     />
                 )}
             </div>
+
+            <RuleGraphModal
+                {...graphProps}
+                open={graphModalOpen}
+                onClose={() => {
+                    setGraphModalOpen(false);
+                }}
+                subtitle={graphSubtitle}
+                layoutKey={graphModalOpen ? 'open' : 'closed'}
+            />
         </aside>
     );
 }

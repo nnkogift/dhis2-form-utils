@@ -10,7 +10,7 @@ import {
 import type { RuleTraceEntry, TraceEffect } from '@dhis2-form-utils/hooks';
 import { useEffect, useState } from 'react';
 import type { DevtoolsLabelLookup } from './createLabelLookup';
-import { getEffectTagClassName } from './effectStyles';
+import { EffectBadge } from './EffectBadge';
 import { formatAgo } from './formatAgo';
 import { translate } from './i18n';
 
@@ -285,13 +285,11 @@ export function TraceTimeline({
                                                                             className="flex flex-col gap-dp4"
                                                                         >
                                                                             <div className="flex flex-wrap items-baseline gap-dp8">
-                                                                                <Tag
-                                                                                    className={getEffectTagClassName(
+                                                                                <EffectBadge
+                                                                                    type={
                                                                                         effect.type
-                                                                                    )}
-                                                                                >
-                                                                                    {effect.type}
-                                                                                </Tag>
+                                                                                    }
+                                                                                />
                                                                                 <span
                                                                                     className={`break-words text-[0.8125rem] leading-[1.45] text-dhis2-grey-800 ${showTargetId ? '' : 'break-all font-mono'}`}
                                                                                 >

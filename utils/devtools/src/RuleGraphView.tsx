@@ -1,19 +1,29 @@
-import { memo, useMemo } from 'react';
+import { memo, useEffect, useMemo, type ReactNode } from 'react';
 import {
     Background,
     Controls,
     type Edge,
     Handle,
+    MarkerType,
     type Node,
     type NodeProps,
     Position,
     ReactFlow,
+    ReactFlowProvider,
+    useReactFlow,
 } from '@xyflow/react';
 import { NoticeBox } from '@dhis2/ui';
 import type { RuleTraceEntry } from '@dhis2-form-utils/hooks';
 import type { FormStore } from '@dhis2-form-utils/hooks';
 import { buildGraphFromTrace, type GraphNode, type RuleDependencyGraph } from './buildGraph';
 import type { DevtoolsLabelLookup } from './createLabelLookup';
+import { EffectLegend } from './EffectBadge';
+import {
+    getEffectEdgeStroke,
+    getEffectShortLabel,
+    getEffectVariant,
+    type EffectVisualVariant,
+} from './effectStyles';
 import { getGraphNodeClassName, getLegendSwatchClassName } from './graphNodeStyles';
 import { translate } from './i18n';
 
@@ -26,13 +36,17 @@ type RuleNodeData = {
     highlighted: boolean;
 };
 
-type RuleGraphViewProps = {
+export type RuleGraphViewProps = {
     entries: readonly RuleTraceEntry[];
     fieldState: FieldStateMap;
     formValues: Record<string, unknown>;
     selectedEntryId: string | null;
     highlightRuleId: string | null;
     labelLookup?: DevtoolsLabelLookup;
+    className?: string;
+    layoutKey?: string | number;
+    headerActions?: ReactNode;
+    minHeightClassName?: string;
 };
 
 const KIND_COLUMNS: Record<GraphNode['kind'], number> = {
@@ -49,6 +63,15 @@ const KIND_LABELS: Record<GraphNode['kind'], string> = {
     rule: 'Rule',
     section: 'Section',
     feedback: 'Feedback',
+};
+
+const DEFAULT_EDGE_OPTIONS = {
+    type: 'smoothstep' as const,
+    style: { stroke: getEffectEdgeStroke('default') },
+    markerEnd: {
+        type: MarkerType.ArrowClosed,
+        color: getEffectEdgeStroke('default'),
+    },
 };
 
 function layoutNode(node: GraphNode, indexWithinKind: number): { x: number; y: number } {
@@ -139,7 +162,7 @@ const formatDisplayValue = (value: unknown): string | undefined => {
     return JSON.stringify(value);
 };
 
-function toFlowGraph(
+export function toFlowGraph(
     graph: RuleDependencyGraph,
     fieldState: FieldStateMap,
     formValues: Record<string, unknown>,
@@ -181,16 +204,34 @@ function toFlowGraph(
         const isHighlighted = highlightedKeys
             ? highlightedKeys.has(edge.source) && highlightedKeys.has(edge.target)
             : true;
+        const effectType = edge.effectType ?? 'default';
+        const stroke = getEffectEdgeStroke(effectType, isHighlighted);
 
         return {
             id: edge.id,
             source: edge.source,
             target: edge.target,
-            label: edge.effectType === 'read' ? 'read' : edge.effectType,
-            animated: isHighlighted && edge.effectType !== 'read',
-            className: isHighlighted ? undefined : 'opacity-25',
+            type: 'smoothstep',
+            label: getEffectShortLabel(effectType),
+            animated: isHighlighted && effectType !== 'read',
             style: {
+                stroke,
                 strokeWidth: Math.min(1 + edge.fireCount, 4),
+                opacity: isHighlighted ? 1 : 0.4,
+            },
+            labelStyle: {
+                fill: stroke,
+                fontWeight: 600,
+                fontSize: 10,
+            },
+            labelBgStyle: {
+                fill: '#ffffff',
+                fillOpacity: 0.92,
+            },
+            labelShowBg: true,
+            markerEnd: {
+                type: MarkerType.ArrowClosed,
+                color: stroke,
             },
         };
     });
@@ -198,7 +239,19 @@ function toFlowGraph(
     return { nodes, edges };
 }
 
-function GraphLegend() {
+type GraphToolbarProps = {
+    nodeCount: number;
+    edgeCount: number;
+    headerActions?: ReactNode;
+    activeEffectVariants: ReadonlySet<EffectVisualVariant>;
+};
+
+function GraphToolbar({
+    nodeCount,
+    edgeCount,
+    headerActions,
+    activeEffectVariants,
+}: GraphToolbarProps) {
     const items: Array<{ kind: GraphNode['kind']; label: string }> = [
         { kind: 'field', label: translate('Field') },
         { kind: 'rule', label: translate('Rule') },
@@ -207,20 +260,85 @@ function GraphLegend() {
     ];
 
     return (
-        <div
-            className="flex shrink-0 flex-wrap gap-x-dp16 gap-y-dp8 border-b border-dhis2-grey-200 bg-white px-dp16 py-dp12"
-            aria-hidden="true"
-        >
-            {items.map((item) => (
-                <span
-                    key={item.kind}
-                    className="inline-flex items-center gap-dp8 text-xs text-dhis2-grey-800"
+        <div className="shrink-0 border-b border-dhis2-grey-200 bg-white">
+            <div className="flex flex-wrap items-center justify-between gap-dp8 px-dp12 py-dp8">
+                <div
+                    className="flex min-w-0 flex-wrap items-center gap-x-dp12 gap-y-dp8"
+                    aria-hidden="true"
                 >
-                    <span className={getLegendSwatchClassName(item.kind)} />
-                    {item.label}
-                </span>
-            ))}
+                    {items.map((item) => (
+                        <span
+                            key={item.kind}
+                            className="inline-flex items-center gap-dp8 text-xs text-dhis2-grey-800"
+                        >
+                            <span className={getLegendSwatchClassName(item.kind)} />
+                            {item.label}
+                        </span>
+                    ))}
+                </div>
+                <div className="flex shrink-0 items-center gap-dp8">
+                    <span className="text-xs tabular-nums text-dhis2-grey-600">
+                        {translate('{{nodes}} nodes · {{edges}} edges', {
+                            nodes: nodeCount,
+                            edges: edgeCount,
+                        })}
+                    </span>
+                    {headerActions}
+                </div>
+            </div>
+            <EffectLegend activeVariants={activeEffectVariants} />
         </div>
+    );
+}
+
+type RuleGraphCanvasProps = {
+    nodes: Node<RuleNodeData>[];
+    edges: Edge[];
+    layoutKey?: string | number;
+};
+
+function FitViewOnChange({
+    layoutKey,
+    nodeCount,
+    edgeCount,
+}: {
+    layoutKey?: string | number;
+    nodeCount: number;
+    edgeCount: number;
+}) {
+    const { fitView } = useReactFlow();
+
+    useEffect(() => {
+        const frameId = requestAnimationFrame(() => {
+            void fitView({ padding: 0.15, duration: 150 });
+        });
+        return () => {
+            cancelAnimationFrame(frameId);
+        };
+    }, [edgeCount, fitView, layoutKey, nodeCount]);
+
+    return null;
+}
+
+function RuleGraphCanvas({ nodes, edges, layoutKey }: RuleGraphCanvasProps) {
+    return (
+        <ReactFlow
+            nodes={nodes}
+            edges={edges}
+            nodeTypes={nodeTypes}
+            defaultEdgeOptions={DEFAULT_EDGE_OPTIONS}
+            fitView
+            proOptions={{ hideAttribution: true }}
+            className="h-full w-full"
+        >
+            <FitViewOnChange
+                layoutKey={layoutKey}
+                nodeCount={nodes.length}
+                edgeCount={edges.length}
+            />
+            <Background gap={16} size={1} />
+            <Controls showInteractive={false} />
+        </ReactFlow>
     );
 }
 
@@ -231,6 +349,10 @@ export function RuleGraphView({
     selectedEntryId,
     highlightRuleId,
     labelLookup,
+    className,
+    layoutKey,
+    headerActions,
+    minHeightClassName = 'min-h-[360px]',
 }: RuleGraphViewProps) {
     const graph = useMemo(() => buildGraphFromTrace(entries, labelLookup), [entries, labelLookup]);
 
@@ -264,12 +386,22 @@ export function RuleGraphView({
         [graph, fieldState, formValues, highlightedKeys]
     );
 
+    const activeEffectVariants = useMemo(() => {
+        const variants = new Set<EffectVisualVariant>();
+        for (const edge of graph.edges) {
+            if (edge.effectType) {
+                variants.add(getEffectVariant(edge.effectType));
+            }
+        }
+        return variants;
+    }, [graph.edges]);
+
     if (!graph.nodes.length) {
         return (
             <div className="p-dp8">
                 <NoticeBox title={translate('No rule relationships yet')}>
                     {translate(
-                        'Interact with the form to build the dependency graph. Only rules and effects that have fired during this session are shown.'
+                        'Interact with the form to build the dependency graph. Only rules and effects that have fired during this session are shown. Connections flow Field → Rule → Target (read / effect).'
                     )}
                 </NoticeBox>
             </div>
@@ -277,13 +409,22 @@ export function RuleGraphView({
     }
 
     return (
-        <div className="flex h-full min-h-[480px] flex-1 flex-col overflow-hidden rounded-md border border-dhis2-grey-200 bg-white">
-            <GraphLegend />
-            <div className="min-h-[360px] flex-1 bg-white">
-                <ReactFlow nodes={nodes} edges={edges} nodeTypes={nodeTypes} fitView>
-                    <Background gap={16} size={1} />
-                    <Controls showInteractive={false} />
-                </ReactFlow>
+        <div
+            className={`flex h-full min-h-[480px] flex-1 flex-col overflow-hidden rounded-md border border-dhis2-grey-200 bg-white ${className ?? ''}`}
+        >
+            <GraphToolbar
+                nodeCount={graph.nodes.length}
+                edgeCount={graph.edges.length}
+                headerActions={headerActions}
+                activeEffectVariants={activeEffectVariants}
+            />
+            <div
+                className={`${minHeightClassName} flex-1 bg-white`}
+                style={{ width: '100%', height: '100%' }}
+            >
+                <ReactFlowProvider>
+                    <RuleGraphCanvas nodes={nodes} edges={edges} layoutKey={layoutKey} />
+                </ReactFlowProvider>
             </div>
         </div>
     );
