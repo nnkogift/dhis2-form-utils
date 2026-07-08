@@ -15,7 +15,7 @@ const LEGEND_SWATCH_CLASSES: Record<GraphNode['kind'], string> = {
 };
 
 export function getGraphNodeClassName(kind: GraphNode['kind'], highlighted: boolean): string {
-    return `p-dp8 rounded border bg-white min-w-28 max-w-[180px] text-xs shadow-[0_1px_2px_rgb(0_0_0/6%)] transition-opacity duration-150 ease-out ${GRAPH_NODE_CLASSES[kind]} ${
+    return `p-dp8 rounded border bg-white min-w-28 max-w-[180px] text-xs shadow-[0_1px_2px_rgb(0_0_0/6%)] transition-opacity duration-150 ease-out cursor-grab active:cursor-grabbing ${GRAPH_NODE_CLASSES[kind]} ${
         highlighted ? '' : 'opacity-35'
     }`;
 }

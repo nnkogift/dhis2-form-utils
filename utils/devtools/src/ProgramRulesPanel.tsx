@@ -6,6 +6,7 @@ import { formatRuleActionSummary } from './formatRuleActionSummary';
 import { translate } from './i18n';
 import { resolveProgramRulesList } from './resolveProgramRulesList';
 import { useRuleTraceStore } from './RuleDevtoolsScope';
+import { getActiveRuleIds } from './traceEntry';
 
 export type ProgramRulesPanelProps = {
     metadata: RuleDevtoolsMetadata;
@@ -19,13 +20,7 @@ function useActiveRuleIds(): ReadonlySet<string> {
         useCallback(() => traceStore.getSnapshot(), [traceStore])
     );
 
-    return useMemo(() => {
-        if (!entries.length) {
-            return new Set<string>();
-        }
-        const latest = entries[entries.length - 1];
-        return new Set(latest.ruleResults.map((result) => result.ruleId));
-    }, [entries]);
+    return useMemo(() => getActiveRuleIds(entries), [entries]);
 }
 
 function formatActionLabel(action: ReturnType<typeof formatRuleActionSummary>): string {

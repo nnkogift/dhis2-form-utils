@@ -10,6 +10,7 @@ import { formatAgo } from './formatAgo';
 import { RuleGraphModal } from './RuleGraphModal';
 import { RuleGraphView } from './RuleGraphView';
 import { TraceTimeline } from './TraceTimeline';
+import { resolveGraphTraceEntry } from './traceEntry';
 
 export type { RuleDevtoolsMetadata } from './createLabelLookup';
 
@@ -67,10 +68,10 @@ export function RuleDevtoolsPanel({ metadata }: RuleDevtoolsPanelProps) {
         return labelLookup?.resolveRuleName(highlightRuleId) ?? highlightRuleId;
     }, [highlightRuleId, labelLookup]);
 
-    const graphHasNodes = useMemo(
-        () => buildGraphFromTrace(entries, labelLookup).nodes.length > 0,
-        [entries, labelLookup]
-    );
+    const graphHasNodes = useMemo(() => {
+        const entry = resolveGraphTraceEntry(entries, selectedEntryId);
+        return entry ? buildGraphFromTrace([entry], labelLookup).nodes.length > 0 : false;
+    }, [entries, labelLookup, selectedEntryId]);
 
     const graphSubtitle = useMemo(() => {
         if (selectedEntry && highlightedRuleName) {

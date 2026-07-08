@@ -73,4 +73,30 @@ describe('buildGraphFromTrace', () => {
         const readEdge = second.edges.find((edge) => edge.effectType === 'read');
         expect(readEdge?.fireCount).toBe(2);
     });
+
+    it('includes only the rules from the supplied entries', () => {
+        const laterEntry: RuleTraceEntry = {
+            ...entry,
+            id: 'entry-2',
+            ruleResults: [
+                {
+                    ruleId: 'rule-2',
+                    effects: [
+                        {
+                            type: 'HIDEFIELD',
+                            targetId: 'weight',
+                        },
+                    ],
+                },
+            ],
+        };
+
+        const sessionGraph = buildGraphFromTrace([entry, laterEntry], labelLookup);
+        const activeGraph = buildGraphFromTrace([laterEntry], labelLookup);
+
+        expect(sessionGraph.nodes.filter((node) => node.kind === 'rule')).toHaveLength(2);
+        expect(activeGraph.nodes.filter((node) => node.kind === 'rule')).toHaveLength(1);
+        expect(activeGraph.nodes.some((node) => node.id === 'rule:rule-2')).toBe(true);
+        expect(activeGraph.nodes.some((node) => node.id === 'rule:rule-1')).toBe(false);
+    });
 });
