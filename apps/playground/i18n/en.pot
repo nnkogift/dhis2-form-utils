@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-07-03T14:06:24.856Z\n"
-"PO-Revision-Date: 2026-07-03T14:06:24.856Z\n"
+"POT-Creation-Date: 2026-07-04T10:40:36.929Z\n"
+"PO-Revision-Date: 2026-07-04T10:40:36.930Z\n"
 
 msgid "Search programs"
 msgstr "Search programs"
@@ -55,6 +55,9 @@ msgstr "Organisation unit is required"
 
 msgid "Event saved successfully"
 msgstr "Event saved successfully"
+
+msgid "Back to programs"
+msgstr "Back to programs"
 
 msgid "Save event"
 msgstr "Save event"
@@ -116,9 +119,6 @@ msgstr "Error"
 
 msgid "Error loading programs"
 msgstr "Error loading programs"
-
-msgid "Back to programs"
-msgstr "Back to programs"
 
 msgid "Program not found"
 msgstr "Program not found"
