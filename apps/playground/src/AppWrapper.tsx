@@ -12,8 +12,8 @@ const AppWrapper = () => {
     return (
         <div className="p-4 h-full">
             <HashRouter>
+                <SyncUrlWithGlobalShell />
                 <Routes>
-                    <SyncUrlWithGlobalShell />
                     <Route path="/" element={<ProgramListPage />} />
                     <Route
                         path="/programs/:programId"
