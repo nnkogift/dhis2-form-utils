@@ -6,12 +6,14 @@ import { HashRouter, Route, Routes } from 'react-router'
 import AboutPage from '@/components/About'
 import { ProgramListPage } from '@/pages/ProgramListPage'
 import { ProgramPlaceholderPage } from '@/pages/ProgramPlaceholderPage'
+import { SyncUrlWithGlobalShell } from '@/components/SyncUrlWithGlobalShell'
 
 const AppWrapper = () => {
     return (
         <div className="p-4 h-full">
             <HashRouter>
                 <Routes>
+                    <SyncUrlWithGlobalShell />
                     <Route path="/" element={<ProgramListPage />} />
                     <Route
                         path="/programs/:programId"
