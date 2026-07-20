@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import i18n from '@dhis2/d2-i18n'
 import {
     Button,
@@ -6,8 +6,8 @@ import {
     SingleSelectField,
     SingleSelectOption,
 } from '@dhis2/ui'
+import { useDebounceCallback } from 'usehooks-ts'
 import type { ProgramTypeFilter } from '@/types/program'
-import classes from './ProgramListFilters.module.css'
 
 const SEARCH_DEBOUNCE_MS = 300
 
@@ -26,35 +26,36 @@ export function ProgramListFilters({
 }: ProgramListFiltersProps) {
     const [localSearch, setLocalSearch] = useState(search)
 
+    const debouncedOnSearchChange = useDebounceCallback(
+        useCallback(
+            (value: string) => {
+                onSearchChange(value)
+            },
+            [onSearchChange]
+        ),
+        SEARCH_DEBOUNCE_MS
+    )
+
     useEffect(() => {
         setLocalSearch(search)
-    }, [search])
-
-    useEffect(() => {
-        const timeoutId = window.setTimeout(() => {
-            if (localSearch !== search) {
-                onSearchChange(localSearch)
-            }
-        }, SEARCH_DEBOUNCE_MS)
-
-        return () => {
-            window.clearTimeout(timeoutId)
-        }
-    }, [localSearch, onSearchChange, search])
+        debouncedOnSearchChange.cancel()
+    }, [search, debouncedOnSearchChange])
 
     return (
-        <div className={classes.filters}>
-            <div className={classes.searchField}>
+        <div className="flex flex-wrap gap-dp16 items-end md:gap-dp24">
+            <div className="flex-[1_1_280px] min-w-0">
                 <InputField
                     label={i18n.t('Search programs')}
                     placeholder={i18n.t('Search by name, code, or ID')}
                     value={localSearch}
                     onChange={({ value }) => {
-                        setLocalSearch(value ?? '')
+                        const next = value ?? ''
+                        setLocalSearch(next)
+                        debouncedOnSearchChange(next)
                     }}
                 />
             </div>
-            <div className={classes.typeField}>
+            <div className="flex-[0_1_240px] min-w-[200px]">
                 <SingleSelectField
                     label={i18n.t('Program type')}
                     selected={type}
@@ -71,11 +72,12 @@ export function ProgramListFilters({
                 </SingleSelectField>
             </div>
             {localSearch ? (
-                <div className={classes.clearButton}>
+                <div className="flex-none pb-dp4">
                     <Button
                         small
                         secondary
                         onClick={() => {
+                            debouncedOnSearchChange.cancel()
                             setLocalSearch('')
                             onSearchChange('')
                         }}

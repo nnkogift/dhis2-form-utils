@@ -1,7 +1,7 @@
 import { useDataQuery } from '@dhis2/app-runtime'
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { buildProgramFilters } from '@/hooks/buildProgramFilters'
-import type { ProgramTypeFilter, ProgramsResponse } from '@/types/program'
+import type { ProgramsResponse, ProgramTypeFilter } from '@/types/program'
 
 type UseProgramsOptions = {
     page: number
@@ -21,21 +21,41 @@ export function usePrograms({
     type,
 }: UseProgramsOptions) {
     const query = useMemo(() => {
-        const filters = buildProgramFilters(search, type)
-
         return {
             programs: {
                 resource: 'programs',
-                params: {
-                    fields: 'id,displayName,code,shortName,programType',
-                    order: 'displayName:asc',
-                    page,
-                    pageSize,
-                    ...(filters.length > 0 ? { filter: filters } : {}),
+                params: ({ page, pageSize, search, type }) => {
+                    const filters = buildProgramFilters(search, type)
+                    return {
+                        fields: 'id,displayName,code,shortName,programType',
+                        order: 'displayName:asc',
+                        page,
+                        pageSize,
+                        ...(filters.length > 0 ? { filter: filters } : {}),
+                    }
                 },
             },
         }
     }, [page, pageSize, search, type])
 
-    return useDataQuery<ProgramsQueryResult>(query)
+    const dataQuery = useDataQuery<ProgramsQueryResult>(query, {
+        variables: {
+            page,
+            pageSize,
+            search,
+            type,
+        },
+        lazy: true,
+    })
+
+    useEffect(() => {
+        dataQuery.refetch({
+            page,
+            pageSize,
+            search,
+            type,
+        })
+    }, [page, pageSize, search, type])
+
+    return dataQuery
 }

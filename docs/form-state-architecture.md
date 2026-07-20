@@ -50,7 +50,7 @@ These effects have **no field UID**. They describe state at the form or widget l
 
 The `location` field on `DISPLAYTEXT` and `DISPLAYKEYVALUEPAIR` is set by the DHIS2 configurator when creating the rule action. It is either `feedback` (shown in the Feedback Widget panel) or `indicators` (shown in the Program Indicators Widget panel). The DHIS2 web Capture app renders both as collapsible side panels. In `dhis2-form-utils`, UI adapters decide how to surface these — but the hooks layer must produce and expose the data for them.
 
-`HIDESECTION` carries the UID of the program stage section it targets. Section UIDs come from the `programStage.programStageSections` metadata, not from fields.
+`HIDESECTION` carries the UID of the program stage section or program section it targets. Section UIDs come from `programStage.programStageSections` (event/stage forms) or `program.programSections` (registration forms). Wrap grouped fields in `FormSection` with the section's metadata `id` so rule-driven visibility works.
 
 ---
 

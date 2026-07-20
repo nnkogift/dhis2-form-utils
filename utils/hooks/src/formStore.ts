@@ -1,25 +1,40 @@
 import { debounce, type DebouncedFunc } from 'lodash-es';
 import type { RefObject } from 'react';
 import type { UseFormReturn } from 'react-hook-form';
-import type { BuiltRuleEngine, EffectHandlersMap } from '@dhis2-form-utils/rules';
+import type { BuiltRuleEngine, EffectHandlersMap, RuleEffect } from '@dhis2-form-utils/rules';
+import { buildTraceEntry, type RuleTraceEntry } from './buildTraceEntry';
 import { evaluateFormState } from './evaluateFormState';
 import { createFieldStateStore, type FieldStateStore } from './store/fieldStateStore';
 import { createNonFieldStateStore, type NonFieldStateStore } from './store/nonFieldStateStore';
 
 const DEBOUNCE_MS = 40;
 
+type TraceListener = (entry: RuleTraceEntry) => void;
+
 export class FormStore {
     readonly fieldStore: FieldStateStore = createFieldStateStore();
     readonly nonFieldStore: NonFieldStateStore = createNonFieldStateStore();
 
     private unsubscribe: (() => void) | null = null;
-    private debouncedEvaluate: DebouncedFunc<(values: Record<string, unknown>) => void> | null =
-        null;
+    private debouncedEvaluate: DebouncedFunc<() => void> | null = null;
     private applyingAssignments = false;
     private prevAssignments: Record<string, unknown> = {};
     private engine: BuiltRuleEngine | null = null;
     private form: UseFormReturn<Record<string, unknown>> | null = null;
     private effectHandlersRef: RefObject<EffectHandlersMap | undefined> | null = null;
+    private pendingChangedFields = new Set<string>();
+    private traceListeners = new Set<TraceListener>();
+    private lastTraceEntry: RuleTraceEntry | null = null;
+
+    subscribeTrace(listener: TraceListener): () => void {
+        this.traceListeners.add(listener);
+        if (this.lastTraceEntry) {
+            listener(this.lastTraceEntry);
+        }
+        return () => {
+            this.traceListeners.delete(listener);
+        };
+    }
 
     init(
         form: UseFormReturn<Record<string, unknown>>,
@@ -41,7 +56,7 @@ export class FormStore {
         this.engine = engine;
         this.effectHandlersRef = effectHandlersRef;
 
-        const evaluate = (values: Record<string, unknown>) => {
+        const evaluate = (changedFields: string[]) => {
             if (this.applyingAssignments) {
                 this.applyingAssignments = false;
                 return;
@@ -51,25 +66,31 @@ export class FormStore {
 
             const next = evaluateFormState(
                 this.engine,
-                values,
+                this.form.getValues(),
                 this.effectHandlersRef?.current ?? undefined
             );
 
             this.applyAssignments(next.fieldMap);
             this.fieldStore.setState(next.fieldMap);
             this.nonFieldStore.setState(next.sectionMap, next.feedback);
+            this.maybeEmitTrace(changedFields, next.effects);
         };
 
         this.debouncedEvaluate = debounce(() => {
-            if (!this.form) return;
-            evaluate(this.form.getValues());
+            const changedFields = [...this.pendingChangedFields];
+            this.pendingChangedFields.clear();
+            evaluate(changedFields);
         }, DEBOUNCE_MS);
-        evaluate(form.getValues());
+
+        evaluate([]);
 
         this.unsubscribe = form.subscribe({
             formState: { values: true },
-            callback: (values) => {
-                this.debouncedEvaluate?.(values);
+            callback: ({ name }) => {
+                if (name) {
+                    this.pendingChangedFields.add(name);
+                }
+                this.debouncedEvaluate?.();
             },
         });
     }
@@ -92,6 +113,21 @@ export class FormStore {
         this.engine = null;
         this.effectHandlersRef = null;
         this.prevAssignments = {};
+        this.pendingChangedFields.clear();
+        this.lastTraceEntry = null;
+    }
+
+    private maybeEmitTrace(changedFields: string[], effects: RuleEffect[]): void {
+        const entry = buildTraceEntry(changedFields, effects);
+        this.lastTraceEntry = entry;
+
+        if (this.traceListeners.size === 0) {
+            return;
+        }
+
+        for (const listener of this.traceListeners) {
+            listener(entry);
+        }
     }
 
     private applyAssignments(

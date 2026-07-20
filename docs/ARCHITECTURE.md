@@ -275,27 +275,24 @@ any DHIS2 application. It provides:
   beneath it
 
 Because `@dhis2/app-runtime`'s `Provider` owns the connection configuration, `dhis2-form-utils`
-needs no equivalent setup of its own. The hooks package exports a `programStageQuery` helper for
-fetching metadata via `useDataQuery`; the consuming application is responsible for fetching
-metadata and posting submissions via `useDataMutation`.
+needs no equivalent setup of its own. The hooks package exports `programMetadataExportQuery`
+(`GET /api/programs/{id}/metadata`) and `programStageQuery` (stage PSDEs/sections only) helpers
+for `useDataQuery`; resolve the export with `resolveEventProgramMetadata` or
+`resolveTrackerProgramMetadata` from `@dhis2-form-utils/metadata`. The consuming application is
+responsible for fetching metadata and posting submissions via `useDataMutation`.
 
 ### Query pattern inside hooks
 
 ```ts
-// utils/hooks/src/queries/programStage.query.ts
+// utils/hooks/src/queries/programMetadataExport.query.ts
 import type { Query } from '@dhis2/data-engine';
 
-export const programStageQuery = (id: string): Query => ({
-    programStage: {
-        resource: 'programStages',
-        id,
+export const programMetadataExportQuery = (programId: string): Query => ({
+    programMetadata: {
+        resource: 'programs',
+        id: `${programId}/metadata`,
         params: {
-            fields: [
-                'id,displayName',
-                'programStageDataElements[dataElement[id,displayName,valueType,optionSet[options[code,displayName]]]]',
-                'programRules[id,condition,priority,programRuleActions[programRuleActionType,dataElement,content,data]]',
-                'programRuleVariables[id,name,dataElement,programRuleVariableSourceType]',
-            ].join(','),
+            skipSharing: true,
         },
     },
 });

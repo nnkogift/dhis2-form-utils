@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-07-01T08:19:11.170Z\n"
-"PO-Revision-Date: 2026-07-01T08:19:11.170Z\n"
+"POT-Creation-Date: 2026-07-04T10:40:36.929Z\n"
+"PO-Revision-Date: 2026-07-04T10:40:36.930Z\n"
 
 msgid "Search programs"
 msgstr "Search programs"
@@ -32,17 +32,81 @@ msgstr "Clear search"
 msgid "Name"
 msgstr "Name"
 
-msgid "Code"
-msgstr "Code"
-
 msgid "Type"
 msgstr "Type"
 
-msgid "ID"
-msgstr "ID"
-
 msgid "No programs found. Try adjusting your search or filter."
 msgstr "No programs found. Try adjusting your search or filter."
+
+msgid "Organisation unit"
+msgstr "Organisation unit"
+
+msgid "Event date"
+msgstr "Event date"
+
+msgid "This field is required"
+msgstr "This field is required"
+
+msgid "Section"
+msgstr "Section"
+
+msgid "Organisation unit is required"
+msgstr "Organisation unit is required"
+
+msgid "Event saved successfully"
+msgstr "Event saved successfully"
+
+msgid "Back to programs"
+msgstr "Back to programs"
+
+msgid "Save event"
+msgstr "Save event"
+
+msgid "Could not save event"
+msgstr "Could not save event"
+
+msgid "Event saved"
+msgstr "Event saved"
+
+msgid "This event program does not have a program stage to render."
+msgstr "This event program does not have a program stage to render."
+
+msgid "Saved"
+msgstr "Saved"
+
+msgid "Tracked entity registered successfully"
+msgstr "Tracked entity registered successfully"
+
+msgid "Register tracked entity"
+msgstr "Register tracked entity"
+
+msgid "Could not save registration"
+msgstr "Could not save registration"
+
+msgid "Registration saved"
+msgstr "Registration saved"
+
+msgid "Could not load registration form"
+msgstr "Could not load registration form"
+
+msgid "The tracker program metadata could not be loaded."
+msgstr "The tracker program metadata could not be loaded."
+
+msgid "No attributes configured"
+msgstr "No attributes configured"
+
+msgid ""
+"This tracker program does not expose any tracked entity attributes to "
+"capture."
+msgstr ""
+"This tracker program does not expose any tracked entity attributes to "
+"capture."
+
+msgid "Date of enrollment"
+msgstr "Date of enrollment"
+
+msgid "Incident date"
+msgstr "Incident date"
 
 msgid "Programs"
 msgstr "Programs"
@@ -56,26 +120,27 @@ msgstr "Error"
 msgid "Error loading programs"
 msgstr "Error loading programs"
 
-msgid "Back to programs"
-msgstr "Back to programs"
-
 msgid "Program not found"
 msgstr "Program not found"
 
-msgid "Registration data entry form"
-msgstr "Registration data entry form"
+msgid "Could not load organisation units"
+msgstr "Could not load organisation units"
 
-msgid "Event data entry form"
-msgstr "Event data entry form"
+msgid "The current user organisation units could not be loaded for data entry."
+msgstr "The current user organisation units could not be loaded for data entry."
 
-msgid "Registration data entry form — coming soon"
-msgstr "Registration data entry form — coming soon"
+msgid "No organisation units available"
+msgstr "No organisation units available"
 
-msgid "Event data entry form — coming soon"
-msgstr "Event data entry form — coming soon"
+msgid ""
+"The current user does not have any accessible organisation units for this "
+"playground."
+msgstr ""
+"The current user does not have any accessible organisation units for this "
+"playground."
 
-msgid "Open form"
-msgstr "Open form"
+msgid "An unexpected error occurred"
+msgstr "An unexpected error occurred"
 
 msgctxt "Application title"
 msgid "__MANIFEST_APP_TITLE"

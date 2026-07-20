@@ -1,6 +1,7 @@
 import type {
     EffectHandlersMap,
     FeedbackMap,
+    RuleEffect,
     RuleEngineLike,
     SectionStateMap,
 } from '@dhis2-form-utils/rules';
@@ -10,6 +11,7 @@ export type FormStateSnapshot = {
     fieldMap: ReturnType<typeof evaluateAndMap>['fieldMap'];
     sectionMap: SectionStateMap;
     feedback: FeedbackMap;
+    effects: RuleEffect[];
 };
 
 export function evaluateFormState(
@@ -24,4 +26,5 @@ export const emptyFormStateSnapshot = (): FormStateSnapshot => ({
     fieldMap: {},
     sectionMap: {},
     feedback: {},
+    effects: [],
 });

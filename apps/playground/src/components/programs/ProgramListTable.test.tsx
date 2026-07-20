@@ -1,7 +1,7 @@
 import { fireEvent, render } from '@testing-library/react'
 import React from 'react'
 import { ProgramListTable } from './ProgramListTable'
-import { PROGRAM_TYPE, type Program } from '../../types/program'
+import { PROGRAM_TYPE, type Program } from '@/types/program'
 
 const sampleProgram: Program = {
     id: 'prog123',

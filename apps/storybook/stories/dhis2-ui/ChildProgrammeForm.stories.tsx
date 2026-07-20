@@ -6,7 +6,7 @@ import { withEventForm } from '../../decorators/withEventForm';
 import { childProgrammePlays } from '../../interactions/childProgrammeInteractions';
 import {
     CHILD_PROGRAMME_STAGE_ID,
-    childProgrammeStageMetadata,
+    childProgrammeEventProgramMetadata,
 } from '../../fixtures/childProgramme';
 
 const plays = childProgrammePlays('dhis2-ui');
@@ -22,7 +22,7 @@ const meta = {
     decorators: [
         withEventForm({
             programStageId: CHILD_PROGRAMME_STAGE_ID,
-            metadata: childProgrammeStageMetadata,
+            metadata: childProgrammeEventProgramMetadata,
         }),
     ],
 } satisfies Meta<typeof Dhis2ChildProgrammeForm>;

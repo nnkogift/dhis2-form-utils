@@ -13,6 +13,29 @@ export type Program = {
     programType: ProgramType
 }
 
+export type ProgramStageSummary = {
+    id: string
+    displayName: string
+}
+
+export type ProgramSection = {
+    id: string
+    displayName?: string
+    sortOrder?: number
+    trackedEntityAttributes: Array<{ id: string }>
+}
+
+export type ProgramHeader = Program & {
+    trackedEntityType?: { id: string }
+    displayIncidentDate?: boolean
+    selectEnrollmentDatesInFuture?: boolean
+    selectIncidentDatesInFuture?: boolean
+    displayEnrollmentDateLabel?: string
+    displayIncidentDateLabel?: string
+    programStages?: ProgramStageSummary[]
+    programSections?: ProgramSection[]
+}
+
 export type Pager = {
     page: number
     pageCount: number
@@ -32,4 +55,9 @@ export type ProgramListParams = {
     type: ProgramTypeFilter
     page: number
     pageSize: number
+}
+
+export type OrgUnit = {
+    id: string
+    displayName: string
 }

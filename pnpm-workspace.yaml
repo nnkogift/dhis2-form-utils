@@ -5,6 +5,7 @@ packages:
     - 'components/*'
 allowBuilds:
     '@dhis2/cli-helpers-engine': false
+    '@parcel/watcher': false
     core-js-pure: false
     esbuild: true
     fallow: false

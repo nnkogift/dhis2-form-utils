@@ -134,18 +134,39 @@ const toRuleVariable = (variable: ProgramRuleVariable): RuleVariableJs =>
         variable.programStage?.id ?? null
     );
 
-const toContext = (metadata: ProgramStageMetadata): RuleEngineContextJs | null => {
-    if (!metadata.programRules?.length) {
+const toContext = (
+    programRules: ProgramRule[],
+    programRuleVariables: ProgramRuleVariable[]
+): RuleEngineContextJs | null => {
+    if (!programRules.length) {
         return null;
     }
 
     return new RuleEngineContextJs(
-        metadata.programRules.map(toRule),
-        (metadata.programRuleVariables ?? []).map(toRuleVariable),
+        programRules.map(toRule),
+        programRuleVariables.map(toRuleVariable),
         new RuleSupplementaryDataJs([], [], new Map<string, string[]>()),
         new Map<string, string>()
     );
 };
+
+export type BuildRuleEngineContextOptions = {
+    stageMetadata: ProgramStageMetadata;
+    programRules: ProgramRule[];
+    programRuleVariables: ProgramRuleVariable[];
+    programStageId: string;
+};
+
+const filterEventRules = (rules: ProgramRule[], programStageId: string): ProgramRule[] =>
+    rules.filter((rule) => !rule.programStage?.id || rule.programStage.id === programStageId);
+
+const filterEventRuleVariables = (
+    variables: ProgramRuleVariable[],
+    programStageId: string
+): ProgramRuleVariable[] =>
+    variables.filter(
+        (variable) => !variable.programStage?.id || variable.programStage.id === programStageId
+    );
 
 const toRuleDataValue = (id: string, value: unknown): RuleDataValue | null => {
     if (value === undefined || value === null) {
@@ -195,6 +216,7 @@ const toRuleEvent = (
 const normalizeEffect = (effect: RuleEffectJs): RuleEffect => {
     const values = effect.ruleAction.values;
     return {
+        ruleId: effect.ruleId,
         ruleActionType: effect.ruleAction.type as ProgramRuleActionType,
         content: values.get('content') ?? null,
         dataElement: values.get('dataElement') ?? null,
@@ -208,10 +230,16 @@ const normalizeEffect = (effect: RuleEffectJs): RuleEffect => {
     };
 };
 
-export function buildRuleEngineContext(metadata: ProgramStageMetadata): RuleEngineContext {
+export function buildRuleEngineContext(options: BuildRuleEngineContextOptions): RuleEngineContext {
+    const eventRules = filterEventRules(options.programRules, options.programStageId);
+    const eventVariables = filterEventRuleVariables(
+        options.programRuleVariables,
+        options.programStageId
+    );
+
     return {
-        metadata,
-        context: toContext(metadata),
+        metadata: options.stageMetadata,
+        context: toContext(eventRules, eventVariables),
         engine: new RuleEngineJs(),
     };
 }

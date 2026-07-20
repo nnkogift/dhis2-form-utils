@@ -6,7 +6,7 @@ import {
     useMemo,
     useSyncExternalStore,
 } from 'react';
-import type { UseFormReturn } from 'react-hook-form';
+import { FormProvider, UseFormReturn } from 'react-hook-form';
 import {
     createEmptyFieldState,
     createEmptySectionState,
@@ -15,48 +15,66 @@ import {
     type SectionState,
 } from '@dhis2-form-utils/rules';
 import type { FormStore } from './formStore';
-import type { FieldStateStore } from './store/fieldStateStore';
-import type { NonFieldStateStore } from './store/nonFieldStateStore';
+import { FieldStateStore } from './store/fieldStateStore';
+import { NonFieldStateStore } from './store/nonFieldStateStore';
 
-export type FormStateContextValue = {
-    form: UseFormReturn<Record<string, unknown>>;
-    fieldStore: FieldStateStore;
-    nonFieldStore: NonFieldStateStore;
+export type FormStateContextValue<T extends Record<string, unknown> = Record<string, unknown>> = {
+    form: UseFormReturn<T>;
     formStore: FormStore;
 };
 
 const FormStateContext = createContext<FormStateContextValue | null>(null);
 
-export type FormStateProviderProps = {
+export type FormStateProviderProps<T extends Record<string, unknown> = Record<string, unknown>> = {
     formStore: FormStore;
-    form: UseFormReturn<Record<string, unknown>>;
+    form: UseFormReturn<T>;
     children: ReactNode;
 };
 
-export function FormStateProvider({ formStore, form, children }: FormStateProviderProps) {
-    const value = useMemo(() => {
-        return {
-            form,
-            fieldStore: formStore.fieldStore,
-            nonFieldStore: formStore.nonFieldStore,
-            formStore,
-        };
-    }, [form, formStore]);
-
-    return <FormStateContext.Provider value={value}>{children}</FormStateContext.Provider>;
+export function FormStateProvider<T extends Record<string, unknown> = Record<string, unknown>>({
+    formStore,
+    form,
+    children,
+}: FormStateProviderProps<T>) {
+    return (
+        <FormStateContext.Provider
+            value={{
+                form: form as UseFormReturn<Record<string, unknown>>,
+                formStore,
+            }}
+        >
+            <FormProvider {...form}>{children}</FormProvider>
+        </FormStateContext.Provider>
+    );
 }
 
-export function useFormStateContext(): FormStateContextValue {
+export function useFormStateContext<
+    T extends Record<string, unknown> = Record<string, unknown>,
+>(): FormStateContextValue<T> {
     const ctx = useContext(FormStateContext);
     if (!ctx) {
         throw new Error('useFormStateContext must be used inside FormStateProvider');
     }
-    return ctx;
+    return ctx as FormStateContextValue<T>;
+}
+
+export function useFormStore(): FormStore {
+    const { formStore } = useFormStateContext();
+    return formStore;
+}
+
+export function useFieldStore(): FieldStateStore {
+    const { formStore } = useFormStateContext();
+    return useMemo(() => formStore.fieldStore, [formStore.fieldStore]);
+}
+
+export function useNonFieldStore(): NonFieldStateStore {
+    const { formStore } = useFormStateContext();
+    return useMemo(() => formStore.nonFieldStore, [formStore.nonFieldStore]);
 }
 
 export function useFieldState(fieldId: string): FieldState {
-    const { fieldStore } = useFormStateContext();
-
+    const fieldStore = useFieldStore();
     const snapshot = useSyncExternalStore(
         useCallback((cb) => fieldStore.subscribe(fieldId, cb), [fieldStore, fieldId]),
         useCallback(() => fieldStore.getFieldSnapshot(fieldId), [fieldStore, fieldId]),
@@ -67,7 +85,7 @@ export function useFieldState(fieldId: string): FieldState {
 }
 
 export function useSectionState(sectionId: string): SectionState {
-    const { nonFieldStore } = useFormStateContext();
+    const nonFieldStore = useNonFieldStore();
 
     const snapshot = useSyncExternalStore(
         useCallback(
@@ -82,7 +100,7 @@ export function useSectionState(sectionId: string): SectionState {
 }
 
 export function useFormFeedback(): FeedbackMap {
-    const { nonFieldStore } = useFormStateContext();
+    const nonFieldStore = useNonFieldStore();
 
     return useSyncExternalStore(
         useCallback((cb) => nonFieldStore.subscribeFeedback(cb), [nonFieldStore]),

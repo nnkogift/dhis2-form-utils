@@ -11,6 +11,7 @@ import {
 
 /** Effect from rule-engine evaluation. Extend ProgramRuleActionType in metadata for new DHIS2 types. */
 export type RuleEffect = {
+    ruleId: string;
     ruleActionType: ProgramRuleActionType;
     dataElement?: string | null;
     trackedEntityAttribute?: string | null;
@@ -36,6 +37,7 @@ export type EvaluateAndMapResult = {
     fieldMap: FieldStateMap;
     sectionMap: SectionStateMap;
     feedback: FeedbackMap;
+    effects: RuleEffect[];
 };
 
 const programRuleActionTypeValues = new Set<string>(Object.values(ProgramRuleActionType));
@@ -154,5 +156,5 @@ export function evaluateAndMap(
         }
     }
 
-    return { fieldMap, sectionMap, feedback };
+    return { fieldMap, sectionMap, feedback, effects };
 }

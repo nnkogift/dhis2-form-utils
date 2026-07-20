@@ -9,6 +9,7 @@ export default defineConfig({
             'packages/metadata',
             'utils/rules',
             'utils/hooks',
+            'utils/devtools',
         ],
     },
 });

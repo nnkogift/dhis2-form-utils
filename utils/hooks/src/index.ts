@@ -1,10 +1,13 @@
 export {
     FormStateProvider,
     useFormStateContext,
+    useFormStore,
     useFieldState,
     useSectionState,
     useFormFeedback,
 } from './FormStateContext';
+export type { RuleTraceEntry, TraceEffect } from './buildTraceEntry';
+export { buildTraceEntry } from './buildTraceEntry';
 export type { FormStateProviderProps, FormStateContextValue } from './FormStateContext';
 export type { FieldStateStore } from './store/fieldStateStore';
 export { createFieldStateStore } from './store/fieldStateStore';
@@ -15,6 +18,7 @@ export { evaluateFormState, emptyFormStateSnapshot } from './evaluateFormState';
 export type { FormStateSnapshot } from './evaluateFormState';
 export { stableMap } from './stableMap';
 export { programStageQuery } from './queries/programStage.query';
+export { programMetadataExportQuery } from './queries/programMetadataExport.query';
 export { useEventForm } from './useEventForm';
 export type { UseEventFormOptions, UseEventFormReturn } from './useEventForm';
 export { useTrackerForm } from './useTrackerForm';
@@ -22,6 +26,7 @@ export type { UseTrackerFormOptions, UseTrackerFormReturn } from './useTrackerFo
 export type {
     ExpandedProgramRule,
     ExpandedProgramRuleAction,
+    EventProgramMetadata,
     TrackerProgramMetadata,
 } from '@dhis2-form-utils/metadata';
 export type { FieldConfig, RenderTypeHint } from './fields/fieldConfig';

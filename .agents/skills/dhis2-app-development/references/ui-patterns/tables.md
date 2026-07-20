@@ -484,9 +484,7 @@ export const DeleteDataElementModal = ({ id, name, onClose }: DeleteDataElementM
             <ModalContent>
                 {i18n.t(
                     'Are you sure you want to delete "{{name}}"? This action cannot be undone.',
-                    {
-                        name,
-                    }
+                    { name }
                 )}
             </ModalContent>
             <ModalActions>
