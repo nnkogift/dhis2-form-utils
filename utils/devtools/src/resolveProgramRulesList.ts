@@ -14,31 +14,51 @@ function sortByPriority(rules: CatalogRule[]): CatalogRule[] {
     return [...rules].sort((left, right) => (left.priority ?? 0) - (right.priority ?? 0));
 }
 
+function toCatalogRule(rule: {
+    id: string;
+    name: string;
+    condition?: string;
+    priority?: number;
+    programRuleActions?: readonly RuleActionLike[] | null;
+}): CatalogRule {
+    return {
+        id: rule.id,
+        name: rule.name,
+        condition: rule.condition,
+        priority: rule.priority,
+        programRuleActions: [...(rule.programRuleActions ?? [])],
+    };
+}
+
 export function resolveProgramRulesList(metadata: RuleDevtoolsMetadata): CatalogRule[] {
     if (metadata.formKind === 'event') {
         const rules = filterEventProgramRules(metadata.metadata, metadata.programStageId);
         return sortByPriority(
             rules
                 .filter((rule): rule is typeof rule & { id: string } => Boolean(rule.id))
-                .map((rule) => ({
-                    id: rule.id,
-                    name: rule.displayName ?? rule.id,
-                    condition: rule.condition,
-                    priority: rule.priority,
-                    programRuleActions: rule.programRuleActions,
-                }))
+                .map((rule) =>
+                    toCatalogRule({
+                        id: rule.id,
+                        name: rule.displayName ?? rule.id,
+                        condition: rule.condition,
+                        priority: rule.priority,
+                        programRuleActions: rule.programRuleActions,
+                    })
+                )
         );
     }
 
     return sortByPriority(
         metadata.metadata.programRules
             .filter((rule): rule is typeof rule & { id: string } => Boolean(rule.id))
-            .map((rule) => ({
-                id: rule.id,
-                name: rule.name ?? rule.id,
-                condition: rule.condition,
-                priority: rule.priority,
-                programRuleActions: rule.programRuleActions,
-            }))
+            .map((rule) =>
+                toCatalogRule({
+                    id: rule.id,
+                    name: rule.name ?? rule.id,
+                    condition: rule.condition,
+                    priority: rule.priority,
+                    programRuleActions: rule.programRuleActions,
+                })
+            )
     );
 }
