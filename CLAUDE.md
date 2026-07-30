@@ -21,9 +21,6 @@ pnpm test:watch          # Unit tests in watch mode
 pnpm --filter rules test              # Test a single package
 pnpm exec vitest run utils/rules   # Also works
 
-# End-to-end
-pnpm --filter playground e2e
-
 # Linting / formatting
 pnpm lint                # ESLint + Prettier check
 pnpm lint:fix            # ESLint --fix + Prettier write
@@ -149,5 +146,5 @@ Plug-and-play `EventForm` / `TrackerForm` components are planned but not yet exp
 - Internal packages reference each other with `"workspace:*"`.
 - Each package builds with `tsup` to `dist/` as both ESM and CJS with declarations.
 - Unit tests are co-located with source. `evaluateAndMap` in the rules package is a pure function and can be tested with fixture rule sets — no DOM or network needed.
-- CI pipeline: `lint → type-check → unit-test → build → storybook-test / e2e` (parallel after build).
+- CI pipeline (`.github/workflows/ci.yml`): `build` runs first and uploads `dist/` artifacts; `lint`, `type-check`, `unit-test`, and `storybook-test` all depend on `build` and run in parallel, downloading those artifacts. A non-blocking `fallow` dead-code check (`continue-on-error`) runs after `lint`. There is no e2e job.
 - Branch naming: `feature/`, `fix/`, `chore/`, `refactor/`. Commits: Conventional Commits (`feat:`, `fix:`, `docs:`, `chore:`).
