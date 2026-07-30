@@ -62,6 +62,9 @@ type Schemas = components['schemas'];
  *
  * dataElement is deliberately excluded — enrollment rules target TEA attributes,
  * not data elements. Including it would create a false affordance.
+ *
+ * programSection is extended separately — used by enrollment HIDESECTION but
+ * absent from OpenAPI v43.
  */
 export type ExpandedProgramRuleAction = Pick<
     Schemas['ProgramRuleAction'],
@@ -70,9 +73,11 @@ export type ExpandedProgramRuleAction = Pick<
     | 'data' // expression string for ASSIGN actions
     | 'content' // display text for DISPLAYTEXT / SHOWWARNING
     | 'trackedEntityAttribute' // { id } — the TEA this action targets
-    | 'programStageSection' // { id } — for HIDESECTION actions
+    | 'programStageSection' // { id } — event HIDESECTION (usually unused on enrollment)
     | 'location' // placement hint for DISPLAYTEXT
->;
+> & {
+    programSection?: { id: string }; // enrollment HIDESECTION target
+};
 
 /**
  * ProgramRule with its actions expanded inline.
@@ -248,6 +253,7 @@ export function buildEnrollmentRuleEngineContext(
        ['content', action.content ?? ''],
        ['location', action.location ?? ''],
        ['programStageSection', action.programStageSection?.id ?? ''],
+       ['programSection', action.programSection?.id ?? ''],
      ])
    → new RuleActionJs(data, type, values, null)
    → new RuleJs(rule.condition, actions, rule.id, rule.name, null, rule.priority ?? null)

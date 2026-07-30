@@ -56,6 +56,7 @@ export const PROGRAM_RULE_ACTION_FIELDS = [
     'option[id,code,displayName]',
     'optionGroup[id,displayName]',
     'programStageSection[id,displayName]',
+    'programSection[id,displayName]',
 ] as const;
 
 export const PROGRAM_RULE_FIELDS = [
@@ -64,7 +65,7 @@ export const PROGRAM_RULE_FIELDS = [
     'condition',
     'priority',
     'programStage[id]',
-    'programRuleActions[programRuleActionType,priority,content,data,location,dataElement[id,displayName,valueType,optionSet[id,options[id,code,displayName]]],trackedEntityAttribute[id,displayName,valueType],option[id,code,displayName],optionGroup[id,displayName],programStageSection[id,displayName]]',
+    'programRuleActions[programRuleActionType,priority,content,data,location,dataElement[id,displayName,valueType,optionSet[id,options[id,code,displayName]]],trackedEntityAttribute[id,displayName,valueType],option[id,code,displayName],optionGroup[id,displayName],programStageSection[id,displayName],programSection[id,displayName]]',
 ] as const;
 
 export const PROGRAM_RULE_VARIABLE_FIELDS = [
@@ -183,7 +184,7 @@ export type EventProgramMetadata = {
 };
 
 const PROGRAM_RULES_QUERY_FIELD =
-    'programRules[id,displayName,condition,priority,programStage[id],programRuleActions[programRuleActionType,priority,content,data,location,dataElement[id,displayName,valueType,optionSet[options[id,code,displayName]]],trackedEntityAttribute[id,displayName,valueType],option[id,code,displayName],optionGroup[id,displayName],programStageSection[id,displayName]]]';
+    'programRules[id,displayName,condition,priority,programStage[id],programRuleActions[programRuleActionType,priority,content,data,location,dataElement[id,displayName,valueType,optionSet[options[id,code,displayName]]],trackedEntityAttribute[id,displayName,valueType],option[id,code,displayName],optionGroup[id,displayName],programStageSection[id,displayName],programSection[id,displayName]]]';
 
 const PROGRAM_RULE_VARIABLES_QUERY_FIELD =
     'programRuleVariables[id,name,useCodeForOptionSet,programRuleVariableSourceType,programStage[id,displayName],dataElement[id,displayName,valueType,optionSet[options[id,code,displayName]]],trackedEntityAttribute[id,displayName,valueType]]';

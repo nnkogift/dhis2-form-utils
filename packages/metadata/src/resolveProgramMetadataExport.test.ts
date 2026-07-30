@@ -98,6 +98,14 @@ describe('resolveProgramMetadataExport', () => {
                             trackedEntityAttribute: { id: 'tea1' },
                         },
                     ],
+                    programSections: [
+                        {
+                            id: 'progSection1',
+                            displayName: 'Demographics',
+                            sortOrder: 1,
+                            trackedEntityAttributes: [{ id: 'tea1' }],
+                        },
+                    ],
                 },
             ],
             trackedEntityAttributes: [
@@ -112,7 +120,7 @@ describe('resolveProgramMetadataExport', () => {
                     id: 'enrollRule',
                     condition: 'true',
                     program: { id: 'tracker1' },
-                    programRuleActions: [{ id: 'enrollAction' }],
+                    programRuleActions: [{ id: 'enrollAction' }, { id: 'hideSectionAction' }],
                 },
             ],
             programRuleActions: [
@@ -120,6 +128,11 @@ describe('resolveProgramMetadataExport', () => {
                     id: 'enrollAction',
                     programRuleActionType: 'HIDEFIELD',
                     trackedEntityAttribute: { id: 'tea1' },
+                },
+                {
+                    id: 'hideSectionAction',
+                    programRuleActionType: 'HIDESECTION',
+                    programSection: { id: 'progSection1' },
                 },
             ],
             programRuleVariables: [
@@ -139,5 +152,73 @@ describe('resolveProgramMetadataExport', () => {
         expect(program.programTrackedEntityAttributes).toHaveLength(1);
         expect(program.programRules).toHaveLength(1);
         expect(program.programRuleVariables).toHaveLength(1);
+        expect(program.programRules[0]?.programRuleActions).toEqual(
+            expect.arrayContaining([
+                expect.objectContaining({
+                    programRuleActionType: 'HIDESECTION',
+                    programSection: { id: 'progSection1' },
+                }),
+            ])
+        );
+        expect(program.programSections).toEqual([
+            {
+                id: 'progSection1',
+                displayName: 'Demographics',
+                sortOrder: 1,
+                trackedEntityAttributes: [{ id: 'tea1' }],
+            },
+        ]);
+    });
+
+    it('preserves programStageSection on event HIDESECTION rule actions', () => {
+        const eventExport: ProgramMetadataExport = {
+            ...minimalExport,
+            programStages: [
+                {
+                    id: 'stage1',
+                    displayName: 'Stage 1',
+                    programStageDataElements: [
+                        {
+                            id: 'psde1',
+                            compulsory: true,
+                            dataElement: { id: 'de1' },
+                        },
+                    ],
+                    programStageSections: [
+                        {
+                            id: 'stageSection1',
+                            displayName: 'Clinical',
+                            sortOrder: 1,
+                            programStageSectionDataElements: [{ dataElement: { id: 'de1' } }],
+                        },
+                    ],
+                },
+            ],
+            programRules: [
+                {
+                    id: 'hideStageSectionRule',
+                    condition: 'true',
+                    program: { id: 'prog1' },
+                    programStage: { id: 'stage1' },
+                    programRuleActions: [{ id: 'hideStageSectionAction' }],
+                },
+            ],
+            programRuleActions: [
+                {
+                    id: 'hideStageSectionAction',
+                    programRuleActionType: 'HIDESECTION',
+                    programStageSection: { id: 'stageSection1' },
+                },
+            ],
+        };
+
+        const program = resolveEventProgramMetadata(eventExport, 'prog1');
+
+        expect(program.programRules[0]?.programRuleActions).toEqual([
+            expect.objectContaining({
+                programRuleActionType: 'HIDESECTION',
+                programStageSection: { id: 'stageSection1' },
+            }),
+        ]);
     });
 });

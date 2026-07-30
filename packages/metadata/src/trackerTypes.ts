@@ -5,6 +5,7 @@ type Schemas = components['schemas'];
 /**
  * Subset of ProgramRuleAction fields needed by buildEnrollmentRuleEngineContext.
  * dataElement is excluded — enrollment rules target TEA attributes, not data elements.
+ * programSection is extended separately — used by HIDESECTION but absent from OpenAPI v43.
  */
 export type ExpandedProgramRuleAction = Pick<
     Schemas['ProgramRuleAction'],
@@ -15,7 +16,11 @@ export type ExpandedProgramRuleAction = Pick<
     | 'trackedEntityAttribute'
     | 'programStageSection'
     | 'location'
->;
+> & {
+    programSection?: {
+        id: string;
+    };
+};
 
 /**
  * ProgramRule with actions expanded inline.

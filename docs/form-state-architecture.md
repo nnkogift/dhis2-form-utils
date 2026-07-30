@@ -44,7 +44,7 @@ These effects have **no field UID**. They describe state at the form or widget l
 
 | Action type           | Target                                        | What it means                                                                                  |
 | --------------------- | --------------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| `HIDESECTION`         | Program stage section UID                     | This entire section of the form must not be rendered                                           |
+| `HIDESECTION`         | Program stage section or program section UID  | This entire section of the form must not be rendered                                           |
 | `DISPLAYTEXT`         | `location`: `feedback` or `indicators` widget | A text string (evaluated from `data`) must be shown in a widget, with a label from `content`   |
 | `DISPLAYKEYVALUEPAIR` | `location`: `feedback` or `indicators` widget | A key/value pair (label from `content`, value from evaluated `data`) must be shown in a widget |
 
@@ -139,7 +139,9 @@ type FieldStateMap = Record<string, FieldState>;
 
 ### `SectionStateMap`
 
-Keyed by program stage section UID. Holds only a `hidden` flag — because `HIDESECTION` is the only action that targets sections, and it produces exactly one boolean.
+Keyed by form section UID (`programStageSection` for event forms, `programSection` for
+registration). Holds only a `hidden` flag — because `HIDESECTION` is the only action that
+targets sections, and it produces exactly one boolean.
 
 ```ts
 type SectionState = {
@@ -149,7 +151,11 @@ type SectionState = {
 type SectionStateMap = Record<string, SectionState>;
 ```
 
-Section UIDs are distinct from field UIDs. They come from `programStage.programStageSections[].id` in the metadata. The form layout knows which fields belong to which section, but the section's own visibility state must be tracked independently so a section wrapper component can subscribe to it without involving field-level state.
+Section UIDs are distinct from field UIDs. They come from `programStage.programStageSections[].id`
+(event/stage forms) or `program.programSections[].id` (registration forms). The form layout knows
+which fields belong to which section, but the section's own visibility state must be tracked
+independently so a section wrapper component can subscribe to it without involving field-level
+state.
 
 ### `FeedbackMap`
 

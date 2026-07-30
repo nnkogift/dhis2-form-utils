@@ -83,6 +83,7 @@ type ExportProgramRuleAction = {
     option?: IdRef;
     optionGroup?: IdRef;
     programStageSection?: IdRef;
+    programSection?: IdRef;
 };
 
 type ExportProgramRule = {
@@ -322,6 +323,9 @@ function createExportResolverContext(exportData: ProgramMetadataExport) {
             programStageSection: action.programStageSection?.id
                 ? { id: action.programStageSection.id }
                 : undefined,
+            programSection: action.programSection?.id
+                ? { id: action.programSection.id }
+                : undefined,
         } as ProgramRuleAction;
     };
 
@@ -367,6 +371,9 @@ function createExportResolverContext(exportData: ProgramMetadataExport) {
                 : undefined,
             programStageSection: action.programStageSection?.id
                 ? { id: action.programStageSection.id }
+                : undefined,
+            programSection: action.programSection?.id
+                ? { id: action.programSection.id }
                 : undefined,
         };
     };
