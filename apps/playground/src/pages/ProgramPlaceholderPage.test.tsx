@@ -1,13 +1,15 @@
 import { render } from '@testing-library/react'
 import React from 'react'
 import { MemoryRouter, Route, Routes } from 'react-router'
+import { useEventProgramMetadataQuery } from '@dhis2-form-utils/hooks'
 import { ProgramEventFormScreen } from '@/components/programs/forms/ProgramEventFormScreen'
 import { ProgramRegistrationFormScreen } from '@/components/programs/forms/ProgramRegistrationFormScreen'
 import { useAccessibleOrgUnits } from '@/hooks/useAccessibleOrgUnits'
-import { useEventProgramMetadata } from '@/hooks/useEventProgramMetadata'
 import { ProgramPlaceholderPage } from './ProgramPlaceholderPage'
 
-jest.mock('@/hooks/useEventProgramMetadata')
+jest.mock('@dhis2-form-utils/hooks', () => ({
+    useEventProgramMetadataQuery: jest.fn(),
+}))
 jest.mock('@/hooks/useAccessibleOrgUnits')
 jest.mock('@/components/programs/forms/ProgramEventFormScreen', () => ({
     ProgramEventFormScreen: jest.fn(() => <div>Event form screen</div>),
@@ -18,7 +20,9 @@ jest.mock('@/components/programs/forms/ProgramRegistrationFormScreen', () => ({
     )),
 }))
 
-const mockedUseEventProgramMetadata = jest.mocked(useEventProgramMetadata)
+const mockedUseEventProgramMetadataQuery = jest.mocked(
+    useEventProgramMetadataQuery
+)
 const mockedUseAccessibleOrgUnits = jest.mocked(useAccessibleOrgUnits)
 
 function renderPage() {
@@ -53,31 +57,25 @@ describe('ProgramPlaceholderPage', () => {
     })
 
     it('renders the event form flow for event programs', () => {
-        mockedUseEventProgramMetadata.mockReturnValue({
-            data: {
-                program: {
-                    id: 'Program12345',
-                    displayName: 'Inpatient morbidity',
-                    code: 'IPM',
-                    shortName: 'IPM',
-                    programType: 'WITHOUT_REGISTRATION',
-                    programStages: [
-                        {
-                            id: 'Stage1234567',
-                            displayName: 'Stage 1',
-                            programStageDataElements: [],
-                        },
-                    ],
-                    programRules: [],
-                    programRuleVariables: [],
-                },
+        mockedUseEventProgramMetadataQuery.mockReturnValue({
+            metadata: {
+                id: 'Program12345',
+                displayName: 'Inpatient morbidity',
+                code: 'IPM',
+                shortName: 'IPM',
+                programType: 'WITHOUT_REGISTRATION',
+                programStages: [
+                    {
+                        id: 'Stage1234567',
+                        displayName: 'Stage 1',
+                        programStageDataElements: [],
+                    },
+                ],
+                programRules: [],
+                programRuleVariables: [],
             },
             error: undefined,
             loading: false,
-            fetching: false,
-            called: true,
-            refetch: jest.fn(),
-            engine: {} as never,
         })
 
         const view = renderPage()
@@ -87,31 +85,25 @@ describe('ProgramPlaceholderPage', () => {
     })
 
     it('renders the registration flow for tracker programs', () => {
-        mockedUseEventProgramMetadata.mockReturnValue({
-            data: {
-                program: {
-                    id: 'Program12345',
-                    displayName: 'Child registration',
-                    code: 'CHILD',
-                    shortName: 'CHILD',
-                    programType: 'WITH_REGISTRATION',
-                    programStages: [
-                        {
-                            id: 'Stage1234567',
-                            displayName: 'Stage 1',
-                            programStageDataElements: [],
-                        },
-                    ],
-                    programRules: [],
-                    programRuleVariables: [],
-                },
+        mockedUseEventProgramMetadataQuery.mockReturnValue({
+            metadata: {
+                id: 'Program12345',
+                displayName: 'Child registration',
+                code: 'CHILD',
+                shortName: 'CHILD',
+                programType: 'WITH_REGISTRATION',
+                programStages: [
+                    {
+                        id: 'Stage1234567',
+                        displayName: 'Stage 1',
+                        programStageDataElements: [],
+                    },
+                ],
+                programRules: [],
+                programRuleVariables: [],
             },
             error: undefined,
             loading: false,
-            fetching: false,
-            called: true,
-            refetch: jest.fn(),
-            engine: {} as never,
         })
 
         const view = renderPage()
@@ -121,31 +113,25 @@ describe('ProgramPlaceholderPage', () => {
     })
 
     it('shows a notice when no organisation units are available', () => {
-        mockedUseEventProgramMetadata.mockReturnValue({
-            data: {
-                program: {
-                    id: 'Program12345',
-                    displayName: 'Child registration',
-                    code: 'CHILD',
-                    shortName: 'CHILD',
-                    programType: 'WITH_REGISTRATION',
-                    programStages: [
-                        {
-                            id: 'Stage1234567',
-                            displayName: 'Stage 1',
-                            programStageDataElements: [],
-                        },
-                    ],
-                    programRules: [],
-                    programRuleVariables: [],
-                },
+        mockedUseEventProgramMetadataQuery.mockReturnValue({
+            metadata: {
+                id: 'Program12345',
+                displayName: 'Child registration',
+                code: 'CHILD',
+                shortName: 'CHILD',
+                programType: 'WITH_REGISTRATION',
+                programStages: [
+                    {
+                        id: 'Stage1234567',
+                        displayName: 'Stage 1',
+                        programStageDataElements: [],
+                    },
+                ],
+                programRules: [],
+                programRuleVariables: [],
             },
             error: undefined,
             loading: false,
-            fetching: false,
-            called: true,
-            refetch: jest.fn(),
-            engine: {} as never,
         })
         mockedUseAccessibleOrgUnits.mockReturnValue({
             data: undefined,

@@ -2,11 +2,11 @@ import React from 'react'
 import { Link, useLocation, useParams } from 'react-router'
 import i18n from '@dhis2/d2-i18n'
 import { Center, CircularLoader, NoticeBox } from '@dhis2/ui'
+import { useEventProgramMetadataQuery } from '@dhis2-form-utils/hooks'
 import { ProgramEventFormScreen } from '@/components/programs/forms/ProgramEventFormScreen'
 import { ProgramRegistrationFormScreen } from '@/components/programs/forms/ProgramRegistrationFormScreen'
 import { buildProgramListUrl } from '@/hooks/buildProgramListUrl'
 import { useAccessibleOrgUnits } from '@/hooks/useAccessibleOrgUnits'
-import { useEventProgramMetadata } from '@/hooks/useEventProgramMetadata'
 import { PROGRAM_TYPE, type ProgramListParams } from '@/types/program'
 
 type PlaceholderLocationState = {
@@ -19,13 +19,16 @@ export function ProgramPlaceholderPage() {
     const listParams = (location.state as PlaceholderLocationState | null)
         ?.listParams
     const backUrl = listParams ? buildProgramListUrl(listParams) : '/'
-    const { data, error, loading } = useEventProgramMetadata(programId)
+    const {
+        metadata: program,
+        error,
+        loading,
+    } = useEventProgramMetadataQuery(programId)
     const {
         orgUnits,
         loading: orgUnitsLoading,
         error: orgUnitsError,
     } = useAccessibleOrgUnits()
-    const program = data?.program
 
     if (loading || orgUnitsLoading) {
         return (

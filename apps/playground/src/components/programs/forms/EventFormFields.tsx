@@ -71,7 +71,8 @@ export function EventFormFields({ metadata }: EventFormFieldsProps) {
         getSectionId: (section) => section.id,
         getSectionDisplayName: (section) => section.displayName,
         getSortOrder: (section) => section.sortOrder ?? 0,
-        getSectionItemIds: getProgramStageSectionDataElementIds,
+        getSectionItemIds: (section) =>
+            getProgramStageSectionDataElementIds(section),
         getFieldId: (programStageDataElement) =>
             programStageDataElement.dataElement?.id,
     })

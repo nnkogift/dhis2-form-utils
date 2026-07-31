@@ -44,13 +44,14 @@ function buildEventLookup(source: Extract<RuleDevtoolsMetadata, { formKind: 'eve
         rules.set(rule.id, rule.displayName ?? rule.id);
     }
 
-    const stage: ProgramStageMetadata =
-        selectProgramStage(source.metadata, source.programStageId) ??
-        ({
-            id: source.programStageId,
-            programStageDataElements: [],
-            programStageSections: [],
-        } as unknown as ProgramStageMetadata);
+    const stage: ProgramStageMetadata = selectProgramStage(
+        source.metadata,
+        source.programStageId
+    ) ?? {
+        id: source.programStageId,
+        programStageDataElements: [],
+        programStageSections: [],
+    };
 
     for (const psde of stage.programStageDataElements ?? []) {
         const de = psde.dataElement;

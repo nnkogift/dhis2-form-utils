@@ -113,7 +113,7 @@ const toRuleAction = (action: ProgramRuleAction): RuleActionJs =>
 const toRule = (rule: ProgramRule): RuleJs =>
     new RuleJs(
         rule.condition ?? 'true',
-        (rule.programRuleActions ?? []).map((action) => toRuleAction(action as ProgramRuleAction)),
+        (rule.programRuleActions ?? []).map((action) => toRuleAction(action)),
         rule.id ?? '',
         rule.displayName ?? null,
         null,
