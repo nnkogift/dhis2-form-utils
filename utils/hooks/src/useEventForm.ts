@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMemo, useRef } from 'react';
 import { Resolver, useForm, type UseFormReturn } from 'react-hook-form';
-import type { EventProgramMetadata, ProgramStageMetadata } from '@dhis2-form-utils/metadata';
+import type { EventProgramMetadata } from '@dhis2-form-utils/metadata';
 import { buildSchema, selectProgramStage } from '@dhis2-form-utils/metadata';
 import type { BuiltRuleEngine, EffectHandlersMap } from '@dhis2-form-utils/rules';
 import { buildRuleEngine, buildRuleEngineContext } from '@dhis2-form-utils/rules';
@@ -35,11 +35,10 @@ export function useEventForm<FormValue extends DefaultFormValue = DefaultFormVal
     );
     const resolvedStageMetadata = useMemo(
         () =>
-            stageMetadata ??
-            ({
+            stageMetadata ?? {
                 id: programStageId,
                 programStageDataElements: [],
-            } as unknown as ProgramStageMetadata),
+            },
         [stageMetadata, programStageId]
     );
     const schema = useMemo(() => buildSchema(resolvedStageMetadata), [resolvedStageMetadata]);

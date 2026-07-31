@@ -45,7 +45,15 @@ export const PROGRAM_STAGE_SECTION_FIELDS = [
     'programStageSectionDataElements[sortOrder,dataElement[id,displayName,displayFormName,valueType,description,optionSet[id,options[id,code,displayName]]]]',
 ] as const;
 
+// Note: `programSection` is deliberately excluded here — it is not a real field on
+// `ProgramRuleActionParams` (absent from OpenAPI v43; see `ProgramRuleAction` below, which adds
+// it back via a manual type intersection). Including an unrepresentable field in this array
+// would make `PickWithFieldFilters`'s recursive picker collapse the *entire* derived type to
+// `never` (a comma-separated field that isn't `keyof Model` fails every case in the picker,
+// and that `never` propagates through the surrounding intersection chain). The actual query
+// sent to the API still requests `programSection[id,displayName]` — see `PROGRAM_RULE_FIELDS`.
 export const PROGRAM_RULE_ACTION_FIELDS = [
+    'id',
     'programRuleActionType',
     'priority',
     'content',
@@ -53,24 +61,32 @@ export const PROGRAM_RULE_ACTION_FIELDS = [
     'location',
     'dataElement[id,displayName,valueType,optionSet[id,options[id,code,displayName]]]',
     'trackedEntityAttribute[id,displayName,valueType]',
-    'option[id,code,displayName]',
-    'optionGroup[id,displayName]',
+    'option',
+    'optionGroup',
     'programStageSection[id,displayName]',
-    'programSection[id,displayName]',
 ] as const;
 
+// Note: `programRuleActions` is deliberately excluded here — on `ProgramRuleParams`, the
+// generated type stubs it as `{ id: string }[]` (a flat identifiable reference, not the
+// expandable `ProgramRuleActionParams[]`), so requesting nested action fields through this
+// array would make `PickWithFieldFilters` collapse the *entire* derived type to `never` (see
+// the comment on `PROGRAM_RULE_ACTION_FIELDS` above for the same limitation on `option`).
+// `ProgramRule` below adds `programRuleActions` back via a manual type intersection, reusing
+// the separately-derived `ProgramRuleAction` type. The actual query string still requests the
+// expanded shape — see `PROGRAM_RULE_FIELDS` (string) in `./queries/fields.const.ts`.
 export const PROGRAM_RULE_FIELDS = [
     'id',
+    'name',
     'displayName',
     'condition',
     'priority',
     'programStage[id]',
-    'programRuleActions[programRuleActionType,priority,content,data,location,dataElement[id,displayName,valueType,optionSet[id,options[id,code,displayName]]],trackedEntityAttribute[id,displayName,valueType],option[id,code,displayName],optionGroup[id,displayName],programStageSection[id,displayName],programSection[id,displayName]]',
 ] as const;
 
 export const PROGRAM_RULE_VARIABLE_FIELDS = [
     'id',
     'name',
+    'valueType',
     'useCodeForOptionSet',
     'programRuleVariableSourceType',
     'programStage[id,displayName]',
@@ -78,13 +94,19 @@ export const PROGRAM_RULE_VARIABLE_FIELDS = [
     'trackedEntityAttribute[id,displayName,valueType]',
 ] as const;
 
-const PROGRAM_STAGE_SECTIONS_QUERY_FIELD = `programStageSections[${PROGRAM_STAGE_SECTION_FIELDS.join(',')}]`;
-
+// Note: `programStageSections` is deliberately excluded here — its real DHIS2 API field name
+// for nested data elements is `programStageSectionDataElements`, but `ProgramStageSectionParams`
+// (the generated type) stubs that relationship as a flat `dataElements: { id: string }[]`
+// instead, under a different key. Requesting the real field name through this array would make
+// `PickWithFieldFilters` collapse the *entire* derived type to `never` (same limitation as
+// `programRuleActions` and `programSection` above). `ProgramStageMetadata` below adds
+// `programStageSections` back via a manual type intersection using the hand-written
+// `ProgramStageSection` type. The actual query string still requests the real nested shape —
+// see `PROGRAM_STAGE_FIELDS` (string) in `./queries/fields.const.ts`.
 export const PROGRAM_STAGE_CORE_FIELDS = [
     'id',
     'displayName',
     'programStageDataElements[id,compulsory,allowProvidedElsewhere,allowFutureDate,displayInReports,renderType,dataElement[id,displayName,displayFormName,valueType,description,optionSet[id,options[id,code,displayName]]]]',
-    PROGRAM_STAGE_SECTIONS_QUERY_FIELD,
 ] as const;
 
 export const TRACKED_ENTITY_ATTRIBUTE_REF_FIELDS = [
@@ -147,6 +169,7 @@ export type ProgramRuleAction = ApiProgramRuleAction & {
 
 export type ProgramRule = PickWithFieldFilters<ProgramRuleParams, typeof PROGRAM_RULE_FIELDS> & {
     programStage?: { id: string };
+    programRuleActions?: ProgramRuleAction[];
 };
 
 export type ProgramRuleVariable = PickWithFieldFilters<
@@ -183,67 +206,8 @@ export type EventProgramMetadata = {
     programRuleVariables: ProgramRuleVariable[];
 };
 
-const PROGRAM_RULES_QUERY_FIELD =
-    'programRules[id,displayName,condition,priority,programStage[id],programRuleActions[programRuleActionType,priority,content,data,location,dataElement[id,displayName,valueType,optionSet[options[id,code,displayName]]],trackedEntityAttribute[id,displayName,valueType],option[id,code,displayName],optionGroup[id,displayName],programStageSection[id,displayName],programSection[id,displayName]]]';
-
-const PROGRAM_RULE_VARIABLES_QUERY_FIELD =
-    'programRuleVariables[id,name,useCodeForOptionSet,programRuleVariableSourceType,programStage[id,displayName],dataElement[id,displayName,valueType,optionSet[options[id,code,displayName]]],trackedEntityAttribute[id,displayName,valueType]]';
-
-const EVENT_PROGRAM_HEADER_FIELDS = [
-    'id',
-    'displayName',
-    'code',
-    'shortName',
-    'programType',
-] as const;
-
-const EVENT_PROGRAM_STAGES_QUERY_FIELD = `programStages[${PROGRAM_STAGE_CORE_FIELDS.join(',')}]`;
-
-/** Comma-joined field string for programs API query (event form metadata). */
-export const eventProgramQueryFields = [
-    ...EVENT_PROGRAM_HEADER_FIELDS,
-    EVENT_PROGRAM_STAGES_QUERY_FIELD,
-    PROGRAM_RULES_QUERY_FIELD,
-    PROGRAM_RULE_VARIABLES_QUERY_FIELD,
-].join(',');
-
-/** Comma-joined field string for programStages API query (stage PSDEs/sections only, no rules). */
-export const programStageQueryFields = PROGRAM_STAGE_CORE_FIELDS.join(',');
-
-const TRACKER_PROGRAM_HEADER_FIELDS = [
-    'id',
-    'displayName',
-    'trackedEntityType[id]',
-    'displayIncidentDate',
-    'selectEnrollmentDatesInFuture',
-    'selectIncidentDatesInFuture',
-    'enrollmentDateLabel',
-    'incidentDateLabel',
-] as const;
-
-const TRACKER_PROGRAM_TRACKED_ENTITY_ATTRIBUTES_QUERY_FIELD =
-    'programTrackedEntityAttributes[id,mandatory,allowFutureDate,searchable,displayInList,sortOrder,renderType,renderOptionsAsRadio,trackedEntityAttribute[id,displayName,formName,valueType,optionSet[id,options[id,code,displayName]],unique,generated,fieldMask,confidential,orgunitScope]]';
-
-/**
- * Enrollment-scoped rule action fields — dataElement is excluded (enrollment rules target TEAs,
- * not data elements); programSection is included for HIDESECTION support (absent from OpenAPI v43).
- */
-const ENROLLMENT_RULE_ACTION_FIELDS =
-    'id,programRuleActionType,data,content,location,trackedEntityAttribute[id],programStageSection[id],programSection[id]';
-
-const ENROLLMENT_PROGRAM_RULES_QUERY_FIELD = `programRules[id,name,condition,priority,programStage[id],programRuleActions[${ENROLLMENT_RULE_ACTION_FIELDS}]]`;
-
-const ENROLLMENT_PROGRAM_RULE_VARIABLES_QUERY_FIELD =
-    'programRuleVariables[id,name,useCodeForOptionSet,programRuleVariableSourceType,valueType,programStage[id],trackedEntityAttribute[id]]';
-
-const PROGRAM_SECTIONS_QUERY_FIELD =
-    'programSections[id,displayName,sortOrder,trackedEntityAttributes[id]]';
-
-/** Comma-joined field string for programs API query (tracker registration form metadata). */
-export const trackerProgramQueryFields = [
-    ...TRACKER_PROGRAM_HEADER_FIELDS,
-    TRACKER_PROGRAM_TRACKED_ENTITY_ATTRIBUTES_QUERY_FIELD,
-    ENROLLMENT_PROGRAM_RULES_QUERY_FIELD,
-    ENROLLMENT_PROGRAM_RULE_VARIABLES_QUERY_FIELD,
-    PROGRAM_SECTIONS_QUERY_FIELD,
-].join(',');
+// Comma-joined query field strings (eventProgramQueryFields, trackerProgramQueryFields,
+// programStageQueryFields) previously lived here as monolithic single-query definitions.
+// They have been replaced by the decomposed query objects + field constants in
+// `./queries/fields.const.ts`, `./queries/eventProgramConfig.query.ts`, and
+// `./queries/trackerConfig.query.ts` — see ARCHITECTURE.md › Data Fetching.
