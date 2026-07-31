@@ -56,6 +56,7 @@ export const PROGRAM_RULE_ACTION_FIELDS = [
     'option[id,code,displayName]',
     'optionGroup[id,displayName]',
     'programStageSection[id,displayName]',
+    'programSection[id,displayName]',
 ] as const;
 
 export const PROGRAM_RULE_FIELDS = [
@@ -64,7 +65,7 @@ export const PROGRAM_RULE_FIELDS = [
     'condition',
     'priority',
     'programStage[id]',
-    'programRuleActions[programRuleActionType,priority,content,data,location,dataElement[id,displayName,valueType,optionSet[id,options[id,code,displayName]]],trackedEntityAttribute[id,displayName,valueType],option[id,code,displayName],optionGroup[id,displayName],programStageSection[id,displayName]]',
+    'programRuleActions[programRuleActionType,priority,content,data,location,dataElement[id,displayName,valueType,optionSet[id,options[id,code,displayName]]],trackedEntityAttribute[id,displayName,valueType],option[id,code,displayName],optionGroup[id,displayName],programStageSection[id,displayName],programSection[id,displayName]]',
 ] as const;
 
 export const PROGRAM_RULE_VARIABLE_FIELDS = [
@@ -183,7 +184,7 @@ export type EventProgramMetadata = {
 };
 
 const PROGRAM_RULES_QUERY_FIELD =
-    'programRules[id,displayName,condition,priority,programStage[id],programRuleActions[programRuleActionType,priority,content,data,location,dataElement[id,displayName,valueType,optionSet[options[id,code,displayName]]],trackedEntityAttribute[id,displayName,valueType],option[id,code,displayName],optionGroup[id,displayName],programStageSection[id,displayName]]]';
+    'programRules[id,displayName,condition,priority,programStage[id],programRuleActions[programRuleActionType,priority,content,data,location,dataElement[id,displayName,valueType,optionSet[options[id,code,displayName]]],trackedEntityAttribute[id,displayName,valueType],option[id,code,displayName],optionGroup[id,displayName],programStageSection[id,displayName],programSection[id,displayName]]]';
 
 const PROGRAM_RULE_VARIABLES_QUERY_FIELD =
     'programRuleVariables[id,name,useCodeForOptionSet,programRuleVariableSourceType,programStage[id,displayName],dataElement[id,displayName,valueType,optionSet[options[id,code,displayName]]],trackedEntityAttribute[id,displayName,valueType]]';
@@ -208,3 +209,41 @@ export const eventProgramQueryFields = [
 
 /** Comma-joined field string for programStages API query (stage PSDEs/sections only, no rules). */
 export const programStageQueryFields = PROGRAM_STAGE_CORE_FIELDS.join(',');
+
+const TRACKER_PROGRAM_HEADER_FIELDS = [
+    'id',
+    'displayName',
+    'trackedEntityType[id]',
+    'displayIncidentDate',
+    'selectEnrollmentDatesInFuture',
+    'selectIncidentDatesInFuture',
+    'enrollmentDateLabel',
+    'incidentDateLabel',
+] as const;
+
+const TRACKER_PROGRAM_TRACKED_ENTITY_ATTRIBUTES_QUERY_FIELD =
+    'programTrackedEntityAttributes[id,mandatory,allowFutureDate,searchable,displayInList,sortOrder,renderType,renderOptionsAsRadio,trackedEntityAttribute[id,displayName,formName,valueType,optionSet[id,options[id,code,displayName]],unique,generated,fieldMask,confidential,orgunitScope]]';
+
+/**
+ * Enrollment-scoped rule action fields — dataElement is excluded (enrollment rules target TEAs,
+ * not data elements); programSection is included for HIDESECTION support (absent from OpenAPI v43).
+ */
+const ENROLLMENT_RULE_ACTION_FIELDS =
+    'id,programRuleActionType,data,content,location,trackedEntityAttribute[id],programStageSection[id],programSection[id]';
+
+const ENROLLMENT_PROGRAM_RULES_QUERY_FIELD = `programRules[id,name,condition,priority,programStage[id],programRuleActions[${ENROLLMENT_RULE_ACTION_FIELDS}]]`;
+
+const ENROLLMENT_PROGRAM_RULE_VARIABLES_QUERY_FIELD =
+    'programRuleVariables[id,name,useCodeForOptionSet,programRuleVariableSourceType,valueType,programStage[id],trackedEntityAttribute[id]]';
+
+const PROGRAM_SECTIONS_QUERY_FIELD =
+    'programSections[id,displayName,sortOrder,trackedEntityAttributes[id]]';
+
+/** Comma-joined field string for programs API query (tracker registration form metadata). */
+export const trackerProgramQueryFields = [
+    ...TRACKER_PROGRAM_HEADER_FIELDS,
+    TRACKER_PROGRAM_TRACKED_ENTITY_ATTRIBUTES_QUERY_FIELD,
+    ENROLLMENT_PROGRAM_RULES_QUERY_FIELD,
+    ENROLLMENT_PROGRAM_RULE_VARIABLES_QUERY_FIELD,
+    PROGRAM_SECTIONS_QUERY_FIELD,
+].join(',');

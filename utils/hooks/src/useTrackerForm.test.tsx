@@ -106,7 +106,7 @@ describe('useTrackerForm', () => {
                         {
                             id: 'action-section',
                             programRuleActionType: ProgramRuleActionType.HIDESECTION,
-                            programStageSection: { id: 'section-a' },
+                            programSection: { id: 'section-a' },
                         },
                         {
                             id: 'action-feedback',
