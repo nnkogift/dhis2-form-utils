@@ -72,7 +72,6 @@ export function RegistrationFormFields({
         getSectionDisplayName: (section) => section.displayName,
         getSortOrder: (section) => section.sortOrder ?? 0,
         getSectionItemIds: (section) => {
-            console.log({ section })
             return section.trackedEntityAttributes.map(
                 (attribute) => attribute.id
             )
