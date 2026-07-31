@@ -258,6 +258,29 @@ export function buildSchema(metadata: ProgramStageMetadata): z.ZodObject<z.ZodRa
 }
 ```
 
+#### Query objects and resolvers
+
+`@dhis2-form-utils/metadata` also owns the standardised query definitions and resolver functions
+that produce `ProgramStageMetadata` and `TrackerProgramMetadata` from the DHIS2 API. This keeps
+metadata _fetching_ decoupled from the form hooks: the query objects and resolvers are plain,
+dependency-free exports — no React, no `@dhis2/app-runtime` runtime dependency, only a type-only
+reference to `Query` from `@dhis2/data-engine`. See
+[Data Fetching](#data-fetching--dhis2app-runtime) below for the full design.
+
+```
+packages/metadata/src/
+├── buildSchema.ts
+├── buildTrackerSchema.ts
+├── queries/
+│   ├── fields.const.ts              # named field-selection constants + withExtraFields
+│   ├── programStageConfig.query.ts  # for useEventForm
+│   └── trackerConfig.query.ts       # for useTrackerForm
+├── resolvers/
+│   ├── resolveEventProgramMetadata.ts
+│   └── resolveTrackerProgramMetadata.ts
+└── types.ts
+```
+
 ---
 
 ## Data Fetching — `@dhis2/app-runtime`
@@ -275,34 +298,166 @@ any DHIS2 application. It provides:
   beneath it
 
 Because `@dhis2/app-runtime`'s `Provider` owns the connection configuration, `dhis2-form-utils`
-needs no equivalent setup of its own. The hooks package exports `eventProgramQuery`,
-`trackerProgramQuery`, and `programStageQuery` — each queries `GET /api/programs/{id}` (or
-`/api/programStages/{id}`) with a nested `fields=` selector built from `@dhis2-form-utils/metadata`
-(`eventProgramQueryFields`, `trackerProgramQueryFields`, `programStageQueryFields`). The API
-returns the already-denormalized `EventProgramMetadata` / `TrackerProgramMetadata` /
-`ProgramStageMetadata` shape directly — data elements, tracked entity attributes, option sets, and
-rule actions arrive inlined rather than as bare `{id}` references, so there is no client-side
-resolve step between fetching and passing metadata to `useEventForm`/`useTrackerForm`. The
-consuming application is responsible for fetching metadata and posting submissions via
-`useDataMutation`.
+needs no equivalent setup of its own. Metadata _fetching_ is deliberately decoupled from the form
+hooks: `@dhis2-form-utils/metadata` exports the query objects and resolver functions; the hooks
+package never fetches internally. A consuming app fetches metadata however it likes — directly
+with `useDataQuery` and an exported query object, or through the thin convenience hooks described
+below — and passes the resolved result into `useEventForm` / `useTrackerForm` via `options.metadata`.
 
-### Query pattern inside hooks
+### Query objects, not query functions
+
+A `Query` passed to `useDataQuery` is a static object, defined once outside the component. Dynamic
+values are supplied by making individual `id` or `params` values functions of a `variables` object,
+injected at call time via `useDataQuery(query, { variables })` (or `refetch(variables)`).
+`@dhis2-form-utils/metadata` follows this exactly — every exported query is a plain object, never
+a factory function:
 
 ```ts
-// utils/hooks/src/queries/trackerProgram.query.ts
+// packages/metadata/src/queries/programStageConfig.query.ts
 import type { Query } from '@dhis2/data-engine';
-import { trackerProgramQueryFields } from '@dhis2-form-utils/metadata';
+import {
+    PROGRAM_STAGE_FIELDS,
+    PROGRAM_RULE_FIELDS,
+    PROGRAM_RULE_VARIABLE_FIELDS,
+} from './fields.const';
 
-export const trackerProgramQuery = (id: string): Query => ({
+export const programStageConfigQuery: Query = {
+    programStage: {
+        resource: 'programStages',
+        id: ({ programStageId }: { programStageId: string }) => programStageId,
+        params: { fields: PROGRAM_STAGE_FIELDS },
+    },
+    programRules: {
+        resource: 'programRules',
+        params: ({ programId }: { programId: string }) => ({
+            fields: PROGRAM_RULE_FIELDS,
+            filter: `program.id:eq:${programId}`,
+        }),
+    },
+    programRuleVariables: {
+        resource: 'programRuleVariables',
+        params: ({ programId }: { programId: string }) => ({
+            fields: PROGRAM_RULE_VARIABLE_FIELDS,
+            filter: `program.id:eq:${programId}`,
+        }),
+    },
+};
+```
+
+`programRules` and `programRuleVariables` are independent, top-level DHIS2 API resources — not
+nested collections under `programs` or `programStages`. They are queried directly, filtered by
+`program.id`, matching how the official Capture app (`dhis2/capture-app`) sources the same data.
+`@dhis2/programs/{id}/metadata` (the dependency-export endpoint used to exchange metadata between
+instances) and a nested `programs/{id}?fields=programRules[...]` selector are both unreliable
+sources for this data — the former isn't a form-consumption endpoint, and the latter treats
+`programRules` as if it were a field on `Program`, which it is not.
+
+`trackerConfigQuery` mirrors this for tracker registration forms:
+
+```ts
+// packages/metadata/src/queries/trackerConfig.query.ts
+export const trackerConfigQuery: Query = {
     program: {
         resource: 'programs',
-        id,
-        params: {
-            fields: trackerProgramQueryFields,
-        },
+        id: ({ programId }: { programId: string }) => programId,
+        params: { fields: PROGRAM_TEA_FIELDS },
     },
-});
+    programRules: {
+        resource: 'programRules',
+        params: ({ programId }: { programId: string }) => ({
+            fields: PROGRAM_RULE_FIELDS,
+            filter: `program.id:eq:${programId}`,
+        }),
+    },
+    programRuleVariables: {
+        resource: 'programRuleVariables',
+        params: ({ programId }: { programId: string }) => ({
+            fields: PROGRAM_RULE_VARIABLE_FIELDS,
+            filter: `program.id:eq:${programId}`,
+        }),
+    },
+};
 ```
+
+`useEventForm` and `useTrackerForm` used together on the same screen (registration plus a
+first-stage event) issue separate `programRuleVariables` requests for the same program. This is
+intentional: `useDataQuery` is backed by its own request cache, so an identical resource+params
+request is deduplicated by `@dhis2/app-runtime` itself. `dhis2-form-utils` does not build a
+shared-fetch layer on top — that would duplicate caching the runtime already owns.
+
+### Resolvers
+
+Each query has a matching pure resolver that reshapes the raw multi-resource `useDataQuery`
+response into the type its form hook expects:
+
+```ts
+export function resolveEventProgramMetadata(raw: RawProgramStageConfigResult): ProgramStageMetadata;
+export function resolveTrackerProgramMetadata(raw: RawTrackerConfigResult): TrackerProgramMetadata;
+```
+
+Resolvers are non-throwing. A program legitimately has zero program rules — `programRules: []` and
+`programRuleVariables: []` are valid, expected states, not error conditions. Error surfacing stays
+entirely with `useDataQuery`'s own `error` output; resolvers never inspect it.
+
+### Extensibility
+
+Every query is built from named field-selection constants (`PROGRAM_STAGE_FIELDS`,
+`PROGRAM_RULE_FIELDS`, `PROGRAM_RULE_VARIABLE_FIELDS`, `PROGRAM_TEA_FIELDS`) plus a
+`withExtraFields(base, extra?)` helper. A consuming app that needs additional fields — for a custom
+`effectHandlers` interpretation of a nonstandard `DISPLAYTEXT` convention, for example — composes
+its own query object by spreading the exported one and overriding only the resource it needs:
+
+```ts
+import {
+    programStageConfigQuery,
+    PROGRAM_RULE_FIELDS,
+    withExtraFields,
+} from '@dhis2-form-utils/metadata';
+
+const customQuery = {
+    ...programStageConfigQuery,
+    programRules: {
+        ...programStageConfigQuery.programRules,
+        params: ({ programId }: { programId: string }) => ({
+            fields: withExtraFields(PROGRAM_RULE_FIELDS, ['programRuleActions[displayContent]']),
+            filter: `program.id:eq:${programId}`,
+        }),
+    },
+};
+```
+
+The exported query objects stay genuine static objects; extension happens through composition, not
+through a parameterised builder function.
+
+### Piping into the hooks
+
+`@dhis2-form-utils/hooks` adds two optional convenience hooks that compose the query and resolver.
+Neither is called internally by `useEventForm` or `useTrackerForm`, and neither is required —
+`useEventForm`/`useTrackerForm` keep their hard "no internal fetch" constraint unchanged:
+
+```ts
+// utils/hooks/src/queries/useProgramStageMetadataQuery.ts
+import { useDataQuery } from '@dhis2/app-runtime';
+import { programStageConfigQuery, resolveEventProgramMetadata } from '@dhis2-form-utils/metadata';
+
+export function useProgramStageMetadataQuery(programId: string, programStageId: string) {
+    const { data, loading, error } = useDataQuery(programStageConfigQuery, {
+        variables: { programId, programStageId },
+    });
+    return { metadata: data ? resolveEventProgramMetadata(data) : undefined, loading, error };
+}
+```
+
+```ts
+const { metadata, loading } = useProgramStageMetadataQuery(programId, programStageId);
+const { form, formStore } = useEventForm({ options: { programStageId, metadata } });
+```
+
+A consumer is free to skip the convenience hook entirely and call
+`useDataQuery(programStageConfigQuery, { variables })` plus `resolveEventProgramMetadata` directly
+— both are exported standalone from `@dhis2-form-utils/metadata` with no dependency on `hooks` or
+React beyond what `useDataQuery` itself requires. The equivalent `useTrackerMetadataQuery` follows
+the same shape for `trackerConfigQuery` / `resolveTrackerProgramMetadata`.
 
 For standalone applications not built on the DHIS2 App Platform, the consuming app is responsible
 for rendering `Provider` from `@dhis2/app-runtime` with the correct `baseUrl` and `authType`
