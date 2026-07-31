@@ -52,7 +52,7 @@ export function ProgramPlaceholderPage() {
     }
 
     return (
-        <div className="flex flex-col gap-dp16 pb-dp24 h-full">
+        <div className="flex flex-col gap-dp16 h-full">
             {orgUnitsError ? (
                 <NoticeBox
                     error

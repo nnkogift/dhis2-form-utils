@@ -97,15 +97,6 @@ export function EventFormFields({ metadata }: EventFormFieldsProps) {
                     </FormSectionCard>
                 </FormSection>
             ))}
-            {layout.unsectionedItemIds.map((fieldId) => {
-                const programStageDataElement =
-                    fieldsByDataElementId.get(fieldId)
-                if (!programStageDataElement) {
-                    return null
-                }
-
-                return renderDataElementField(programStageDataElement)
-            })}
         </>
     )
 }

@@ -15,6 +15,10 @@ export function ProgramRegistrationFormScreen({
 }: ProgramRegistrationFormScreenProps) {
     const { data, error, loading } = useTrackerProgramMetadata(programId)
 
+    console.log({
+        data,
+    })
+
     if (loading) {
         return (
             <Center>

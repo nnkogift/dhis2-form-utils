@@ -91,7 +91,7 @@ export function ProgramEventForm({
     return (
         <FormStateProvider<EventFormValues> formStore={formStore} form={form}>
             <RuleDevtoolsScope formStore={formStore}>
-                <div className="flex h-full w-full flex-1 gap-dp16 min-h-0">
+                <div className="flex h-full w-full flex-1 gap-dp16  min-h-0">
                     <ProgramRulesPanel
                         metadata={{
                             formKind: 'event',
@@ -101,7 +101,7 @@ export function ProgramEventForm({
                     />
                     <form
                         onSubmit={handleSubmit}
-                        className="flex min-w-0 flex-1 flex-col gap-dp16"
+                        className="flex min-w-0 flex-1 py-4 flex-col gap-dp16"
                     >
                         <Link
                             className="text-dhis2-teal-700 no-underline font-medium hover:underline"

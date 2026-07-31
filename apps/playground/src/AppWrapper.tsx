@@ -10,7 +10,7 @@ import { SyncUrlWithGlobalShell } from '@/components/SyncUrlWithGlobalShell'
 
 const AppWrapper = () => {
     return (
-        <div className="p-4 h-full">
+        <div className="h-full">
             <HashRouter>
                 <SyncUrlWithGlobalShell />
                 <Routes>

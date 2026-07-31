@@ -106,7 +106,7 @@ export function ProgramRegistrationForm({
                     <FormProvider {...form}>
                         <form
                             onSubmit={handleSubmit}
-                            className="flex min-w-0 flex-1 flex-col gap-dp16"
+                            className="flex min-w-0 flex-1 flex-col gap-dp16 py-4"
                         >
                             <Link
                                 className="text-dhis2-teal-700 no-underline font-medium hover:underline"
