@@ -1,11 +1,11 @@
-import type { EventProgramMetadata, ProgramStageMetadata } from '@dhis2-form-utils/metadata';
-import childProgrammeExport from './child-programme.json';
-import {
-    resolveMetadataExportEventProgram,
-    resolveMetadataExportProgram,
-    resolveMetadataExportStage,
-    type MetadataExport,
-} from './resolveMetadataExport';
+import type {
+    EventProgramMetadata,
+    ProgramStageMetadata,
+    TrackerProgramMetadata,
+} from '@dhis2-form-utils/metadata';
+import childProgrammeEventJson from './child-programme.event.json';
+import childProgrammeStageJson from './child-programme.stage.json';
+import childProgrammeTrackerJson from './child-programme.tracker.json';
 
 export const CHILD_PROGRAMME_PROGRAM_ID = 'IpHINAT79UW';
 export const CHILD_PROGRAMME_STAGE_ID = 'A03MvHHogjR';
@@ -17,22 +17,8 @@ export const APGAR_SCORE_DE_ID = 'a3kGcGDCuk6';
 export const APGAR_COMMENT_DE_ID = 'H6uSAMO5WLD';
 export const CHILD_REGISTRATION_DEFAULT_ORG_UNIT = 'DiszpKrYNg8';
 
-const childExport = childProgrammeExport as MetadataExport;
-
-export function resolveChildProgrammeStage(stageId: string): ProgramStageMetadata {
-    return resolveMetadataExportStage(childExport, stageId);
-}
-
-export function resolveChildProgrammeEventProgram(): EventProgramMetadata {
-    return resolveMetadataExportEventProgram(childExport, CHILD_PROGRAMME_PROGRAM_ID);
-}
-
-export function resolveChildProgrammeProgram(programId: string) {
-    return resolveMetadataExportProgram(childExport, programId);
-}
-
-export const childProgrammeStageMetadata = resolveChildProgrammeStage(CHILD_PROGRAMME_STAGE_ID);
-export const childProgrammeEventProgramMetadata = resolveChildProgrammeEventProgram();
-export const childProgrammeProgramMetadata = resolveChildProgrammeProgram(
-    CHILD_PROGRAMME_PROGRAM_ID
-);
+export const childProgrammeStageMetadata =
+    childProgrammeStageJson as unknown as ProgramStageMetadata;
+export const childProgrammeEventProgramMetadata =
+    childProgrammeEventJson as unknown as EventProgramMetadata;
+export const childProgrammeProgramMetadata = childProgrammeTrackerJson as TrackerProgramMetadata;

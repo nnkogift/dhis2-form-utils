@@ -1,0 +1,173 @@
+{
+    "id": "A03MvHHogjR",
+    "displayName": "Birth",
+    "programStageDataElements": [
+        {
+            "id": "LBNxoXdMnkv",
+            "compulsory": false,
+            "allowProvidedElsewhere": false,
+            "allowFutureDate": false,
+            "displayInReports": false,
+            "dataElement": {
+                "id": "a3kGcGDCuk6",
+                "displayName": "MCH Apgar Score",
+                "displayFormName": "Apgar Score",
+                "valueType": "NUMBER",
+                "description": "Apgar is a quick test performed on a baby at 1 and 5 minutes after birth. The 1-minute score determines how well the baby tolerated the birthing process. The 5-minute score tells the doctor how well the baby is doing outside the mother's womb."
+            }
+        },
+        {
+            "id": "yYMGxXpfl0Z",
+            "compulsory": false,
+            "allowProvidedElsewhere": false,
+            "allowFutureDate": false,
+            "displayInReports": false,
+            "dataElement": {
+                "id": "H6uSAMO5WLD",
+                "displayName": "MCH Apgar comment",
+                "displayFormName": "Apgar comment",
+                "valueType": "LONG_TEXT"
+            }
+        },
+        {
+            "id": "u2FvnCDCBcD",
+            "compulsory": false,
+            "allowProvidedElsewhere": false,
+            "allowFutureDate": false,
+            "displayInReports": false,
+            "dataElement": {
+                "id": "UXz7xuGCEhU",
+                "displayName": "MCH Weight (g)",
+                "displayFormName": "Weight (g)",
+                "valueType": "NUMBER"
+            }
+        },
+        {
+            "id": "XLFc6tTftb5",
+            "compulsory": false,
+            "allowProvidedElsewhere": false,
+            "allowFutureDate": false,
+            "displayInReports": false,
+            "dataElement": {
+                "id": "wQLfBvPrXqq",
+                "displayName": "MCH ARV at birth",
+                "displayFormName": "ARV at birth",
+                "valueType": "TEXT",
+                "description": "Onlu used for birth details.",
+                "optionSet": {
+                    "id": "f38bstJioPs",
+                    "options": [
+                        {
+                            "id": "Cd0gtHGmlwS",
+                            "code": "NVP only",
+                            "displayName": "NVP only"
+                        },
+                        {
+                            "id": "ww8JVblo4SI",
+                            "code": "Others",
+                            "displayName": "Others"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "p8eX3rSkKN0",
+            "compulsory": false,
+            "allowProvidedElsewhere": false,
+            "allowFutureDate": false,
+            "displayInReports": false,
+            "dataElement": {
+                "id": "bx6fsa0t90x",
+                "displayName": "MCH BCG dose",
+                "displayFormName": "BCG dose",
+                "valueType": "BOOLEAN"
+            }
+        },
+        {
+            "id": "O4dwFWakvGO",
+            "compulsory": false,
+            "allowProvidedElsewhere": false,
+            "allowFutureDate": false,
+            "displayInReports": false,
+            "dataElement": {
+                "id": "ebaJjqltK5N",
+                "displayName": "MCH OPV dose",
+                "displayFormName": "OPV dose",
+                "valueType": "TEXT",
+                "optionSet": {
+                    "id": "kzgQRhOCadd",
+                    "options": [
+                        {
+                            "id": "sXfZuRdvhl5",
+                            "code": "0",
+                            "displayName": "Dose 0"
+                        },
+                        {
+                            "id": "lFFqylGiWLk",
+                            "code": "1",
+                            "displayName": "Dose 1"
+                        },
+                        {
+                            "id": "Xr0M5yEhtpT",
+                            "code": "2",
+                            "displayName": "Dose 2"
+                        },
+                        {
+                            "id": "VBGXfSXgJzv",
+                            "code": "3",
+                            "displayName": "Dose 3"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "xtjAxBGQNNV",
+            "compulsory": false,
+            "allowProvidedElsewhere": false,
+            "allowFutureDate": false,
+            "displayInReports": false,
+            "dataElement": {
+                "id": "X8zyunlgUfM",
+                "displayName": "MCH Infant Feeding",
+                "displayFormName": "Infant Feeding",
+                "valueType": "TEXT",
+                "optionSet": {
+                    "id": "x31y45jvIQL",
+                    "options": [
+                        {
+                            "id": "bS16xfd2E1F",
+                            "code": "Exclusive",
+                            "displayName": "Exclusive"
+                        },
+                        {
+                            "id": "fLCgjvxrw4c",
+                            "code": "Replacement",
+                            "displayName": "Replacement"
+                        },
+                        {
+                            "id": "odMfnhhpjUj",
+                            "code": "Mixed",
+                            "displayName": "Mixed"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "JYyXbTmBBls",
+            "compulsory": false,
+            "allowProvidedElsewhere": false,
+            "allowFutureDate": false,
+            "displayInReports": false,
+            "dataElement": {
+                "id": "uf3svrmp8Oj",
+                "displayName": "Birth certificate",
+                "displayFormName": "Birth certificate",
+                "valueType": "FILE_RESOURCE"
+            }
+        }
+    ],
+    "programStageSections": []
+}

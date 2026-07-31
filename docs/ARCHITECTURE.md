@@ -275,24 +275,30 @@ any DHIS2 application. It provides:
   beneath it
 
 Because `@dhis2/app-runtime`'s `Provider` owns the connection configuration, `dhis2-form-utils`
-needs no equivalent setup of its own. The hooks package exports `programMetadataExportQuery`
-(`GET /api/programs/{id}/metadata`) and `programStageQuery` (stage PSDEs/sections only) helpers
-for `useDataQuery`; resolve the export with `resolveEventProgramMetadata` or
-`resolveTrackerProgramMetadata` from `@dhis2-form-utils/metadata`. The consuming application is
-responsible for fetching metadata and posting submissions via `useDataMutation`.
+needs no equivalent setup of its own. The hooks package exports `eventProgramQuery`,
+`trackerProgramQuery`, and `programStageQuery` — each queries `GET /api/programs/{id}` (or
+`/api/programStages/{id}`) with a nested `fields=` selector built from `@dhis2-form-utils/metadata`
+(`eventProgramQueryFields`, `trackerProgramQueryFields`, `programStageQueryFields`). The API
+returns the already-denormalized `EventProgramMetadata` / `TrackerProgramMetadata` /
+`ProgramStageMetadata` shape directly — data elements, tracked entity attributes, option sets, and
+rule actions arrive inlined rather than as bare `{id}` references, so there is no client-side
+resolve step between fetching and passing metadata to `useEventForm`/`useTrackerForm`. The
+consuming application is responsible for fetching metadata and posting submissions via
+`useDataMutation`.
 
 ### Query pattern inside hooks
 
 ```ts
-// utils/hooks/src/queries/programMetadataExport.query.ts
+// utils/hooks/src/queries/trackerProgram.query.ts
 import type { Query } from '@dhis2/data-engine';
+import { trackerProgramQueryFields } from '@dhis2-form-utils/metadata';
 
-export const programMetadataExportQuery = (programId: string): Query => ({
-    programMetadata: {
+export const trackerProgramQuery = (id: string): Query => ({
+    program: {
         resource: 'programs',
-        id: `${programId}/metadata`,
+        id,
         params: {
-            skipSharing: true,
+            fields: trackerProgramQueryFields,
         },
     },
 });

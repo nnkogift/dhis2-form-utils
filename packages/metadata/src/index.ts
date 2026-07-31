@@ -32,12 +32,7 @@ export {
     PROGRAM_TRACKED_ENTITY_ATTRIBUTE_FIELDS,
     eventProgramQueryFields,
     programStageQueryFields,
+    trackerProgramQueryFields,
 } from './fieldFilters';
 export { buildSchema } from './buildSchema';
 export { buildTrackerSchema } from './buildTrackerSchema';
-export type { ProgramMetadataExport } from './resolveProgramMetadataExport';
-export {
-    resolveEventProgramMetadata,
-    resolveProgramStageMetadata,
-    resolveTrackerProgramMetadata,
-} from './resolveProgramMetadataExport';
