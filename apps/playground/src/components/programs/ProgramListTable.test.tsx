@@ -9,6 +9,9 @@ const sampleProgram: Program = {
     code: 'ANC',
     shortName: 'ANC',
     programType: PROGRAM_TYPE.WITHOUT_REGISTRATION,
+    lastUpdated: '2026-06-12',
+    stageCount: 1,
+    ruleCount: 0,
 }
 
 describe('ProgramListTable', () => {

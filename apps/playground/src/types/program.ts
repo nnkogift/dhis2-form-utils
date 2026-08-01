@@ -11,6 +11,9 @@ export type Program = {
     code: string
     shortName: string
     programType: ProgramType
+    lastUpdated: string
+    stageCount: number
+    ruleCount: number
 }
 
 export type ProgramStageSummary = {

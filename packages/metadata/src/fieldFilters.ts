@@ -106,6 +106,8 @@ export const PROGRAM_RULE_VARIABLE_FIELDS = [
 export const PROGRAM_STAGE_CORE_FIELDS = [
     'id',
     'displayName',
+    'repeatable',
+    'sortOrder',
     'programStageDataElements[id,compulsory,allowProvidedElsewhere,allowFutureDate,displayInReports,renderType,dataElement[id,displayName,displayFormName,valueType,description,optionSet[id,options[id,code,displayName]]]]',
 ] as const;
 

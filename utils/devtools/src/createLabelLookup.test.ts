@@ -64,17 +64,20 @@ describe('createLabelLookup', () => {
         expect(lookup.resolveFieldName('de-weight')).toBe('Weight (kg)');
         expect(lookup.resolveSectionName('section-a')).toBe('Clinical data');
         expect(lookup.resolveRuleName('rule-1')).toBe('Weight warning');
+        expect(lookup.resolveStageName('stage-1')).toBe('Stage 1');
     });
 
     it('resolves tracker field, section, and rule names from metadata', () => {
         const lookup = createLabelLookup({
             formKind: 'tracker',
             metadata: trackerMetadata,
+            programStages: [{ id: 'stage-1', displayName: 'Stage 1' }],
         });
 
         expect(lookup.resolveFieldName('tea-first-name')).toBe('Given name');
         expect(lookup.resolveSectionName('section-reg')).toBe('Registration');
         expect(lookup.resolveRuleName('rule-t1')).toBe('Name required');
+        expect(lookup.resolveStageName('stage-1')).toBe('Stage 1');
     });
 
     it('falls back to raw id for unknown keys', () => {

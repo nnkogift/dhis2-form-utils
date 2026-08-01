@@ -20,6 +20,9 @@ export default tseslint.config(
             '**/*.config.ts',
             '**/vite.config.ts',
             '**/playwright.config.ts',
+            // Design handoff reference material (prototypes, exported design-system bundles) —
+            // not application source, never meant to pass app lint rules.
+            '**/apps/playground/design/**',
         ],
     },
     js.configs.recommended,

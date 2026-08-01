@@ -38,3 +38,5 @@ export { useFieldControl } from './fields/useFieldControl';
 export { resolveWidgetKind } from './fields/widgetKind';
 export { buildFieldSchema } from './fields/fieldValidation';
 export { resolveFieldValidation } from './fields/fieldFeedback';
+export { useRuleEffectTrace, useFieldRuleEffect, useSectionRuleEffect } from './useRuleEffectTrace';
+export type { RuleEffectTrace } from './useRuleEffectTrace';

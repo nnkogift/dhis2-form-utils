@@ -1,9 +1,10 @@
 import { useDataEngine } from '@dhis2/app-runtime'
-import { FormFeedback } from '@dhis2-form-utils/dhis2-ui'
+import i18n from '@dhis2/d2-i18n'
 import {
-    ProgramRulesPanel,
-    RuleDevtoolsPanel,
+    createLabelLookup,
     RuleDevtoolsScope,
+    RulesPanel,
+    type ProgramStageRef,
 } from '@dhis2-form-utils/devtools'
 import {
     FormStateProvider,
@@ -11,24 +12,26 @@ import {
     useTrackerForm,
 } from '@dhis2-form-utils/hooks'
 import { filterPayload } from '@dhis2-form-utils/rules'
-import i18n from '@dhis2/d2-i18n'
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { FormProvider, type UseFormReturn } from 'react-hook-form'
-import type { OrgUnit } from '@/types/program'
+import { GhostToggleButton } from '@/components/rules/GhostToggleButton'
+import { RuleDisplayProvider } from '@/components/rules/RuleDisplayContext'
+import { RuleFeedbackList } from '@/components/rules/RuleFeedbackList'
 import { formatDhis2Error } from '@/utils/formatDhis2Error'
 import {
     buildTrackerRegistrationPayload,
     type TrackerRegistrationValues,
 } from '@/utils/trackerPayloads'
+import { FormDateField } from './FormDateField'
 import { ProgramFormActions } from './ProgramFormActions'
 import { RegistrationFormFields } from './RegistrationFormFields'
-import { TrackerSystemFields } from './TrackerSystemFields'
-import { Link } from 'react-router'
 
 type ProgramRegistrationFormProps = {
     programId: string
     metadata: TrackerProgramMetadata
-    orgUnits: OrgUnit[]
+    programStages: ProgramStageRef[]
+    orgUnitId: string
+    enrolledAt: string
 }
 
 function createTodayValue() {
@@ -38,18 +41,22 @@ function createTodayValue() {
 export function ProgramRegistrationForm({
     programId,
     metadata,
-    orgUnits,
+    programStages,
+    orgUnitId,
+    enrolledAt,
 }: ProgramRegistrationFormProps) {
     const dataEngine = useDataEngine()
     const defaultValues = useMemo(
         () => ({
-            orgUnit: '',
-            enrolledAt: createTodayValue(),
+            orgUnit: orgUnitId,
+            enrolledAt,
             ...(metadata.displayIncidentDate
                 ? { occurredAt: createTodayValue() }
                 : {}),
         }),
-        [metadata.displayIncidentDate]
+        // intentionally computed once, at mount, as RHF's initial snapshot only —
+        // live updates flow through the setValue effects below, not through this memo
+        []
     )
     const { form, formStore } = useTrackerForm<TrackerRegistrationValues>({
         options: {
@@ -62,6 +69,20 @@ export function ProgramRegistrationForm({
         },
     })
     const [successMessage, setSuccessMessage] = useState<string>()
+    const [ghostsEnabled, setGhostsEnabled] = useState(true)
+    const labelLookup = useMemo(
+        () =>
+            createLabelLookup({ formKind: 'tracker', metadata, programStages }),
+        [metadata, programStages]
+    )
+
+    useEffect(() => {
+        form.setValue('orgUnit', orgUnitId, { shouldValidate: false })
+    }, [form, orgUnitId])
+
+    useEffect(() => {
+        form.setValue('enrolledAt', enrolledAt, { shouldValidate: false })
+    }, [form, enrolledAt])
 
     const handleSubmit = form.handleSubmit(async (values) => {
         form.clearErrors('root')
@@ -99,30 +120,37 @@ export function ProgramRegistrationForm({
             form={form as unknown as UseFormReturn<Record<string, unknown>>}
         >
             <RuleDevtoolsScope formStore={formStore}>
-                <div className="flex h-full w-full flex-1 gap-dp16 min-h-0">
-                    <ProgramRulesPanel
-                        metadata={{ formKind: 'tracker', metadata }}
-                    />
+                <div className="flex h-full w-full flex-1 min-h-0">
                     <FormProvider {...form}>
                         <form
                             onSubmit={handleSubmit}
-                            className="flex min-w-0 flex-1 flex-col gap-dp16 py-4"
+                            className="flex min-w-0 flex-1 flex-col gap-dp16 overflow-auto pt-4 px-7 pb-7"
                         >
-                            <Link
-                                className="text-dhis2-teal-700 no-underline font-medium hover:underline"
-                                to="/"
-                            >
-                                {i18n.t('Back to programs')}
-                            </Link>
-                            <h2 className="text-2xl font-bold">
-                                {metadata.displayName}
-                            </h2>
-                            <TrackerSystemFields
-                                metadata={metadata}
-                                orgUnits={orgUnits}
+                            {metadata.displayIncidentDate ? (
+                                <FormDateField
+                                    name="occurredAt"
+                                    label={
+                                        metadata.displayIncidentDateLabel ??
+                                        i18n.t('Incident date')
+                                    }
+                                    disabled={form.formState.isSubmitting}
+                                />
+                            ) : null}
+                            <GhostToggleButton
+                                enabled={ghostsEnabled}
+                                onToggle={() => {
+                                    setGhostsEnabled((current) => !current)
+                                }}
                             />
-                            <FormFeedback />
-                            <RegistrationFormFields metadata={metadata} />
+                            <RuleDisplayProvider
+                                ghostsEnabled={ghostsEnabled}
+                                labelLookup={labelLookup}
+                            >
+                                <RuleFeedbackList
+                                    metadata={{ formKind: 'tracker', metadata }}
+                                />
+                                <RegistrationFormFields metadata={metadata} />
+                            </RuleDisplayProvider>
                             <ProgramFormActions
                                 submitLabel={i18n.t('Register tracked entity')}
                                 errorTitle={i18n.t(
@@ -133,8 +161,12 @@ export function ProgramRegistrationForm({
                             />
                         </form>
                     </FormProvider>
-                    <RuleDevtoolsPanel
-                        metadata={{ formKind: 'tracker', metadata }}
+                    <RulesPanel
+                        metadata={{
+                            formKind: 'tracker',
+                            metadata,
+                            programStages,
+                        }}
                     />
                 </div>
             </RuleDevtoolsScope>
