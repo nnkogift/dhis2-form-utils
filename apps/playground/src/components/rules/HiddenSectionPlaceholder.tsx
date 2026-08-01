@@ -16,8 +16,7 @@ export function HiddenSectionPlaceholder({
         >
             <IconViewOff16 aria-hidden="true" />
             <span>
-                {i18n.t('Section hidden by')}{' '}
-                <span className="font-semibold">{ruleName}</span>
+                {i18n.t('Section hidden by {{ruleName}}', { ruleName })}
             </span>
         </div>
     )

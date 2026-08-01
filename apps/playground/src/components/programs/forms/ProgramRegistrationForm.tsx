@@ -70,10 +70,13 @@ export function ProgramRegistrationForm({
     })
     const [successMessage, setSuccessMessage] = useState<string>()
     const [ghostsEnabled, setGhostsEnabled] = useState(true)
-    const labelLookup = useMemo(
-        () =>
-            createLabelLookup({ formKind: 'tracker', metadata, programStages }),
+    const rulesMetadata = useMemo(
+        () => ({ formKind: 'tracker' as const, metadata, programStages }),
         [metadata, programStages]
+    )
+    const labelLookup = useMemo(
+        () => createLabelLookup(rulesMetadata),
+        [rulesMetadata]
     )
 
     useEffect(() => {
@@ -146,9 +149,7 @@ export function ProgramRegistrationForm({
                                 ghostsEnabled={ghostsEnabled}
                                 labelLookup={labelLookup}
                             >
-                                <RuleFeedbackList
-                                    metadata={{ formKind: 'tracker', metadata }}
-                                />
+                                <RuleFeedbackList metadata={rulesMetadata} />
                                 <RegistrationFormFields metadata={metadata} />
                             </RuleDisplayProvider>
                             <ProgramFormActions
@@ -161,13 +162,7 @@ export function ProgramRegistrationForm({
                             />
                         </form>
                     </FormProvider>
-                    <RulesPanel
-                        metadata={{
-                            formKind: 'tracker',
-                            metadata,
-                            programStages,
-                        }}
-                    />
+                    <RulesPanel metadata={rulesMetadata} />
                 </div>
             </RuleDevtoolsScope>
         </FormStateProvider>

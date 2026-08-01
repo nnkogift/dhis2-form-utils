@@ -39,6 +39,7 @@ function RailRow({
         <div
             role="button"
             tabIndex={0}
+            aria-current={selected ? 'true' : undefined}
             onClick={onClick}
             onKeyDown={(event) => {
                 if (event.key === 'Enter' || event.key === ' ') {

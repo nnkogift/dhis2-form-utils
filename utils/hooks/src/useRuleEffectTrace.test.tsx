@@ -71,9 +71,11 @@ function metadataWithRules(): TrackerProgramMetadata {
     };
 }
 
+const trackerMetadata = metadataWithRules();
+
 function useHarness() {
     const { form, formStore } = useTrackerForm({
-        options: { programId: 'prog-1', metadata: metadataWithRules() },
+        options: { programId: 'prog-1', metadata: trackerMetadata },
     });
     return { form, formStore };
 }

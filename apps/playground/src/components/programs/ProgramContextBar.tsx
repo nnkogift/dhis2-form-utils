@@ -59,7 +59,7 @@ export function ProgramContextBar({
                     <SingleSelectField
                         dense
                         label={i18n.t('Organisation unit')}
-                        selected={orgUnitId}
+                        selected={orgUnitId || undefined}
                         onChange={({ selected }) => {
                             onOrgUnitChange(selected ?? '')
                         }}

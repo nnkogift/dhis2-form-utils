@@ -55,14 +55,17 @@ export function ProgramEventForm({
     })
     const [successMessage, setSuccessMessage] = useState<string>()
     const [ghostsEnabled, setGhostsEnabled] = useState(true)
-    const labelLookup = useMemo(
-        () =>
-            createLabelLookup({
-                formKind: 'event',
-                metadata: program,
-                programStageId,
-            }),
+    const rulesMetadata = useMemo(
+        () => ({
+            formKind: 'event' as const,
+            metadata: program,
+            programStageId,
+        }),
         [program, programStageId]
+    )
+    const labelLookup = useMemo(
+        () => createLabelLookup(rulesMetadata),
+        [rulesMetadata]
     )
 
     useEffect(() => {
@@ -121,13 +124,7 @@ export function ProgramEventForm({
                             ghostsEnabled={ghostsEnabled}
                             labelLookup={labelLookup}
                         >
-                            <RuleFeedbackList
-                                metadata={{
-                                    formKind: 'event',
-                                    metadata: program,
-                                    programStageId,
-                                }}
-                            />
+                            <RuleFeedbackList metadata={rulesMetadata} />
                             <EventFormFields metadata={stageMetadata} />
                         </RuleDisplayProvider>
                         <ProgramFormActions
@@ -137,13 +134,7 @@ export function ProgramEventForm({
                             successTitle={i18n.t('Event saved')}
                         />
                     </form>
-                    <RulesPanel
-                        metadata={{
-                            formKind: 'event',
-                            metadata: program,
-                            programStageId,
-                        }}
-                    />
+                    <RulesPanel metadata={rulesMetadata} />
                 </div>
             </RuleDevtoolsScope>
         </FormStateProvider>

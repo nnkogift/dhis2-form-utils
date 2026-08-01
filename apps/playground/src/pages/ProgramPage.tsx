@@ -18,6 +18,14 @@ function createTodayValue() {
     return new Date().toISOString().slice(0, 10)
 }
 
+const HTTP_NOT_FOUND = 404
+
+function isNotFoundError(error: unknown): boolean {
+    const details = (error as { details?: { httpStatusCode?: number } })
+        ?.details
+    return details?.httpStatusCode === HTTP_NOT_FOUND
+}
+
 export function ProgramPage() {
     const { programId } = useParams<{ programId: string }>()
     const location = useLocation()
@@ -37,6 +45,7 @@ export function ProgramPage() {
 
     const [orgUnitId, setOrgUnitId] = useState('')
     const [primaryDate, setPrimaryDate] = useState(createTodayValue)
+    const [resetKey, setResetKey] = useState(0)
 
     const isTracker = program?.programType === PROGRAM_TYPE.WITH_REGISTRATION
     const programMeta = useMemo(() => {
@@ -55,6 +64,7 @@ export function ProgramPage() {
     const handleResetPlayground = () => {
         setOrgUnitId('')
         setPrimaryDate(createTodayValue())
+        setResetKey((key) => key + 1)
     }
 
     if (loading || orgUnitsLoading) {
@@ -66,6 +76,7 @@ export function ProgramPage() {
     }
 
     if (error || !program) {
+        const notFound = !error || isNotFoundError(error)
         return (
             <div className="flex flex-col gap-dp16 pb-dp24">
                 <Link
@@ -75,7 +86,11 @@ export function ProgramPage() {
                     {i18n.t('Back to programs')}
                 </Link>
                 <NoticeBox error title={i18n.t('Error')}>
-                    {i18n.t('Program not found')}
+                    {notFound
+                        ? i18n.t('Program not found')
+                        : i18n.t(
+                              'Could not load this program. Try again later.'
+                          )}
                 </NoticeBox>
             </div>
         )
@@ -125,6 +140,7 @@ export function ProgramPage() {
                     <div className="flex min-h-0 flex-1 flex-col">
                         {isTracker ? (
                             <TrackerProgramShell
+                                key={resetKey}
                                 program={program}
                                 programId={program.id}
                                 orgUnitId={orgUnitId}
@@ -132,6 +148,7 @@ export function ProgramPage() {
                             />
                         ) : (
                             <ProgramStageFormScreen
+                                key={resetKey}
                                 program={program}
                                 programStageId={program.programStages?.[0]?.id}
                                 orgUnitId={orgUnitId}

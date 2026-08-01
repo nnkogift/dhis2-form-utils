@@ -1,8 +1,4 @@
-import {
-    type FieldControlInput,
-    type FieldControlReturn,
-    useFieldControl,
-} from '@dhis2-form-utils/hooks';
+import { type FieldControlInput, useFieldControl, type WidgetProps } from '@dhis2-form-utils/hooks';
 import {
     D2AgeField,
     D2BooleanField,
@@ -24,9 +20,7 @@ export type D2FieldProps = {
     field: FieldControlInput;
 };
 
-export type D2FieldWidgetProps = {
-    control: FieldControlReturn;
-};
+export type D2FieldWidgetProps = WidgetProps;
 
 /** Dispatches an already-resolved `FieldControlReturn` to its widget component, without re-deriving field control state. Reused by consumers that build their own chrome (labels, badges, ghost placeholders) around a field. */
 export function D2FieldWidget({ control }: D2FieldWidgetProps) {

@@ -78,11 +78,18 @@ function countObservedRules(entries: readonly RuleTraceEntry[]): number {
     return ruleIds.size;
 }
 
-const PANEL_TABS: Array<{ key: DevtoolsTab; label: string }> = [
-    { key: 'rules', label: translate('Rules') },
-    { key: 'trace', label: translate('Trace') },
-    { key: 'graph', label: translate('Graph') },
-];
+const PANEL_TAB_KEYS: DevtoolsTab[] = ['rules', 'trace', 'graph'];
+
+function resolveTabLabel(key: DevtoolsTab): string {
+    switch (key) {
+        case 'rules':
+            return translate('Rules');
+        case 'trace':
+            return translate('Trace');
+        case 'graph':
+            return translate('Graph');
+    }
+}
 
 export function RulesPanel({ metadata, showConditions = true }: RulesPanelProps) {
     const formStore = useFormStore();
@@ -201,20 +208,20 @@ export function RulesPanel({ metadata, showConditions = true }: RulesPanelProps)
                     </span>
                 </div>
                 <div className="flex">
-                    {PANEL_TABS.map((item) => (
+                    {PANEL_TAB_KEYS.map((key) => (
                         <button
-                            key={item.key}
+                            key={key}
                             type="button"
                             className={`cursor-pointer border-0 border-b-[3px] bg-transparent px-dp12 py-dp8 text-sm font-medium ${
-                                tab === item.key
+                                tab === key
                                     ? 'border-b-dhis2-blue-600 text-dhis2-blue-600'
                                     : 'border-b-transparent text-dhis2-grey-700'
                             }`}
                             onClick={() => {
-                                setTab(item.key);
+                                setTab(key);
                             }}
                         >
-                            {item.label}
+                            {resolveTabLabel(key)}
                         </button>
                     ))}
                 </div>
@@ -283,8 +290,8 @@ export function RulesPanel({ metadata, showConditions = true }: RulesPanelProps)
                 )}
             </div>
 
-            {entries.length === 0 && tab !== 'rules' ? (
-                <p className="sr-only">
+            {entries.length > 0 && tab !== 'rules' ? (
+                <p className="sr-only" aria-live="polite">
                     {translate('{{evaluations}} evaluations · {{rules}} rules observed', {
                         evaluations: entries.length,
                         rules: observedRuleCount,
@@ -327,7 +334,7 @@ function RulesTab({
     if (!catalog.length) {
         return (
             <p className="m-0 text-sm leading-normal text-dhis2-grey-600">
-                {translate('This program has no rules for the current form context.')}
+                {translate('This program has no rules.')}
             </p>
         );
     }

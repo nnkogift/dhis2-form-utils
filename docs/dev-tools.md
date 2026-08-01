@@ -5,11 +5,11 @@
 A developer-facing tool that answers, for any running `dhis2-form-utils` form:
 **"why did this field/section/feedback area just change, and what else has this rule affected?"**
 
-Two views on the right, plus a rules catalog on the left, driven by one trace stream:
+One panel, three tabs, driven by one trace stream:
 
-- **Program rules** — a metadata-driven catalog of all rules for the current program/stage: name, configured actions, and condition expression. Rules that fired in the **latest** evaluation cycle are highlighted (teal accent).
-- **Trace timeline** — a reverse-chronological log of every evaluation cycle: which field(s) changed, which rules fired, what effects they produced.
-- **Dependency graph** — a node/edge visualization of fields, sections, feedback areas, and the rules connecting them, built up from what's actually been observed.
+- **Rules** — a metadata-driven catalog of all rules for the current program: name, configured actions, and condition expression. Cards use a 4-state accent (selected, firing-in-scope, idle-in-scope, out-of-scope) based on whether the rule applies to the slot currently being viewed.
+- **Trace** — a reverse-chronological log of every evaluation cycle: which field(s) changed, which rules fired, what effects they produced.
+- **Graph** — a node/edge visualization of fields, sections, feedback areas, and the rules connecting them, built up from what's actually been observed.
 
 Ships as a new package, `@dhis2-form-utils/devtools`, attached directly to a running form's `FormStore` via side panels.
 
@@ -132,7 +132,7 @@ Bounded ring buffer (default 200) avoids unbounded memory growth in a long dev s
 
 ## 5. Wiring in a consuming app
 
-Wrap the form and both devtools panels in `RuleDevtoolsScope` so they share a single trace subscription:
+Wrap the form and the panel in `RuleDevtoolsScope` so they share a single trace subscription:
 
 ```tsx
 const { form, formStore } = useEventForm({ options });
@@ -140,14 +140,9 @@ const { form, formStore } = useEventForm({ options });
 return (
     <FormStateProvider formStore={formStore} form={form}>
         <RuleDevtoolsScope formStore={formStore}>
-            <div className="flex h-full flex-1 gap-dp16 min-h-0">
-                <ProgramRulesPanel
-                    metadata={{ formKind: 'event', metadata: program, programStageId }}
-                />
+            <div className="flex h-full flex-1 min-h-0">
                 <FormProvider {...form}>{/* ...form fields... */}</FormProvider>
-                <RuleDevtoolsPanel
-                    metadata={{ formKind: 'event', metadata: program, programStageId }}
-                />
+                <RulesPanel metadata={{ formKind: 'event', metadata: program, programStageId }} />
             </div>
         </RuleDevtoolsScope>
     </FormStateProvider>
@@ -158,29 +153,25 @@ For tracker registration forms:
 
 ```tsx
 <RuleDevtoolsScope formStore={formStore}>
-    <ProgramRulesPanel metadata={{ formKind: 'tracker', metadata: trackerMetadata }} />
     {/* form */}
-    <RuleDevtoolsPanel metadata={{ formKind: 'tracker', metadata: trackerMetadata }} />
+    <RulesPanel metadata={{ formKind: 'tracker', metadata: trackerMetadata, programStages }} />
 </RuleDevtoolsScope>
 ```
 
-`ProgramRulesPanel` lists all rules from metadata (filtered by stage for event forms). Active highlight is derived from the latest `RuleTraceEntry`: any `ruleId` in `ruleResults` is marked active. The engine only reports rules that fired with effects — a rule whose condition is false produces no trace and stays unhighlighted.
+`RulesPanel`'s Rules tab lists every rule from metadata — it does not pre-filter by stage. Instead, each card compares the rule's `programStage` against the slot currently being viewed (the event form's `programStageId`, or `null` for tracker registration) to decide whether it's in scope, and whether an in-scope rule is currently firing is derived from the latest `RuleTraceEntry`: any `ruleId` in `ruleResults` is marked firing. The engine only reports rules that fired with effects — a rule whose condition is false produces no trace and stays idle.
 
-Without `metadata`, rule names and action targets fall back to raw UIDs — both panels are fully functional either way.
+Without `metadata`, rule/field/section/stage names fall back to raw UIDs — the panel is fully functional either way.
 
-`RuleDevtoolsPanel` reads `FormStore` from context and the shared trace store from `RuleDevtoolsScope`. Pass optional `metadata` for human-readable rule, field, and section labels:
+`RulesPanel` reads `FormStore` from context and the shared trace store from `RuleDevtoolsScope`. Pass optional `metadata` for human-readable rule, field, section, and stage labels:
 
 ```tsx
-// devtools/src/RuleDevtoolsPanel.tsx
-function RuleDevtoolsPanel({ metadata }: RuleDevtoolsPanelProps) {
+// devtools/src/RulesPanel.tsx
+function RulesPanel({ metadata }: RulesPanelProps) {
     const formStore = useFormStore(); // from @dhis2-form-utils/hooks context
     const traceStore = useRuleTraceStore(); // from RuleDevtoolsScope
-    const labelLookup = useMemo(
-        () => (metadata ? createLabelLookup(metadata) : undefined),
-        [metadata]
-    );
+    const labelLookup = useMemo(() => createLabelLookup(metadata), [metadata]);
 
-    // reads traceStore for the timeline/graph, and formStore (via useFieldState /
+    // reads traceStore for the rules/trace/graph tabs, and formStore (via useFieldState /
     // useSectionState / useFormFeedback) to annotate graph nodes with current values
 }
 ```
@@ -200,7 +191,7 @@ Built entirely from the `RuleTraceEntry` stream, accumulated over the session:
 **Labeling:** rules, fields, and sections are labeled by UID by default. Pass optional `metadata` (a discriminated union for event or tracker forms) to resolve display names from program metadata — same label fallbacks as `fieldConfig.ts` (`displayFormName ?? displayName ?? id` for data elements; `formName ?? displayName ?? id` for TEAs). System field keys (`orgUnit`, `enrolledAt`, …) stay as raw IDs. Naming is strictly optional and cosmetic.
 
 ```ts
-<RuleDevtoolsPanel
+<RulesPanel
     metadata={{ formKind: 'event', metadata: program, programStageId }}
 />
 ```
@@ -211,11 +202,10 @@ Clicking a trace-timeline entry highlights the exact rule-node and edges that en
 
 ---
 
-## 7. UI shell — side panels
+## 7. UI shell — side panel
 
-- `<ProgramRulesPanel>` — left catalog of all program rules from metadata (name, configured actions, condition). Highlights rules active in the latest evaluation cycle.
-- `<RuleDevtoolsPanel>` — right panel with two tabs: **Trace** and **Graph**. The Graph tab includes a fullscreen expand button that opens the dependency graph in a large modal.
-- `<RuleDevtoolsScope>` — wraps both panels; owns the shared trace store subscription.
+- `<RulesPanel>` — single right-hand panel with three tabs: **Rules** (catalog of all program rules from metadata, 4-state scope/firing accent), **Trace**, and **Graph**. The Graph tab includes a fullscreen expand button that opens the dependency graph in a large modal.
+- `<RuleDevtoolsScope>` — wraps the panel; owns the shared trace store subscription.
 - Graph rendered with **`@xyflow/react`** (v12.11.1). React Flow styles are bundled into `@dhis2-form-utils/devtools/style.css` — consumers need only that single stylesheet import.
 - This is the one new runtime dependency in this design, scoped entirely to the optional `devtools` package — never imported by `hooks`, never in a production form bundle.
 
@@ -226,7 +216,7 @@ Clicking a trace-timeline entry highlights the exact rule-node and edges that en
 1. **`@xyflow/react` outside core no-new-deps rule** — confirmed. Scoped to optional `devtools` package only; never imported by `hooks` or `rules`.
 2. **`subscribeTrace()` + `useFormStore()`** — implemented. Trace emission is a no-op when no listeners are attached.
 3. **Ring buffer** — default 200 entries; overridable via internal `attachRuleDevtools({ maxEntries })`.
-4. **`metadata` prop** — optional discriminated union for event/tracker program metadata; resolves rule, field, and section labels internally.
+4. **`metadata` prop** — optional discriminated union for event/tracker program metadata; resolves rule, field, section, and stage labels internally.
 5. **`useTrackerForm`** — no special handling; same `FormStore` attach point.
 
 ---
