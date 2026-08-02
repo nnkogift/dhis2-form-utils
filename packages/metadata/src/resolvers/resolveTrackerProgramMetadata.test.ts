@@ -58,6 +58,9 @@ describe('resolveTrackerProgramMetadata', () => {
                     },
                 ],
             },
+            constants: {
+                constants: [{ id: 'const1', value: 10 }],
+            },
         });
 
         expect(result.id).toBe('program1');
@@ -65,6 +68,7 @@ describe('resolveTrackerProgramMetadata', () => {
         expect(result.trackedEntityType).toEqual({ id: 'tet1' });
         expect(result.displayEnrollmentDateLabel).toBe('Enrollment date');
         expect(result.displayIncidentDateLabel).toBe('Incident date');
+        expect(result.constants).toEqual([{ id: 'const1', value: 10 }]);
 
         // Sorted by sortOrder ascending.
         expect(result.programTrackedEntityAttributes.map((p) => p.id)).toEqual(['ptea1', 'ptea2']);
@@ -101,10 +105,38 @@ describe('resolveTrackerProgramMetadata', () => {
             },
             programRules: { programRules: [] },
             programRuleVariables: { programRuleVariables: [] },
+            constants: { constants: [] },
         });
 
         expect(result.programRules).toEqual([]);
         expect(result.programRuleVariables).toEqual([]);
+        expect(result.constants).toEqual([]);
+    });
+
+    it('defaults constants to [] when absent and passes through when present', () => {
+        const withoutConstants = resolveTrackerProgramMetadata({
+            program: {
+                id: 'program1',
+                displayName: 'Program One',
+                programTrackedEntityAttributes: [],
+            },
+            programRules: { programRules: [] },
+            programRuleVariables: { programRuleVariables: [] },
+            constants: undefined,
+        });
+        expect(withoutConstants.constants).toEqual([]);
+
+        const withConstants = resolveTrackerProgramMetadata({
+            program: {
+                id: 'program1',
+                displayName: 'Program One',
+                programTrackedEntityAttributes: [],
+            },
+            programRules: { programRules: [] },
+            programRuleVariables: { programRuleVariables: [] },
+            constants: { constants: [{ id: 'c1', value: 42 }] },
+        });
+        expect(withConstants.constants).toEqual([{ id: 'c1', value: 42 }]);
     });
 
     it('never throws when nested resources are missing', () => {
@@ -113,6 +145,7 @@ describe('resolveTrackerProgramMetadata', () => {
                 program: undefined,
                 programRules: undefined,
                 programRuleVariables: undefined,
+                constants: undefined,
             })
         ).not.toThrow();
     });
@@ -143,6 +176,7 @@ describe('resolveTrackerProgramMetadata', () => {
                     },
                 ],
             },
+            constants: undefined,
         });
 
         expect(result.programRuleVariables).toHaveLength(2);

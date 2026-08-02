@@ -1,10 +1,20 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMemo, useRef } from 'react';
 import { Resolver, useForm, type UseFormReturn } from 'react-hook-form';
-import type { EventProgramMetadata } from '@dhis2-form-utils/metadata';
+import type { EventProgramMetadata, TrackerProgramMetadata } from '@dhis2-form-utils/metadata';
 import { buildSchema, selectProgramStage } from '@dhis2-form-utils/metadata';
-import type { BuiltRuleEngine, EffectHandlersMap } from '@dhis2-form-utils/rules';
-import { buildRuleEngine, buildRuleEngineContext } from '@dhis2-form-utils/rules';
+import type {
+    BuiltRuleEngine,
+    EffectHandlersMap,
+    RuleEventInput,
+    RuleSupplementaryDataInput,
+} from '@dhis2-form-utils/rules';
+import {
+    buildRuleEngine,
+    buildRuleEngineContext,
+    toRuleEnrollment,
+    toRuleEventFromInput,
+} from '@dhis2-form-utils/rules';
 import { FormStore } from './formStore';
 
 export type DefaultFormValue = Record<string, string>;
@@ -13,6 +23,9 @@ export type UseEventFormOptions = {
     programStageId: string;
     metadata: EventProgramMetadata;
     effectHandlers?: EffectHandlersMap;
+    enrollment?: { metadata: TrackerProgramMetadata; values: Record<string, unknown> };
+    events?: RuleEventInput[];
+    supplementaryData?: RuleSupplementaryDataInput;
 };
 
 export type UseEventFormReturn<FormValue extends DefaultFormValue = DefaultFormValue> = {
@@ -27,6 +40,9 @@ export function useEventForm<FormValue extends DefaultFormValue = DefaultFormVal
     options: UseEventFormOptions;
     formOptions?: Omit<Parameters<typeof useForm<FormValue>>[0], 'resolver'>;
 }): UseEventFormReturn<FormValue> {
+    // Reference-equality memoization only (no deep equality) — callers must keep
+    // metadata / enrollment / events / supplementaryData stable across renders to
+    // avoid unnecessary formStore.reinit churn.
     const metadata = useMemo(() => options.metadata, [options.metadata]);
     const programStageId = options.programStageId;
     const stageMetadata = useMemo(
@@ -54,10 +70,26 @@ export function useEventForm<FormValue extends DefaultFormValue = DefaultFormVal
                 programRules: metadata.programRules,
                 programRuleVariables: metadata.programRuleVariables,
                 programStageId,
+                constants: metadata.constants,
+                supplementaryData: options.supplementaryData,
             }),
-        [metadata, programStageId, resolvedStageMetadata]
+        [metadata, programStageId, resolvedStageMetadata, options.supplementaryData]
     );
-    const ruleEngine = useMemo(() => buildRuleEngine(ruleEngineContext), [ruleEngineContext]);
+
+    const enrollmentContext = useMemo(
+        () => ({
+            enrollment: options.enrollment
+                ? toRuleEnrollment(options.enrollment.metadata, options.enrollment.values)
+                : null,
+            events: (options.events ?? []).map(toRuleEventFromInput),
+        }),
+        [options.enrollment, options.events]
+    );
+
+    const ruleEngine = useMemo(
+        () => buildRuleEngine(ruleEngineContext, enrollmentContext),
+        [ruleEngineContext, enrollmentContext]
+    );
     const formStore = useMemo(() => new FormStore(), []);
 
     const effectHandlersRef = useRef(options.effectHandlers);

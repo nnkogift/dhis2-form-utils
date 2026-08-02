@@ -7,9 +7,9 @@ import {
     RuleEngineJs,
     RuleEnrollmentJs,
     RuleEnrollmentStatus,
+    RuleEventJs,
     RuleJs,
     RuleLocalDate,
-    RuleSupplementaryDataJs,
     RuleVariableJs,
     RuleVariableType,
 } from '@dhis2/rule-engine';
@@ -19,7 +19,8 @@ import {
     type ProgramRuleAction,
     type TrackerProgramMetadata,
 } from '@dhis2-form-utils/metadata';
-import type { BuiltRuleEngine } from './context';
+import type { BuiltRuleEngine, RuleSupplementaryDataInput } from './context';
+import { toRuleSupplementaryData } from './context';
 import type { RuleEffect } from './evaluate';
 import { ruleValueTypeFromDhis2 } from './ruleValueType';
 
@@ -121,7 +122,10 @@ const toEnrollmentRuleVariable = (
     );
 };
 
-const toEnrollmentContext = (metadata: TrackerProgramMetadata): RuleEngineContextJs | null => {
+const toEnrollmentContext = (
+    metadata: TrackerProgramMetadata,
+    supplementaryData?: RuleSupplementaryDataInput
+): RuleEngineContextJs | null => {
     const enrollmentRules = metadata.programRules.filter((rule) => !rule.programStage?.id);
     if (!enrollmentRules.length) {
         return null;
@@ -133,11 +137,15 @@ const toEnrollmentContext = (metadata: TrackerProgramMetadata): RuleEngineContex
         )
         .map(toEnrollmentRuleVariable);
 
+    const constantsMap = new Map(
+        metadata.constants.flatMap((c) => (c.id ? [[c.id, String(c.value)] as const] : []))
+    );
+
     return new RuleEngineContextJs(
         enrollmentRules.map(toEnrollmentRule),
         ruleVariables,
-        new RuleSupplementaryDataJs([], [], new Map<string, string[]>()),
-        new Map<string, string>()
+        toRuleSupplementaryData(supplementaryData),
+        constantsMap
     );
 };
 
@@ -148,7 +156,7 @@ const teaUidsFromMetadata = (metadata: TrackerProgramMetadata): Set<string> =>
             .filter((id): id is string => Boolean(id))
     );
 
-const toRuleEnrollment = (
+export const toRuleEnrollment = (
     metadata: TrackerProgramMetadata,
     currentValues: Record<string, unknown>
 ): RuleEnrollmentJs => {
@@ -199,16 +207,20 @@ const normalizeEffect = (effect: RuleEffectJs): RuleEffect => {
 };
 
 export function buildEnrollmentRuleEngineContext(
-    metadata: TrackerProgramMetadata
+    metadata: TrackerProgramMetadata,
+    supplementaryData?: RuleSupplementaryDataInput
 ): EnrollmentRuleEngineContext {
     return {
         metadata,
-        context: toEnrollmentContext(metadata),
+        context: toEnrollmentContext(metadata, supplementaryData),
         engine: new RuleEngineJs(),
     };
 }
 
-export function buildEnrollmentRuleEngine(context: EnrollmentRuleEngineContext): BuiltRuleEngine {
+export function buildEnrollmentRuleEngine(
+    context: EnrollmentRuleEngineContext,
+    ruleEvents: RuleEventJs[] = []
+): BuiltRuleEngine {
     return {
         evaluate(currentValues) {
             if (!context.context) {
@@ -216,7 +228,11 @@ export function buildEnrollmentRuleEngine(context: EnrollmentRuleEngineContext):
             }
 
             const enrollment = toRuleEnrollment(context.metadata, currentValues);
-            const effects = context.engine.evaluateEnrollment(enrollment, [], context.context);
+            const effects = context.engine.evaluateEnrollment(
+                enrollment,
+                ruleEvents,
+                context.context
+            );
 
             return effects.map(normalizeEffect);
         },

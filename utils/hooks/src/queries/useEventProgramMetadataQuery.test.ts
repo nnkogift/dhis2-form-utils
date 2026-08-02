@@ -62,6 +62,7 @@ describe('useEventProgramMetadataQuery', () => {
             programStages: [],
             programRules: [],
             programRuleVariables: [],
+            constants: [],
         });
     });
 

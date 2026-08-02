@@ -1,4 +1,5 @@
 import {
+    CONSTANT_FIELDS as CONSTANT_FIELD_LIST,
     PROGRAM_RULE_FIELDS as PROGRAM_RULE_FIELD_LIST,
     PROGRAM_RULE_VARIABLE_FIELDS as PROGRAM_RULE_VARIABLE_FIELD_LIST,
     PROGRAM_STAGE_CORE_FIELDS,
@@ -81,6 +82,12 @@ export const PROGRAM_RULE_FIELDS: string = [
  * `useTrackerForm` (TEI_ATTRIBUTE / CALCULATED_VALUE sources).
  */
 export const PROGRAM_RULE_VARIABLE_FIELDS: string = PROGRAM_RULE_VARIABLE_FIELD_LIST.join(',');
+
+/**
+ * `constants` resource fields — global (non-program-scoped) top-level resource used by
+ * program rules via `C{uid}`. Shared by event and tracker queries.
+ */
+export const CONSTANT_FIELDS: string = CONSTANT_FIELD_LIST.join(',');
 
 /** Appends extra field selectors to a base `fields=` query string, for query composition. */
 export const withExtraFields = (base: string, extra?: string[]): string =>

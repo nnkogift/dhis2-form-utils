@@ -1,16 +1,24 @@
-import type { ProgramRule, ProgramRuleAction, ProgramRuleVariable } from '../types';
+import type {
+    ProgramConstant,
+    ProgramRule,
+    ProgramRuleAction,
+    ProgramRuleVariable,
+} from '../types';
 import type {
     ExpandedProgramRule,
     ExpandedProgramRuleAction,
     TrackerProgramMetadata,
 } from '../trackerTypes';
 
-type RawProgram = Partial<Omit<TrackerProgramMetadata, 'programRules' | 'programRuleVariables'>>;
+type RawProgram = Partial<
+    Omit<TrackerProgramMetadata, 'programRules' | 'programRuleVariables' | 'constants'>
+>;
 
 export type RawTrackerConfigResult = {
     program: RawProgram | undefined;
     programRules: { programRules?: ProgramRule[] } | undefined;
     programRuleVariables: { programRuleVariables?: ProgramRuleVariable[] } | undefined;
+    constants: { constants?: ProgramConstant[] } | undefined;
 };
 
 const toExpandedAction = (action: ProgramRuleAction): ExpandedProgramRuleAction => ({
@@ -35,7 +43,8 @@ const toExpandedRule = (rule: ProgramRule): ExpandedProgramRule => ({
 
 /**
  * Resolves the raw `trackerConfigQuery` result into `TrackerProgramMetadata`.
- * Pure and non-throwing — `programRules: []` / `programRuleVariables: []` are valid outputs.
+ * Pure and non-throwing — `programRules: []` / `programRuleVariables: []` / `constants: []`
+ * are valid outputs.
  *
  * Does not filter to enrollment-only rules/variables (no `programStage === null` filtering, no
  * `TEI_ATTRIBUTE`-only filtering) — that scoping belongs to `buildEnrollmentRuleEngineContext`
@@ -59,6 +68,7 @@ export function resolveTrackerProgramMetadata(raw: RawTrackerConfigResult): Trac
         ),
         programRules: (raw.programRules?.programRules ?? []).map(toExpandedRule),
         programRuleVariables: raw.programRuleVariables?.programRuleVariables ?? [],
+        constants: raw.constants?.constants ?? [],
         programSections: program?.programSections,
     };
 }

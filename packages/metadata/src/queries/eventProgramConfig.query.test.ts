@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { eventProgramConfigQuery } from './eventProgramConfig.query';
 import {
+    CONSTANT_FIELDS,
     EVENT_PROGRAM_FIELDS,
     PROGRAM_RULE_FIELDS,
     PROGRAM_RULE_VARIABLE_FIELDS,
@@ -54,5 +55,13 @@ describe('eventProgramConfigQuery', () => {
             filter: 'program.id:eq:program1',
             paging: false,
         });
+    });
+
+    it('fetches constants as a global resource with no program filter', () => {
+        const constants = eventProgramConfigQuery.constants;
+
+        expect(constants.resource).toBe('constants');
+        expect(constants.params).toEqual({ fields: CONSTANT_FIELDS, paging: false });
+        expect(constants.params).not.toHaveProperty('filter');
     });
 });

@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { trackerConfigQuery } from './trackerConfig.query';
 import {
+    CONSTANT_FIELDS,
     PROGRAM_RULE_FIELDS,
     PROGRAM_RULE_VARIABLE_FIELDS,
     PROGRAM_TEA_FIELDS,
@@ -54,5 +55,13 @@ describe('trackerConfigQuery', () => {
             filter: 'program.id:eq:program1',
             paging: false,
         });
+    });
+
+    it('fetches constants as a global resource with no program filter', () => {
+        const constants = trackerConfigQuery.constants;
+
+        expect(constants.resource).toBe('constants');
+        expect(constants.params).toEqual({ fields: CONSTANT_FIELDS, paging: false });
+        expect(constants.params).not.toHaveProperty('filter');
     });
 });

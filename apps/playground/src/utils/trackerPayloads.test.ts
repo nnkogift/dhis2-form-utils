@@ -75,6 +75,7 @@ describe('trackerPayloads', () => {
             ],
             programRules: [],
             programRuleVariables: [],
+            constants: [],
             programSections: [],
         }
 

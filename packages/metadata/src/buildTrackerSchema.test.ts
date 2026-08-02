@@ -12,6 +12,7 @@ const baseMetadata = (): TrackerProgramMetadata => ({
     programTrackedEntityAttributes: [],
     programRules: [],
     programRuleVariables: [],
+    constants: [],
 });
 
 describe('buildTrackerSchema', () => {

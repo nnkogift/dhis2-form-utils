@@ -19,6 +19,7 @@ import {
 import {
     ProgramRuleActionType,
     ProgramRuleVariableSourceType,
+    type ProgramConstant,
     type ProgramRule,
     type ProgramRuleAction,
     type ProgramRuleVariable,
@@ -33,6 +34,38 @@ const DEFAULT_ORG_UNIT = 'UNKNOWN_ORG_UNIT';
 export type EnrollmentContext = {
     enrollment?: RuleEnrollmentJs | null;
     events?: RuleEventJs[];
+};
+
+export type RuleSupplementaryDataInput = {
+    userGroups?: string[];
+    userRoles?: string[];
+    orgUnitGroups?: Record<string, string[]>;
+};
+
+export type RuleEventStatusInput =
+    | 'ACTIVE'
+    | 'COMPLETED'
+    | 'SCHEDULE'
+    | 'SKIPPED'
+    | 'VISITED'
+    | 'OVERDUE';
+
+export type RuleEventInput = {
+    event: string;
+    programStage: string;
+    /** Caller supplies directly — avoids a metadata lookup in the converter. */
+    programStageName?: string;
+    /** Defaults to 'ACTIVE'. */
+    status?: RuleEventStatusInput;
+    eventDate?: string | null;
+    dueDate?: string | null;
+    completedDate?: string | null;
+    /** ISO instant string; defaults to RuleInstant.now(). */
+    createdDate?: string;
+    createdAtClientDate?: string | null;
+    orgUnit?: string;
+    orgUnitCode?: string | null;
+    dataValues?: Record<string, unknown>;
 };
 
 export type RuleEngineContext = {
@@ -140,17 +173,23 @@ const toRuleVariable = (variable: ProgramRuleVariable): RuleVariableJs =>
 
 const toContext = (
     programRules: ProgramRule[],
-    programRuleVariables: ProgramRuleVariable[]
+    programRuleVariables: ProgramRuleVariable[],
+    constants: ProgramConstant[] = [],
+    supplementaryData?: RuleSupplementaryDataInput
 ): RuleEngineContextJs | null => {
     if (!programRules.length) {
         return null;
     }
 
+    const constantsMap = new Map(
+        constants.flatMap((c) => (c.id ? [[c.id, String(c.value)] as const] : []))
+    );
+
     return new RuleEngineContextJs(
         programRules.map(toRule),
         programRuleVariables.map(toRuleVariable),
-        new RuleSupplementaryDataJs([], [], new Map<string, string[]>()),
-        new Map<string, string>()
+        toRuleSupplementaryData(supplementaryData),
+        constantsMap
     );
 };
 
@@ -159,6 +198,8 @@ export type BuildRuleEngineContextOptions = {
     programRules: ProgramRule[];
     programRuleVariables: ProgramRuleVariable[];
     programStageId: string;
+    constants?: ProgramConstant[];
+    supplementaryData?: RuleSupplementaryDataInput;
 };
 
 const filterEventRules = (rules: ProgramRule[], programStageId: string): ProgramRule[] =>
@@ -195,6 +236,60 @@ const toRuleDate = (value: unknown): RuleLocalDate | null => {
         return null;
     }
 };
+
+const EVENT_STATUS_MAP: Record<RuleEventStatusInput, RuleEventStatus> = {
+    ACTIVE: RuleEventStatus.ACTIVE,
+    COMPLETED: RuleEventStatus.COMPLETED,
+    SCHEDULE: RuleEventStatus.SCHEDULE,
+    SKIPPED: RuleEventStatus.SKIPPED,
+    VISITED: RuleEventStatus.VISITED,
+    OVERDUE: RuleEventStatus.OVERDUE,
+};
+
+const toRuleInstant = (value: string | undefined): RuleInstant => {
+    if (!value) return RuleInstant.now();
+    try {
+        return RuleInstant.parse(value);
+    } catch {
+        return RuleInstant.now();
+    }
+};
+
+const toNullableRuleInstant = (value: string | null | undefined): RuleInstant | null => {
+    if (!value) return null;
+    try {
+        return RuleInstant.parse(value);
+    } catch {
+        return null;
+    }
+};
+
+export const toRuleSupplementaryData = (
+    input?: RuleSupplementaryDataInput
+): RuleSupplementaryDataJs =>
+    new RuleSupplementaryDataJs(
+        input?.userGroups ?? [],
+        input?.userRoles ?? [],
+        new Map(Object.entries(input?.orgUnitGroups ?? {}))
+    );
+
+export const toRuleEventFromInput = (input: RuleEventInput): RuleEventJs =>
+    new RuleEventJs(
+        input.event,
+        input.programStage,
+        input.programStageName ?? '',
+        EVENT_STATUS_MAP[input.status ?? 'ACTIVE'],
+        toRuleDate(input.eventDate ?? null),
+        toRuleInstant(input.createdDate),
+        toNullableRuleInstant(input.createdAtClientDate),
+        toRuleDate(input.dueDate ?? null),
+        toRuleDate(input.completedDate ?? null),
+        input.orgUnit ?? DEFAULT_ORG_UNIT,
+        input.orgUnitCode ?? null,
+        Object.entries(input.dataValues ?? {})
+            .map(([key, value]) => toRuleDataValue(key, value))
+            .filter((value): value is RuleDataValue => value !== null)
+    );
 
 const toRuleEvent = (
     metadata: ProgramStageMetadata,
@@ -243,7 +338,12 @@ export function buildRuleEngineContext(options: BuildRuleEngineContextOptions): 
 
     return {
         metadata: options.stageMetadata,
-        context: toContext(eventRules, eventVariables),
+        context: toContext(
+            eventRules,
+            eventVariables,
+            options.constants,
+            options.supplementaryData
+        ),
         engine: new RuleEngineJs(),
     };
 }

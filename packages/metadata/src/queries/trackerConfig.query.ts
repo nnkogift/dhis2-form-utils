@@ -1,5 +1,6 @@
 import type { Query, QueryVariables } from '@dhis2/data-engine';
 import {
+    CONSTANT_FIELDS,
     PROGRAM_RULE_FIELDS,
     PROGRAM_RULE_VARIABLE_FIELDS,
     PROGRAM_TEA_FIELDS,
@@ -8,7 +9,8 @@ import {
 /**
  * Static query for `useTrackerForm` metadata — the program (header + tracked entity attributes),
  * plus program rules and program rule variables as independent top-level resources filtered by
- * `program.id`. See ARCHITECTURE.md › Data Fetching.
+ * `program.id`. Constants are a global (non-program-scoped) resource. See ARCHITECTURE.md ›
+ * Data Fetching.
  */
 export const trackerConfigQuery: Query = {
     program: {
@@ -33,5 +35,9 @@ export const trackerConfigQuery: Query = {
             filter: `program.id:eq:${variables.programId as string}`,
             paging: false,
         }),
+    },
+    constants: {
+        resource: 'constants',
+        params: { fields: CONSTANT_FIELDS, paging: false },
     },
 };

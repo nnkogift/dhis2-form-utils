@@ -3,6 +3,7 @@ export type { ValueType, ValueTypeRenderingType } from '@dhis2/api-types/v43';
 export type {
     DataElementRef,
     EventProgramMetadata,
+    ProgramConstant,
     ProgramRule,
     ProgramRuleAction,
     ProgramRuleVariable,
@@ -34,6 +35,7 @@ export {
 export { buildSchema } from './buildSchema';
 export { buildTrackerSchema } from './buildTrackerSchema';
 export {
+    CONSTANT_FIELDS,
     EVENT_PROGRAM_FIELDS,
     PROGRAM_RULE_FIELDS,
     PROGRAM_RULE_VARIABLE_FIELDS,

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+    CONSTANT_FIELDS,
     EVENT_PROGRAM_FIELDS,
     PROGRAM_RULE_FIELDS,
     PROGRAM_RULE_VARIABLE_FIELDS,
@@ -53,5 +54,9 @@ describe('field constants', () => {
         expect(PROGRAM_RULE_VARIABLE_FIELDS).toBe(
             'id,name,valueType,useCodeForOptionSet,programRuleVariableSourceType,programStage[id,displayName],dataElement[id,displayName,valueType,optionSet[id,options[id,code,displayName]]],trackedEntityAttribute[id,displayName,valueType]'
         );
+    });
+
+    it('CONSTANT_FIELDS matches the expected fixture string', () => {
+        expect(CONSTANT_FIELDS).toBe('id,value');
     });
 });
