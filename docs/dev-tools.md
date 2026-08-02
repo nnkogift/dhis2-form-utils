@@ -101,7 +101,7 @@ apps/playground
 @dhis2-form-utils/hooks       (needs only FormStore + RuleTraceEntry types)
 ```
 
-`devtools` depends on `hooks` for types only — no dependency on `@dhis2-form-utils/metadata` or `@dhis2/api-types`.
+`devtools` uses runtime hooks from `hooks` and imports shared form types. It has no dependency on `@dhis2-form-utils/metadata` or `@dhis2/api-types`.
 
 ```ts
 // devtools/src/attach.ts
@@ -171,8 +171,8 @@ function RulesPanel({ metadata }: RulesPanelProps) {
     const traceStore = useRuleTraceStore(); // from RuleDevtoolsScope
     const labelLookup = useMemo(() => createLabelLookup(metadata), [metadata]);
 
-    // reads traceStore for the rules/trace/graph tabs, and formStore (via useFieldState /
-    // useSectionState / useFormFeedback) to annotate graph nodes with current values
+    // reads traceStore for the rules/trace/graph tabs, subscribes to formStore.fieldStore,
+    // and reads form.getValues() to annotate graph nodes with current values
 }
 ```
 
