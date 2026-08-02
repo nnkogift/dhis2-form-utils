@@ -10,21 +10,56 @@ describe('FormStore', () => {
         vi.useRealTimers();
     });
 
-    it('skips debounced re-evaluation triggered by ASSIGN setValue', () => {
+    it('applies an ASSIGN effect from the initial evaluation via form.setValue', () => {
+        const engine = {
+            evaluate: () => [
+                {
+                    ruleId: 'rule-assign',
+                    ruleActionType: ProgramRuleActionType.ASSIGN,
+                    dataElement: 'field-a',
+                    data: 'assigned',
+                },
+            ],
+        };
+
+        const setValue = vi.fn();
+        const form = {
+            getValues: () => ({ 'field-a': '' }),
+            setValue,
+            subscribe: vi.fn(() => vi.fn()),
+        } as unknown as UseFormReturn<Record<string, unknown>>;
+
+        const store = new FormStore();
+        store.init(form, engine, createRef());
+
+        expect(setValue).toHaveBeenCalledWith(
+            'field-a',
+            'assigned',
+            expect.objectContaining({ shouldDirty: false })
+        );
+    });
+
+    it('does not swallow a real user edit that follows an initial-load ASSIGN', () => {
         vi.useFakeTimers();
 
         let evaluateCount = 0;
+        const values: Record<string, unknown> = { 'field-a': '', 'field-b': '' };
         const engine = {
             evaluate: () => {
                 evaluateCount += 1;
-                return [
-                    {
-                        ruleId: 'rule-assign',
-                        ruleActionType: ProgramRuleActionType.ASSIGN,
-                        dataElement: 'field-a',
-                        data: 'assigned',
-                    },
-                ];
+                // Only assigns once: after the first pass field-a already holds 'assigned',
+                // so the dedup in applyAssignments naturally stops further setValue calls.
+                if (values['field-a'] === '') {
+                    return [
+                        {
+                            ruleId: 'rule-assign',
+                            ruleActionType: ProgramRuleActionType.ASSIGN,
+                            dataElement: 'field-a',
+                            data: 'assigned',
+                        },
+                    ];
+                }
+                return [];
             },
         };
 
@@ -32,9 +67,10 @@ describe('FormStore', () => {
             | ((arg: { name?: string; values?: Record<string, unknown> }) => void)
             | undefined;
         const form = {
-            getValues: () => ({ 'field-a': '' }),
-            setValue: vi.fn(() => {
-                notify?.({ name: 'field-a', values: { 'field-a': 'assigned' } });
+            getValues: () => values,
+            setValue: vi.fn((name: string, value: unknown) => {
+                values[name] = value;
+                notify?.({ name, values });
             }),
             subscribe: ({
                 callback,
@@ -49,11 +85,17 @@ describe('FormStore', () => {
         const store = new FormStore();
         store.init(form, engine, createRef());
 
+        // init() -> evaluate([]) assigns field-a, which echoes back through
+        // form.setValue -> subscribe callback -> a debounced evaluate is scheduled.
         const countAfterInit = evaluateCount;
+
+        // A genuine user edit to a different field, landing after init.
+        notify?.({ name: 'field-b', values });
         vi.advanceTimersByTime(50);
 
         expect(countAfterInit).toBe(1);
-        expect(evaluateCount).toBe(1);
+        // The echo-triggered cycle and the real edit both ran the engine -- neither was dropped.
+        expect(evaluateCount).toBe(2);
     });
 
     it('does not recreate subscription when effectHandlers ref is unchanged', () => {
