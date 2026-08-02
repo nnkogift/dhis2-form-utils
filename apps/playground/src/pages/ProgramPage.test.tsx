@@ -5,6 +5,7 @@ import { useEventProgramMetadataQuery } from '@dhis2-form-utils/hooks'
 import { ProgramStageFormScreen } from '@/components/programs/forms/ProgramStageFormScreen'
 import { TrackerProgramShell } from '@/components/programs/forms/TrackerProgramShell'
 import { useAccessibleOrgUnits } from '@/hooks/useAccessibleOrgUnits'
+import { useCurrentUserSupplementaryData } from '@/hooks/useCurrentUserSupplementaryData'
 import { ProgramPage } from './ProgramPage'
 
 jest.mock('@dhis2-form-utils/hooks', () => ({
@@ -23,6 +24,13 @@ const mockedUseEventProgramMetadataQuery = jest.mocked(
     useEventProgramMetadataQuery
 )
 const mockedUseAccessibleOrgUnits = jest.mocked(useAccessibleOrgUnits)
+const mockedUseCurrentUserSupplementaryData = jest.mocked(
+    useCurrentUserSupplementaryData
+)
+const SENTINEL_SUPPLEMENTARY_DATA = {
+    userGroups: ['UserGroup1'],
+    userRoles: ['UserRole1'],
+}
 
 function renderPage() {
     return render(
@@ -46,6 +54,9 @@ describe('ProgramPage', () => {
             refetch: jest.fn(),
             engine: {} as never,
         })
+        mockedUseCurrentUserSupplementaryData.mockReturnValue(
+            SENTINEL_SUPPLEMENTARY_DATA
+        )
     })
 
     afterEach(() => {
@@ -79,6 +90,8 @@ describe('ProgramPage', () => {
 
         expect(view.getByText('Event form screen')).toBeTruthy()
         expect(ProgramStageFormScreen).toHaveBeenCalled()
+        const [props] = jest.mocked(ProgramStageFormScreen).mock.calls[0]
+        expect(props.supplementaryData).toEqual(SENTINEL_SUPPLEMENTARY_DATA)
     })
 
     it('renders the registration flow for tracker programs', () => {
@@ -108,6 +121,8 @@ describe('ProgramPage', () => {
 
         expect(view.getByText('Registration form screen')).toBeTruthy()
         expect(TrackerProgramShell).toHaveBeenCalled()
+        const [props] = jest.mocked(TrackerProgramShell).mock.calls[0]
+        expect(props.supplementaryData).toEqual(SENTINEL_SUPPLEMENTARY_DATA)
     })
 
     it('shows a notice when no organisation units are available', () => {
