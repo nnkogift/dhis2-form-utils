@@ -3,10 +3,16 @@ import { useMemo, useRef } from 'react';
 import { Resolver, useForm, type UseFormReturn } from 'react-hook-form';
 import type { TrackerProgramMetadata } from '@dhis2-form-utils/metadata';
 import { buildTrackerSchema } from '@dhis2-form-utils/metadata';
-import type { BuiltRuleEngine, EffectHandlersMap } from '@dhis2-form-utils/rules';
+import type {
+    BuiltRuleEngine,
+    EffectHandlersMap,
+    RuleEventInput,
+    RuleSupplementaryDataInput,
+} from '@dhis2-form-utils/rules';
 import {
     buildEnrollmentRuleEngine,
     buildEnrollmentRuleEngineContext,
+    toRuleEventFromInput,
 } from '@dhis2-form-utils/rules';
 import { FormStore } from './formStore';
 
@@ -16,6 +22,8 @@ export type UseTrackerFormOptions = {
     programId: string;
     metadata: TrackerProgramMetadata;
     effectHandlers?: EffectHandlersMap;
+    events?: RuleEventInput[];
+    supplementaryData?: RuleSupplementaryDataInput;
 };
 
 export type UseTrackerFormReturn<FormValue extends DefaultFormValue = DefaultFormValue> = {
@@ -30,6 +38,9 @@ export function useTrackerForm<FormValue extends DefaultFormValue = DefaultFormV
     options: UseTrackerFormOptions;
     formOptions?: Omit<Parameters<typeof useForm<FormValue>>[0], 'resolver'>;
 }): UseTrackerFormReturn<FormValue> {
+    // Reference-equality memoization only (no deep equality) — callers must keep
+    // metadata / events / supplementaryData stable across renders to avoid
+    // unnecessary formStore.reinit churn.
     const metadata = useMemo(() => options.metadata, [options.metadata]);
     const schema = useMemo(() => buildTrackerSchema(metadata), [metadata]);
     const form = useForm<FormValue>({
@@ -37,10 +48,17 @@ export function useTrackerForm<FormValue extends DefaultFormValue = DefaultFormV
         resolver: zodResolver(schema) as unknown as Resolver<FormValue>,
     });
 
-    const ruleEngineContext = useMemo(() => buildEnrollmentRuleEngineContext(metadata), [metadata]);
+    const ruleEngineContext = useMemo(
+        () => buildEnrollmentRuleEngineContext(metadata, options.supplementaryData),
+        [metadata, options.supplementaryData]
+    );
+    const ruleEvents = useMemo(
+        () => (options.events ?? []).map(toRuleEventFromInput),
+        [options.events]
+    );
     const ruleEngine = useMemo(
-        () => buildEnrollmentRuleEngine(ruleEngineContext),
-        [ruleEngineContext]
+        () => buildEnrollmentRuleEngine(ruleEngineContext, ruleEvents),
+        [ruleEngineContext, ruleEvents]
     );
     const formStore = useMemo(() => new FormStore(), []);
 

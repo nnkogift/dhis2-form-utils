@@ -1,6 +1,7 @@
 export type {
     DataElementRef,
     EventProgramMetadata,
+    ProgramConstant,
     ProgramRule,
     ProgramRuleAction,
     ProgramRuleVariable,

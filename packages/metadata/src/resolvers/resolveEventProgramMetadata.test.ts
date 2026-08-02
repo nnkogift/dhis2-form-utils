@@ -39,6 +39,9 @@ describe('resolveEventProgramMetadata', () => {
                     },
                 ],
             },
+            constants: {
+                constants: [{ id: 'const1', value: 10 }],
+            },
         });
 
         expect(result).toEqual({
@@ -71,6 +74,7 @@ describe('resolveEventProgramMetadata', () => {
                     valueType: 'TEXT',
                 },
             ],
+            constants: [{ id: 'const1', value: 10 }],
         });
     });
 
@@ -84,10 +88,40 @@ describe('resolveEventProgramMetadata', () => {
             },
             programRules: { programRules: [] },
             programRuleVariables: { programRuleVariables: [] },
+            constants: { constants: [] },
         });
 
         expect(result.programRules).toEqual([]);
         expect(result.programRuleVariables).toEqual([]);
+        expect(result.constants).toEqual([]);
+    });
+
+    it('defaults constants to [] when absent and passes through when present', () => {
+        const withoutConstants = resolveEventProgramMetadata({
+            program: {
+                id: 'program1',
+                displayName: 'Program One',
+                programType: 'WITHOUT_REGISTRATION',
+                programStages: [],
+            },
+            programRules: { programRules: [] },
+            programRuleVariables: { programRuleVariables: [] },
+            constants: undefined,
+        });
+        expect(withoutConstants.constants).toEqual([]);
+
+        const withConstants = resolveEventProgramMetadata({
+            program: {
+                id: 'program1',
+                displayName: 'Program One',
+                programType: 'WITHOUT_REGISTRATION',
+                programStages: [],
+            },
+            programRules: { programRules: [] },
+            programRuleVariables: { programRuleVariables: [] },
+            constants: { constants: [{ id: 'c1', value: 42 }] },
+        });
+        expect(withConstants.constants).toEqual([{ id: 'c1', value: 42 }]);
     });
 
     it('never throws — resolves defensively when nested resources are missing', () => {
@@ -96,6 +130,7 @@ describe('resolveEventProgramMetadata', () => {
                 program: undefined,
                 programRules: undefined,
                 programRuleVariables: undefined,
+                constants: undefined,
             })
         ).not.toThrow();
 
@@ -103,6 +138,7 @@ describe('resolveEventProgramMetadata', () => {
             program: undefined,
             programRules: undefined,
             programRuleVariables: undefined,
+            constants: undefined,
         });
 
         expect(result).toEqual({
@@ -114,6 +150,7 @@ describe('resolveEventProgramMetadata', () => {
             programStages: [],
             programRules: [],
             programRuleVariables: [],
+            constants: [],
         });
     });
 });

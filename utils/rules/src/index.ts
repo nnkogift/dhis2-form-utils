@@ -26,8 +26,20 @@ export type {
     RuleEngineContext,
     BuiltRuleEngine,
     BuildRuleEngineContextOptions,
+    RuleEventInput,
+    RuleEventStatusInput,
+    RuleSupplementaryDataInput,
 } from './context';
-export { buildRuleEngineContext, buildRuleEngine } from './context';
+export {
+    buildRuleEngineContext,
+    buildRuleEngine,
+    toRuleEventFromInput,
+    toRuleSupplementaryData,
+} from './context';
 export type { EnrollmentRuleEngineContext } from './enrollmentContext';
-export { buildEnrollmentRuleEngineContext, buildEnrollmentRuleEngine } from './enrollmentContext';
+export {
+    buildEnrollmentRuleEngineContext,
+    buildEnrollmentRuleEngine,
+    toRuleEnrollment,
+} from './enrollmentContext';
 export { filterPayload } from './filterPayload';

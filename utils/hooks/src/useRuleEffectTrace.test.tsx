@@ -68,6 +68,7 @@ function metadataWithRules(): TrackerProgramMetadata {
                 valueType: 'INTEGER',
             },
         ],
+        constants: [],
     };
 }
 

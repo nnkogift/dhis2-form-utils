@@ -1,4 +1,5 @@
 import type {
+    ConstantParams,
     DataElementParams,
     ProgramRuleActionParams,
     ProgramRuleParams,
@@ -196,6 +197,10 @@ export type ProgramTrackedEntityAttribute = PickWithFieldFilters<
     typeof PROGRAM_TRACKED_ENTITY_ATTRIBUTE_FIELDS
 >;
 
+/** Global DHIS2 constants used by program rules via `C{uid}`. */
+export const CONSTANT_FIELDS = ['id', 'value'] as const;
+export type ProgramConstant = PickWithFieldFilters<ConstantParams, typeof CONSTANT_FIELDS>;
+
 /** Program-level metadata for event forms — rules live on the program, not the stage. */
 export type EventProgramMetadata = {
     id: string;
@@ -206,6 +211,7 @@ export type EventProgramMetadata = {
     programStages: ProgramStageMetadata[];
     programRules: ProgramRule[];
     programRuleVariables: ProgramRuleVariable[];
+    constants: ProgramConstant[];
 };
 
 // Comma-joined query field strings (eventProgramQueryFields, trackerProgramQueryFields,

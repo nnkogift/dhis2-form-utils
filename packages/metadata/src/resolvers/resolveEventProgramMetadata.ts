@@ -1,17 +1,25 @@
-import type { EventProgramMetadata, ProgramRule, ProgramRuleVariable } from '../types';
+import type {
+    EventProgramMetadata,
+    ProgramConstant,
+    ProgramRule,
+    ProgramRuleVariable,
+} from '../types';
 
-type RawProgram = Partial<Omit<EventProgramMetadata, 'programRules' | 'programRuleVariables'>>;
+type RawProgram = Partial<
+    Omit<EventProgramMetadata, 'programRules' | 'programRuleVariables' | 'constants'>
+>;
 
 export type RawEventProgramConfigResult = {
     program: RawProgram | undefined;
     programRules: { programRules?: ProgramRule[] } | undefined;
     programRuleVariables: { programRuleVariables?: ProgramRuleVariable[] } | undefined;
+    constants: { constants?: ProgramConstant[] } | undefined;
 };
 
 /**
  * Resolves the raw `eventProgramConfigQuery` result into `EventProgramMetadata`.
- * Pure and non-throwing — `programRules: []` / `programRuleVariables: []` are valid outputs,
- * not error states.
+ * Pure and non-throwing — `programRules: []` / `programRuleVariables: []` / `constants: []`
+ * are valid outputs, not error states.
  */
 export function resolveEventProgramMetadata(
     raw: RawEventProgramConfigResult
@@ -27,5 +35,6 @@ export function resolveEventProgramMetadata(
         programStages: program?.programStages ?? [],
         programRules: raw.programRules?.programRules ?? [],
         programRuleVariables: raw.programRuleVariables?.programRuleVariables ?? [],
+        constants: raw.constants?.constants ?? [],
     };
 }

@@ -28,6 +28,7 @@ const baseMetadata = (): TrackerProgramMetadata => ({
     ],
     programRules: [],
     programRuleVariables: [],
+    constants: [],
 });
 
 describe('useTrackerForm', () => {
@@ -140,6 +141,128 @@ describe('useTrackerForm', () => {
             expect(
                 result.current.formStore.nonFieldStore.getFeedbackSnapshot()['feedback:Note'].value
             ).toBe('Registration active');
+        });
+    });
+
+    it('auto-derives constants from metadata.constants with no hook-level constants prop', async () => {
+        const constantUid = 'bCqvfPR02Im';
+        const metadata: TrackerProgramMetadata = {
+            ...baseMetadata(),
+            constants: [{ id: constantUid, value: 10 }],
+            programRules: [
+                {
+                    id: 'rule-const',
+                    condition: `C{${constantUid}} == 10`,
+                    priority: 1,
+                    name: 'Constant rule',
+                    programRuleActions: [
+                        {
+                            id: 'action-const',
+                            programRuleActionType: ProgramRuleActionType.SHOWWARNING,
+                            content: 'Constant matched',
+                            trackedEntityAttribute: { id: teaId },
+                        },
+                    ],
+                },
+            ],
+        };
+
+        const { result } = renderHook(() =>
+            useTrackerForm({ options: { programId: 'prog-1', metadata } })
+        );
+
+        result.current.form.setValue('orgUnit', 'abcdefghijk');
+        result.current.form.setValue('enrolledAt', '2024-01-01');
+
+        await waitFor(() => {
+            expect(result.current.formStore.fieldStore.getFieldSnapshot(teaId)?.warning).toBe(
+                'Constant matched'
+            );
+        });
+    });
+
+    it('resolves V{event_count} when events option is provided', async () => {
+        const metadata: TrackerProgramMetadata = {
+            ...baseMetadata(),
+            programRules: [
+                {
+                    id: 'rule-event-count',
+                    condition: 'V{event_count} >= 1',
+                    priority: 1,
+                    name: 'Event count rule',
+                    programRuleActions: [
+                        {
+                            id: 'action-count',
+                            programRuleActionType: ProgramRuleActionType.SHOWWARNING,
+                            content: 'Has events',
+                            trackedEntityAttribute: { id: teaId },
+                        },
+                    ],
+                },
+            ],
+        };
+
+        const events = [
+            {
+                event: 'sibling-1',
+                programStage: 'stage-1',
+                eventDate: '2024-01-01',
+                createdDate: '2024-01-01T00:00:00Z',
+                orgUnit: 'abcdefghijk',
+                dataValues: { age: 12 },
+            },
+        ];
+
+        const { result } = renderHook(() =>
+            useTrackerForm({ options: { programId: 'prog-1', metadata, events } })
+        );
+
+        result.current.form.setValue('orgUnit', 'abcdefghijk');
+        result.current.form.setValue('enrolledAt', '2024-01-01');
+
+        await waitFor(() => {
+            expect(result.current.formStore.fieldStore.getFieldSnapshot(teaId)?.warning).toBe(
+                'Has events'
+            );
+        });
+    });
+
+    it('fires d2:inUserGroup() rules when supplementaryData is provided', async () => {
+        const metadata: TrackerProgramMetadata = {
+            ...baseMetadata(),
+            programRules: [
+                {
+                    id: 'rule-ug',
+                    condition: "d2:inUserGroup('UG1xxxxxx01')",
+                    priority: 1,
+                    name: 'User group rule',
+                    programRuleActions: [
+                        {
+                            id: 'action-ug',
+                            programRuleActionType: ProgramRuleActionType.SHOWWARNING,
+                            content: 'In group',
+                            trackedEntityAttribute: { id: teaId },
+                        },
+                    ],
+                },
+            ],
+        };
+
+        const supplementaryData = { userGroups: ['UG1xxxxxx01'] };
+
+        const { result } = renderHook(() =>
+            useTrackerForm({
+                options: { programId: 'prog-1', metadata, supplementaryData },
+            })
+        );
+
+        result.current.form.setValue('orgUnit', 'abcdefghijk');
+        result.current.form.setValue('enrolledAt', '2024-01-01');
+
+        await waitFor(() => {
+            expect(result.current.formStore.fieldStore.getFieldSnapshot(teaId)?.warning).toBe(
+                'In group'
+            );
         });
     });
 });

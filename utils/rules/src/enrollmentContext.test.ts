@@ -4,6 +4,7 @@ import {
     type TrackerProgramMetadata,
 } from '@dhis2-form-utils/metadata';
 import { describe, expect, it } from 'vitest';
+import { toRuleEventFromInput } from './context';
 import { buildEnrollmentRuleEngine, buildEnrollmentRuleEngineContext } from './enrollmentContext';
 
 const teaId = 'tea-age';
@@ -27,6 +28,7 @@ const baseTrackerMetadata = (): TrackerProgramMetadata => ({
     ],
     programRules: [],
     programRuleVariables: [],
+    constants: [],
 });
 
 const metadataWithTeaRule = (): TrackerProgramMetadata => ({
@@ -238,5 +240,113 @@ describe('buildEnrollmentRuleEngineContext / buildEnrollmentRuleEngine', () => {
         expect(effects[0].ruleActionType).toBe(ProgramRuleActionType.ASSIGN);
         expect(effects[0].trackedEntityAttribute).toBe(riskScoreTeaId);
         expect(effects[0].data).toBe('30');
+    });
+
+    it('resolves C{constantUid} from metadata.constants', () => {
+        const constantUid = 'bCqvfPR02Im';
+        const metadata: TrackerProgramMetadata = {
+            ...baseTrackerMetadata(),
+            constants: [{ id: constantUid, value: 10 }],
+            programRules: [
+                {
+                    id: 'rule-const',
+                    condition: `C{${constantUid}} == 10`,
+                    priority: 1,
+                    name: 'Constant rule',
+                    programRuleActions: [
+                        {
+                            id: 'action-const',
+                            programRuleActionType: ProgramRuleActionType.SHOWWARNING,
+                            content: 'Constant matched',
+                            trackedEntityAttribute: { id: teaId },
+                        },
+                    ],
+                },
+            ],
+        };
+
+        const context = buildEnrollmentRuleEngineContext(metadata);
+        const engine = buildEnrollmentRuleEngine(context);
+        const effects = engine.evaluate({
+            orgUnit: 'abcdefghijk',
+            enrolledAt: '2024-01-01',
+        });
+
+        expect(effects).toHaveLength(1);
+        expect(effects[0].content).toBe('Constant matched');
+    });
+
+    it('fires a d2:inUserGroup()-gated enrollment rule when supplementaryData is passed', () => {
+        const metadata: TrackerProgramMetadata = {
+            ...baseTrackerMetadata(),
+            programRules: [
+                {
+                    id: 'rule-ug',
+                    condition: "d2:inUserGroup('UG1xxxxxx01')",
+                    priority: 1,
+                    name: 'User group rule',
+                    programRuleActions: [
+                        {
+                            id: 'action-ug',
+                            programRuleActionType: ProgramRuleActionType.SHOWWARNING,
+                            content: 'In group',
+                            trackedEntityAttribute: { id: teaId },
+                        },
+                    ],
+                },
+            ],
+        };
+
+        const context = buildEnrollmentRuleEngineContext(metadata, {
+            userGroups: ['UG1xxxxxx01'],
+        });
+        const engine = buildEnrollmentRuleEngine(context);
+        const effects = engine.evaluate({
+            orgUnit: 'abcdefghijk',
+            enrolledAt: '2024-01-01',
+        });
+
+        expect(effects).toHaveLength(1);
+        expect(effects[0].content).toBe('In group');
+    });
+
+    it('resolves V{event_count} when other events are passed to buildEnrollmentRuleEngine', () => {
+        const metadata: TrackerProgramMetadata = {
+            ...baseTrackerMetadata(),
+            programRules: [
+                {
+                    id: 'rule-event-count',
+                    condition: 'V{event_count} >= 1',
+                    priority: 1,
+                    name: 'Event count rule',
+                    programRuleActions: [
+                        {
+                            id: 'action-count',
+                            programRuleActionType: ProgramRuleActionType.SHOWWARNING,
+                            content: 'Has events',
+                            trackedEntityAttribute: { id: teaId },
+                        },
+                    ],
+                },
+            ],
+        };
+
+        const context = buildEnrollmentRuleEngineContext(metadata);
+        const sibling = toRuleEventFromInput({
+            event: 'sibling-1',
+            programStage: 'stage-1',
+            eventDate: '2024-01-01',
+            createdDate: '2024-01-01T00:00:00Z',
+            orgUnit: 'abcdefghijk',
+            dataValues: { age: 12 },
+        });
+        const engine = buildEnrollmentRuleEngine(context, [sibling]);
+        const effects = engine.evaluate({
+            orgUnit: 'abcdefghijk',
+            enrolledAt: '2024-01-01',
+        });
+
+        expect(effects).toHaveLength(1);
+        expect(effects[0].content).toBe('Has events');
     });
 });

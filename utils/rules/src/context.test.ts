@@ -6,7 +6,8 @@ import {
     type ProgramStageMetadata,
 } from '@dhis2-form-utils/metadata';
 import { describe, expect, it } from 'vitest';
-import { buildRuleEngine, buildRuleEngineContext } from './context';
+import { buildRuleEngine, buildRuleEngineContext, toRuleEventFromInput } from './context';
+import { toRuleEnrollment } from './enrollmentContext';
 
 const stageMetadata = {
     id: 'stage-1',
@@ -138,5 +139,181 @@ describe('buildRuleEngineContext / buildRuleEngine', () => {
         expect(effects[0].ruleActionType).toBe(ProgramRuleActionType.ASSIGN);
         expect(effects[0].dataElement).toBe('riskScore');
         expect(effects[0].data).toBe('30');
+    });
+
+    it('resolves C{constantUid} when constants are passed into the context', () => {
+        const constantUid = 'bCqvfPR02Im';
+        const context = buildRuleEngineContext({
+            stageMetadata,
+            programRules: [
+                {
+                    id: 'rule-const',
+                    condition: `C{${constantUid}} == 10`,
+                    priority: 1,
+                    programRuleActions: [
+                        {
+                            programRuleActionType: ProgramRuleActionType.SHOWWARNING,
+                            content: 'Constant matched',
+                            dataElement: {
+                                id: 'age',
+                                displayName: 'Age',
+                                valueType: 'INTEGER' as const,
+                            },
+                        },
+                    ],
+                },
+            ] as ProgramRule[],
+            programRuleVariables: [],
+            programStageId: 'stage-1',
+            constants: [{ id: constantUid, value: 10 }],
+        });
+        const engine = buildRuleEngine(context);
+
+        expect(engine.evaluate({})).toHaveLength(1);
+        expect(engine.evaluate({})[0].content).toBe('Constant matched');
+    });
+
+    it('fires a d2:inUserGroup()-gated rule when supplementaryData includes the group', () => {
+        const context = buildRuleEngineContext({
+            stageMetadata,
+            programRules: [
+                {
+                    id: 'rule-ug',
+                    condition: "d2:inUserGroup('UG1xxxxxx01')",
+                    priority: 1,
+                    programRuleActions: [
+                        {
+                            programRuleActionType: ProgramRuleActionType.SHOWWARNING,
+                            content: 'In group',
+                            dataElement: {
+                                id: 'age',
+                                displayName: 'Age',
+                                valueType: 'INTEGER' as const,
+                            },
+                        },
+                    ],
+                },
+            ] as ProgramRule[],
+            programRuleVariables: [],
+            programStageId: 'stage-1',
+            supplementaryData: { userGroups: ['UG1xxxxxx01'] },
+        });
+        const engine = buildRuleEngine(context);
+
+        expect(engine.evaluate({})).toHaveLength(1);
+        expect(engine.evaluate({})[0].content).toBe('In group');
+    });
+
+    it('resolves a TEI_ATTRIBUTE variable when enrollmentContext.enrollment is provided', () => {
+        const teaId = 'tea-sex';
+        const enrollmentMetadata = {
+            id: 'prog-1',
+            displayName: 'Tracker Program',
+            trackedEntityType: { id: 'te-type-1' },
+            displayIncidentDate: false,
+            selectEnrollmentDatesInFuture: true,
+            selectIncidentDatesInFuture: true,
+            programTrackedEntityAttributes: [
+                {
+                    mandatory: false,
+                    trackedEntityAttribute: {
+                        id: teaId,
+                        displayName: 'Sex',
+                        valueType: 'TEXT' as const,
+                    },
+                },
+            ],
+            programRules: [],
+            programRuleVariables: [],
+            constants: [],
+        };
+
+        const context = buildRuleEngineContext({
+            stageMetadata,
+            programRules: [
+                {
+                    id: 'rule-tei',
+                    condition: "#{sex} == 'F'",
+                    priority: 1,
+                    programRuleActions: [
+                        {
+                            programRuleActionType: ProgramRuleActionType.SHOWWARNING,
+                            content: 'Female TEI',
+                            dataElement: {
+                                id: 'age',
+                                displayName: 'Age',
+                                valueType: 'INTEGER' as const,
+                            },
+                        },
+                    ],
+                },
+            ] as ProgramRule[],
+            programRuleVariables: [
+                {
+                    id: 'var-sex',
+                    name: 'sex',
+                    trackedEntityAttribute: {
+                        id: teaId,
+                        displayName: 'Sex',
+                        valueType: 'TEXT' as const,
+                    },
+                    programRuleVariableSourceType: ProgramRuleVariableSourceType.TEI_ATTRIBUTE,
+                },
+            ] as ProgramRuleVariable[],
+            programStageId: 'stage-1',
+        });
+
+        const engine = buildRuleEngine(context, {
+            enrollment: toRuleEnrollment(enrollmentMetadata, {
+                orgUnit: 'abcdefghijk',
+                enrolledAt: '2024-01-01',
+                [teaId]: 'F',
+            }),
+            events: [],
+        });
+
+        expect(engine.evaluate({})).toHaveLength(1);
+        expect(engine.evaluate({})[0].content).toBe('Female TEI');
+    });
+
+    it('resolves V{event_count} from sibling events built via toRuleEventFromInput', () => {
+        const context = buildRuleEngineContext({
+            stageMetadata,
+            programRules: [
+                {
+                    id: 'rule-event-count',
+                    condition: 'V{event_count} >= 1',
+                    priority: 1,
+                    programRuleActions: [
+                        {
+                            programRuleActionType: ProgramRuleActionType.SHOWWARNING,
+                            content: 'Has sibling events',
+                            dataElement: {
+                                id: 'age',
+                                displayName: 'Age',
+                                valueType: 'INTEGER' as const,
+                            },
+                        },
+                    ],
+                },
+            ] as ProgramRule[],
+            programRuleVariables: [],
+            programStageId: 'stage-1',
+        });
+
+        const sibling = toRuleEventFromInput({
+            event: 'sibling-1',
+            programStage: 'stage-1',
+            programStageName: 'Stage 1',
+            eventDate: '2024-01-01',
+            createdDate: '2024-01-01T00:00:00Z',
+            orgUnit: 'abcdefghijk',
+            dataValues: { age: 12 },
+        });
+
+        const engine = buildRuleEngine(context, { events: [sibling] });
+
+        expect(engine.evaluate({})).toHaveLength(1);
+        expect(engine.evaluate({})[0].content).toBe('Has sibling events');
     });
 });

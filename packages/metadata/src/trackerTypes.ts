@@ -1,4 +1,5 @@
 import type { components } from '@dhis2/api-types/v43';
+import type { ProgramConstant } from './fieldFilters';
 
 type Schemas = components['schemas'];
 
@@ -82,6 +83,7 @@ export type TrackerProgramMetadata = {
             | 'useCodeForOptionSet'
         >
     >;
+    constants: ProgramConstant[];
     programSections?: Array<{
         id: string;
         displayName?: string;
