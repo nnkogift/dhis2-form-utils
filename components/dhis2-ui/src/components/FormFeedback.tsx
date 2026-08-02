@@ -13,12 +13,12 @@ function FeedbackPanel({ title, items }: { title: string; items: FeedbackItem[] 
             <h3 style={{ margin: '0 0 var(--spacers-dp8)' }}>{title}</h3>
             {items.map((item) => (
                 <NoticeBox key={`${item.location}:${item.content}`} title={item.content}>
-                    {item.type === 'keyValuePair' ? (
+                    {item.value ? (
                         <>
                             <strong>{item.content}</strong>: {item.value}
                         </>
                     ) : (
-                        item.value
+                        item.content
                     )}
                 </NoticeBox>
             ))}

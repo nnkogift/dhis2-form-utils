@@ -38,18 +38,8 @@ function FeedbackRow({
             </span>
             <div className="flex min-w-0 flex-col gap-0.5">
                 <span className="text-sm leading-snug text-dhis2-grey-900">
-                    {item.type === 'text' ? (
-                        <strong className="font-semibold">
-                            {item.content}
-                        </strong>
-                    ) : (
-                        <>
-                            <strong className="font-semibold">
-                                {item.content}:{' '}
-                            </strong>
-                            {item.value}
-                        </>
-                    )}
+                    <strong className="font-semibold">{item.content}</strong>
+                    {item.value ? <>: {item.value}</> : null}
                 </span>
                 <span className="text-xs text-dhis2-grey-600">
                     {ruleName

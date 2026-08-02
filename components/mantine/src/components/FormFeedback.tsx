@@ -13,16 +13,18 @@ function FeedbackPanel({ title, items }: { title: string; items: FeedbackItem[] 
             <Title order={5}>{title}</Title>
             {items.map((item) => (
                 <Alert key={`${item.location}:${item.content}`} title={item.content} color="blue">
-                    {item.type === 'keyValuePair' ? (
-                        <Text>
-                            <Text span fw={600}>
-                                {item.content}
-                            </Text>
-                            : {item.value}
-                        </Text>
-                    ) : (
-                        <Text>{item.value}</Text>
-                    )}
+                    <Text>
+                        {item.value ? (
+                            <>
+                                <Text span fw={600}>
+                                    {item.content}
+                                </Text>
+                                : {item.value}
+                            </>
+                        ) : (
+                            item.content
+                        )}
+                    </Text>
                 </Alert>
             ))}
         </Stack>
