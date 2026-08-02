@@ -110,4 +110,33 @@ describe('buildRuleEngineContext / buildRuleEngine', () => {
         const engine = buildRuleEngine(context);
         expect(engine.evaluate({ age: 15 })).toHaveLength(1);
     });
+
+    it('emits a real ASSIGN effect for a data element target via the official engine', () => {
+        const context = buildContext([
+            {
+                id: 'rule-assign',
+                condition: "d2:hasValue('age')",
+                priority: 1,
+                programRuleActions: [
+                    {
+                        programRuleActionType: ProgramRuleActionType.ASSIGN,
+                        data: '#{age} * 2',
+                        dataElement: {
+                            id: 'riskScore',
+                            displayName: 'Risk score',
+                            valueType: 'INTEGER' as const,
+                        },
+                    },
+                ],
+            },
+        ] as ProgramRule[]);
+        const engine = buildRuleEngine(context);
+
+        const effects = engine.evaluate({ age: 15, riskScore: '' });
+
+        expect(effects).toHaveLength(1);
+        expect(effects[0].ruleActionType).toBe(ProgramRuleActionType.ASSIGN);
+        expect(effects[0].dataElement).toBe('riskScore');
+        expect(effects[0].data).toBe('30');
+    });
 });
