@@ -28,6 +28,7 @@ const labelLookup: DevtoolsLabelLookup = {
     resolveRuleName: (id) => (id === 'rule-1' ? 'Age warning rule' : id),
     resolveFieldName: (id) => (id === 'age' ? 'Age (years)' : id),
     resolveSectionName: (id) => (id === 'section-a' ? 'Clinical data' : id),
+    resolveStageName: (id) => id,
 };
 
 describe('buildGraphFromTrace', () => {

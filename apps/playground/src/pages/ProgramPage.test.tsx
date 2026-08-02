@@ -2,22 +2,20 @@ import { render } from '@testing-library/react'
 import React from 'react'
 import { MemoryRouter, Route, Routes } from 'react-router'
 import { useEventProgramMetadataQuery } from '@dhis2-form-utils/hooks'
-import { ProgramEventFormScreen } from '@/components/programs/forms/ProgramEventFormScreen'
-import { ProgramRegistrationFormScreen } from '@/components/programs/forms/ProgramRegistrationFormScreen'
+import { ProgramStageFormScreen } from '@/components/programs/forms/ProgramStageFormScreen'
+import { TrackerProgramShell } from '@/components/programs/forms/TrackerProgramShell'
 import { useAccessibleOrgUnits } from '@/hooks/useAccessibleOrgUnits'
-import { ProgramPlaceholderPage } from './ProgramPlaceholderPage'
+import { ProgramPage } from './ProgramPage'
 
 jest.mock('@dhis2-form-utils/hooks', () => ({
     useEventProgramMetadataQuery: jest.fn(),
 }))
 jest.mock('@/hooks/useAccessibleOrgUnits')
-jest.mock('@/components/programs/forms/ProgramEventFormScreen', () => ({
-    ProgramEventFormScreen: jest.fn(() => <div>Event form screen</div>),
+jest.mock('@/components/programs/forms/ProgramStageFormScreen', () => ({
+    ProgramStageFormScreen: jest.fn(() => <div>Event form screen</div>),
 }))
-jest.mock('@/components/programs/forms/ProgramRegistrationFormScreen', () => ({
-    ProgramRegistrationFormScreen: jest.fn(() => (
-        <div>Registration form screen</div>
-    )),
+jest.mock('@/components/programs/forms/TrackerProgramShell', () => ({
+    TrackerProgramShell: jest.fn(() => <div>Registration form screen</div>),
 }))
 
 const mockedUseEventProgramMetadataQuery = jest.mocked(
@@ -29,16 +27,13 @@ function renderPage() {
     return render(
         <MemoryRouter initialEntries={['/programs/Program12345']}>
             <Routes>
-                <Route
-                    path="/programs/:programId"
-                    element={<ProgramPlaceholderPage />}
-                />
+                <Route path="/programs/:programId" element={<ProgramPage />} />
             </Routes>
         </MemoryRouter>
     )
 }
 
-describe('ProgramPlaceholderPage', () => {
+describe('ProgramPage', () => {
     beforeEach(() => {
         mockedUseAccessibleOrgUnits.mockReturnValue({
             data: undefined,
@@ -81,7 +76,7 @@ describe('ProgramPlaceholderPage', () => {
         const view = renderPage()
 
         expect(view.getByText('Event form screen')).toBeTruthy()
-        expect(ProgramEventFormScreen).toHaveBeenCalled()
+        expect(ProgramStageFormScreen).toHaveBeenCalled()
     })
 
     it('renders the registration flow for tracker programs', () => {
@@ -109,7 +104,7 @@ describe('ProgramPlaceholderPage', () => {
         const view = renderPage()
 
         expect(view.getByText('Registration form screen')).toBeTruthy()
-        expect(ProgramRegistrationFormScreen).toHaveBeenCalled()
+        expect(TrackerProgramShell).toHaveBeenCalled()
     })
 
     it('shows a notice when no organisation units are available', () => {

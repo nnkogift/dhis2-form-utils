@@ -5,7 +5,7 @@ import React from 'react'
 import { HashRouter, Route, Routes } from 'react-router'
 import AboutPage from '@/components/About'
 import { ProgramListPage } from '@/pages/ProgramListPage'
-import { ProgramPlaceholderPage } from '@/pages/ProgramPlaceholderPage'
+import { ProgramPage } from '@/pages/ProgramPage'
 import { SyncUrlWithGlobalShell } from '@/components/SyncUrlWithGlobalShell'
 
 const AppWrapper = () => {
@@ -17,7 +17,7 @@ const AppWrapper = () => {
                     <Route path="/" element={<ProgramListPage />} />
                     <Route
                         path="/programs/:programId"
-                        element={<ProgramPlaceholderPage />}
+                        element={<ProgramPage />}
                     />
                     <Route path="/about" element={<AboutPage />} />
                 </Routes>

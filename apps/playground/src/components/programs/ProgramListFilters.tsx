@@ -1,15 +1,16 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import i18n from '@dhis2/d2-i18n'
-import {
-    Button,
-    InputField,
-    SingleSelectField,
-    SingleSelectOption,
-} from '@dhis2/ui'
+import { IconSearch16, InputField, SegmentedControl } from '@dhis2/ui'
 import { useDebounceCallback } from 'usehooks-ts'
 import type { ProgramTypeFilter } from '@/types/program'
 
 const SEARCH_DEBOUNCE_MS = 300
+
+const TYPE_SEGMENTS: Array<{ label: string; value: ProgramTypeFilter }> = [
+    { label: i18n.t('All'), value: 'all' },
+    { label: i18n.t('Tracker'), value: 'registration' },
+    { label: i18n.t('Event'), value: 'event' },
+]
 
 type ProgramListFiltersProps = {
     search: string
@@ -42,10 +43,14 @@ export function ProgramListFilters({
     }, [search, debouncedOnSearchChange])
 
     return (
-        <div className="flex flex-wrap gap-dp16 items-end md:gap-dp24">
-            <div className="flex-[1_1_280px] min-w-0">
+        <div className="flex items-center gap-dp12 justify-between flex-wrap">
+            <div className="w-75">
                 <InputField
-                    label={i18n.t('Search programs')}
+                    type="search"
+                    dense
+                    clearable
+                    // @dhis2/ui types `prefixIcon` as DOM `Element`, but it renders a ReactNode at runtime
+                    prefixIcon={(<IconSearch16 />) as unknown as Element}
                     placeholder={i18n.t('Search by name, code, or ID')}
                     value={localSearch}
                     onChange={({ value }) => {
@@ -55,37 +60,13 @@ export function ProgramListFilters({
                     }}
                 />
             </div>
-            <div className="flex-[0_1_240px] min-w-[200px]">
-                <SingleSelectField
-                    label={i18n.t('Program type')}
-                    selected={type}
-                    onChange={({ selected }) => {
-                        onTypeChange(selected as ProgramTypeFilter)
-                    }}
-                >
-                    <SingleSelectOption value="all" label={i18n.t('All')} />
-                    <SingleSelectOption
-                        value="registration"
-                        label={i18n.t('Registration')}
-                    />
-                    <SingleSelectOption value="event" label={i18n.t('Event')} />
-                </SingleSelectField>
-            </div>
-            {localSearch ? (
-                <div className="flex-none pb-dp4">
-                    <Button
-                        small
-                        secondary
-                        onClick={() => {
-                            debouncedOnSearchChange.cancel()
-                            setLocalSearch('')
-                            onSearchChange('')
-                        }}
-                    >
-                        {i18n.t('Clear search')}
-                    </Button>
-                </div>
-            ) : null}
+            <SegmentedControl
+                options={TYPE_SEGMENTS}
+                selected={type}
+                onChange={({ value }) => {
+                    onTypeChange(value as ProgramTypeFilter)
+                }}
+            />
         </div>
     )
 }

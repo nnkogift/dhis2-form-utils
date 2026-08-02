@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="_ds/dhis2-ui-design-system-ffc06bc4-cd86-47a2-b576-e92c802c477f/tokens/colors.css">
+  <link rel="stylesheet" href="_ds/dhis2-ui-design-system-ffc06bc4-cd86-47a2-b576-e92c802c477f/tokens/typography.css">
+  <link rel="stylesheet" href="_ds/dhis2-ui-design-system-ffc06bc4-cd86-47a2-b576-e92c802c477f/tokens/spacing.css">
+  <link rel="stylesheet" href="_ds/dhis2-ui-design-system-ffc06bc4-cd86-47a2-b576-e92c802c477f/tokens/radius.css">
+  <link rel="stylesheet" href="_ds/dhis2-ui-design-system-ffc06bc4-cd86-47a2-b576-e92c802c477f/tokens/elevation.css">
+  <link rel="stylesheet" href="_ds/dhis2-ui-design-system-ffc06bc4-cd86-47a2-b576-e92c802c477f/styles.css">
+  <script src="_ds/dhis2-ui-design-system-ffc06bc4-cd86-47a2-b576-e92c802c477f/_ds_bundle.js"></script>
+  <style>
+    html, body { margin: 0; height: 100%; }
+    body { background: #fbfcfd; font-family: Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif; color: #212934; }
+    a { color: #00695c; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    * { box-sizing: border-box; }
+  </style>
+</helmet>
+
+<div style="height:100vh;display:flex;flex-direction:column;overflow:hidden;background:#fbfcfd">
+
+  <div style="height:40px;flex-shrink:0;background:#165c92;display:flex;align-items:center;justify-content:space-between;padding:0 14px">
+    <span style="font-size:13px;font-weight:500;color:#fff;filter:drop-shadow(0 0 2px rgba(0,0,0,.5))">Sierra Leone demo — Program rules playground</span>
+    <span style="display:inline-flex;color:#fff;opacity:.85">
+      <x-import component-from-global-scope="DHIS2UIDesignSystem_ffc06b.Icon" name="UserSize24" size="24" hint-size="24px,24px"></x-import>
+    </span>
+  </div>
+
+  <!-- ============================ PROGRAM LIST ============================ -->
+  <sc-if value="{{ onList }}" hint-placeholder-val="{{ true }}">
+    <div style="flex:1;min-height:0;overflow:auto;display:flex;justify-content:center">
+      <div style="width:100%;max-width:1240px;padding:28px 32px 48px;display:flex;flex-direction:column;gap:20px">
+        <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap">
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <h1 style="margin:0;font-size:24px;font-weight:500;line-height:1.3">Programs</h1>
+            <p style="margin:0;font-size:14px;color:#4a5768">Pick a program to open its forms and watch its rules evaluate. Nothing is saved unless you ask for it.</p>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="width:300px;height:36px;border-radius:3px;background:#fff;box-shadow:inset 0 0 0 1px #a0adba;display:flex;align-items:center;gap:8px;padding:0 8px">
+              <span style="display:inline-flex;color:#6e7a8a;flex-shrink:0">
+                <x-import component-from-global-scope="DHIS2UIDesignSystem_ffc06b.Icon" name="SearchSize16" size="16" hint-size="16px,16px"></x-import>
+              </span>
+              <input value="{{ search }}" onInput="{{ onSearch }}" placeholder="Search by name, code, or ID" style="border:none;outline:none;background:transparent;font:inherit;font-size:14px;width:100%;color:#212934">
+            </div>
+            <div style="display:flex;border-radius:5px;overflow:hidden;box-shadow:inset 0 0 0 1px #a0adba;flex-shrink:0">
+              <sc-for list="{{ typeSegments }}" as="s" hint-placeholder-count="3">
+                <div onClick="{{ s.onClick }}" style="height:36px;padding:0 14px;display:flex;align-items:center;font-size:14px;cursor:pointer;border-right:1px solid #d5dde5;background:{{ s.bg }};color:{{ s.fg }}">{{ s.label }}</div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+
+        <div style="flex-shrink:0;border:1px solid #e8edf2;border-radius:3px;background:#fff;overflow:hidden">
+          <div style="display:grid;grid-template-columns:1fr 120px 88px 128px 140px 44px;background:#f3f5f7;border-bottom:1px solid #e8edf2">
+            <div style="padding:10px 12px;font-size:13px;font-weight:500;color:#4a5768">Program</div>
+            <div style="padding:10px 12px;font-size:13px;font-weight:500;color:#4a5768">Type</div>
+            <div style="padding:10px 12px;font-size:13px;font-weight:500;color:#4a5768;text-align:right">Stages</div>
+            <div style="padding:10px 12px;font-size:13px;font-weight:500;color:#4a5768;text-align:right">Rules</div>
+            <div style="padding:10px 12px;font-size:13px;font-weight:500;color:#4a5768">Last updated</div>
+            <div></div>
+          </div>
+          <sc-for list="{{ programRows }}" as="p" hint-placeholder-count="7">
+            <div onClick="{{ p.onClick }}" style="display:grid;grid-template-columns:1fr 120px 88px 128px 140px 44px;border-bottom:1px solid #e8edf2;cursor:pointer;align-items:center" style-hover="background:#f8f9fa">
+              <div style="padding:{{ rowPad }};display:flex;flex-direction:column;gap:2px;min-width:0">
+                <span style="font-size:14px;font-weight:500;line-height:20px;color:#212934">{{ p.name }}</span>
+                <span style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;color:#6e7a8a">{{ p.id }}</span>
+              </div>
+              <div style="padding:{{ rowPad }}">
+                <span style="display:inline-flex;align-items:center;border-radius:4px;padding:3px 7px;font-size:12px;font-weight:500;line-height:16px;background:{{ p.typeBg }};color:{{ p.typeFg }}">{{ p.typeLabel }}</span>
+              </div>
+              <div style="padding:{{ rowPad }};font-size:14px;color:#404b5a;text-align:right;font-variant-numeric:tabular-nums">{{ p.stages }}</div>
+              <div style="padding:{{ rowPad }};text-align:right">
+                <span style="display:inline-flex;align-items:center;gap:6px;font-size:14px;color:#404b5a;font-variant-numeric:tabular-nums">
+                  <span style="width:6px;height:6px;border-radius:50%;background:{{ p.ruleDot }}"></span>{{ p.rulesLabel }}
+                </span>
+              </div>
+              <div style="padding:{{ rowPad }};font-size:13px;color:#6e7a8a">{{ p.updated }}</div>
+              <div style="padding:{{ rowPad }};display:flex;justify-content:center;color:#6e7a8a">
+                <x-import component-from-global-scope="DHIS2UIDesignSystem_ffc06b.Icon" name="ChevronRightSize16" size="16" hint-size="16px,16px"></x-import>
+              </div>
+            </div>
+          </sc-for>
+          <sc-if value="{{ noResults }}" hint-placeholder-val="{{ true }}">
+            <div style="padding:32px 24px;text-align:center;font-size:14px;color:#4a5768">No programs found. Try adjusting your search or filter.</div>
+          </sc-if>
+          <div style="padding:12px 16px;display:flex;align-items:center;justify-content:space-between;font-size:13px;color:#6e7a8a">
+            <span>{{ resultCount }}</span>
+            <div style="display:flex;align-items:center;gap:16px">
+              <span>Rows per page 10</span>
+              <span>Page 1 of 1</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ============================ PROGRAM PAGE ============================ -->
+  <sc-if value="{{ onProgram }}" hint-placeholder-val="{{ true }}">
+    <div style="flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden">
+
+      <!-- context bar -->
+      <div style="flex-shrink:0;background:#fff;border-bottom:1px solid #d5dde5;padding:10px 20px;display:flex;align-items:center;gap:20px">
+        <span onClick="{{ goList }}" style="display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:500;color:#00695c;cursor:pointer;flex-shrink:0">
+          <x-import component-from-global-scope="DHIS2UIDesignSystem_ffc06b.Icon" name="ArrowLeftSize16" size="16" hint-size="16px,16px"></x-import>
+          Programs
+        </span>
+        <div style="width:1px;height:28px;background:#e8edf2;flex-shrink:0"></div>
+        <div style="display:flex;flex-direction:column;gap:1px;min-width:0">
+          <span style="font-size:15px;font-weight:700;line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ programName }}</span>
+          <span style="font-size:12px;color:#6e7a8a">{{ programMeta }}</span>
+        </div>
+        <div style="display:flex;align-items:flex-end;gap:12px;margin-left:auto;flex-shrink:0">
+          <div style="display:flex;flex-direction:column;gap:3px">
+            <span style="font-size:11px;font-weight:500;letter-spacing:.04em;text-transform:uppercase;color:#6e7a8a">Organisation unit</span>
+            <div style="width:196px;height:32px;border-radius:3px;background:#fff;box-shadow:inset 0 0 0 1px #a0adba;display:flex;align-items:center;justify-content:space-between;padding:0 8px;font-size:13px;cursor:pointer"><span>Ngelehun CHC</span><span style="color:#6e7a8a">▾</span></div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:3px">
+            <span style="font-size:11px;font-weight:500;letter-spacing:.04em;text-transform:uppercase;color:#6e7a8a">{{ primaryDateLabel }}</span>
+            <div style="width:130px;height:32px;border-radius:3px;background:#fff;box-shadow:inset 0 0 0 1px #a0adba;display:flex;align-items:center;padding:0 8px;font-size:13px;font-variant-numeric:tabular-nums">2026-07-31</div>
+          </div>
+          <sc-if value="{{ hasIncidentDate }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex;flex-direction:column;gap:3px">
+              <span style="font-size:11px;font-weight:500;letter-spacing:.04em;text-transform:uppercase;color:#6e7a8a">Incident date</span>
+              <div style="width:130px;height:32px;border-radius:3px;background:#fff;box-shadow:inset 0 0 0 1px #a0adba;display:flex;align-items:center;padding:0 8px;font-size:13px;font-variant-numeric:tabular-nums">2026-03-14</div>
+            </div>
+          </sc-if>
+          <div onClick="{{ resetPlayground }}" style="height:32px;padding:0 12px;border-radius:4px;background:#f9fafb;box-shadow:inset 0 0 0 1px #a0adba;display:flex;align-items:center;gap:6px;font-size:13px;letter-spacing:.4px;cursor:pointer">
+            <x-import component-from-global-scope="DHIS2UIDesignSystem_ffc06b.Icon" name="SyncSize16" size="16" hint-size="16px,16px"></x-import>
+            Reset playground
+          </div>
+        </div>
+      </div>
+
+      <div style="flex:1;min-height:0;display:flex;overflow-x:auto">
+
+        <!-- enrollment rail (tracker only) -->
+        <sc-if value="{{ hasRail }}" hint-placeholder-val="{{ true }}">
+          <nav style="width:268px;flex-shrink:0;background:#f8f9fa;border-right:1px solid #e8edf2;display:flex;flex-direction:column;overflow:auto">
+            <div style="padding:14px 16px 8px;flex-shrink:0">
+              <span style="font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#6e7a8a">Enrollment</span>
+            </div>
+            <div style="display:flex;flex-direction:column;flex-shrink:0">
+              <sc-for list="{{ railItems }}" as="s" hint-placeholder-count="3">
+                <div onClick="{{ s.onClick }}" style="position:relative;padding:10px 16px 10px 19px;cursor:pointer;display:flex;flex-direction:column;gap:4px;background:{{ s.bg }}">
+                  <div style="position:absolute;left:0;top:0;bottom:0;width:3px;background:{{ s.accent }}"></div>
+                  <div style="display:flex;align-items:center;gap:8px;min-width:0">
+                    <span style="display:inline-flex;flex-shrink:0;color:{{ s.iconFg }}">
+                      <x-import component-from-global-scope="DHIS2UIDesignSystem_ffc06b.Icon" name="{{ s.icon }}" size="16" hint-size="16px,16px"></x-import>
+                    </span>
+                    <span style="font-size:14px;line-height:20px;font-weight:500;color:{{ s.fg }};min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ s.label }}</span>
+                  </div>
+                  <div style="padding-left:24px;display:flex;align-items:center;gap:8px">
+                    <span style="font-size:12px;color:#6e7a8a">{{ s.meta }}</span>
+                    <sc-if value="{{ s.hasActive }}" hint-placeholder-val="{{ true }}">
+                      <span style="display:inline-flex;align-items:center;border-radius:4px;background:#e0f2f1;color:#00332b;padding:1px 5px;font-size:11px;font-weight:500">{{ s.activeLabel }}</span>
+                    </sc-if>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+            <div style="margin-top:8px;padding:8px 16px 14px;border-top:1px solid #e8edf2;flex-shrink:0">
+              <div onClick="{{ addEvent }}" style="height:32px;border-radius:4px;background:#fff;box-shadow:inset 0 0 0 1px #a0adba;display:flex;align-items:center;justify-content:center;gap:6px;font-size:13px;letter-spacing:.4px;cursor:pointer">
+                <x-import component-from-global-scope="DHIS2UIDesignSystem_ffc06b.Icon" name="AddSize16" size="16" hint-size="16px,16px"></x-import>
+                Add event
+              </div>
+              <p style="margin:8px 0 0;font-size:12px;line-height:1.5;color:#6e7a8a">Repeatable stages accept more than one event, so you can test rules that compare across events.</p>
+            </div>
+          </nav>
+        </sc-if>
+
+        <!-- form column -->
+        <div style="flex:1;min-width:520px;display:flex;flex-direction:column;overflow:hidden;background:#fbfcfd">
+          <div style="flex-shrink:0;padding:20px 28px 0;display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:12px 20px">
+            <div style="display:flex;flex-direction:column;gap:2px;min-width:240px;flex:1">
+              <h2 style="margin:0;font-size:20px;font-weight:700;line-height:1.3">{{ activeTitle }}</h2>
+              <span style="font-size:13px;color:#6e7a8a">{{ activeSubtitle }}</span>
+            </div>
+            <div onClick="{{ toggleGhosts }}" title="Ghost placeholders keep the slot of fields and sections a rule hid." style="flex-shrink:0;height:32px;padding:0 10px;border-radius:4px;background:{{ ghostBtnBg }};box-shadow:inset 0 0 0 1px {{ ghostBtnBorder }};display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;color:{{ ghostBtnFg }}">
+              <x-import component-from-global-scope="DHIS2UIDesignSystem_ffc06b.Icon" name="ViewOffSize16" size="16" hint-size="16px,16px"></x-import>
+              {{ ghostBtnLabel }}
+            </div>
+          </div>
+
+          <div style="flex:1;min-height:0;overflow:auto;padding:16px 28px 28px;display:flex;flex-direction:column;gap:16px">
+            <sc-for list="{{ feedbackItems }}" as="fb" hint-placeholder-count="1">
+              <div style="flex-shrink:0;border-radius:3px;background:#f7f2fa;box-shadow:inset 0 0 0 1px #e1bee7;padding:10px 14px;display:flex;align-items:flex-start;gap:10px">
+                <span style="display:inline-flex;flex-shrink:0;margin-top:1px;color:#4a148c">
+                  <x-import component-from-global-scope="DHIS2UIDesignSystem_ffc06b.Icon" name="MessagesSize16" size="16" hint-size="16px,16px"></x-import>
+                </span>
+                <div style="display:flex;flex-direction:column;gap:3px;min-width:0">
+                  <span style="font-size:14px;line-height:1.45;color:#212934"><strong style="font-weight:600">{{ fb.label }}</strong>{{ fb.valueText }}</span>
+                  <span style="font-size:12px;color:#6e7a8a">{{ fb.source }}</span>
+                </div>
+              </div>
+            </sc-for>
+
+            <sc-for list="{{ activeSections }}" as="sec" hint-placeholder-count="2">
+              <section style="flex-shrink:0;background:#fff;border:1px solid #e8edf2;border-radius:3px;box-shadow:0 1px 2px rgba(33,41,52,.06);overflow:hidden">
+                <header style="padding:12px 16px;border-bottom:1px solid #f3f5f7;display:flex;align-items:center;justify-content:space-between;gap:12px">
+                  <h3 style="margin:0;font-size:15px;font-weight:600">{{ sec.title }}</h3>
+                  <sc-if value="{{ sec.note }}" hint-placeholder-val="{{ true }}">
+                    <span style="font-size:12px;color:#6e7a8a">{{ sec.note }}</span>
+                  </sc-if>
+                </header>
+                <sc-if value="{{ sec.hiddenBy }}" hint-placeholder-val="{{ true }}">
+                  <div style="margin:12px 16px;border-radius:3px;background:repeating-linear-gradient(135deg,#f8f9fa 0 6px,#f3f5f7 6px 12px);border:1px dashed #d5dde5;padding:12px 14px;display:flex;align-items:center;gap:10px">
+                    <span style="display:inline-flex;color:#6e7a8a;flex-shrink:0">
+                      <x-import component-from-global-scope="DHIS2UIDesignSystem_ffc06b.Icon" name="ViewOffSize16" size="16" hint-size="16px,16px"></x-import>
+                    </span>
+                    <span style="font-size:13px;color:#4a5768">Section hidden by <strong style="font-weight:600">{{ sec.hiddenBy }}</strong></span>
+                  </div>
+                </sc-if>
+                <sc-if value="{{ sec.visible }}" hint-placeholder-val="{{ true }}">
+                  <div style="padding:16px;display:grid;grid-template-columns:repeat(2, minmax(0,1fr));gap:16px 20px">
+                    <sc-for list="{{ sec.fields }}" as="f" hint-placeholder-count="4">
+                      <div style="display:flex;flex-direction:column;gap:5px;min-width:0">
+                        <div style="display:flex;align-items:center;gap:8px;min-width:0">
+                          <span style="font-size:14px;line-height:20px;color:{{ f.labelFg }}">{{ f.label }}</span>
+                          <sc-if value="{{ f.hasBadge }}" hint-placeholder-val="{{ true }}">
+                            <span title="{{ f.badgeTitle }}" style="display:inline-flex;align-items:center;gap:4px;border-radius:4px;padding:2px 6px;font-size:11px;font-weight:600;letter-spacing:.02em;flex-shrink:0;background:{{ f.badgeBg }};color:{{ f.badgeFg }}">
+                              <x-import component-from-global-scope="DHIS2UIDesignSystem_ffc06b.Icon" name="{{ f.badgeIcon }}" size="16" hint-size="16px,16px"></x-import>
+                              {{ f.badgeText }}
+                            </span>
+                          </sc-if>
+                        </div>
+                        <sc-if value="{{ f.isGhost }}" hint-placeholder-val="{{ true }}">
+                          <div style="height:36px;border-radius:3px;background:repeating-linear-gradient(135deg,#f8f9fa 0 6px,#f3f5f7 6px 12px);border:1px dashed #d5dde5;display:flex;align-items:center;padding:0 8px;font-size:12px;color:#6e7a8a;overflow:hidden">{{ f.ghostNote }}</div>
+                        </sc-if>
+                        <sc-if value="{{ f.isInput }}" hint-placeholder-val="{{ true }}">
+                          <div style="height:36px;border-radius:3px;background:#fff;box-shadow:inset 0 0 0 1px {{ f.ring }};display:flex;align-items:center;justify-content:space-between;padding:0 8px;font-size:14px;color:#212934">
+                            <span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ f.value }}</span>
+                            <sc-if value="{{ f.isSelect }}" hint-placeholder-val="{{ true }}">
+                              <span style="color:#6e7a8a;flex-shrink:0">▾</span>
+                            </sc-if>
+                          </div>
+                        </sc-if>
+                        <sc-if value="{{ f.help }}" hint-placeholder-val="{{ true }}">
+                          <span style="font-size:12px;line-height:1.45;color:{{ f.helpFg }}">{{ f.help }}</span>
+                        </sc-if>
+                      </div>
+                    </sc-for>
+                  </div>
+                </sc-if>
+              </section>
+            </sc-for>
+
+            <div style="flex-shrink:0;display:flex;align-items:center;justify-content:space-between;gap:16px;padding-top:4px">
+              <span style="font-size:12px;color:#6e7a8a">Nothing is written to the server until you save.</span>
+              <div style="display:flex;gap:8px">
+                <div style="height:36px;padding:0 12px;border-radius:4px;background:#f9fafb;box-shadow:inset 0 0 0 1px #a0adba;display:flex;align-items:center;font-size:14px;letter-spacing:.5px;cursor:pointer">Re-run rules</div>
+                <div style="height:36px;padding:0 14px;border-radius:4px;background:#147cd7;display:flex;align-items:center;font-size:14px;letter-spacing:.5px;color:#fff;cursor:pointer">{{ activeSubmitLabel }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- rules / trace / graph panel -->
+        <aside style="width:404px;flex-shrink:0;background:#f8f9fa;border-left:1px solid #d5dde5;display:flex;flex-direction:column;overflow:hidden">
+          <div style="flex-shrink:0;background:#fff;border-bottom:1px solid #e8edf2;padding:12px 16px 0">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding-bottom:10px">
+              <div style="display:flex;align-items:center;gap:8px">
+                <span style="width:8px;height:8px;border-radius:50%;background:#00796b"></span>
+                <h2 style="margin:0;font-size:15px;font-weight:700">Rules</h2>
+              </div>
+              <span style="font-size:12px;color:#6e7a8a">{{ panelSummary }}</span>
+            </div>
+            <div style="display:flex">
+              <sc-for list="{{ panelTabs }}" as="t" hint-placeholder-count="3">
+                <div onClick="{{ t.onClick }}" style="padding:9px 12px;font-size:14px;font-weight:500;cursor:pointer;border-bottom:3px solid {{ t.border }};color:{{ t.fg }}">{{ t.label }}</div>
+              </sc-for>
+            </div>
+          </div>
+
+          <div style="flex:1;min-height:0;overflow:auto;padding:14px 16px 20px;display:flex;flex-direction:column;gap:10px">
+            <sc-if value="{{ showCatalog }}" hint-placeholder-val="{{ true }}">
+              <div style="display:flex;flex-direction:column;gap:10px">
+                <sc-for list="{{ catalogRules }}" as="r" hint-placeholder-count="5">
+                  <article onClick="{{ r.onClick }}" style="flex-shrink:0;position:relative;border:1px solid #e8edf2;border-radius:5px;background:#fff;padding:11px 12px 11px 14px;box-shadow:0 1px 2px rgba(33,41,52,.05);cursor:pointer;display:flex;flex-direction:column;gap:8px">
+                    <div style="position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:5px 0 0 5px;background:{{ r.accent }}"></div>
+                    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">
+                      <h3 style="margin:0;font-size:13px;font-weight:600;line-height:1.4;min-width:0;color:{{ r.nameFg }}">{{ r.name }}</h3>
+                      <span style="flex-shrink:0;font-size:11px;font-weight:600;color:{{ r.stateFg }}">{{ r.stateLabel }}</span>
+                    </div>
+                    <div style="display:flex;flex-wrap:wrap;gap:6px">
+                      <sc-for list="{{ r.actions }}" as="a" hint-placeholder-count="1">
+                        <span style="display:inline-flex;align-items:center;gap:4px;border-radius:4px;padding:3px 6px;font-size:11px;font-weight:500;line-height:14px;max-width:100%;background:{{ a.bg }};color:{{ a.fg }}">
+                          <x-import component-from-global-scope="DHIS2UIDesignSystem_ffc06b.Icon" name="{{ a.icon }}" size="16" hint-size="16px,16px"></x-import>
+                          {{ a.text }}
+                        </span>
+                      </sc-for>
+                    </div>
+                    <sc-if value="{{ r.showCondition }}" hint-placeholder-val="{{ true }}">
+                      <code style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;line-height:1.5;color:#4a5768;word-break:break-word">{{ r.condition }}</code>
+                    </sc-if>
+                    <sc-if value="{{ r.scopeNote }}" hint-placeholder-val="{{ true }}">
+                      <span style="font-size:11px;color:#6e7a8a">{{ r.scopeNote }}</span>
+                    </sc-if>
+                  </article>
+                </sc-for>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ showTrace }}" hint-placeholder-val="{{ true }}">
+              <div style="display:flex;flex-direction:column;gap:10px">
+                <sc-for list="{{ traceEntries }}" as="t" hint-placeholder-count="3">
+                  <div style="flex-shrink:0;border:1px solid #e8edf2;border-radius:5px;background:#fff;overflow:hidden">
+                    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;background:#fbfcfd;padding:8px 12px;border-bottom:1px solid #f3f5f7">
+                      <span style="font-size:13px;font-weight:600;font-variant-numeric:tabular-nums">{{ t.when }}</span>
+                      <span style="border-radius:4px;background:#e8edf2;color:#212934;font-size:11px;font-weight:500;padding:2px 6px">{{ t.tag }}</span>
+                    </div>
+                    <div style="padding:10px 12px;display:flex;flex-direction:column;gap:8px">
+                      <span style="font-size:11px;color:#6e7a8a">{{ t.summary }}</span>
+                      <sc-for list="{{ t.effects }}" as="e" hint-placeholder-count="2">
+                        <div style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap">
+                          <span style="display:inline-flex;align-items:center;gap:4px;border-radius:4px;padding:3px 6px;font-size:11px;font-weight:500;line-height:14px;background:{{ e.bg }};color:{{ e.fg }}">
+                            <x-import component-from-global-scope="DHIS2UIDesignSystem_ffc06b.Icon" name="{{ e.icon }}" size="16" hint-size="16px,16px"></x-import>
+                            {{ e.type }}
+                          </span>
+                          <span style="font-size:12px;color:#404b5a">{{ e.target }}</span>
+                        </div>
+                      </sc-for>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ showGraph }}" hint-placeholder-val="{{ true }}">
+              <div style="display:flex;flex-direction:column;gap:12px">
+                <p style="margin:0;font-size:12px;line-height:1.5;color:#6e7a8a">Dependencies for the selected rule. Pick a rule in the Rules tab to focus it.</p>
+                <div style="flex-shrink:0;border:1px solid #e8edf2;border-radius:5px;background:#fff;padding:16px;display:flex;flex-direction:column;gap:10px">
+                  <sc-for list="{{ graphRows }}" as="g" hint-placeholder-count="3">
+                    <div style="display:flex;align-items:center;gap:8px">
+                      <span style="border-radius:3px;padding:4px 8px;font-size:12px;background:#e3f2fd;color:#093371;white-space:nowrap">{{ g.from }}</span>
+                      <span style="flex:1;height:1px;background:{{ g.stroke }}"></span>
+                      <span style="font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:{{ g.stroke }}">{{ g.kind }}</span>
+                      <span style="flex:1;height:1px;background:{{ g.stroke }}"></span>
+                      <span style="border-radius:3px;padding:4px 8px;font-size:12px;background:#f3f5f7;color:#212934;white-space:nowrap">{{ g.to }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-if>
+          </div>
+        </aside>
+
+      </div>
+    </div>
+  </sc-if>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;showConditions&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Rules panel&quot;},&quot;density&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;comfortable&quot;,&quot;compact&quot;],&quot;default&quot;:&quot;comfortable&quot;,&quot;tsType&quot;:&quot;'comfortable' | 'compact'&quot;,&quot;section&quot;:&quot;Program list&quot;}}">
+const EFFECT = {
+  hide: { bg: '#f3f5f7', fg: '#212934', icon: 'ViewOffSize16', stroke: '#494949' },
+  show: { bg: '#e8f5e9', fg: '#103713', icon: 'ViewSize16', stroke: '#388e3c' },
+  assign: { bg: '#e3f2fd', fg: '#093371', icon: 'EditSize16', stroke: '#1565c0' },
+  mandatory: { bg: '#ffecb3', fg: '#6f3205', icon: 'StarFilledSize16', stroke: '#e56408' },
+  warning: { bg: '#ffecb3', fg: '#6f3205', icon: 'WarningFilledSize16', stroke: '#ff8302' },
+  error: { bg: '#ffe5e8', fg: '#330202', icon: 'ErrorFilledSize16', stroke: '#c62828' },
+  feedback: { bg: '#e1bee7', fg: '#4a148c', icon: 'MessagesSize16', stroke: '#9c27b0' },
+};
+
+const PROGRAMS = [
+  { id: 'IpHINAT79UW', name: 'Child Programme', type: 'tracker', rules: 8, active: 2, updated: '12 Jun 2026',
+    stages: [{ name: 'Birth', repeatable: false, events: 1 }, { name: 'Baby Postnatal', repeatable: true, events: 2 }] },
+  { id: 'WSGAb5XwJ3Y', name: 'WHO RMNCH Tracker', type: 'tracker', rules: 24, active: 0, updated: '3 Jun 2026',
+    stages: [{ name: 'First antenatal visit', repeatable: false, events: 1 }, { name: 'Second antenatal visit', repeatable: false, events: 0 }, { name: 'Delivery', repeatable: false, events: 0 }, { name: 'Postpartum care', repeatable: true, events: 0 }] },
+  { id: 'ur1Edk5Oe2n', name: 'TB program', type: 'tracker', rules: 5, active: 0, updated: '28 May 2026',
+    stages: [{ name: 'TB visit', repeatable: true, events: 1 }, { name: 'Sputum smear microscopy test', repeatable: true, events: 0 }, { name: 'Lab monitoring', repeatable: true, events: 0 }] },
+  { id: 'lxAQ7Zs9VYR', name: 'Antenatal care visit', type: 'tracker', rules: 9, active: 0, updated: '14 May 2026',
+    stages: [{ name: 'Antenatal care visit', repeatable: true, events: 1 }] },
+  { id: 'VBqh0ynB2wv', name: 'Malaria case diagnosis, treatment and investigation', type: 'event', rules: 6, active: 2, updated: '9 Jul 2026',
+    stages: [{ name: 'Malaria case registration', repeatable: false, events: 1 }] },
+  { id: 'eBAyeGv0exc', name: 'Inpatient morbidity and mortality', type: 'event', rules: 2, active: 0, updated: '2 Apr 2026',
+    stages: [{ name: 'Inpatient morbidity and mortality', repeatable: false, events: 1 }] },
+  { id: 'q04UBOqq3rp', name: 'Information Campaign', type: 'event', rules: 0, active: 0, updated: '17 Mar 2026',
+    stages: [{ name: 'Information Campaign', repeatable: false, events: 1 }] },
+];
+
+const TRACKER_RULES = [
+  { id: 'r1', name: 'Hide residence for infants', slot: 'registration', firing: true,
+    condition: 'd2:yearsBetween(A{birth_date}, V{current_date}) < 5',
+    actions: [{ v: 'hide', text: 'Hide field · Residence' }] },
+  { id: 'r2', name: 'Show gestational age', slot: 'registration', firing: true,
+    condition: "A{birth_date} != ''",
+    actions: [{ v: 'feedback', text: 'Display text · Estimated gestational age' }] },
+  { id: 'r3', name: 'Require mother\u2019s name for newborns', slot: 'registration', firing: false,
+    condition: 'd2:monthsBetween(A{birth_date}, V{current_date}) < 2',
+    actions: [{ v: 'mandatory', text: 'Make mandatory · Mother\u2019s name' }] },
+  { id: 'r4', name: 'Assign age group', slot: 'registration', firing: false,
+    condition: "A{birth_date} != ''",
+    actions: [{ v: 'assign', text: 'Assign · Age group' }] },
+  { id: 'r5', name: 'Low birth weight warning', slot: 0, firing: false,
+    condition: '#{birth_weight} < 2.5',
+    actions: [{ v: 'warning', text: 'Show warning · Birth weight' }] },
+  { id: 'r6', name: 'Hide postnatal review for stillbirth', slot: 1, firing: false,
+    condition: "#{delivery_outcome} == 'STILLBIRTH'",
+    actions: [{ v: 'hide', text: 'Hide section · Postnatal review' }] },
+  { id: 'r7', name: 'Weight-for-age indicator', slot: 1, firing: false,
+    condition: "#{infant_weight} != ''",
+    actions: [{ v: 'feedback', text: 'Display key-value pair · Weight for age' }] },
+  { id: 'r8', name: 'Hide referral unless underweight', slot: 1, firing: false,
+    condition: '#{infant_weight} >= 3',
+    actions: [{ v: 'hide', text: 'Hide field · Referral to clinic' }] },
+];
+
+const EVENT_RULES = [
+  { id: 'e1', name: 'Classify malaria case', firing: true, condition: "#{case_detection} != '' && #{blood_test} == 'POSITIVE'",
+    actions: [{ v: 'feedback', text: 'Display key-value pair · Case classification' }] },
+  { id: 'e2', name: 'Hide travel history for local cases', firing: true, condition: "#{case_origin} == 'LOCAL'",
+    actions: [{ v: 'hide', text: 'Hide field · Travel history' }] },
+  { id: 'e3', name: 'Require species when positive', firing: false, condition: "#{blood_test} == 'POSITIVE'",
+    actions: [{ v: 'mandatory', text: 'Make mandatory · Plasmodium species' }] },
+  { id: 'e4', name: 'Warn on missing treatment date', firing: false, condition: "#{treatment} != '' && #{treatment_date} == ''",
+    actions: [{ v: 'warning', text: 'Show warning · Date treatment started' }] },
+  { id: 'e5', name: 'Hide investigation section for negatives', firing: false, condition: "#{blood_test} == 'NEGATIVE'",
+    actions: [{ v: 'hide', text: 'Hide section · Case investigation' }] },
+  { id: 'e6', name: 'Assign case reference', firing: false, condition: "V{event_date} != ''",
+    actions: [{ v: 'assign', text: 'Assign · Case reference' }] },
+];
+
+const RING = '#a0adba';
+
+function field(label, value, opts) {
+  const o = opts || {};
+  return {
+    label, value: value || '',
+    labelFg: o.ghost ? '#6e7a8a' : '#212934',
+    isGhost: !!o.ghost, isInput: !o.ghost, isSelect: !!o.select,
+    ring: o.ring || RING,
+    ghostNote: o.ghostNote || '',
+    help: o.help || '', helpFg: o.helpFg || '#6e7a8a',
+    hasBadge: !!o.badge,
+    badgeIcon: o.badge ? EFFECT[o.badge].icon : '',
+    badgeBg: o.badge ? EFFECT[o.badge].bg : '',
+    badgeFg: o.badge ? EFFECT[o.badge].fg : '',
+    badgeText: o.badgeText || '',
+    badgeTitle: o.badgeTitle || '',
+  };
+}
+
+class Component extends DCLogic {
+  state = { route: 'list', programId: null, slot: 'registration', tab: 'rules', typeFilter: 'all', search: '', ghosts: true, selectedRule: null };
+
+  set(patch) { this.setState(patch); }
+
+  program() { return PROGRAMS.find((p) => p.id === this.state.programId) || PROGRAMS[0]; }
+
+  registrationSections() {
+    const g = this.state.ghosts;
+    return [
+      { title: 'Child details', note: '6 attributes', visible: true, hiddenBy: '', fields: [
+        field('First name', 'Amara'),
+        field('Last name', 'Kamara'),
+        field('Date of birth', '2026-03-14'),
+        field('Gender', 'Female', { select: true }),
+        g ? field('Residence', '', { ghost: true, ghostNote: 'Hidden by Hide residence for infants', badge: 'hide', badgeText: 'Hidden', badgeTitle: 'HIDEFIELD from rule: Hide residence for infants' }) : null,
+        field('Mother\u2019s name', '', { badge: 'mandatory', badgeText: 'Required by rule', badgeTitle: 'SETMANDATORYFIELD from rule: Require mother\u2019s name for newborns', ring: '#ffa902', help: 'Required while the child is under 2 months old.', helpFg: '#6f3205' }),
+      ].filter(Boolean) },
+      { title: 'Age group', note: 'Maintained by rules', visible: true, hiddenBy: '', fields: [
+        field('Age group', '0\u20134 years', { badge: 'assign', badgeText: 'Assigned', badgeTitle: 'ASSIGN from rule: Assign age group', ring: '#90caf9', help: 'Read-only while a rule assigns it.' }),
+      ] },
+    ];
+  }
+
+  stageSections(index) {
+    const g = this.state.ghosts;
+    if (index === 0) {
+      return [
+        { title: 'Birth details', note: '4 data elements', visible: true, hiddenBy: '', fields: [
+          field('Mode of delivery', 'Vaginal delivery', { select: true }),
+          field('Birth weight (kg)', '2.1', { badge: 'warning', badgeText: 'Warning', badgeTitle: 'SHOWWARNING from rule: Low birth weight warning', ring: '#ffa902', help: 'Birth weight is below 2.5 kg — flag for follow-up.', helpFg: '#6f3205' }),
+          field('Apgar score', '8'),
+          field('Infant feeding', 'Exclusive breastfeeding', { select: true }),
+        ] },
+      ];
+    }
+    return [
+      { title: 'Postnatal review', note: '', visible: false, hiddenBy: 'Hide postnatal review for stillbirth', fields: [] },
+      { title: 'Infant follow-up', note: '3 data elements', visible: true, hiddenBy: '', fields: [
+        field('Infant weight (kg)', '4.2'),
+        field('Measles dose given', 'Yes', { select: true }),
+        g ? field('Referral to clinic', '', { ghost: true, ghostNote: 'Hidden by Hide referral unless underweight', badge: 'hide', badgeText: 'Hidden', badgeTitle: 'HIDEFIELD from rule: Hide referral unless underweight' })
+          : field('Referral to clinic', '', { badge: 'hide', badgeText: 'Hidden', badgeTitle: 'HIDEFIELD from rule: Hide referral unless underweight' }),
+      ] },
+    ];
+  }
+
+  eventSections() {
+    const g = this.state.ghosts;
+    return [
+      { title: 'Case details', note: '4 data elements', visible: true, hiddenBy: '', fields: [
+        field('Case detection', 'Passive case detection', { select: true }),
+        field('Blood test result', 'Positive', { select: true }),
+        field('Plasmodium species', '', { select: true, badge: 'mandatory', badgeText: 'Required by rule', badgeTitle: 'SETMANDATORYFIELD from rule: Require species when positive', ring: '#ffa902', help: 'Required because the blood test is positive.', helpFg: '#6f3205' }),
+        field('Case origin', 'Local', { select: true }),
+      ] },
+      { title: 'Case investigation', note: '3 data elements', visible: true, hiddenBy: '', fields: [
+        g ? field('Travel history', '', { ghost: true, ghostNote: 'Hidden by Hide travel history for local cases', badge: 'hide', badgeText: 'Hidden', badgeTitle: 'HIDEFIELD from rule: Hide travel history for local cases' })
+          : field('Travel history', '', { badge: 'hide', badgeText: 'Hidden', badgeTitle: 'HIDEFIELD from rule: Hide travel history for local cases' }),
+        field('Treatment', 'ACT', { select: true }),
+        field('Date treatment started', '', { badge: 'warning', badgeText: 'Warning', badgeTitle: 'SHOWWARNING from rule: Warn on missing treatment date', ring: '#ffa902', help: 'Treatment recorded without a start date.', helpFg: '#6f3205' }),
+      ] },
+    ];
+  }
+
+  renderVals() {
+    const st = this.state;
+    const showConditions = this.props.showConditions ?? true;
+    const compact = (this.props.density ?? 'comfortable') === 'compact';
+    const p = this.program();
+    const isTracker = p.type === 'tracker';
+
+    const q = st.search.trim().toLowerCase();
+    const filtered = PROGRAMS.filter((row) =>
+      (st.typeFilter === 'all' || row.type === st.typeFilter) &&
+      (q === '' || row.name.toLowerCase().includes(q) || row.id.toLowerCase().includes(q)));
+
+    // rail / slots
+    const slots = isTracker
+      ? [{ key: 'registration', label: 'Registration', icon: 'UserSize16', meta: '6 attributes', active: 2 }].concat(
+          p.stages.map((s, i) => ({
+            key: i, label: s.name,
+            icon: s.repeatable ? 'QueueSize16' : 'FileDocumentSize16',
+            meta: s.events === 1 ? '1 event' : s.events + ' events',
+            active: 0,
+          })))
+      : [];
+
+    const slotKey = isTracker ? st.slot : 0;
+    const activeIsReg = isTracker && slotKey === 'registration';
+    const stageIndex = typeof slotKey === 'number' ? slotKey : 0;
+    const stage = p.stages[stageIndex];
+
+    const sections = !isTracker ? this.eventSections()
+      : activeIsReg ? this.registrationSections()
+      : this.stageSections(stageIndex);
+
+    const rules = isTracker ? TRACKER_RULES : EVENT_RULES;
+    const inScope = (r) => !isTracker || r.slot === slotKey;
+    const scoped = rules.filter(inScope);
+    const firing = scoped.filter((r) => r.firing);
+
+    const activeTitle = !isTracker ? p.stages[0].name : activeIsReg ? 'Registration' : stage.name;
+    const activeSubtitle = !isTracker
+      ? 'Event program · single stage · ' + p.rules + ' rules'
+      : activeIsReg
+        ? 'Tracked entity attributes · ' + scoped.length + ' of ' + p.rules + ' rules in scope'
+        : (stage.repeatable ? 'Repeatable stage' : 'Non-repeatable stage') + ' · ' + (stage.events === 1 ? '1 event' : stage.events + ' events') + ' · ' + scoped.length + ' rules in scope';
+
+    return {
+      onList: st.route === 'list',
+      onProgram: st.route === 'program',
+      goList: () => this.set({ route: 'list' }),
+
+      // list
+      search: st.search,
+      onSearch: (e) => this.set({ search: e.target.value }),
+      rowPad: compact ? '7px 12px' : '11px 12px',
+      resultCount: filtered.length === 1 ? '1 program' : filtered.length + ' programs',
+      noResults: filtered.length === 0,
+      typeSegments: ['all', 'tracker', 'event'].map((k) => ({
+        label: k === 'all' ? 'All' : k === 'tracker' ? 'Tracker' : 'Event',
+        bg: st.typeFilter === k ? '#00796b' : '#fff',
+        fg: st.typeFilter === k ? '#fff' : '#212934',
+        onClick: () => this.set({ typeFilter: k }),
+      })),
+      programRows: filtered.map((row) => ({
+        name: row.name, id: row.id, stages: row.stages.length, updated: row.updated,
+        typeLabel: row.type === 'tracker' ? 'Tracker' : 'Event',
+        typeBg: row.type === 'tracker' ? '#e0f2f1' : '#e3f2fd',
+        typeFg: row.type === 'tracker' ? '#00332b' : '#093371',
+        rulesLabel: row.rules === 0 ? 'None' : String(row.rules),
+        ruleDot: row.rules === 0 ? '#d5dde5' : '#00796b',
+        onClick: () => this.set({ route: 'program', programId: row.id, slot: row.type === 'tracker' ? 'registration' : 0, tab: 'rules', selectedRule: null }),
+      })),
+
+      // program page
+      programName: p.name,
+      programMeta: (p.type === 'tracker' ? 'Tracker · Person · ' : 'Event program · ') + p.rules + ' rules',
+      primaryDateLabel: isTracker ? 'Enrollment date' : 'Event date',
+      hasIncidentDate: isTracker,
+      hasRail: isTracker,
+      resetPlayground: () => this.set({ ghosts: true, tab: 'rules', selectedRule: null }),
+      addEvent: () => this.set({ slot: p.stages.length - 1 }),
+      railItems: slots.map((s) => {
+        const on = slotKey === s.key;
+        return {
+          label: s.label, icon: s.icon, meta: s.meta,
+          bg: on ? '#e0f2f1' : 'transparent',
+          accent: on ? '#00796b' : 'transparent',
+          fg: on ? '#00332b' : '#404b5a',
+          iconFg: on ? '#00796b' : '#6e7a8a',
+          hasActive: s.active > 0,
+          activeLabel: s.active + ' firing',
+          onClick: () => this.set({ slot: s.key }),
+        };
+      }),
+      activeTitle,
+      activeSubtitle,
+      activeSubmitLabel: activeIsReg ? 'Register tracked entity' : 'Save event',
+      activeSections: sections,
+      feedbackItems: !isTracker
+        ? [{ label: 'Case classification: ', valueText: 'Confirmed, imported', source: 'Display key-value pair · Classify malaria case' }]
+        : activeIsReg
+          ? [{ label: 'Estimated gestational age: ', valueText: '38 weeks at birth', source: 'Display text · Show gestational age' }]
+          : stageIndex === 1
+            ? [{ label: 'Weight for age: ', valueText: '+0.4 SD (within range)', source: 'Display key-value pair · Weight-for-age indicator' }]
+            : [],
+      ghostBtnLabel: st.ghosts ? 'Hidden fields shown' : 'Hidden fields collapsed',
+      ghostBtnBg: st.ghosts ? '#e0f2f1' : '#f9fafb',
+      ghostBtnBorder: st.ghosts ? '#4db6ac' : '#a0adba',
+      ghostBtnFg: st.ghosts ? '#00332b' : '#212934',
+      toggleGhosts: () => this.set({ ghosts: !st.ghosts }),
+
+      panelSummary: scoped.length + ' in scope · ' + firing.length + ' firing',
+      panelTabs: [{ key: 'rules', label: 'Rules' }, { key: 'trace', label: 'Trace' }, { key: 'graph', label: 'Graph' }].map((t) => ({
+        label: t.label,
+        border: st.tab === t.key ? '#147cd7' : 'transparent',
+        fg: st.tab === t.key ? '#147cd7' : '#4a5768',
+        onClick: () => this.set({ tab: t.key }),
+      })),
+      showCatalog: st.tab === 'rules',
+      showTrace: st.tab === 'trace',
+      showGraph: st.tab === 'graph',
+      catalogRules: rules.map((r) => {
+        const ok = inScope(r);
+        const sel = st.selectedRule === r.id;
+        return {
+          name: r.name,
+          nameFg: ok ? '#212934' : '#6e7a8a',
+          accent: sel ? '#147cd7' : r.firing && ok ? '#00796b' : ok ? '#d5dde5' : 'transparent',
+          stateLabel: !ok ? 'Out of scope' : r.firing ? 'Firing' : 'Idle',
+          stateFg: !ok ? '#a0adba' : r.firing ? '#00695c' : '#6e7a8a',
+          actions: r.actions.map((a) => ({ text: a.text, bg: EFFECT[a.v].bg, fg: EFFECT[a.v].fg, icon: EFFECT[a.v].icon })),
+          condition: r.condition,
+          showCondition: showConditions,
+          scopeNote: ok ? '' : 'Applies to ' + (r.slot === 'registration' ? 'registration' : (p.stages[r.slot] ? p.stages[r.slot].name : 'another stage')),
+          onClick: () => this.set({ selectedRule: r.id, tab: 'graph' }),
+        };
+      }),
+      traceEntries: [
+        { when: 'just now', tag: '2 rules', summary: 'Date of birth changed · 2 rules fired', effects: [
+          { type: 'HIDEFIELD', target: 'Residence', bg: EFFECT.hide.bg, fg: EFFECT.hide.fg, icon: EFFECT.hide.icon },
+          { type: 'DISPLAYTEXT', target: 'Estimated gestational age', bg: EFFECT.feedback.bg, fg: EFFECT.feedback.fg, icon: EFFECT.feedback.icon },
+        ] },
+        { when: '12s ago', tag: '1 rule', summary: 'Gender changed · 1 rule fired', effects: [
+          { type: 'ASSIGN', target: 'Age group = 0\u20134 years', bg: EFFECT.assign.bg, fg: EFFECT.assign.fg, icon: EFFECT.assign.icon },
+        ] },
+        { when: '1m ago', tag: 'Initial', summary: 'Initial evaluation · 2 effects', effects: [
+          { type: 'DISPLAYTEXT', target: 'Estimated gestational age', bg: EFFECT.feedback.bg, fg: EFFECT.feedback.fg, icon: EFFECT.feedback.icon },
+          { type: 'HIDEFIELD', target: 'Residence', bg: EFFECT.hide.bg, fg: EFFECT.hide.fg, icon: EFFECT.hide.icon },
+        ] },
+      ],
+      graphRows: [
+        { from: 'Date of birth', to: 'Residence', kind: 'hide', stroke: EFFECT.hide.stroke },
+        { from: 'Date of birth', to: 'Gestational age', kind: 'feedback', stroke: EFFECT.feedback.stroke },
+        { from: 'Date of birth', to: 'Age group', kind: 'assign', stroke: EFFECT.assign.stroke },
+      ],
+    };
+  }
+}
+
+</script>
+</body>
+</html>

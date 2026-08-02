@@ -1,4 +1,3 @@
-import { filterEventProgramRules } from '@dhis2-form-utils/metadata';
 import type { RuleDevtoolsMetadata } from './createLabelLookup';
 import type { RuleActionLike } from './formatRuleActionSummary';
 
@@ -8,6 +7,8 @@ export type CatalogRule = {
     condition?: string;
     priority?: number;
     programRuleActions: RuleActionLike[];
+    /** Stage the rule applies to, or `null` for attribute-only/global rules. */
+    programStageId: string | null;
 };
 
 function sortByPriority(rules: CatalogRule[]): CatalogRule[] {
@@ -20,6 +21,7 @@ function toCatalogRule(rule: {
     condition?: string;
     priority?: number;
     programRuleActions?: readonly RuleActionLike[] | null;
+    programStageId: string | null;
 }): CatalogRule {
     return {
         id: rule.id,
@@ -27,14 +29,19 @@ function toCatalogRule(rule: {
         condition: rule.condition,
         priority: rule.priority,
         programRuleActions: [...(rule.programRuleActions ?? [])],
+        programStageId: rule.programStageId,
     };
 }
 
+/**
+ * The full program rule catalog — every rule regardless of which slot is currently
+ * being viewed. `RulesPanel` derives in-scope/out-of-scope status from `programStageId`
+ * against the slot it renders, so this must not pre-filter by stage.
+ */
 export function resolveProgramRulesList(metadata: RuleDevtoolsMetadata): CatalogRule[] {
     if (metadata.formKind === 'event') {
-        const rules = filterEventProgramRules(metadata.metadata, metadata.programStageId);
         return sortByPriority(
-            rules
+            metadata.metadata.programRules
                 .filter((rule): rule is typeof rule & { id: string } => Boolean(rule.id))
                 .map((rule) =>
                     toCatalogRule({
@@ -43,6 +50,7 @@ export function resolveProgramRulesList(metadata: RuleDevtoolsMetadata): Catalog
                         condition: rule.condition,
                         priority: rule.priority,
                         programRuleActions: rule.programRuleActions,
+                        programStageId: rule.programStage?.id ?? null,
                     })
                 )
         );
@@ -58,6 +66,7 @@ export function resolveProgramRulesList(metadata: RuleDevtoolsMetadata): Catalog
                     condition: rule.condition,
                     priority: rule.priority,
                     programRuleActions: rule.programRuleActions,
+                    programStageId: rule.programStage?.id ?? null,
                 })
             )
     );

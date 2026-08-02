@@ -1,20 +1,28 @@
 import i18n from '@dhis2/d2-i18n'
 import { Center, CircularLoader, NoticeBox } from '@dhis2/ui'
-import { useTrackerMetadataQuery } from '@dhis2-form-utils/hooks'
-import type { OrgUnit } from '@/types/program'
+import type { ProgramStageRef } from '@dhis2-form-utils/devtools'
+import type { TrackerProgramMetadata } from '@dhis2-form-utils/hooks'
 import { ProgramRegistrationForm } from './ProgramRegistrationForm'
 
 type ProgramRegistrationFormScreenProps = {
     programId: string
-    orgUnits: OrgUnit[]
+    orgUnitId: string
+    enrolledAt: string
+    metadata: TrackerProgramMetadata | undefined
+    programStages: ProgramStageRef[]
+    loading: boolean
+    error: Error | undefined
 }
 
 export function ProgramRegistrationFormScreen({
     programId,
-    orgUnits,
+    orgUnitId,
+    enrolledAt,
+    metadata,
+    programStages,
+    loading,
+    error,
 }: ProgramRegistrationFormScreenProps) {
-    const { metadata, error, loading } = useTrackerMetadataQuery(programId)
-
     if (loading) {
         return (
             <Center>
@@ -46,7 +54,9 @@ export function ProgramRegistrationFormScreen({
             <ProgramRegistrationForm
                 programId={programId}
                 metadata={metadata}
-                orgUnits={orgUnits}
+                programStages={programStages}
+                orgUnitId={orgUnitId}
+                enrolledAt={enrolledAt}
             />
         </div>
     )

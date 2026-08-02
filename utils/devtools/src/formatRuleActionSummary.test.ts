@@ -6,6 +6,7 @@ const labelLookup: DevtoolsLabelLookup = {
     resolveRuleName: (id) => `rule:${id}`,
     resolveFieldName: (id) => `field:${id}`,
     resolveSectionName: (id) => `section:${id}`,
+    resolveStageName: (id) => `stage:${id}`,
 };
 
 describe('formatRuleActionSummary', () => {

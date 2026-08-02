@@ -1,8 +1,9 @@
-import { D2Field, FormSection } from '@dhis2-form-utils/dhis2-ui'
+import { useMemo } from 'react'
+import i18n from '@dhis2/d2-i18n'
 import type { TrackerProgramMetadata } from '@dhis2-form-utils/hooks'
 import type { ProgramTrackedEntityAttribute } from '@dhis2-form-utils/metadata'
 import { resolveFormSectionLayout } from '@dhis2-form-utils/metadata'
-import { useMemo } from 'react'
+import { RuleAwareField } from '@/components/rules/RuleAwareField'
 import { defaultSectionTitle, FormSectionCard } from './FormSectionCard'
 
 type RegistrationFormFieldsProps = {
@@ -25,7 +26,7 @@ function toFieldConfig(
 
 function renderTeaField(fieldConfig: ProgramTrackedEntityAttribute) {
     return (
-        <D2Field
+        <RuleAwareField
             key={fieldConfig.id}
             field={{
                 kind: 'trackedEntityAttribute',
@@ -82,20 +83,23 @@ export function RegistrationFormFields({
     return (
         <>
             {layout.sections.map((section) => (
-                <FormSection key={section.id} sectionId={section.id}>
-                    <FormSectionCard
-                        title={defaultSectionTitle(section.displayName)}
-                    >
-                        {section.itemIds.map((teaId) => {
-                            const fieldConfig = fieldsByTeaId.get(teaId)
-                            if (!fieldConfig) {
-                                return null
-                            }
+                <FormSectionCard
+                    key={section.id}
+                    sectionId={section.id}
+                    title={defaultSectionTitle(section.displayName)}
+                    note={i18n.t('{{count}} attributes', {
+                        count: section.itemIds.length,
+                    })}
+                >
+                    {section.itemIds.map((teaId) => {
+                        const fieldConfig = fieldsByTeaId.get(teaId)
+                        if (!fieldConfig) {
+                            return null
+                        }
 
-                            return renderTeaField(fieldConfig)
-                        })}
-                    </FormSectionCard>
-                </FormSection>
+                        return renderTeaField(fieldConfig)
+                    })}
+                </FormSectionCard>
             ))}
             {layout.unsectionedItemIds.map((teaId) => {
                 const fieldConfig = fieldsByTeaId.get(teaId)

@@ -1,4 +1,5 @@
-import { D2Field, FormSection } from '@dhis2-form-utils/dhis2-ui'
+import { useMemo } from 'react'
+import i18n from '@dhis2/d2-i18n'
 import type {
     ProgramStageDataElement,
     ProgramStageMetadata,
@@ -7,7 +8,7 @@ import {
     getProgramStageSectionDataElementIds,
     resolveFormSectionLayout,
 } from '@dhis2-form-utils/metadata'
-import { useMemo } from 'react'
+import { RuleAwareField } from '@/components/rules/RuleAwareField'
 import { defaultSectionTitle, FormSectionCard } from './FormSectionCard'
 
 type EventFormFieldsProps = {
@@ -23,7 +24,7 @@ function renderDataElementField(
     }
 
     return (
-        <D2Field
+        <RuleAwareField
             key={fieldId}
             field={{
                 kind: 'dataElement',
@@ -80,24 +81,34 @@ export function EventFormFields({ metadata }: EventFormFieldsProps) {
     return (
         <>
             {layout.sections.map((section) => (
-                <FormSection key={section.id} sectionId={section.id}>
-                    <FormSectionCard
-                        title={defaultSectionTitle(section.displayName)}
-                    >
-                        {section.itemIds.map((fieldId) => {
-                            const programStageDataElement =
-                                fieldsByDataElementId.get(fieldId)
-                            if (!programStageDataElement) {
-                                return null
-                            }
+                <FormSectionCard
+                    key={section.id}
+                    sectionId={section.id}
+                    title={defaultSectionTitle(section.displayName)}
+                    note={i18n.t('{{count}} data elements', {
+                        count: section.itemIds.length,
+                    })}
+                >
+                    {section.itemIds.map((fieldId) => {
+                        const programStageDataElement =
+                            fieldsByDataElementId.get(fieldId)
+                        if (!programStageDataElement) {
+                            return null
+                        }
 
-                            return renderDataElementField(
-                                programStageDataElement
-                            )
-                        })}
-                    </FormSectionCard>
-                </FormSection>
+                        return renderDataElementField(programStageDataElement)
+                    })}
+                </FormSectionCard>
             ))}
+            {layout.unsectionedItemIds.map((fieldId) => {
+                const programStageDataElement =
+                    fieldsByDataElementId.get(fieldId)
+                if (!programStageDataElement) {
+                    return null
+                }
+
+                return renderDataElementField(programStageDataElement)
+            })}
         </>
     )
 }
