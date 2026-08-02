@@ -43,8 +43,8 @@ export function ProgramListFilters({
     }, [search, debouncedOnSearchChange])
 
     return (
-        <div className="flex items-center gap-dp12 flex-wrap">
-            <div className="w-[300px]">
+        <div className="flex items-center gap-dp12 justify-between flex-wrap">
+            <div className="w-75">
                 <InputField
                     type="search"
                     dense

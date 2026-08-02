@@ -16,8 +16,8 @@ import {
 } from '@dhis2/ui'
 import { PAGE_SIZE_OPTIONS } from '@/hooks/buildProgramListUrl'
 import { formatLastUpdated } from '@/utils/formatLastUpdated'
-import { PROGRAM_TYPE } from '@/types/program'
 import type { Pager, Program } from '@/types/program'
+import { PROGRAM_TYPE } from '@/types/program'
 
 type ProgramListTableProps = {
     programs: Program[]
@@ -34,6 +34,8 @@ function ProgramTypeTag({ program }: { program: Program }) {
     const isTracker = program.programType === PROGRAM_TYPE.WITH_REGISTRATION
     return (
         <Tag
+            positive={isTracker}
+            neutral={!isTracker}
             className={
                 isTracker
                     ? 'bg-dhis2-teal-100 text-dhis2-teal-900'
@@ -82,29 +84,10 @@ function ProgramRow({
             </DataTableCell>
             <DataTableCell
                 onClick={handleSelect}
-                align="right"
-                className="w-[88px] tabular-nums"
+                align="center"
+                className="w-30 tabular-nums"
             >
                 {program.stageCount}
-            </DataTableCell>
-            <DataTableCell
-                onClick={handleSelect}
-                align="right"
-                className="w-[128px]"
-            >
-                <span className="inline-flex items-center gap-1.5 tabular-nums">
-                    <span
-                        className={`size-1.5 rounded-full ${
-                            program.ruleCount > 0
-                                ? 'bg-dhis2-teal-600'
-                                : 'bg-dhis2-grey-400'
-                        }`}
-                        aria-hidden="true"
-                    />
-                    {program.ruleCount === 0
-                        ? i18n.t('None')
-                        : program.ruleCount}
-                </span>
             </DataTableCell>
             <DataTableCell
                 onClick={handleSelect}
@@ -151,15 +134,9 @@ export function ProgramListTable({
                         </DataTableColumnHeader>
                         <DataTableColumnHeader
                             align="right"
-                            className="w-[88px]"
+                            className="w-[120px]"
                         >
                             {i18n.t('Stages')}
-                        </DataTableColumnHeader>
-                        <DataTableColumnHeader
-                            align="right"
-                            className="w-[128px]"
-                        >
-                            {i18n.t('Rules')}
                         </DataTableColumnHeader>
                         <DataTableColumnHeader className="w-[140px]">
                             {i18n.t('Last updated')}
@@ -200,7 +177,7 @@ export function ProgramListTable({
                     <DataTableFoot>
                         <DataTableRow>
                             <DataTableCell colSpan="6">
-                                <div className="p-4">
+                                <div>
                                     <Pagination
                                         page={page}
                                         pageSize={pageSize}

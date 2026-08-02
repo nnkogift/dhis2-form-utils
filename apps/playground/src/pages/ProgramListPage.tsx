@@ -47,7 +47,7 @@ export function ProgramListPage() {
     }
 
     return (
-        <div className="flex flex-col max-w-[1240px] w-full mx-auto px-8 pt-7 pb-12 gap-5">
+        <div className="flex flex-col max-w-400 w-full mx-auto px-8 pt-7 pb-12 gap-5">
             <div className="flex items-end justify-between gap-6 flex-wrap">
                 <div className="flex flex-col gap-1">
                     <h1 className="m-0 text-2xl font-medium leading-[1.3] text-dhis2-grey-900">
@@ -55,7 +55,7 @@ export function ProgramListPage() {
                     </h1>
                     <p className="m-0 text-sm text-dhis2-grey-700">
                         {i18n.t(
-                            'Pick a program to open its forms and watch its rules evaluate. Nothing is saved unless you ask for it.'
+                            'Pick a program to open its forms and watch its rules evaluate.'
                         )}
                     </p>
                 </div>
