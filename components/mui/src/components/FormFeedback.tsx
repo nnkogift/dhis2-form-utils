@@ -16,12 +16,12 @@ function FeedbackPanel({ title, items }: { title: string; items: FeedbackItem[] 
             <Stack spacing={1}>
                 {items.map((item) => (
                     <Alert key={`${item.location}:${item.content}`} severity="info">
-                        {item.type === 'keyValuePair' ? (
+                        {item.value ? (
                             <>
                                 <strong>{item.content}</strong>: {item.value}
                             </>
                         ) : (
-                            item.value
+                            item.content
                         )}
                     </Alert>
                 ))}
