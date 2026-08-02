@@ -1,6 +1,13 @@
 import i18n from '@dhis2/d2-i18n'
-import type { EventProgramMetadata } from '@dhis2-form-utils/metadata'
+import type {
+    EventProgramMetadata,
+    TrackerProgramMetadata,
+} from '@dhis2-form-utils/metadata'
 import { selectProgramStage } from '@dhis2-form-utils/metadata'
+import type {
+    RuleEventInput,
+    RuleSupplementaryDataInput,
+} from '@dhis2-form-utils/rules'
 import { ProgramEventForm } from './ProgramEventForm'
 
 type ProgramStageFormScreenProps = {
@@ -8,6 +15,13 @@ type ProgramStageFormScreenProps = {
     programStageId?: string
     orgUnitId: string
     occurredAt: string
+    enrollment?: {
+        metadata: TrackerProgramMetadata
+        values: Record<string, unknown>
+    }
+    events?: RuleEventInput[]
+    supplementaryData?: RuleSupplementaryDataInput
+    onValuesChange?: (values: Record<string, unknown>) => void
 }
 
 export function ProgramStageFormScreen({
@@ -15,6 +29,10 @@ export function ProgramStageFormScreen({
     programStageId,
     orgUnitId,
     occurredAt,
+    enrollment,
+    events,
+    supplementaryData,
+    onValuesChange,
 }: ProgramStageFormScreenProps) {
     const stageMetadata = programStageId
         ? selectProgramStage(program, programStageId)
@@ -36,6 +54,10 @@ export function ProgramStageFormScreen({
                 programStageId={programStageId}
                 orgUnitId={orgUnitId}
                 occurredAt={occurredAt}
+                enrollment={enrollment}
+                events={events}
+                supplementaryData={supplementaryData}
+                onValuesChange={onValuesChange}
             />
         </div>
     )

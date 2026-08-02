@@ -8,13 +8,19 @@ import { FormStateProvider, useEventForm } from '@dhis2-form-utils/hooks'
 import type {
     EventProgramMetadata,
     ProgramStageMetadata,
+    TrackerProgramMetadata,
 } from '@dhis2-form-utils/metadata'
-import { filterPayload } from '@dhis2-form-utils/rules'
+import {
+    filterPayload,
+    type RuleEventInput,
+    type RuleSupplementaryDataInput,
+} from '@dhis2-form-utils/rules'
 import i18n from '@dhis2/d2-i18n'
 import React, { useEffect, useMemo, useState } from 'react'
 import { GhostToggleButton } from '@/components/rules/GhostToggleButton'
 import { RuleDisplayProvider } from '@/components/rules/RuleDisplayContext'
 import { RuleFeedbackList } from '@/components/rules/RuleFeedbackList'
+import { usePublishFormValues } from '@/hooks/usePublishFormValues'
 import { formatDhis2Error } from '@/utils/formatDhis2Error'
 import {
     buildEventPayload,
@@ -29,6 +35,13 @@ type ProgramEventFormProps = {
     programStageId: string
     orgUnitId: string
     occurredAt: string
+    enrollment?: {
+        metadata: TrackerProgramMetadata
+        values: Record<string, unknown>
+    }
+    events?: RuleEventInput[]
+    supplementaryData?: RuleSupplementaryDataInput
+    onValuesChange?: (values: Record<string, unknown>) => void
 }
 
 export function ProgramEventForm({
@@ -37,6 +50,10 @@ export function ProgramEventForm({
     programStageId,
     orgUnitId,
     occurredAt,
+    enrollment,
+    events,
+    supplementaryData,
+    onValuesChange,
 }: ProgramEventFormProps) {
     const dataEngine = useDataEngine()
 
@@ -44,6 +61,9 @@ export function ProgramEventForm({
         options: {
             programStageId,
             metadata: program,
+            enrollment,
+            events,
+            supplementaryData,
         },
         formOptions: {
             mode: 'onBlur',
@@ -53,6 +73,7 @@ export function ProgramEventForm({
             },
         },
     })
+    usePublishFormValues(form, onValuesChange)
     const [successMessage, setSuccessMessage] = useState<string>()
     const [ghostsEnabled, setGhostsEnabled] = useState(true)
     const rulesMetadata = useMemo(

@@ -11,12 +11,17 @@ import {
     type TrackerProgramMetadata,
     useTrackerForm,
 } from '@dhis2-form-utils/hooks'
-import { filterPayload } from '@dhis2-form-utils/rules'
+import {
+    filterPayload,
+    type RuleEventInput,
+    type RuleSupplementaryDataInput,
+} from '@dhis2-form-utils/rules'
 import React, { useEffect, useMemo, useState } from 'react'
 import { FormProvider, type UseFormReturn } from 'react-hook-form'
 import { GhostToggleButton } from '@/components/rules/GhostToggleButton'
 import { RuleDisplayProvider } from '@/components/rules/RuleDisplayContext'
 import { RuleFeedbackList } from '@/components/rules/RuleFeedbackList'
+import { usePublishFormValues } from '@/hooks/usePublishFormValues'
 import { formatDhis2Error } from '@/utils/formatDhis2Error'
 import {
     buildTrackerRegistrationPayload,
@@ -32,6 +37,9 @@ type ProgramRegistrationFormProps = {
     programStages: ProgramStageRef[]
     orgUnitId: string
     enrolledAt: string
+    events?: RuleEventInput[]
+    supplementaryData?: RuleSupplementaryDataInput
+    onValuesChange?: (values: Record<string, unknown>) => void
 }
 
 function createTodayValue() {
@@ -44,6 +52,9 @@ export function ProgramRegistrationForm({
     programStages,
     orgUnitId,
     enrolledAt,
+    events,
+    supplementaryData,
+    onValuesChange,
 }: ProgramRegistrationFormProps) {
     const dataEngine = useDataEngine()
     const defaultValues = useMemo(
@@ -62,12 +73,15 @@ export function ProgramRegistrationForm({
         options: {
             programId,
             metadata,
+            events,
+            supplementaryData,
         },
         formOptions: {
             mode: 'onBlur',
             defaultValues,
         },
     })
+    usePublishFormValues(form, onValuesChange)
     const [successMessage, setSuccessMessage] = useState<string>()
     const [ghostsEnabled, setGhostsEnabled] = useState(true)
     const rulesMetadata = useMemo(
