@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-08-01T09:46:39.955Z\n"
-"PO-Revision-Date: 2026-08-01T09:46:39.955Z\n"
+"POT-Creation-Date: 2026-08-02T13:21:32.021Z\n"
+"PO-Revision-Date: 2026-08-02T13:21:32.021Z\n"
 
 msgid "Enrollment"
 msgstr "Enrollment"
@@ -51,9 +51,6 @@ msgstr "Event"
 msgid "Search by name, code, or ID"
 msgstr "Search by name, code, or ID"
 
-msgid "None"
-msgstr "None"
-
 msgid "Program"
 msgstr "Program"
 
@@ -62,9 +59,6 @@ msgstr "Type"
 
 msgid "Stages"
 msgstr "Stages"
-
-msgid "Rules"
-msgstr "Rules"
 
 msgid "Last updated"
 msgstr "Last updated"
@@ -178,12 +172,8 @@ msgstr "{{sourceLabel}} · {{ruleName}}"
 msgid "Program indicators"
 msgstr "Program indicators"
 
-msgid ""
-"Pick a program to open its forms and watch its rules evaluate. Nothing is "
-"saved unless you ask for it."
-msgstr ""
-"Pick a program to open its forms and watch its rules evaluate. Nothing is "
-"saved unless you ask for it."
+msgid "Pick a program to open its forms and watch its rules evaluate."
+msgstr "Pick a program to open its forms and watch its rules evaluate."
 
 msgid "Error loading programs"
 msgstr "Error loading programs"
