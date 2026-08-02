@@ -2,6 +2,10 @@ import i18n from '@dhis2/d2-i18n'
 import { Center, CircularLoader, NoticeBox } from '@dhis2/ui'
 import type { ProgramStageRef } from '@dhis2-form-utils/devtools'
 import type { TrackerProgramMetadata } from '@dhis2-form-utils/hooks'
+import type {
+    RuleEventInput,
+    RuleSupplementaryDataInput,
+} from '@dhis2-form-utils/rules'
 import { ProgramRegistrationForm } from './ProgramRegistrationForm'
 
 type ProgramRegistrationFormScreenProps = {
@@ -12,6 +16,9 @@ type ProgramRegistrationFormScreenProps = {
     programStages: ProgramStageRef[]
     loading: boolean
     error: Error | undefined
+    events?: RuleEventInput[]
+    supplementaryData?: RuleSupplementaryDataInput
+    onValuesChange?: (values: Record<string, unknown>) => void
 }
 
 export function ProgramRegistrationFormScreen({
@@ -22,6 +29,9 @@ export function ProgramRegistrationFormScreen({
     programStages,
     loading,
     error,
+    events,
+    supplementaryData,
+    onValuesChange,
 }: ProgramRegistrationFormScreenProps) {
     if (loading) {
         return (
@@ -57,6 +67,9 @@ export function ProgramRegistrationFormScreen({
                 programStages={programStages}
                 orgUnitId={orgUnitId}
                 enrolledAt={enrolledAt}
+                events={events}
+                supplementaryData={supplementaryData}
+                onValuesChange={onValuesChange}
             />
         </div>
     )

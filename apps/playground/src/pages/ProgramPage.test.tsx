@@ -11,6 +11,7 @@ jest.mock('@dhis2-form-utils/hooks', () => ({
     useEventProgramMetadataQuery: jest.fn(),
 }))
 jest.mock('@/hooks/useAccessibleOrgUnits')
+jest.mock('@/hooks/useCurrentUserSupplementaryData')
 jest.mock('@/components/programs/forms/ProgramStageFormScreen', () => ({
     ProgramStageFormScreen: jest.fn(() => <div>Event form screen</div>),
 }))
@@ -68,6 +69,7 @@ describe('ProgramPage', () => {
                 ],
                 programRules: [],
                 programRuleVariables: [],
+                constants: [],
             },
             error: undefined,
             loading: false,
@@ -96,6 +98,7 @@ describe('ProgramPage', () => {
                 ],
                 programRules: [],
                 programRuleVariables: [],
+                constants: [],
             },
             error: undefined,
             loading: false,
@@ -124,6 +127,7 @@ describe('ProgramPage', () => {
                 ],
                 programRules: [],
                 programRuleVariables: [],
+                constants: [],
             },
             error: undefined,
             loading: false,

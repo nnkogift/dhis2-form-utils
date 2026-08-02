@@ -11,7 +11,7 @@ export type EventFormValues = Record<string, string> & {
     occurredAt: string
 }
 
-const EVENT_SYSTEM_FIELD_KEYS = new Set(['orgUnit', 'occurredAt'])
+export const EVENT_SYSTEM_FIELD_KEYS = new Set(['orgUnit', 'occurredAt'])
 
 export type EventSubmissionInput = {
     values: EventFormValues | Record<string, unknown>
