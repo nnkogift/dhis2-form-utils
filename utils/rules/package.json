@@ -26,7 +26,7 @@
         "@dhis2-form-utils/metadata": "workspace:*"
     },
     "peerDependencies": {
-        "@dhis2/rule-engine": ">=2.0.0"
+        "@dhis2/rule-engine": ">=3.8.2"
     },
     "devDependencies": {
         "@dhis2-form-utils/config": "workspace:*",
