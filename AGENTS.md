@@ -15,9 +15,14 @@ those here).
   server is needed for stories or tests.
 - **Playground** (`apps/playground`, port `3000`): a DHIS2 App Platform sandbox run with
   `pnpm playground`. It compiles standalone but proxies to a live DHIS2 instance
-  (`https://dhis.rufaa.co.tz`) and renders a DHIS2 login screen — full end-to-end use requires DHIS2
-  credentials for that instance, which are not provisioned by default. It is optional for developing
-  the library.
+  (`https://dhis.rufaa.co.tz` — the standard DHIS2 Sierra Leone demo db) and renders a DHIS2 login
+  screen. `d2-app-scripts start` also spins up a proxy on port `8080` that forwards to that instance.
+  To log in on the `:3000` screen, set the **Server** field to `http://localhost:8080` (the local
+  proxy, which avoids CORS), then use DHIS2 credentials. In cloud runs the credentials come from the
+  `DHIS2_PLAYGROUND_USERNAME` / `DHIS2_PLAYGROUND_PASSWORD` secrets; if those are unset the app still
+  builds and serves the login page, so the playground is optional for developing the library. Once
+  logged in, pick a program (e.g. "Antenatal care visit") to open its form and watch its program
+  rules evaluate live, with a Rules/Trace/Graph panel.
 
 ### Node / package manager
 
