@@ -138,7 +138,9 @@ const toEnrollmentContext = (
         .map(toEnrollmentRuleVariable);
 
     const constantsMap = new Map(
-        metadata.constants.flatMap((c) => (c.id ? [[c.id, String(c.value)] as const] : []))
+        (Array.isArray(metadata.constants) ? metadata.constants : []).flatMap((c) =>
+            c.id ? [[c.id, String(c.value)] as const] : []
+        )
     );
 
     return new RuleEngineContextJs(
