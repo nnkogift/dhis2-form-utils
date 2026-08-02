@@ -14,13 +14,13 @@ import {
     RuleVariableType,
 } from '@dhis2/rule-engine';
 import {
+    ProgramRuleActionType,
     ProgramRuleVariableSourceType,
     type ProgramRuleAction,
     type TrackerProgramMetadata,
 } from '@dhis2-form-utils/metadata';
 import type { BuiltRuleEngine } from './context';
 import type { RuleEffect } from './evaluate';
-import { ProgramRuleActionType } from '@dhis2/api-types';
 import { ruleValueTypeFromDhis2 } from './ruleValueType';
 
 const DEFAULT_ENROLLMENT_ID = 'current-enrollment';
@@ -60,6 +60,12 @@ const toActionValues = (action: ProgramRuleAction): Map<string, string> => {
         values.set('trackedEntityAttribute', action.trackedEntityAttribute.id);
     }
     if (action.content) values.set('content', action.content);
+    if (
+        action.programRuleActionType === ProgramRuleActionType.ASSIGN &&
+        action.trackedEntityAttribute?.id
+    ) {
+        values.set('field', action.trackedEntityAttribute.id);
+    }
     if (action.programStageSection?.id) {
         values.set('programStageSection', action.programStageSection.id);
     }

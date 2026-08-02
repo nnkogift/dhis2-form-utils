@@ -17,6 +17,7 @@ import {
     RuleVariableType,
 } from '@dhis2/rule-engine';
 import {
+    ProgramRuleActionType,
     ProgramRuleVariableSourceType,
     type ProgramRule,
     type ProgramRuleAction,
@@ -24,7 +25,6 @@ import {
     type ProgramStageMetadata,
 } from '@dhis2-form-utils/metadata';
 import type { RuleEffect } from './evaluate';
-import { ProgramRuleActionType } from '@dhis2/api-types';
 import { ruleValueTypeFromDhis2 } from './ruleValueType';
 
 const DEFAULT_EVENT_STATUS = RuleEventStatus.ACTIVE;
@@ -89,6 +89,10 @@ const toActionValues = (action: ProgramRuleAction): Map<string, string> => {
         values.set('trackedEntityAttribute', action.trackedEntityAttribute.id);
     }
     if (action.content) values.set('content', action.content);
+    if (action.programRuleActionType === ProgramRuleActionType.ASSIGN) {
+        const field = action.dataElement?.id ?? action.trackedEntityAttribute?.id;
+        if (field) values.set('field', field);
+    }
     const option = action.option as OptionRef | undefined;
     const optionGroup = action.optionGroup as { id?: string; displayName?: string } | undefined;
     if (option?.code) values.set('optionCode', option.code);

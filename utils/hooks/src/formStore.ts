@@ -17,7 +17,6 @@ export class FormStore {
 
     private unsubscribe: (() => void) | null = null;
     private debouncedEvaluate: DebouncedFunc<() => void> | null = null;
-    private applyingAssignments = false;
     private prevAssignments: Record<string, unknown> = {};
     private engine: BuiltRuleEngine | null = null;
     private form: UseFormReturn<Record<string, unknown>> | null = null;
@@ -57,11 +56,6 @@ export class FormStore {
         this.effectHandlersRef = effectHandlersRef;
 
         const evaluate = (changedFields: string[]) => {
-            if (this.applyingAssignments) {
-                this.applyingAssignments = false;
-                return;
-            }
-
             if (!this.engine || !this.form) return;
 
             const next = evaluateFormState(
@@ -150,8 +144,6 @@ export class FormStore {
         }
 
         if (!pending.length) return;
-
-        this.applyingAssignments = true;
 
         for (const { fieldId, value } of pending) {
             this.prevAssignments[fieldId] = value;

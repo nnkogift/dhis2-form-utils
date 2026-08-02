@@ -202,4 +202,41 @@ describe('buildEnrollmentRuleEngineContext / buildEnrollmentRuleEngine', () => {
 
         expect(effects[0].trackedEntityAttribute).toBe(teaId);
     });
+
+    it('emits a real ASSIGN effect for a tracked entity attribute target via the official engine', () => {
+        const riskScoreTeaId = 'tea-risk-score';
+        const metadata: TrackerProgramMetadata = {
+            ...metadataWithTeaRule(),
+            programRules: [
+                {
+                    id: 'rule-assign',
+                    condition: "d2:hasValue('age')",
+                    priority: 1,
+                    name: 'Assign risk score',
+                    programRuleActions: [
+                        {
+                            id: 'action-assign',
+                            programRuleActionType: ProgramRuleActionType.ASSIGN,
+                            data: '#{age} * 2',
+                            trackedEntityAttribute: { id: riskScoreTeaId },
+                        },
+                    ],
+                },
+            ],
+        };
+
+        const context = buildEnrollmentRuleEngineContext(metadata);
+        const engine = buildEnrollmentRuleEngine(context);
+        const effects = engine.evaluate({
+            orgUnit: 'abcdefghijk',
+            enrolledAt: '2024-01-01',
+            [teaId]: '15',
+            [riskScoreTeaId]: '',
+        });
+
+        expect(effects).toHaveLength(1);
+        expect(effects[0].ruleActionType).toBe(ProgramRuleActionType.ASSIGN);
+        expect(effects[0].trackedEntityAttribute).toBe(riskScoreTeaId);
+        expect(effects[0].data).toBe('30');
+    });
 });

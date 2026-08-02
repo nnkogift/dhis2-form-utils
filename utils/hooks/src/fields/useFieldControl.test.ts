@@ -58,6 +58,23 @@ describe('useFieldControl', () => {
         expect(result.current.isDisabled).toBe(true);
     });
 
+    it('sets isDisabled when a rule assigns a value to the field', () => {
+        const { result } = renderFieldControlHook(
+            () =>
+                useFieldControl({
+                    kind: 'dataElement',
+                    config: makePsde('de-text', 'TEXT'),
+                }),
+            {
+                fieldState: {
+                    'de-text': { ...createEmptyFieldState(), assignedValue: 'auto' },
+                },
+            }
+        );
+
+        expect(result.current.isDisabled).toBe(true);
+    });
+
     it('isHidden reflects fieldState.hidden from the FieldStateStore', () => {
         const { result } = renderFieldControlHook(
             () =>
