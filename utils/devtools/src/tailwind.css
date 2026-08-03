@@ -1,4 +1,0 @@
-@import '@xyflow/react/dist/style.css';
-@import 'tailwindcss';
-@import '@dhis2-form-utils/config/tailwind-theme.css';
-@source './**/*.{ts,tsx}';
