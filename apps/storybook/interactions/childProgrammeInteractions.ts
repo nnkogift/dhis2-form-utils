@@ -1,4 +1,5 @@
 import { expect, screen, userEvent, waitFor, within } from 'storybook/test';
+import { RULE_EFFECT_WAIT_TIMEOUT_MS } from './waitTimeouts';
 
 export type ChildProgrammeAdapter = 'dhis2-ui' | 'mantine' | 'mui';
 
@@ -100,7 +101,7 @@ export function childProgrammePlays(adapter: ChildProgrammeAdapter) {
                 async () => {
                     await expect(canvas.getByText(LOW_APGAR_WARNING)).toBeInTheDocument();
                 },
-                { timeout: 1000 }
+                { timeout: RULE_EFFECT_WAIT_TIMEOUT_MS }
             );
             return;
         }
@@ -115,7 +116,7 @@ export function childProgrammePlays(adapter: ChildProgrammeAdapter) {
                 }
                 await expect(canvas.getByLabelText(APGAR_COMMENT_LABEL)).toBeInTheDocument();
             },
-            { timeout: 1000 }
+            { timeout: RULE_EFFECT_WAIT_TIMEOUT_MS }
         );
         await expect(canvas.queryByText(LOW_APGAR_WARNING)).not.toBeInTheDocument();
     };
@@ -128,7 +129,7 @@ export function childProgrammePlays(adapter: ChildProgrammeAdapter) {
             async () => {
                 await expect(canvas.getByText(NEGATIVE_APGAR_ERROR)).toBeInTheDocument();
             },
-            { timeout: 1000 }
+            { timeout: RULE_EFFECT_WAIT_TIMEOUT_MS }
         );
     };
 
@@ -140,7 +141,7 @@ export function childProgrammePlays(adapter: ChildProgrammeAdapter) {
             async () => {
                 await expect(canvas.queryByLabelText(APGAR_COMMENT_LABEL)).not.toBeInTheDocument();
             },
-            { timeout: 1000 }
+            { timeout: RULE_EFFECT_WAIT_TIMEOUT_MS }
         );
     };
 

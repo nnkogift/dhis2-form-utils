@@ -1,4 +1,5 @@
 import { expect, screen, userEvent, waitFor, within } from 'storybook/test';
+import { RULE_EFFECT_EXTENDED_WAIT_TIMEOUT_MS, RULE_EFFECT_WAIT_TIMEOUT_MS } from './waitTimeouts';
 
 export type AncAdapter = 'dhis2-ui' | 'mantine' | 'mui';
 
@@ -135,7 +136,7 @@ export function ancPlays(adapter: AncAdapter) {
                 async () => {
                     await expect(canvas.getByText(LOW_HEMOGLOBIN_WARNING)).toBeInTheDocument();
                 },
-                { timeout: 1000 }
+                { timeout: RULE_EFFECT_WAIT_TIMEOUT_MS }
             );
             return;
         }
@@ -149,7 +150,7 @@ export function ancPlays(adapter: AncAdapter) {
                     await expect(input).toHaveValue('8');
                 }
             },
-            { timeout: 1000 }
+            { timeout: RULE_EFFECT_WAIT_TIMEOUT_MS }
         );
         await expect(canvas.queryByText(LOW_HEMOGLOBIN_WARNING)).not.toBeInTheDocument();
     };
@@ -162,7 +163,7 @@ export function ancPlays(adapter: AncAdapter) {
             async () => {
                 await expect(canvas.getByText(HIGH_HEMOGLOBIN_ERROR)).toBeInTheDocument();
             },
-            { timeout: 1000 }
+            { timeout: RULE_EFFECT_WAIT_TIMEOUT_MS }
         );
     };
 
@@ -209,7 +210,7 @@ export function ancPlays(adapter: AncAdapter) {
                     canvas.queryByRole('group', { name: COUNSELLING_LABEL })
                 ).not.toBeInTheDocument();
             },
-            { timeout: 2000 }
+            { timeout: RULE_EFFECT_EXTENDED_WAIT_TIMEOUT_MS }
         );
     };
 
@@ -244,7 +245,7 @@ export function ancPlays(adapter: AncAdapter) {
                     canvas.queryByRole('group', { name: COUNSELLING_LABEL })
                 ).not.toBeInTheDocument();
             },
-            { timeout: 2000 }
+            { timeout: RULE_EFFECT_EXTENDED_WAIT_TIMEOUT_MS }
         );
     };
 
