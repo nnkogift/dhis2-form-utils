@@ -114,7 +114,7 @@ jobs:
 
     fallow-badge:
         runs-on: ubuntu-latest
-        needs: fallow
+        needs: build
         permissions:
             contents: write
         steps:
@@ -126,13 +126,14 @@ jobs:
                   cache: pnpm
             - run: pnpm install --frozen-lockfile
             - name: Generate health badge
-              run: pnpm exec fallow health --format badge > badge.svg || true
+              run: |
+                  mkdir -p badge-out
+                  pnpm exec fallow health --format badge > badge-out/badge.svg || true
 
             - name: Publish badge
               uses: peaceiris/actions-gh-pages@v4
               with:
                   github_token: ${{ secrets.GITHUB_TOKEN }}
-                  publish_dir: .
+                  publish_dir: ./badge-out
                   publish_branch: badges
-                  keep_files: true
-                  include_files: badge.svg
+                  keep_files: false
