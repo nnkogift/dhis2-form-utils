@@ -1,0 +1,7 @@
+@import 'tailwindcss';
+@import '@dhis2-form-utils/config/tailwind-theme.css';
+
+html {
+    color-scheme: light;
+    background: var(--color-dhis2-grey-050);
+}

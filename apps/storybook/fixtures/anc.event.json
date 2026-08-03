@@ -1,0 +1,139 @@
+{
+    "id": "lxAQ7Zs9VYR",
+    "displayName": "Antenatal care visit",
+    "shortName": "Antenatal care",
+    "programType": "WITHOUT_REGISTRATION",
+    "programStages": [
+        {
+            "id": "dBwrot7S420",
+            "displayName": "Antenatal care visit",
+            "programStageDataElements": [
+                {
+                    "id": "eM6beRIqUnM",
+                    "compulsory": false,
+                    "allowProvidedElsewhere": false,
+                    "allowFutureDate": false,
+                    "displayInReports": false,
+                    "dataElement": {
+                        "id": "sWoqcoByYmD",
+                        "displayName": "WHOMCH Smoking",
+                        "displayFormName": "WHOMCH Smoking",
+                        "valueType": "BOOLEAN"
+                    }
+                },
+                {
+                    "id": "ZD8pd21Dt4i",
+                    "compulsory": false,
+                    "allowProvidedElsewhere": false,
+                    "allowFutureDate": false,
+                    "displayInReports": false,
+                    "dataElement": {
+                        "id": "Ok9OQpitjQr",
+                        "displayName": "WHOMCH Smoking cessation counselling provided",
+                        "displayFormName": "WHOMCH Smoking cessation counselling provided",
+                        "valueType": "BOOLEAN",
+                        "description": "Counselling and behavioural interventions on smoking cessation."
+                    }
+                },
+                {
+                    "id": "QgGD234oA8i",
+                    "compulsory": false,
+                    "allowProvidedElsewhere": false,
+                    "allowFutureDate": false,
+                    "displayInReports": false,
+                    "dataElement": {
+                        "id": "vANAXwtLwcT",
+                        "displayName": "WHOMCH Hemoglobin value",
+                        "displayFormName": "WHOMCH Hemoglobin value",
+                        "valueType": "NUMBER",
+                        "description": "Screening for anemia."
+                    }
+                }
+            ],
+            "programStageSections": []
+        }
+    ],
+    "programRules": [
+        {
+            "id": "dahuKlP7jR2",
+            "displayName": "Show error for high hemoglobin value",
+            "condition": "#{hemoglobin} > 99",
+            "programRuleActions": [
+                {
+                    "programRuleActionType": "SHOWERROR",
+                    "content": "The hemoglobin value cannot be above 99",
+                    "dataElement": {
+                        "id": "vANAXwtLwcT",
+                        "displayName": "WHOMCH Hemoglobin value",
+                        "displayFormName": "WHOMCH Hemoglobin value",
+                        "valueType": "NUMBER",
+                        "description": "Screening for anemia."
+                    }
+                }
+            ]
+        },
+        {
+            "id": "xOe5qCzRS0Y",
+            "displayName": "Hide smoking cessation councelling",
+            "condition": "!#{womanSmoking} ",
+            "programRuleActions": [
+                {
+                    "programRuleActionType": "HIDEFIELD",
+                    "dataElement": {
+                        "id": "Ok9OQpitjQr",
+                        "displayName": "WHOMCH Smoking cessation counselling provided",
+                        "displayFormName": "WHOMCH Smoking cessation counselling provided",
+                        "valueType": "BOOLEAN",
+                        "description": "Counselling and behavioural interventions on smoking cessation."
+                    }
+                }
+            ]
+        },
+        {
+            "id": "GC4gpdoSD4r",
+            "displayName": "Hemoglobin warning",
+            "condition": "#{hemoglobin} < 9",
+            "programRuleActions": [
+                {
+                    "programRuleActionType": "SHOWWARNING",
+                    "content": "Hemoglobin value lower than normal",
+                    "dataElement": {
+                        "id": "vANAXwtLwcT",
+                        "displayName": "WHOMCH Hemoglobin value",
+                        "displayFormName": "WHOMCH Hemoglobin value",
+                        "valueType": "NUMBER",
+                        "description": "Screening for anemia."
+                    }
+                }
+            ]
+        }
+    ],
+    "programRuleVariables": [
+        {
+            "id": "omrL0gtPpDL",
+            "name": "hemoglobin",
+            "useCodeForOptionSet": false,
+            "programRuleVariableSourceType": "DATAELEMENT_NEWEST_EVENT_PROGRAM",
+            "dataElement": {
+                "id": "vANAXwtLwcT",
+                "displayName": "WHOMCH Hemoglobin value",
+                "displayFormName": "WHOMCH Hemoglobin value",
+                "valueType": "NUMBER",
+                "description": "Screening for anemia."
+            }
+        },
+        {
+            "id": "Z92dJO9gIje",
+            "name": "womanSmoking",
+            "useCodeForOptionSet": false,
+            "programRuleVariableSourceType": "DATAELEMENT_NEWEST_EVENT_PROGRAM",
+            "dataElement": {
+                "id": "sWoqcoByYmD",
+                "displayName": "WHOMCH Smoking",
+                "displayFormName": "WHOMCH Smoking",
+                "valueType": "BOOLEAN"
+            }
+        }
+    ],
+    "constants": []
+}

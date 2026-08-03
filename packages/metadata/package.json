@@ -1,0 +1,23 @@
+{
+    "name": "@dhis2-form-utils/metadata",
+    "version": "0.0.0",
+    "description": "Convert DHIS2 metadata into Zod schemas for React Hook Form",
+    "type": "module",
+    "exports": {
+        ".": "./src/index.ts"
+    },
+    "scripts": {
+        "typecheck": "tsc --noEmit",
+        "test": "vitest run"
+    },
+    "dependencies": {
+        "zod": "^3.25.76"
+    },
+    "devDependencies": {
+        "@dhis2-form-utils/config": "workspace:*",
+        "@dhis2/api-types": "43.0.0-beta.daa0d8e",
+        "@dhis2/data-engine": "^3.17.0",
+        "typescript": "^5.9.3",
+        "vitest": "^4.1.7"
+    }
+}

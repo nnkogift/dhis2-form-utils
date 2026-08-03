@@ -1,0 +1,54 @@
+import { D2Field } from '@dhis2-form-utils/mui';
+import type { Meta, StoryObj } from '@storybook/react-vite';
+import { ProgrammeEventForm } from '../../components/ProgrammeEventForm';
+import { withEventForm } from '../../decorators/withEventForm';
+import { ANC_STAGE_ID, ancEventProgramMetadata } from '../../fixtures/anc';
+import { ancPlays } from '../../interactions/ancInteractions';
+import type { StoryPlayContext } from '../../interactions/ancInteractions';
+
+const plays = ancPlays('mui');
+
+function MuiAncForm() {
+    return <ProgrammeEventForm Field={D2Field} />;
+}
+
+const meta = {
+    title: 'mui/ANC Form Example',
+    component: MuiAncForm,
+    tags: ['autodocs'],
+    decorators: [
+        withEventForm({
+            programStageId: ANC_STAGE_ID,
+            metadata: ancEventProgramMetadata,
+        }),
+    ],
+} satisfies Meta<typeof MuiAncForm>;
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+export const Default: Story = {
+    play: async (context: StoryPlayContext) => {
+        await plays.rendersForm(context);
+        await plays.fillsHemoglobin(context);
+    },
+};
+
+export const LowHemoglobinWarning: Story = {
+    parameters: {
+        docs: {
+            description: {
+                story: 'MUI adapters surface program-rule errors but not warnings. The hemoglobin value is still persisted.',
+            },
+        },
+    },
+    play: plays.lowHemoglobinWarning,
+};
+
+export const HighHemoglobinError: Story = {
+    play: plays.highHemoglobinError,
+};
+
+export const NonSmokerHidesCounselling: Story = {
+    play: plays.nonSmokerHidesCounselling,
+};

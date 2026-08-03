@@ -1,0 +1,39 @@
+{
+    "name": "@dhis2-form-utils/rules",
+    "version": "0.0.0",
+    "description": "DHIS2 program rule evaluation and field state mapping for React forms",
+    "type": "module",
+    "main": "./dist/index.cjs",
+    "module": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+        ".": {
+            "import": "./dist/index.js",
+            "require": "./dist/index.cjs",
+            "types": "./dist/index.d.ts"
+        }
+    },
+    "files": [
+        "dist"
+    ],
+    "scripts": {
+        "build": "tsup",
+        "dev": "tsup --watch",
+        "typecheck": "tsc --noEmit",
+        "test": "vitest run"
+    },
+    "dependencies": {
+        "@dhis2-form-utils/metadata": "workspace:*"
+    },
+    "peerDependencies": {
+        "@dhis2/rule-engine": ">=3.8.2"
+    },
+    "devDependencies": {
+        "@dhis2-form-utils/config": "workspace:*",
+        "@dhis2/api-types": "43.0.0-beta.daa0d8e",
+        "@dhis2/rule-engine": "3.8.2",
+        "tsup": "^8.5.1",
+        "typescript": "^5.9.3",
+        "vitest": "^4.1.7"
+    }
+}
