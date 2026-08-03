@@ -126,7 +126,7 @@ jobs:
                   cache: pnpm
             - run: pnpm install --frozen-lockfile
             - name: Generate health badge
-              run: pnpm exec fallow health --format badge > badge.svg
+              run: pnpm exec fallow health --format badge > badge.svg || true
 
             - name: Publish badge
               uses: peaceiris/actions-gh-pages@v4
