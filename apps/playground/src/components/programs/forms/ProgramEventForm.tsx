@@ -7,6 +7,7 @@ import {
 import { FormStateProvider, useEventForm } from '@dhis2-form-utils/hooks'
 import type {
     EventProgramMetadata,
+    OptionGroupCodeMap,
     ProgramStageMetadata,
     TrackerProgramMetadata,
 } from '@dhis2-form-utils/metadata'
@@ -41,6 +42,7 @@ type ProgramEventFormProps = {
     }
     events?: RuleEventInput[]
     supplementaryData?: RuleSupplementaryDataInput
+    optionGroups?: OptionGroupCodeMap
     onValuesChange?: (values: Record<string, unknown>) => void
 }
 
@@ -53,6 +55,7 @@ export function ProgramEventForm({
     enrollment,
     events,
     supplementaryData,
+    optionGroups,
     onValuesChange,
 }: ProgramEventFormProps) {
     const dataEngine = useDataEngine()
@@ -64,6 +67,7 @@ export function ProgramEventForm({
             enrollment,
             events,
             supplementaryData,
+            optionGroups,
         },
         formOptions: {
             mode: 'onBlur',
@@ -104,7 +108,8 @@ export function ProgramEventForm({
         try {
             const filteredValues = filterPayload(
                 values,
-                formStore.fieldStore.getSnapshot()
+                formStore.fieldStore.getSnapshot(),
+                formStore.optionGroups
             ) as EventFormValues
             const payload = buildEventPayload({
                 values: filteredValues,

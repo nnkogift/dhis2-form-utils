@@ -4,13 +4,14 @@
 
 ## As-built deltas
 
-| Plan                                  | As built                                                  |
-| ------------------------------------- | --------------------------------------------------------- |
-| `packages/hooks/` paths               | `utils/hooks/src/fields/`                                 |
-| Pass `control` into `useFieldControl` | `useController()` via `FormProvider` — no `control` param |
-| `Dhis2Field` / `ui-dhis2` naming      | `D2Field` in `components/dhis2-ui`                        |
-| `ruleState.isMandatory`               | `ruleState.mandatory`                                     |
-| `useEnrollmentForm`                   | Does not exist                                            |
+| Plan                                  | As built                                                                                                                                                                        |
+| ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/hooks/` paths               | `utils/hooks/src/fields/`                                                                                                                                                       |
+| Pass `control` into `useFieldControl` | `useController()` via `FormProvider` — no `control` param                                                                                                                       |
+| `Dhis2Field` / `ui-dhis2` naming      | `D2Field` in `components/dhis2-ui`                                                                                                                                              |
+| `ruleState.isMandatory`               | `ruleState.mandatory`                                                                                                                                                           |
+| `useEnrollmentForm`                   | Does not exist                                                                                                                                                                  |
+| (not in original plan)                | `FieldControlReturn.visibleOptions` — `optionSet.options` filtered by `HIDEOPTION`/`HIDEOPTIONGROUP` rule effects (see `resolveHiddenOptionCodes` in `@dhis2-form-utils/rules`) |
 
 The sections below are retained as historical design reference.
 

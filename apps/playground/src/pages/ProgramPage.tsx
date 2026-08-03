@@ -9,6 +9,7 @@ import { TrackerProgramShell } from '@/components/programs/forms/TrackerProgramS
 import { buildProgramListUrl } from '@/hooks/buildProgramListUrl'
 import { useAccessibleOrgUnits } from '@/hooks/useAccessibleOrgUnits'
 import { useCurrentUserSupplementaryData } from '@/hooks/useCurrentUserSupplementaryData'
+import { useOptionGroupsSupplementaryData } from '@/hooks/useOptionGroupsSupplementaryData'
 import { PROGRAM_TYPE, type ProgramListParams } from '@/types/program'
 
 type ProgramPageLocationState = {
@@ -44,6 +45,9 @@ export function ProgramPage() {
         error: orgUnitsError,
     } = useAccessibleOrgUnits()
     const supplementaryData = useCurrentUserSupplementaryData()
+    const optionGroups = useOptionGroupsSupplementaryData(
+        program?.programRules ?? []
+    )
 
     const [orgUnitId, setOrgUnitId] = useState('')
     const [primaryDate, setPrimaryDate] = useState(createTodayValue)
@@ -148,6 +152,7 @@ export function ProgramPage() {
                                 orgUnitId={orgUnitId}
                                 enrolledAt={primaryDate}
                                 supplementaryData={supplementaryData}
+                                optionGroups={optionGroups}
                             />
                         ) : (
                             <ProgramStageFormScreen
@@ -157,6 +162,7 @@ export function ProgramPage() {
                                 orgUnitId={orgUnitId}
                                 occurredAt={primaryDate}
                                 supplementaryData={supplementaryData}
+                                optionGroups={optionGroups}
                             />
                         )}
                     </div>

@@ -92,6 +92,66 @@ describe('useFieldControl', () => {
         expect(result.current.isHidden).toBe(true);
     });
 
+    it('visibleOptions includes all options when nothing is hidden', () => {
+        const { result } = renderFieldControlHook(() =>
+            useFieldControl({
+                kind: 'dataElement',
+                config: makePsdeWithOptionSet('de-select', 'TEXT'),
+            })
+        );
+
+        expect(result.current.visibleOptions?.map((o) => o.code)).toEqual(['YES', 'NO']);
+    });
+
+    it('visibleOptions excludes a directly hidden option (HIDEOPTION)', () => {
+        const { result } = renderFieldControlHook(
+            () =>
+                useFieldControl({
+                    kind: 'dataElement',
+                    config: makePsdeWithOptionSet('de-select', 'TEXT'),
+                }),
+            {
+                fieldState: {
+                    'de-select': { ...createEmptyFieldState(), hiddenOptions: new Set(['NO']) },
+                },
+            }
+        );
+
+        expect(result.current.visibleOptions?.map((o) => o.code)).toEqual(['YES']);
+    });
+
+    it('visibleOptions excludes members of a hidden option group (HIDEOPTIONGROUP), given optionGroups', () => {
+        const { result } = renderFieldControlHook(
+            () =>
+                useFieldControl({
+                    kind: 'dataElement',
+                    config: makePsdeWithOptionSet('de-select', 'TEXT'),
+                }),
+            {
+                fieldState: {
+                    'de-select': {
+                        ...createEmptyFieldState(),
+                        hiddenOptionGroups: new Set(['og1']),
+                    },
+                },
+                optionGroups: { og1: ['NO'] },
+            }
+        );
+
+        expect(result.current.visibleOptions?.map((o) => o.code)).toEqual(['YES']);
+    });
+
+    it('visibleOptions is undefined when the field has no optionSet', () => {
+        const { result } = renderFieldControlHook(() =>
+            useFieldControl({
+                kind: 'dataElement',
+                config: makePsde('de-text', 'TEXT'),
+            })
+        );
+
+        expect(result.current.visibleOptions).toBeUndefined();
+    });
+
     it('returns unsupported widgetKind for REFERENCE valueType', () => {
         const kind = resolveWidgetKind({
             id: 'de-ref',

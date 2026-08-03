@@ -447,8 +447,13 @@ const { form, formStore } = useTrackerForm({ options: { programId, metadata } })
 const [mutate] = useDataMutation(CREATE_TRACKER_MUTATION);
 
 const handleSubmit = form.handleSubmit((values) => {
-    // Strip hidden fields — TEA fields hidden by rules must not be submitted
-    const visibleValues = filterPayload(values, formStore.fieldStore.getSnapshot());
+    // Strip hidden fields (and null out any value referencing a now-hidden option) —
+    // TEA fields hidden by rules must not be submitted
+    const visibleValues = filterPayload(
+        values,
+        formStore.fieldStore.getSnapshot(),
+        formStore.optionGroups
+    );
 
     // Separate TEA fields from enrollment system fields
     const teaUids = new Set(
@@ -481,7 +486,10 @@ const handleSubmit = form.handleSubmit((values) => {
 ```
 
 `filterPayload` from `@dhis2-form-utils/rules` strips any field whose `FieldState.isHidden === true` from the submitted
-values. It is the same utility used by `useEventForm` consumers — shared, not duplicated.
+values, and — given the optional third `optionGroups` argument (`formStore.optionGroups`, populated from the hook's
+`optionGroups` option) — nulls out a field's value if it currently holds an option code hidden by `HIDEOPTION` or a
+member of a `HIDEOPTIONGROUP`-hidden group. It is the same utility used by `useEventForm` consumers — shared, not
+duplicated.
 
 The caller splits the flat form values into the TEA attributes array (for `trackedEntities`) and the system fields (for
 `enrollments`). The hook does not prescribe how this split happens — it is a straightforward Set membership check on the

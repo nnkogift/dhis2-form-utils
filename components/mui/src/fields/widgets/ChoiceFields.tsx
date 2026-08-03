@@ -54,10 +54,11 @@ export function D2TrueOnlyField({ control }: WidgetProps) {
     );
 }
 
+// fallow-ignore-next-line complexity -- pre-existing widget, no co-located test coverage yet
 export function D2SelectField({ control }: WidgetProps) {
     const { fieldConfig, field, isMandatory, isDisabled } = control;
     const { validationText, hasError } = resolveFieldValidation(control);
-    const options = fieldConfig.optionSet?.options ?? [];
+    const options = control.visibleOptions ?? fieldConfig.optionSet?.options ?? [];
 
     return (
         <TextField

@@ -1,6 +1,7 @@
 import { debounce, type DebouncedFunc } from 'lodash-es';
 import type { RefObject } from 'react';
 import type { UseFormReturn } from 'react-hook-form';
+import type { OptionGroupCodeMap } from '@dhis2-form-utils/metadata';
 import type { BuiltRuleEngine, EffectHandlersMap, RuleEffect } from '@dhis2-form-utils/rules';
 import { buildTraceEntry, type RuleTraceEntry } from './buildTraceEntry';
 import { evaluateFormState } from './evaluateFormState';
@@ -21,9 +22,21 @@ export class FormStore {
     private engine: BuiltRuleEngine | null = null;
     private form: UseFormReturn<Record<string, unknown>> | null = null;
     private effectHandlersRef: RefObject<EffectHandlersMap | undefined> | null = null;
+    private optionGroupsRef: RefObject<OptionGroupCodeMap | undefined> | null = null;
     private pendingChangedFields = new Set<string>();
     private traceListeners = new Set<TraceListener>();
     private lastTraceEntry: RuleTraceEntry | null = null;
+
+    /** Option-group id -> member option codes, for resolving HIDEOPTIONGROUP/SHOWOPTIONGROUP effects. */
+    // fallow-ignore-next-line unused-class-member -- read via `formStore.optionGroups` in useFieldControl.ts
+    get optionGroups(): OptionGroupCodeMap | undefined {
+        return this.optionGroupsRef?.current ?? undefined;
+    }
+
+    /** Sets option-group membership directly, without going through `init`/`reinit`. */
+    setOptionGroups(optionGroups: OptionGroupCodeMap | undefined): void {
+        this.optionGroupsRef = { current: optionGroups };
+    }
 
     subscribeTrace(listener: TraceListener): () => void {
         this.traceListeners.add(listener);
@@ -38,12 +51,14 @@ export class FormStore {
     init(
         form: UseFormReturn<Record<string, unknown>>,
         engine: BuiltRuleEngine,
-        effectHandlersRef: RefObject<EffectHandlersMap | undefined>
+        effectHandlersRef: RefObject<EffectHandlersMap | undefined>,
+        optionGroupsRef?: RefObject<OptionGroupCodeMap | undefined>
     ): void {
         if (
             this.form === form &&
             this.engine === engine &&
             this.effectHandlersRef === effectHandlersRef &&
+            this.optionGroupsRef === (optionGroupsRef ?? null) &&
             this.unsubscribe
         ) {
             return;
@@ -54,6 +69,7 @@ export class FormStore {
         this.form = form;
         this.engine = engine;
         this.effectHandlersRef = effectHandlersRef;
+        this.optionGroupsRef = optionGroupsRef ?? null;
 
         const evaluate = (changedFields: string[]) => {
             if (!this.engine || !this.form) return;
@@ -92,10 +108,11 @@ export class FormStore {
     reinit(
         form: UseFormReturn<Record<string, unknown>>,
         engine: BuiltRuleEngine,
-        effectHandlersRef: RefObject<EffectHandlersMap | undefined>
+        effectHandlersRef: RefObject<EffectHandlersMap | undefined>,
+        optionGroupsRef?: RefObject<OptionGroupCodeMap | undefined>
     ): void {
         this.destroy();
-        this.init(form, engine, effectHandlersRef);
+        this.init(form, engine, effectHandlersRef, optionGroupsRef);
     }
 
     destroy(): void {
@@ -106,6 +123,7 @@ export class FormStore {
         this.form = null;
         this.engine = null;
         this.effectHandlersRef = null;
+        this.optionGroupsRef = null;
         this.prevAssignments = {};
         this.pendingChangedFields.clear();
         this.lastTraceEntry = null;

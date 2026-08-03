@@ -45,7 +45,10 @@ export {
 } from './queries/fields.const';
 export { eventProgramConfigQuery } from './queries/eventProgramConfig.query';
 export { trackerConfigQuery } from './queries/trackerConfig.query';
+export { OPTION_GROUP_FIELDS, optionGroupsQuery } from './queries/optionGroups.query';
 export { resolveEventProgramMetadata } from './resolvers/resolveEventProgramMetadata';
 export type { RawEventProgramConfigResult } from './resolvers/resolveEventProgramMetadata';
 export { resolveTrackerProgramMetadata } from './resolvers/resolveTrackerProgramMetadata';
 export type { RawTrackerConfigResult } from './resolvers/resolveTrackerProgramMetadata';
+export { extractReferencedOptionGroupIds, resolveOptionGroups } from './optionGroups';
+export type { OptionGroupCodeMap, RawOptionGroupsResult } from './optionGroups';

@@ -4,7 +4,8 @@ import type {
     ProgramStageDataElement,
     ProgramTrackedEntityAttribute,
 } from '@dhis2-form-utils/metadata';
-import { useFieldState } from '../FormStateContext';
+import { resolveHiddenOptionCodes } from '@dhis2-form-utils/rules';
+import { useFieldState, useFormStore } from '../FormStateContext';
 import {
     type FieldConfig,
     fromProgramStageDataElement,
@@ -32,6 +33,8 @@ export type FieldControlReturn = {
     hasError: boolean;
     warningMessage?: string;
     errorMessage?: string;
+    /** `fieldConfig.optionSet.options` filtered by HIDEOPTION/HIDEOPTIONGROUP rule effects. */
+    visibleOptions?: ReadonlyArray<{ id: string; code: string; label: string }>;
 };
 
 export type WidgetProps = {
@@ -50,10 +53,16 @@ export function useFieldControl(input: FieldControlInput): FieldControlReturn {
 
     const widgetKind = useMemo(() => resolveWidgetKind(fieldConfig), [fieldConfig]);
     const ruleState = useFieldState(fieldConfig.id);
+    const formStore = useFormStore();
     const isMandatory = useMemo(
         () => fieldConfig.required || ruleState.mandatory,
         [fieldConfig, ruleState]
     );
+    const visibleOptions = useMemo(() => {
+        if (!fieldConfig.optionSet) return undefined;
+        const hiddenCodes = resolveHiddenOptionCodes(ruleState, formStore.optionGroups);
+        return fieldConfig.optionSet.options.filter((option) => !hiddenCodes.has(option.code));
+    }, [fieldConfig.optionSet, ruleState, formStore.optionGroups]);
     const { field, fieldState } = useController({
         name: fieldConfig.id,
     });
@@ -71,5 +80,6 @@ export function useFieldControl(input: FieldControlInput): FieldControlReturn {
         hasError: Boolean(ruleState.error),
         warningMessage: ruleState.warning ?? undefined,
         errorMessage: ruleState.error ?? undefined,
+        visibleOptions,
     };
 }

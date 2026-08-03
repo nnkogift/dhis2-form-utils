@@ -1,8 +1,11 @@
+import type { OptionGroupCodeMap } from '@dhis2-form-utils/metadata';
+import { resolveHiddenOptionCodes } from './resolveHiddenOptionCodes';
 import type { FieldStateMap } from './types';
 
 export function filterPayload(
     values: Record<string, unknown>,
-    fieldState: FieldStateMap
+    fieldState: FieldStateMap,
+    optionGroups?: OptionGroupCodeMap
 ): Record<string, unknown> {
     const result: Record<string, unknown> = {};
 
@@ -17,6 +20,11 @@ export function filterPayload(
 
         if (state.assignedValue !== null && state.assignedValue !== undefined) {
             result[key] = state.assignedValue;
+        } else if (
+            typeof value === 'string' &&
+            resolveHiddenOptionCodes(state, optionGroups).has(value)
+        ) {
+            result[key] = null;
         } else {
             result[key] = value;
         }
