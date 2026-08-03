@@ -4,6 +4,8 @@ A composable, design-system-agnostic form library for building DHIS2 data entry 
 
 ---
 
+![fallow health](https://raw.githubusercontent.com/nnkogift/dhis2-form-utils/badges/badge.svg)
+
 ## What this is
 
 `dhis2-form-utils` bridges the gap between DHIS2 metadata and React forms. It handles the parts
