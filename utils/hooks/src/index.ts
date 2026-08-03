@@ -25,6 +25,7 @@ export { useEventForm } from './useEventForm';
 export type { UseEventFormOptions, UseEventFormReturn } from './useEventForm';
 export { useTrackerForm } from './useTrackerForm';
 export type { UseTrackerFormOptions, UseTrackerFormReturn } from './useTrackerForm';
+export type { DefaultFormValue } from './formValue';
 export type {
     ExpandedProgramRule,
     ExpandedProgramRuleAction,

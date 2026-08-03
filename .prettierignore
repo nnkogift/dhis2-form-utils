@@ -9,3 +9,6 @@ pnpm-lock.yaml
 # Design handoff reference material (prototypes, exported design-system bundles) —
 # not application source.
 apps/playground/design
+
+# JSONC (fallow writes .fallowrc.json with comments; both extensions support them).
+.fallowrc.json

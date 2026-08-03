@@ -16,8 +16,7 @@ import {
     toRuleEventFromInput,
 } from '@dhis2-form-utils/rules';
 import { FormStore } from './formStore';
-
-export type DefaultFormValue = Record<string, string>;
+import type { DefaultFormValue } from './formValue';
 
 export type UseEventFormOptions = {
     programStageId: string;

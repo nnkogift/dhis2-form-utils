@@ -1,9 +1,7 @@
 /* eslint-disable @typescript-eslint/no-deprecated -- @dhis2/rule-engine Kotlin/JS interop requires these APIs */
 import {
     Option,
-    RuleActionJs,
     RuleDataValue,
-    RuleEffectJs,
     RuleEngineContextJs,
     RuleEngineJs,
     RuleEnrollmentJs,
@@ -26,6 +24,7 @@ import {
     type ProgramStageMetadata,
 } from '@dhis2-form-utils/metadata';
 import type { RuleEffect } from './evaluate';
+import { normalizeEffect, toRuleAction, toStringValue } from './ruleInterop';
 import { ruleValueTypeFromDhis2 } from './ruleValueType';
 
 const DEFAULT_EVENT_STATUS = RuleEventStatus.ACTIVE;
@@ -108,12 +107,6 @@ const mapDataElementOptions = (dataElement?: DataElementWithOptions): Option[] =
         return new Option(displayName, code);
     }) ?? [];
 
-const toStringValue = (value: unknown, fallback: string): string => {
-    if (typeof value === 'string') return value;
-    if (typeof value === 'number' || typeof value === 'boolean') return String(value);
-    return fallback;
-};
-
 const toActionValues = (action: ProgramRuleAction): Map<string, string> => {
     const values = new Map<string, string>();
 
@@ -139,18 +132,12 @@ const toActionValues = (action: ProgramRuleAction): Map<string, string> => {
     return values;
 };
 
-const toRuleAction = (action: ProgramRuleAction): RuleActionJs =>
-    new RuleActionJs(
-        action.data ?? null,
-        action.programRuleActionType,
-        toActionValues(action),
-        action.priority ?? null
-    );
-
 const toRule = (rule: ProgramRule): RuleJs =>
     new RuleJs(
         rule.condition ?? 'true',
-        (rule.programRuleActions ?? []).map((action) => toRuleAction(action)),
+        (rule.programRuleActions ?? []).map((action) =>
+            toRuleAction(action, toActionValues(action))
+        ),
         rule.id ?? '',
         rule.displayName ?? null,
         null,
@@ -311,23 +298,6 @@ const toRuleEvent = (
             .map(([key, value]) => toRuleDataValue(key, value))
             .filter((value): value is RuleDataValue => value !== null)
     );
-
-const normalizeEffect = (effect: RuleEffectJs): RuleEffect => {
-    const values = effect.ruleAction.values;
-    return {
-        ruleId: effect.ruleId,
-        ruleActionType: effect.ruleAction.type as ProgramRuleActionType,
-        content: values.get('content') ?? null,
-        dataElement: values.get('dataElement') ?? null,
-        trackedEntityAttribute: values.get('trackedEntityAttribute') ?? null,
-        optionCode: values.get('optionCode') ?? values.get('option') ?? null,
-        optionGroupId: values.get('optionGroupId') ?? values.get('optionGroup') ?? null,
-        programStageSection: values.get('programStageSection') ?? null,
-        programSection: values.get('programSection') ?? null,
-        location: values.get('location') ?? null,
-        data: effect.data ?? effect.ruleAction.data ?? null,
-    };
-};
 
 export function buildRuleEngineContext(options: BuildRuleEngineContextOptions): RuleEngineContext {
     const eventRules = filterEventRules(options.programRules, options.programStageId);

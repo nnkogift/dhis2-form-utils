@@ -3,14 +3,10 @@ export {
     D2LongTextField,
     D2EmailField,
     D2PhoneField,
-    D2NumberField,
-    D2IntegerField,
-    D2PercentageField,
     D2TimeField,
     D2DateField,
     D2AgeField,
-    D2BooleanField,
-    D2TrueOnlyField,
-    D2SelectField,
-    D2UnsupportedField,
-} from './Fields';
+} from './TextField';
+export { D2NumberField, D2IntegerField, D2PercentageField } from './NumericFields';
+export { D2BooleanField, D2TrueOnlyField, D2SelectField } from './ChoiceFields';
+export { D2UnsupportedField } from './UnsupportedField';

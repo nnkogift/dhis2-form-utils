@@ -1,4 +1,5 @@
 import type { RuleTraceEntry } from '@dhis2-form-utils/hooks';
+import { DEFAULT_TRACE_MAX_ENTRIES } from './constants';
 
 type Listener = () => void;
 
@@ -9,7 +10,7 @@ export type RuleTraceStore = {
     dispose: () => void;
 };
 
-export function createRuleTraceStore(maxEntries = 200): RuleTraceStore {
+export function createRuleTraceStore(maxEntries = DEFAULT_TRACE_MAX_ENTRIES): RuleTraceStore {
     let entries: RuleTraceEntry[] = [];
     const listeners = new Set<Listener>();
     let disposeTraceSubscription: (() => void) | null = null;

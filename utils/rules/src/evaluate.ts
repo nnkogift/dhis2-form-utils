@@ -55,6 +55,86 @@ const ensureField = (state: FieldStateMap, key: string): FieldState => {
     return state[key];
 };
 
+type EffectApplier = (field: FieldState, effect: RuleEffect) => void;
+
+const applyHideField: EffectApplier = (field) => {
+    field.hidden = true;
+};
+
+const applyShowField: EffectApplier = (field) => {
+    field.hidden = false;
+};
+
+const applyShowWarning: EffectApplier = (field, effect) => {
+    field.warning = effect.content ?? 'Warning';
+};
+
+const applyShowError: EffectApplier = (field, effect) => {
+    field.error = effect.content ?? 'Error';
+};
+
+const applyWarningOnComplete: EffectApplier = (field, effect) => {
+    field.warningOnComplete = effect.content ?? 'Warning';
+};
+
+const applyErrorOnComplete: EffectApplier = (field, effect) => {
+    field.errorOnComplete = effect.content ?? 'Error';
+};
+
+const applySetMandatoryField: EffectApplier = (field) => {
+    field.mandatory = true;
+};
+
+const applyUnsetMandatoryField: EffectApplier = (field) => {
+    field.mandatory = false;
+};
+
+const applyAssign: EffectApplier = (field, effect) => {
+    field.assignedValue = effect.data ?? effect.content ?? null;
+};
+
+const applyHideOption: EffectApplier = (field, effect) => {
+    const optionCode = effect.optionCode ?? effect.data;
+    if (!optionCode) return;
+    field.hiddenOptions = new Set([...field.hiddenOptions, optionCode]);
+};
+
+const applyShowOption: EffectApplier = (field, effect) => {
+    const optionCode = effect.optionCode ?? effect.data;
+    if (!optionCode) return;
+    field.hiddenOptions = new Set([...field.hiddenOptions].filter((code) => code !== optionCode));
+};
+
+const applyHideOptionGroup: EffectApplier = (field, effect) => {
+    const optionGroupId = effect.optionGroupId ?? effect.data;
+    if (!optionGroupId) return;
+    field.hiddenOptionGroups = new Set([...field.hiddenOptionGroups, optionGroupId]);
+};
+
+const applyShowOptionGroup: EffectApplier = (field, effect) => {
+    const optionGroupId = effect.optionGroupId ?? effect.data;
+    if (!optionGroupId) return;
+    field.hiddenOptionGroups = new Set(
+        [...field.hiddenOptionGroups].filter((id) => id !== optionGroupId)
+    );
+};
+
+const EFFECT_APPLIERS: Partial<Record<ProgramRuleActionType, EffectApplier>> = {
+    [ProgramRuleActionType.HIDEFIELD]: applyHideField,
+    [ProgramRuleActionType.SHOWFIELD]: applyShowField,
+    [ProgramRuleActionType.SHOWWARNING]: applyShowWarning,
+    [ProgramRuleActionType.SHOWERROR]: applyShowError,
+    [ProgramRuleActionType.WARNINGONCOMPLETE]: applyWarningOnComplete,
+    [ProgramRuleActionType.ERRORONCOMPLETE]: applyErrorOnComplete,
+    [ProgramRuleActionType.SETMANDATORYFIELD]: applySetMandatoryField,
+    [ProgramRuleActionType.UNSETMANDATORYFIELD]: applyUnsetMandatoryField,
+    [ProgramRuleActionType.ASSIGN]: applyAssign,
+    [ProgramRuleActionType.HIDEOPTION]: applyHideOption,
+    [ProgramRuleActionType.SHOWOPTION]: applyShowOption,
+    [ProgramRuleActionType.HIDEOPTIONGROUP]: applyHideOptionGroup,
+    [ProgramRuleActionType.SHOWOPTIONGROUP]: applyShowOptionGroup,
+};
+
 export const applyEffect = (state: FieldStateMap, effect: RuleEffect): FieldStateMap => {
     const key = fieldKey(effect);
     if (!key) return state;
@@ -62,74 +142,10 @@ export const applyEffect = (state: FieldStateMap, effect: RuleEffect): FieldStat
     const field = { ...ensureField(state, key) };
     const next = { ...state, [key]: field };
 
-    const actionType = effect.ruleActionType;
-    if (!isProgramRuleActionType(actionType)) {
-        return next;
-    }
-
-    switch (actionType) {
-        case ProgramRuleActionType.HIDEFIELD:
-            field.hidden = true;
-            break;
-        case ProgramRuleActionType.SHOWFIELD:
-            field.hidden = false;
-            break;
-        case ProgramRuleActionType.SHOWWARNING:
-            field.warning = effect.content ?? 'Warning';
-            break;
-        case ProgramRuleActionType.SHOWERROR:
-            field.error = effect.content ?? 'Error';
-            break;
-        case ProgramRuleActionType.WARNINGONCOMPLETE:
-            field.warningOnComplete = effect.content ?? 'Warning';
-            break;
-        case ProgramRuleActionType.ERRORONCOMPLETE:
-            field.errorOnComplete = effect.content ?? 'Error';
-            break;
-        case ProgramRuleActionType.SETMANDATORYFIELD:
-            field.mandatory = true;
-            break;
-        case ProgramRuleActionType.UNSETMANDATORYFIELD:
-            field.mandatory = false;
-            break;
-        case ProgramRuleActionType.ASSIGN:
-            field.assignedValue = effect.data ?? effect.content ?? null;
-            break;
-        case ProgramRuleActionType.HIDEOPTION:
-            if (effect.optionCode ?? effect.data) {
-                field.hiddenOptions = new Set([
-                    ...field.hiddenOptions,
-                    String(effect.optionCode ?? effect.data),
-                ]);
-            }
-            break;
-        case ProgramRuleActionType.SHOWOPTION:
-            if (effect.optionCode ?? effect.data) {
-                const optionToShow = String(effect.optionCode ?? effect.data);
-                field.hiddenOptions = new Set(
-                    [...field.hiddenOptions].filter((optionCode) => optionCode !== optionToShow)
-                );
-            }
-            break;
-        case ProgramRuleActionType.HIDEOPTIONGROUP:
-            if (effect.optionGroupId ?? effect.data) {
-                field.hiddenOptionGroups = new Set([
-                    ...field.hiddenOptionGroups,
-                    String(effect.optionGroupId ?? effect.data),
-                ]);
-            }
-            break;
-        case ProgramRuleActionType.SHOWOPTIONGROUP:
-            if (effect.optionGroupId ?? effect.data) {
-                const groupToShow = String(effect.optionGroupId ?? effect.data);
-                field.hiddenOptionGroups = new Set(
-                    [...field.hiddenOptionGroups].filter((groupId) => groupId !== groupToShow)
-                );
-            }
-            break;
-        default:
-            break;
-    }
+    const applier = isProgramRuleActionType(effect.ruleActionType)
+        ? EFFECT_APPLIERS[effect.ruleActionType]
+        : undefined;
+    applier?.(field, effect);
 
     return next;
 };

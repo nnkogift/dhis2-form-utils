@@ -6,6 +6,9 @@ on:
     pull_request:
         branches: [main, master]
 
+permissions:
+    contents: read
+
 jobs:
     lint:
         runs-on: ubuntu-latest
@@ -108,3 +111,28 @@ jobs:
                   cache: pnpm
             - run: pnpm install --frozen-lockfile
             - run: pnpm exec fallow dead-code || true
+
+    fallow-badge:
+        runs-on: ubuntu-latest
+        needs: fallow
+        permissions:
+            contents: write
+        steps:
+            - uses: actions/checkout@v4
+            - uses: pnpm/action-setup@v4
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 24
+                  cache: pnpm
+            - run: pnpm install --frozen-lockfile
+            - name: Generate health badge
+              run: pnpm exec fallow health --format badge > badge.svg
+
+            - name: Publish badge
+              uses: peaceiris/actions-gh-pages@v4
+              with:
+                  github_token: ${{ secrets.GITHUB_TOKEN }}
+                  publish_dir: .
+                  publish_branch: badges
+                  keep_files: true
+                  include_files: badge.svg

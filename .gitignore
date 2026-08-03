@@ -149,3 +149,4 @@ dist
 # Design-tool exported design-system bundle (scratch, regenerated on demand)
 apps/playground/design/_ds/
 
+.fallow/

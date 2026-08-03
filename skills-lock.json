@@ -25,6 +25,18 @@
             "skillPath": "src/skills/dhis2-apps/SKILL.md",
             "computedHash": "1e0937be16cf5174603c750d0372008c50a3dd72bd130d47ec72d32cbcb31ece"
         },
+        "fallow": {
+            "source": "fallow-rs/fallow-skills",
+            "sourceType": "github",
+            "skillPath": "fallow/skills/fallow/SKILL.md",
+            "computedHash": "7ee57d2b308538b1df4204c28f7d6c148b5df43208fa5267742845541a18abd2"
+        },
+        "fallow-review": {
+            "source": "fallow-rs/fallow-skills",
+            "sourceType": "github",
+            "skillPath": "fallow/skills/fallow-review/SKILL.md",
+            "computedHash": "a8b4074fa14e7ac3900640867932e85d6b973f573d929d0c56de475347322731"
+        },
         "forming": {
             "source": "nnkogift/personal-skills",
             "sourceType": "github",

@@ -1,0 +1,1 @@
+export const DEFAULT_TRACE_MAX_ENTRIES = 200;
