@@ -1,4 +1,5 @@
 export { ProgramRuleActionType, ProgramRuleVariableSourceType } from '@dhis2-form-utils/metadata';
+export type { OptionGroupCodeMap } from '@dhis2-form-utils/metadata';
 export type { ValueType } from '@dhis2/api-types/v43';
 export type {
     FieldState,
@@ -43,3 +44,4 @@ export {
     toRuleEnrollment,
 } from './enrollmentContext';
 export { filterPayload } from './filterPayload';
+export { resolveHiddenOptionCodes } from './resolveHiddenOptionCodes';

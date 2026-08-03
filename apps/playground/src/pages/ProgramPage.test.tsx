@@ -6,6 +6,7 @@ import { ProgramStageFormScreen } from '@/components/programs/forms/ProgramStage
 import { TrackerProgramShell } from '@/components/programs/forms/TrackerProgramShell'
 import { useAccessibleOrgUnits } from '@/hooks/useAccessibleOrgUnits'
 import { useCurrentUserSupplementaryData } from '@/hooks/useCurrentUserSupplementaryData'
+import { useOptionGroupsSupplementaryData } from '@/hooks/useOptionGroupsSupplementaryData'
 import { ProgramPage } from './ProgramPage'
 
 jest.mock('@dhis2-form-utils/hooks', () => ({
@@ -13,6 +14,7 @@ jest.mock('@dhis2-form-utils/hooks', () => ({
 }))
 jest.mock('@/hooks/useAccessibleOrgUnits')
 jest.mock('@/hooks/useCurrentUserSupplementaryData')
+jest.mock('@/hooks/useOptionGroupsSupplementaryData')
 jest.mock('@/components/programs/forms/ProgramStageFormScreen', () => ({
     ProgramStageFormScreen: jest.fn(() => <div>Event form screen</div>),
 }))
@@ -27,10 +29,14 @@ const mockedUseAccessibleOrgUnits = jest.mocked(useAccessibleOrgUnits)
 const mockedUseCurrentUserSupplementaryData = jest.mocked(
     useCurrentUserSupplementaryData
 )
+const mockedUseOptionGroupsSupplementaryData = jest.mocked(
+    useOptionGroupsSupplementaryData
+)
 const SENTINEL_SUPPLEMENTARY_DATA = {
     userGroups: ['UserGroup1'],
     userRoles: ['UserRole1'],
 }
+const SENTINEL_OPTION_GROUPS = { OptionGroup1: ['OptionCode1'] }
 
 function renderPage() {
     return render(
@@ -56,6 +62,9 @@ describe('ProgramPage', () => {
         })
         mockedUseCurrentUserSupplementaryData.mockReturnValue(
             SENTINEL_SUPPLEMENTARY_DATA
+        )
+        mockedUseOptionGroupsSupplementaryData.mockReturnValue(
+            SENTINEL_OPTION_GROUPS
         )
     })
 
@@ -92,6 +101,7 @@ describe('ProgramPage', () => {
         expect(ProgramStageFormScreen).toHaveBeenCalled()
         const [props] = jest.mocked(ProgramStageFormScreen).mock.calls[0]
         expect(props.supplementaryData).toEqual(SENTINEL_SUPPLEMENTARY_DATA)
+        expect(props.optionGroups).toEqual(SENTINEL_OPTION_GROUPS)
     })
 
     it('renders the registration flow for tracker programs', () => {
@@ -123,6 +133,7 @@ describe('ProgramPage', () => {
         expect(TrackerProgramShell).toHaveBeenCalled()
         const [props] = jest.mocked(TrackerProgramShell).mock.calls[0]
         expect(props.supplementaryData).toEqual(SENTINEL_SUPPLEMENTARY_DATA)
+        expect(props.optionGroups).toEqual(SENTINEL_OPTION_GROUPS)
     })
 
     it('shows a notice when no organisation units are available', () => {

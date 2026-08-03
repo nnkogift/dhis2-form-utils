@@ -1,7 +1,11 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMemo, useRef } from 'react';
 import { Resolver, useForm, type UseFormReturn } from 'react-hook-form';
-import type { EventProgramMetadata, TrackerProgramMetadata } from '@dhis2-form-utils/metadata';
+import type {
+    EventProgramMetadata,
+    OptionGroupCodeMap,
+    TrackerProgramMetadata,
+} from '@dhis2-form-utils/metadata';
 import { buildSchema, selectProgramStage } from '@dhis2-form-utils/metadata';
 import type {
     BuiltRuleEngine,
@@ -25,6 +29,7 @@ export type UseEventFormOptions = {
     enrollment?: { metadata: TrackerProgramMetadata; values: Record<string, unknown> };
     events?: RuleEventInput[];
     supplementaryData?: RuleSupplementaryDataInput;
+    optionGroups?: OptionGroupCodeMap;
 };
 
 export type UseEventFormReturn<FormValue extends DefaultFormValue = DefaultFormValue> = {
@@ -92,19 +97,23 @@ export function useEventForm<FormValue extends DefaultFormValue = DefaultFormVal
     const formStore = useMemo(() => new FormStore(), []);
 
     const effectHandlersRef = useRef(options.effectHandlers);
+    const optionGroupsRef = useRef(options.optionGroups);
+    optionGroupsRef.current = options.optionGroups;
     const prevEngineRef = useRef<BuiltRuleEngine | null>(null);
     if (prevEngineRef.current !== ruleEngine) {
         if (prevEngineRef.current !== null) {
             formStore.reinit(
                 form as UseFormReturn<Record<string, unknown>>,
                 ruleEngine,
-                effectHandlersRef
+                effectHandlersRef,
+                optionGroupsRef
             );
         } else {
             formStore.init(
                 form as UseFormReturn<Record<string, unknown>>,
                 ruleEngine,
-                effectHandlersRef
+                effectHandlersRef,
+                optionGroupsRef
             );
         }
         prevEngineRef.current = ruleEngine;

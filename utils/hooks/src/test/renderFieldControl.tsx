@@ -1,5 +1,6 @@
 import { FormStore } from '../formStore';
 import { FormStateProvider } from '../FormStateContext';
+import type { OptionGroupCodeMap } from '@dhis2-form-utils/metadata';
 import type { FieldStateMap } from '@dhis2-form-utils/rules';
 import { renderHook, type RenderHookOptions } from '@testing-library/react';
 import type { ReactNode } from 'react';
@@ -16,6 +17,7 @@ import {
 export type FieldControlWrapperOptions = {
     defaultValues?: Record<string, string>;
     fieldState?: FieldStateMap;
+    optionGroups?: OptionGroupCodeMap;
     formOptions?: UseFormProps<Record<string, string>>;
 };
 
@@ -23,6 +25,7 @@ function FieldControlWrapper({
     children,
     defaultValues = {},
     fieldState = {},
+    optionGroups,
     formOptions,
 }: {
     children: ReactNode;
@@ -31,8 +34,9 @@ function FieldControlWrapper({
     const formStore = useMemo(() => {
         const store = new FormStore();
         store.fieldStore.setState(fieldState);
+        store.setOptionGroups(optionGroups);
         return store;
-    }, [fieldState]);
+    }, [fieldState, optionGroups]);
 
     return (
         <FormStateProvider
@@ -48,7 +52,7 @@ export function renderFieldControlHook<Result>(
     callback: (control: Control<Record<string, string>>) => Result,
     options?: RenderHookOptions<unknown> & FieldControlWrapperOptions
 ) {
-    const { defaultValues, fieldState, formOptions, ...hookOptions } = options ?? {};
+    const { defaultValues, fieldState, optionGroups, formOptions, ...hookOptions } = options ?? {};
 
     return renderHook(
         () => {
@@ -61,6 +65,7 @@ export function renderFieldControlHook<Result>(
                 <FieldControlWrapper
                     defaultValues={defaultValues}
                     fieldState={fieldState}
+                    optionGroups={optionGroups}
                     formOptions={formOptions}
                 >
                     {children}

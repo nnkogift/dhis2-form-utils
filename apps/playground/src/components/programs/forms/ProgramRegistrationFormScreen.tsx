@@ -2,6 +2,7 @@ import i18n from '@dhis2/d2-i18n'
 import { Center, CircularLoader, NoticeBox } from '@dhis2/ui'
 import type { ProgramStageRef } from '@dhis2-form-utils/devtools'
 import type { TrackerProgramMetadata } from '@dhis2-form-utils/hooks'
+import type { OptionGroupCodeMap } from '@dhis2-form-utils/metadata'
 import type {
     RuleEventInput,
     RuleSupplementaryDataInput,
@@ -18,6 +19,7 @@ type ProgramRegistrationFormScreenProps = {
     error: Error | undefined
     events?: RuleEventInput[]
     supplementaryData?: RuleSupplementaryDataInput
+    optionGroups?: OptionGroupCodeMap
     onValuesChange?: (values: Record<string, unknown>) => void
 }
 
@@ -31,6 +33,7 @@ export function ProgramRegistrationFormScreen({
     error,
     events,
     supplementaryData,
+    optionGroups,
     onValuesChange,
 }: ProgramRegistrationFormScreenProps) {
     if (loading) {
@@ -69,6 +72,7 @@ export function ProgramRegistrationFormScreen({
                 enrolledAt={enrolledAt}
                 events={events}
                 supplementaryData={supplementaryData}
+                optionGroups={optionGroups}
                 onValuesChange={onValuesChange}
             />
         </div>

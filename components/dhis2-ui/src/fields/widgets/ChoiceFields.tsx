@@ -61,11 +61,12 @@ export function D2TrueOnlyField({ control }: WidgetProps) {
 export function D2SelectField({ control }: WidgetProps) {
     const { fieldConfig, field, isMandatory, isDisabled } = control;
     const { validationText, hasError, hasWarning } = resolveFieldValidation(control);
-    const options =
-        fieldConfig.optionSet?.options.map((option) => ({
+    const options = (control.visibleOptions ?? fieldConfig.optionSet?.options ?? []).map(
+        (option) => ({
             label: option.label,
             value: option.code,
-        })) ?? [];
+        })
+    );
 
     if (fieldConfig.renderTypeHint && RADIO_RENDER_HINTS.has(fieldConfig.renderTypeHint)) {
         return (

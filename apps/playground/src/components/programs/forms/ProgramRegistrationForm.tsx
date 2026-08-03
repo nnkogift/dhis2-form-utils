@@ -11,6 +11,7 @@ import {
     type TrackerProgramMetadata,
     useTrackerForm,
 } from '@dhis2-form-utils/hooks'
+import type { OptionGroupCodeMap } from '@dhis2-form-utils/metadata'
 import {
     filterPayload,
     type RuleEventInput,
@@ -39,6 +40,7 @@ type ProgramRegistrationFormProps = {
     enrolledAt: string
     events?: RuleEventInput[]
     supplementaryData?: RuleSupplementaryDataInput
+    optionGroups?: OptionGroupCodeMap
     onValuesChange?: (values: Record<string, unknown>) => void
 }
 
@@ -54,6 +56,7 @@ export function ProgramRegistrationForm({
     enrolledAt,
     events,
     supplementaryData,
+    optionGroups,
     onValuesChange,
 }: ProgramRegistrationFormProps) {
     const dataEngine = useDataEngine()
@@ -75,6 +78,7 @@ export function ProgramRegistrationForm({
             metadata,
             events,
             supplementaryData,
+            optionGroups,
         },
         formOptions: {
             mode: 'onBlur',
@@ -108,7 +112,8 @@ export function ProgramRegistrationForm({
         try {
             const filteredValues = filterPayload(
                 values,
-                formStore.fieldStore.getSnapshot()
+                formStore.fieldStore.getSnapshot(),
+                formStore.optionGroups
             ) as TrackerRegistrationValues
             const payload = buildTrackerRegistrationPayload({
                 values: filteredValues,

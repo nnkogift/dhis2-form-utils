@@ -1,6 +1,9 @@
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { useTrackerMetadataQuery } from '@dhis2-form-utils/hooks'
-import type { EventProgramMetadata } from '@dhis2-form-utils/metadata'
+import type {
+    EventProgramMetadata,
+    OptionGroupCodeMap,
+} from '@dhis2-form-utils/metadata'
 import type {
     RuleEventInput,
     RuleSupplementaryDataInput,
@@ -21,6 +24,7 @@ type TrackerProgramShellProps = {
     orgUnitId: string
     enrolledAt: string
     supplementaryData?: RuleSupplementaryDataInput
+    optionGroups?: OptionGroupCodeMap
 }
 
 type RenderableStageSlot = { stageId: string; eventLocalId: string }
@@ -55,6 +59,7 @@ export function TrackerProgramShell({
     orgUnitId,
     enrolledAt,
     supplementaryData,
+    optionGroups,
 }: TrackerProgramShellProps) {
     const {
         metadata: trackerMetadata,
@@ -200,6 +205,7 @@ export function TrackerProgramShell({
                     error={trackerError}
                     events={allEvents}
                     supplementaryData={supplementaryData}
+                    optionGroups={optionGroups}
                     onValuesChange={handleRegistrationValuesChange}
                 />
             </div>
@@ -230,6 +236,7 @@ export function TrackerProgramShell({
                                 eventsExcludingSlot.get(key) ?? EMPTY_EVENTS
                             }
                             supplementaryData={supplementaryData}
+                            optionGroups={optionGroups}
                             onValuesChange={getEventValuesChangeHandler(key)}
                         />
                     </div>

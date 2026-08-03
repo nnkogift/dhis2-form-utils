@@ -140,6 +140,17 @@ export type FieldState = {
 export type FieldStateMap = Record<string, FieldState>;
 ```
 
+`hiddenOptions` holds option codes hidden directly by `HIDEOPTION`; `hiddenOptionGroups` holds
+optionGroup ids hidden by `HIDEOPTIONGROUP` — group _membership_ (which option codes belong to a
+group) is resolved separately, since it requires an `optionGroups` API fetch the metadata package
+doesn't do on its own. Callers fetch it (e.g. via `extractReferencedOptionGroupIds` +
+`optionGroupsQuery` + `resolveOptionGroups` from `@dhis2-form-utils/metadata`) and pass it as the
+`optionGroups` option to `useEventForm`/`useTrackerForm`. `resolveHiddenOptionCodes` (in
+`@dhis2-form-utils/rules`) unions `hiddenOptions` with the resolved group members into a single
+`Set<string>` of hidden codes — `useFieldControl` uses it to compute `FieldControlReturn.visibleOptions`
+for widgets to render, and `filterPayload`'s optional third argument uses it to null out a submitted
+value that references a now-hidden option.
+
 **Context assembly** — the engine requires all program rule variables to be resolved before
 evaluation. `@dhis2-form-utils/rules` provides `buildRuleEngineContext`, which takes fetched
 program metadata and constructs the `RuleEngineContext` once, and `buildRuleEngine`, which
