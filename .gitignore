@@ -150,3 +150,7 @@ dist
 apps/playground/design/_ds/
 
 .fallow/
+
+# Personal, machine-local Cursor skill symlinks — never portable across clones/CI
+.cursor/skills/coding-standards
+.cursor/skills/dev-tooling
