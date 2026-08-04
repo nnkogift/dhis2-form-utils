@@ -1,11 +1,15 @@
 import { type FieldControlInput, useFieldControl, type WidgetProps } from '@dhis2-form-utils/hooks';
+import type { WidgetKind } from '@dhis2-form-utils/hooks';
+import type { ComponentType } from 'react';
 import {
     D2AgeField,
     D2BooleanField,
     D2DateField,
+    D2DateTimeField,
     D2EmailField,
     D2IntegerField,
     D2LongTextField,
+    D2MultiSelectField,
     D2NumberField,
     D2PercentageField,
     D2PhoneField,
@@ -22,43 +26,34 @@ export type D2FieldProps = {
 
 export type D2FieldWidgetProps = WidgetProps;
 
+// fallow-ignore-next-line code-duplication -- mirrored dispatcher map in each UI adapter
+const WIDGET_BY_KIND: Record<WidgetKind, ComponentType<WidgetProps>> = {
+    text: D2TextField,
+    longText: D2LongTextField,
+    email: D2EmailField,
+    phone: D2PhoneField,
+    number: D2NumberField,
+    integer: D2IntegerField,
+    percentage: D2PercentageField,
+    boolean: D2BooleanField,
+    trueOnly: D2TrueOnlyField,
+    date: D2DateField,
+    time: D2TimeField,
+    age: D2AgeField,
+    select: D2SelectField,
+    multiSelect: D2MultiSelectField,
+    datetime: D2DateTimeField,
+    coordinate: D2UnsupportedField,
+    orgUnit: D2UnsupportedField,
+    file: D2UnsupportedField,
+    image: D2UnsupportedField,
+    unsupported: D2UnsupportedField,
+};
+
 /** Dispatches an already-resolved `FieldControlReturn` to its widget component, without re-deriving field control state. Reused by consumers that build their own chrome (labels, badges, ghost placeholders) around a field. */
 export function D2FieldWidget({ control }: D2FieldWidgetProps) {
-    switch (control.widgetKind) {
-        case 'text':
-            return <D2TextField control={control} />;
-        case 'longText':
-            return <D2LongTextField control={control} />;
-        case 'email':
-            return <D2EmailField control={control} />;
-        case 'phone':
-            return <D2PhoneField control={control} />;
-        case 'number':
-            return <D2NumberField control={control} />;
-        case 'integer':
-            return <D2IntegerField control={control} />;
-        case 'percentage':
-            return <D2PercentageField control={control} />;
-        case 'boolean':
-            return <D2BooleanField control={control} />;
-        case 'trueOnly':
-            return <D2TrueOnlyField control={control} />;
-        case 'date':
-            return <D2DateField control={control} />;
-        case 'time':
-            return <D2TimeField control={control} />;
-        case 'age':
-            return <D2AgeField control={control} />;
-        case 'select':
-            return <D2SelectField control={control} />;
-        case 'datetime':
-        case 'coordinate':
-        case 'orgUnit':
-        case 'file':
-        case 'image':
-        case 'unsupported':
-            return <D2UnsupportedField control={control} />;
-    }
+    const Widget = WIDGET_BY_KIND[control.widgetKind];
+    return <Widget control={control} />;
 }
 
 export function D2Field({ field }: D2FieldProps) {

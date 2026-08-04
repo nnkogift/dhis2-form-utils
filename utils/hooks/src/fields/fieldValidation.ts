@@ -1,5 +1,19 @@
 import { z } from 'zod';
 import type { FieldConfig } from './fieldConfig';
+import { parseMultiTextValue } from './multiTextValue';
+
+const DATETIME_PATTERN = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/;
+
+const multiTextOptionSchema = (codes: string[]): z.ZodTypeAny => {
+    const codeSet = new Set(codes);
+    return z.string().refine(
+        (value) => {
+            const selected = parseMultiTextValue(value);
+            return selected.length > 0 && selected.every((code) => codeSet.has(code));
+        },
+        { message: 'One or more selected options are invalid' }
+    );
+};
 
 /**
  * Per-field Zod schema for useController validation.
@@ -12,6 +26,8 @@ export function buildFieldSchema(config: FieldConfig): z.ZodTypeAny {
         const codes = config.optionSet.options.map((option) => option.code);
         if (codes.length === 0) {
             base = z.string();
+        } else if (config.valueType === 'MULTI_TEXT') {
+            base = multiTextOptionSchema(codes);
         } else {
             base = z.enum(codes as [string, ...string[]]);
         }
@@ -61,7 +77,7 @@ export function buildFieldSchema(config: FieldConfig): z.ZodTypeAny {
                 base = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be YYYY-MM-DD');
                 break;
             case 'DATETIME':
-                base = z.string().datetime({ message: 'Invalid date-time' });
+                base = z.string().regex(DATETIME_PATTERN, 'Date-time must be YYYY-MM-DDTHH:mm');
                 break;
             case 'BOOLEAN':
                 base = z.enum(['true', 'false', '']);

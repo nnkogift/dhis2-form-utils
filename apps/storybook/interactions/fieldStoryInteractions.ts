@@ -31,7 +31,12 @@ function queryFieldInput(canvas: Canvas, widgetKind: WidgetKind) {
     if (widgetKind === 'integer' || widgetKind === 'number' || widgetKind === 'percentage') {
         return queryNumericInput(canvas, widgetKind);
     }
-    if (widgetKind === 'date' || widgetKind === 'time' || widgetKind === 'age') {
+    if (
+        widgetKind === 'date' ||
+        widgetKind === 'time' ||
+        widgetKind === 'datetime' ||
+        widgetKind === 'age'
+    ) {
         try {
             return canvas.getByLabelText(labelPattern(widgetKind));
         } catch {
@@ -72,6 +77,13 @@ async function openDhis2SingleSelect(canvasElement: HTMLElement) {
     await userEvent.click(trigger);
 }
 
+async function openDhis2MultiSelect(canvasElement: HTMLElement) {
+    const field = getByDataTest(canvasElement, 'dhis2-uiwidgets-multiselectfield');
+    const trigger = field.querySelector('[data-test="dhis2-uicore-select-input"]');
+    if (!trigger) throw new Error('DHIS2 multi select trigger not found');
+    await userEvent.click(trigger);
+}
+
 async function pickSelectOption(
     adapter: FieldStoryAdapter,
     canvasElement: HTMLElement,
@@ -97,35 +109,38 @@ async function pickSelectOption(
     await userEvent.click(await screen.findByRole('option', { name: optionLabel }));
 }
 
-async function clickMantineBooleanSegment(control: HTMLElement, optionLabel: 'Yes' | 'No') {
-    await userEvent.click(within(control).getByText(optionLabel));
-    const value = optionLabel === 'Yes' ? 'true' : 'false';
-    const input = control.querySelector(`input[type="radio"][value="${value}"]`);
-    if (input instanceof HTMLInputElement && !input.checked) {
-        input.click();
-    }
-}
-
-async function pickBooleanYes(
+async function pickMultiSelectOption(
     adapter: FieldStoryAdapter,
     canvasElement: HTMLElement,
-    widgetKind: WidgetKind = 'boolean'
+    widgetKind: WidgetKind,
+    optionLabel: string
 ) {
     const canvas = canvasOf(canvasElement);
 
     if (adapter === 'dhis2-ui') {
-        await openDhis2SingleSelect(canvasElement);
-        await userEvent.click(await screen.findByText('Yes'));
+        await openDhis2MultiSelect(canvasElement);
+        await userEvent.click(await screen.findByText(optionLabel));
+        await expect(screen.getByText(optionLabel)).toBeInTheDocument();
         return;
     }
 
     if (adapter === 'mantine') {
-        const control = canvas.getByLabelText(labelPattern(widgetKind));
-        await clickMantineBooleanSegment(control, 'Yes');
+        await userEvent.click(canvas.getByRole('textbox', { name: labelPattern(widgetKind) }));
+        await userEvent.click(await screen.findByRole('option', { name: optionLabel }));
         return;
     }
 
-    await userEvent.click(canvas.getByRole('button', { name: 'Yes' }));
+    await userEvent.click(canvas.getByRole('combobox', { name: labelPattern(widgetKind) }));
+    await userEvent.click(await screen.findByRole('option', { name: optionLabel }));
+}
+
+async function pickBooleanYes(
+    _adapter: FieldStoryAdapter,
+    canvasElement: HTMLElement,
+    _widgetKind: WidgetKind = 'boolean'
+) {
+    const canvas = canvasOf(canvasElement);
+    await userEvent.click(canvas.getByRole('radio', { name: 'Yes' }));
 }
 
 export function fieldStoryPlays(adapter: FieldStoryAdapter) {
@@ -196,12 +211,25 @@ export function fieldStoryPlays(adapter: FieldStoryAdapter) {
         await pickSelectOption(adapter, canvasElement, 'select', 'Option A');
     };
 
+    const multiSelectOption: PlayFunction<FieldStoryArgs> = async ({ canvasElement }) => {
+        await pickMultiSelectOption(adapter, canvasElement, 'multiSelect', 'Option A');
+    };
+
     const booleanYes: PlayFunction<FieldStoryArgs> = async ({ canvasElement, args }) => {
         await pickBooleanYes(adapter, canvasElement, args?.widgetKind ?? 'boolean');
     };
 
     const dateInput: PlayFunction<FieldStoryArgs> = async ({ canvasElement }) => {
         await typeIntoField(canvasElement, 'date', '2024-06-15');
+    };
+
+    const timeInput: PlayFunction<FieldStoryArgs> = async ({ canvasElement }) => {
+        await typeIntoField(canvasElement, 'time', '14:30');
+    };
+
+    const datetimeInput: PlayFunction<FieldStoryArgs> = async ({ canvasElement }) => {
+        const canvas = canvasOf(canvasElement);
+        await expect(canvas.getByLabelText(labelPattern('datetime'))).toBeInTheDocument();
     };
 
     const ageShowsComputedAge: PlayFunction<FieldStoryArgs> = async ({ canvasElement }) => {
@@ -228,8 +256,11 @@ export function fieldStoryPlays(adapter: FieldStoryAdapter) {
         generatedFieldDisabled,
         integerInput,
         selectOption,
+        multiSelectOption,
         booleanYes,
         dateInput,
+        timeInput,
+        datetimeInput,
         ageShowsComputedAge,
         stubWidget,
     };

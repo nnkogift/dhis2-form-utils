@@ -1,5 +1,6 @@
 import type { ValueType } from '@dhis2/api-types/v43';
 import { z } from 'zod';
+import { parseMultiTextValue } from './multiTextValue';
 
 export type TeaFieldInput = {
     valueType?: ValueType;
@@ -9,11 +10,23 @@ export type TeaFieldInput = {
 };
 
 const todayIso = (): string => new Date().toISOString().slice(0, 10);
+const DATETIME_PATTERN = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/;
 
 const rejectFutureDates = (schema: z.ZodTypeAny): z.ZodTypeAny =>
     schema.refine((value) => typeof value !== 'string' || value === '' || value <= todayIso(), {
         message: 'Date cannot be in the future',
     });
+
+const multiTextOptionSchema = (codes: string[]): z.ZodTypeAny => {
+    const codeSet = new Set(codes);
+    return z.string().refine(
+        (value) => {
+            const selected = parseMultiTextValue(value);
+            return selected.length > 0 && selected.every((code) => codeSet.has(code));
+        },
+        { message: 'One or more selected options are invalid' }
+    );
+};
 
 const valueTypeToStringSchema = (valueType: ValueType | undefined): z.ZodTypeAny => {
     switch (valueType) {
@@ -52,7 +65,7 @@ const valueTypeToStringSchema = (valueType: ValueType | undefined): z.ZodTypeAny
         case 'DATE':
             return z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be YYYY-MM-DD');
         case 'DATETIME':
-            return z.string().datetime({ message: 'Invalid date-time' });
+            return z.string().regex(DATETIME_PATTERN, 'Date-time must be YYYY-MM-DDTHH:mm');
         case 'BOOLEAN':
             return z.enum(['true', 'false', '']);
         case 'TRUE_ONLY':
@@ -81,7 +94,10 @@ export function buildTeaFieldSchema(
     let base: z.ZodTypeAny;
 
     if (codes.length > 0) {
-        base = z.enum(codes as [string, ...string[]]);
+        base =
+            tea.valueType === 'MULTI_TEXT'
+                ? multiTextOptionSchema(codes)
+                : z.enum(codes as [string, ...string[]]);
     } else {
         base = valueTypeToStringSchema(tea.valueType);
     }
