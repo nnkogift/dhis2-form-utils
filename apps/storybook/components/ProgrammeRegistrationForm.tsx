@@ -10,6 +10,7 @@ export type RegistrationFormFieldProps = {
 
 type ProgrammeRegistrationFormProps = {
     Field: ComponentType<RegistrationFormFieldProps>;
+    Feedback?: ComponentType;
     submitLabel?: string;
 };
 
@@ -17,8 +18,12 @@ const fieldStyle = { display: 'block', marginBottom: 16 } as const;
 const labelStyle = { display: 'block', marginBottom: 4, fontWeight: 500 } as const;
 const inputStyle = { width: '100%', padding: '6px 8px' } as const;
 
+// Branches are the optional incident-date field, the optional Feedback slot, and the TEA
+// field-id guard; splitting further would hurt readability.
+// fallow-ignore-next-line complexity
 export function ProgrammeRegistrationForm({
     Field,
+    Feedback,
     submitLabel = 'Register',
 }: ProgrammeRegistrationFormProps) {
     const { handleSubmit, register } = useFormContext<Record<string, string>>();
@@ -75,6 +80,7 @@ export function ProgrammeRegistrationForm({
                 );
             })}
 
+            {Feedback ? <Feedback /> : null}
             <button type="submit" style={{ marginTop: 16 }}>
                 {submitLabel}
             </button>
