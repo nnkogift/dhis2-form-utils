@@ -1,4 +1,4 @@
-import { expect, screen, userEvent, waitFor, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { RULE_EFFECT_EXTENDED_WAIT_TIMEOUT_MS, RULE_EFFECT_WAIT_TIMEOUT_MS } from './waitTimeouts';
 
 export type AncAdapter = 'dhis2-ui' | 'mantine' | 'mui';
@@ -30,21 +30,6 @@ function queryHemoglobinInput(canvas: Canvas) {
     }
 }
 
-const MANTINE_BOOLEAN_SEGMENT_VALUE: Record<'Yes' | 'No', string> = {
-    Yes: 'true',
-    No: 'false',
-};
-
-async function clickMantineBooleanSegment(control: HTMLElement, optionLabel: 'Yes' | 'No') {
-    await userEvent.click(within(control).getByText(optionLabel));
-    const input = control.querySelector(
-        `input[type="radio"][value="${MANTINE_BOOLEAN_SEGMENT_VALUE[optionLabel]}"]`
-    );
-    if (input instanceof HTMLInputElement && !input.checked) {
-        input.click();
-    }
-}
-
 async function typeHemoglobin(canvasElement: HTMLElement, value: string) {
     const canvas = canvasOf(canvasElement);
     const input = queryHemoglobinInput(canvas);
@@ -61,33 +46,31 @@ async function pickBooleanOption(
     const canvas = canvasOf(canvasElement);
 
     if (adapter === 'dhis2-ui') {
-        const field = Array.from(
-            canvasElement.querySelectorAll('[data-test="dhis2-uiwidgets-singleselectfield"]')
-        ).find((element) => {
-            const text = element.textContent ?? '';
-            if (fieldLabel === SMOKING_LABEL) {
-                return /WHOMCH Smoking/i.test(text) && !/counselling/i.test(text);
+        const fieldsets = Array.from(canvasElement.querySelectorAll('fieldset')).filter(
+            (element) => {
+                const text = element.textContent ?? '';
+                if (fieldLabel === SMOKING_LABEL) {
+                    return /WHOMCH Smoking/i.test(text) && !/counselling/i.test(text);
+                }
+                return fieldLabel.test(text);
             }
-            return fieldLabel.test(text);
-        });
+        );
+        const field = fieldsets[0];
         if (!field) {
             throw new Error(`DHIS2 boolean field matching ${fieldLabel} not found`);
         }
-        const trigger = field.querySelector('[data-test="dhis2-uicore-select-input"]');
-        if (!trigger) throw new Error('DHIS2 single select trigger not found');
-        await userEvent.click(trigger);
-        await userEvent.click(await screen.findByText(optionLabel));
+        await userEvent.click(within(field).getByRole('radio', { name: optionLabel }));
         return;
     }
 
     if (adapter === 'mantine') {
-        const control = canvas.getByLabelText(fieldLabel);
-        await clickMantineBooleanSegment(control, optionLabel);
+        const control = canvas.getByRole('radiogroup', { name: fieldLabel });
+        await userEvent.click(within(control).getByRole('radio', { name: optionLabel }));
         return;
     }
 
     const group = canvas.getByRole('group', { name: fieldLabel });
-    await userEvent.click(within(group).getByRole('button', { name: optionLabel }));
+    await userEvent.click(within(group).getByRole('radio', { name: optionLabel }));
 }
 
 export function ancPlays(adapter: AncAdapter) {
@@ -97,16 +80,19 @@ export function ancPlays(adapter: AncAdapter) {
         await expect(queryHemoglobinInput(canvas)).toBeInTheDocument();
 
         if (adapter === 'dhis2-ui') {
-            const selectFields = canvasElement.querySelectorAll(
-                '[data-test="dhis2-uiwidgets-singleselectfield"]'
-            );
-            await expect(selectFields).toHaveLength(1);
+            await expect(
+                canvas.getByRole('radio', { name: 'Yes', hidden: false })
+            ).toBeInTheDocument();
             return;
         }
 
         if (adapter === 'mantine') {
-            await expect(canvas.getByLabelText(SMOKING_LABEL)).toBeInTheDocument();
-            await expect(canvas.queryByLabelText(COUNSELLING_LABEL)).not.toBeInTheDocument();
+            await expect(
+                canvas.getByRole('radiogroup', { name: SMOKING_LABEL })
+            ).toBeInTheDocument();
+            await expect(
+                canvas.queryByRole('radiogroup', { name: COUNSELLING_LABEL })
+            ).not.toBeInTheDocument();
             return;
         }
 
@@ -172,15 +158,14 @@ export function ancPlays(adapter: AncAdapter) {
 
         if (adapter === 'dhis2-ui') {
             await waitFor(async () => {
-                const selectFields = canvasElement.querySelectorAll(
-                    '[data-test="dhis2-uiwidgets-singleselectfield"]'
-                );
-                await expect(selectFields).toHaveLength(2);
+                await expect(
+                    canvasOf(canvasElement).getByText(COUNSELLING_LABEL)
+                ).toBeInTheDocument();
             });
         } else if (adapter === 'mantine') {
             await waitFor(async () => {
                 await expect(
-                    canvasOf(canvasElement).getByLabelText(COUNSELLING_LABEL)
+                    canvasOf(canvasElement).getByRole('radiogroup', { name: COUNSELLING_LABEL })
                 ).toBeInTheDocument();
             });
         } else {
@@ -202,7 +187,7 @@ export function ancPlays(adapter: AncAdapter) {
                 }
                 if (adapter === 'mantine') {
                     await expect(
-                        canvas.queryByLabelText(COUNSELLING_LABEL)
+                        canvas.queryByRole('radiogroup', { name: COUNSELLING_LABEL })
                     ).not.toBeInTheDocument();
                     return;
                 }
@@ -218,7 +203,9 @@ export function ancPlays(adapter: AncAdapter) {
         const canvas = canvasOf(canvasElement);
 
         if (adapter === 'mantine') {
-            await expect(canvas.getByLabelText(COUNSELLING_LABEL)).toBeInTheDocument();
+            await expect(
+                canvas.getByRole('radiogroup', { name: COUNSELLING_LABEL })
+            ).toBeInTheDocument();
         } else if (adapter === 'dhis2-ui') {
             await expect(canvas.getByText(COUNSELLING_LABEL)).toBeInTheDocument();
         } else {
@@ -237,7 +224,7 @@ export function ancPlays(adapter: AncAdapter) {
                 }
                 if (adapter === 'mantine') {
                     await expect(
-                        canvas.queryByLabelText(COUNSELLING_LABEL)
+                        canvas.queryByRole('radiogroup', { name: COUNSELLING_LABEL })
                     ).not.toBeInTheDocument();
                     return;
                 }

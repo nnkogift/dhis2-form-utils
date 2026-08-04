@@ -20,7 +20,7 @@ const BOOLEAN_OPTIONS = [
 
 const RADIO_RENDER_HINTS = new Set(['RADIO', 'VERTICAL_RADIOBUTTONS', 'HORIZONTAL_RADIOBUTTONS']);
 
-// fallow-ignore-next-line complexity -- widget has no co-located unit coverage yet
+// fallow-ignore-next-line complexity
 export function D2BooleanField({ control }: WidgetProps) {
     const { fieldConfig, field, isMandatory, isDisabled } = control;
     const { validationText, hasError, hasWarning } = resolveFieldValidation(control);

@@ -1,3 +1,4 @@
+// fallow-ignore-file code-duplication
 import {
     type FieldControlInput,
     useFieldControl,
@@ -28,7 +29,6 @@ export type D2FieldProps = {
     field: FieldControlInput;
 };
 
-// fallow-ignore-next-line code-duplication -- mirrored dispatcher map in each UI adapter
 const WIDGET_BY_KIND: Record<WidgetKind, ComponentType<WidgetProps>> = {
     text: D2TextField,
     longText: D2LongTextField,

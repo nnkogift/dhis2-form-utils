@@ -1,3 +1,4 @@
+// fallow-ignore-file code-duplication
 import { type FieldControlInput, useFieldControl, type WidgetProps } from '@dhis2-form-utils/hooks';
 import type { WidgetKind } from '@dhis2-form-utils/hooks';
 import type { ComponentType } from 'react';
@@ -26,7 +27,6 @@ export type D2FieldProps = {
 
 export type D2FieldWidgetProps = WidgetProps;
 
-// fallow-ignore-next-line code-duplication -- mirrored dispatcher map in each UI adapter
 const WIDGET_BY_KIND: Record<WidgetKind, ComponentType<WidgetProps>> = {
     text: D2TextField,
     longText: D2LongTextField,

@@ -16,7 +16,7 @@ import {
     resolveFieldValidation,
 } from '@dhis2-form-utils/hooks';
 
-// fallow-ignore-next-line complexity -- widget has no co-located unit coverage yet
+// fallow-ignore-next-line complexity
 export function D2BooleanField({ control }: WidgetProps) {
     const { fieldConfig, field, isMandatory, isDisabled } = control;
     const { validationText, hasError } = resolveFieldValidation(control);
@@ -90,7 +90,7 @@ export function D2TrueOnlyField({ control }: WidgetProps) {
     );
 }
 
-// fallow-ignore-next-line complexity -- widget has no co-located unit coverage yet
+// fallow-ignore-next-line complexity
 export function D2SelectField({ control }: WidgetProps) {
     const { fieldConfig, field, isMandatory, isDisabled } = control;
     const { validationText, hasError } = resolveFieldValidation(control);
@@ -122,7 +122,7 @@ export function D2SelectField({ control }: WidgetProps) {
     );
 }
 
-// fallow-ignore-next-line complexity -- widget has no co-located unit coverage yet
+// fallow-ignore-next-line complexity
 export function D2MultiSelectField({ control }: WidgetProps) {
     const { fieldConfig, field, isMandatory, isDisabled } = control;
     const { validationText, hasError } = resolveFieldValidation(control);

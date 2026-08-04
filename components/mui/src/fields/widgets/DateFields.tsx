@@ -51,7 +51,7 @@ export function D2DateField({ control }: WidgetProps) {
     );
 }
 
-// fallow-ignore-next-line complexity -- widget has no co-located unit coverage yet
+// fallow-ignore-next-line complexity
 export function D2TimeField({ control }: WidgetProps) {
     const { fieldConfig, field, isMandatory, isDisabled } = control;
     const { validationText, hasError } = resolveFieldValidation(control);
