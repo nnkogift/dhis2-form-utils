@@ -58,9 +58,32 @@ Same for `beta` with `pre enter beta`. When promoting to stable, open a PR into 
 2. Merge to `alpha`, `beta`, or `main`.
 3. The **Release** GitHub Action either opens/updates a **Version Packages** PR or, when that PR is merged (or when versions are already bumped), runs `changeset publish`.
 
+## What a release produces
+
+When Changesets publishes from CI, each release:
+
+1. **Publishes to npmjs.org** via OIDC trusted publishing (`latest` / `alpha` / `beta` dist-tags).
+2. **Creates per-package git tags** (e.g. `@nnkogift/dhis2-form-utils-hooks@0.1.0`) and matching **GitHub Releases** (`changesets/action` `createGithubReleases`).
+3. **Creates a unified `vX.Y.Z` tag + GitHub Release** for the fixed version shared by all packages.
+4. **Mirrors the same versions to GitHub Packages** (`https://npm.pkg.github.com`) under `@nnkogift/*`.
+
+### Install from GitHub Packages
+
+```bash
+# .npmrc
+@nnkogift:registry=https://npm.pkg.github.com
+//npm.pkg.github.com/:_authToken=YOUR_GITHUB_TOKEN
+
+pnpm add @nnkogift/dhis2-form-utils-hooks
+```
+
+Use a classic PAT or fine-grained token with `read:packages` (and `write:packages` only if you publish locally).
+
 ## Maintainer setup (one-time)
 
-Publishing uses **npm trusted publishing** (OIDC). No long-lived `NPM_TOKEN` is stored in GitHub.
+### npmjs.org (OIDC)
+
+Publishing to the public registry uses **npm trusted publishing** (OIDC). No long-lived `NPM_TOKEN` is stored in GitHub.
 
 1. Ensure your npm user can publish under the `@nnkogift` scope.
 2. For **each** publishable package on [npmjs.com](https://www.npmjs.com/), open **Settings → Trusted Publisher**:
@@ -72,7 +95,14 @@ Publishing uses **npm trusted publishing** (OIDC). No long-lived `NPM_TOKEN` is 
 3. Protect `main` / `beta` / `alpha` so CI must pass before merge.
 4. Optional hardening (after the first successful OIDC publish): package **Settings → Publishing access** → require 2FA and **disallow tokens**.
 
-### First publish of a brand-new package
+### GitHub Packages
+
+Uses the workflow `GITHUB_TOKEN` with `packages: write`. No extra secret is required for CI.
+
+- Packages appear under the repo **Packages** tab / `https://github.com/nnkogift?tab=packages`.
+- Link each package to this repository on first publish (GitHub usually does this when `repository.url` matches).
+
+### First publish of a brand-new package on npmjs
 
 Trusted Publisher is configured per package on npm. If a package does not exist yet:
 
@@ -94,10 +124,12 @@ OIDC only works inside GitHub Actions. Local `changeset publish` still needs int
 
 ## Scripts
 
-| Script                  | Purpose                                 |
-| ----------------------- | --------------------------------------- |
-| `pnpm changeset`        | Add a changeset                         |
-| `pnpm version-packages` | Apply changesets (`changeset version`)  |
-| `pnpm release`          | Build packages then `changeset publish` |
-| `pnpm publint:packages` | Lint publishable package exports        |
-| `pnpm size`             | Check gzip size budgets                 |
+| Script                         | Purpose                                         |
+| ------------------------------ | ----------------------------------------------- |
+| `pnpm changeset`               | Add a changeset                                 |
+| `pnpm version-packages`        | Apply changesets (`changeset version`)          |
+| `pnpm release`                 | Build packages then `changeset publish` (npmjs) |
+| `pnpm publish:github-packages` | Mirror published packages to GitHub Packages    |
+| `pnpm release:github`          | Create unified `v*` tag + GitHub Release        |
+| `pnpm publint:packages`        | Lint publishable package exports                |
+| `pnpm size`                    | Check gzip size budgets                         |

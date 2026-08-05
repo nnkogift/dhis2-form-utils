@@ -28,7 +28,9 @@
         "size": "size-limit",
         "precommit": "lint-staged && node scripts/typecheck-staged.mjs",
         "prepare": "husky",
-        "clean": "find . -name 'node_modules' -type d -prune -exec rm -rf '{}' +"
+        "clean": "find . -name 'node_modules' -type d -prune -exec rm -rf '{}' +",
+        "publish:github-packages": "node scripts/publish-github-packages.mjs",
+        "release:github": "node scripts/create-unified-github-release.mjs"
     },
     "lint-staged": {
         "*.{ts,tsx}": [

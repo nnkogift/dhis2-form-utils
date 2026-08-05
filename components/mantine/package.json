@@ -5,7 +5,7 @@
     "license": "MIT",
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/nnkogift/dhis2-form-utils.git",
+        "url": "https://github.com/nnkogift/dhis2-form-utils.git",
         "directory": "components/mantine"
     },
     "homepage": "https://github.com/nnkogift/dhis2-form-utils#readme",
