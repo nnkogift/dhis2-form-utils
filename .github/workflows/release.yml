@@ -11,6 +11,8 @@ concurrency:
 permissions:
     contents: write
     pull-requests: write
+    # Required for npm trusted publishing (OIDC)
+    id-token: write
 
 jobs:
     release:
@@ -25,9 +27,14 @@ jobs:
 
             - uses: actions/setup-node@v4
               with:
+                  # Trusted publishing needs Node >= 22.14 and npm >= 11.5.1
                   node-version: 24
                   cache: pnpm
-                  registry-url: https://registry.npmjs.org
+                  # Do not set registry-url here: setup-node would write an auth
+                  # .npmrc that blocks npm's OIDC auto-detection.
+
+            - name: Ensure npm supports OIDC trusted publishing
+              run: npm install -g npm@latest
 
             - run: pnpm install --frozen-lockfile
 
@@ -44,5 +51,6 @@ jobs:
                   createGithubReleases: true
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                  NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+                  # Empty on purpose: changesets/action skips writing a real
+                  # auth token to .npmrc, so npm can use GitHub OIDC instead.
+                  NPM_TOKEN: ''

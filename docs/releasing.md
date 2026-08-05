@@ -60,10 +60,25 @@ Same for `beta` with `pre enter beta`. When promoting to stable, open a PR into 
 
 ## Maintainer setup (one-time)
 
+Publishing uses **npm trusted publishing** (OIDC). No long-lived `NPM_TOKEN` is stored in GitHub.
+
 1. Ensure your npm user can publish under the `@nnkogift` scope.
-2. Create an npm **Automation** token with publish permission for the scope.
-3. Add a repository secret: `NPM_TOKEN` (used by `.github/workflows/release.yml`).
-4. Protect `main` / `beta` / `alpha` so CI must pass before merge.
+2. For **each** publishable package on [npmjs.com](https://www.npmjs.com/), open **Settings → Trusted Publisher**:
+    - Provider: **GitHub Actions**
+    - Organization or user: `nnkogift`
+    - Repository: `dhis2-form-utils`
+    - Workflow filename: `release.yml` (filename only, including `.yml`)
+    - Allowed actions: enable **`npm publish`**
+3. Protect `main` / `beta` / `alpha` so CI must pass before merge.
+4. Optional hardening (after the first successful OIDC publish): package **Settings → Publishing access** → require 2FA and **disallow tokens**.
+
+### First publish of a brand-new package
+
+Trusted Publisher is configured per package on npm. If a package does not exist yet:
+
+1. Create it with a one-time local/CI publish (token or interactive), **or** publish once under the scope so the package page exists.
+2. Immediately add the Trusted Publisher config above for `release.yml`.
+3. Prefer OIDC for all subsequent releases; revoke any temporary automation token.
 
 ### Local dry-run
 
@@ -74,6 +89,8 @@ pnpm exec publint packages/metadata
 pnpm size
 npm whoami
 ```
+
+OIDC only works inside GitHub Actions. Local `changeset publish` still needs interactive npm login or a token.
 
 ## Scripts
 
