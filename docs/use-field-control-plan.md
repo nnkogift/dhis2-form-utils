@@ -4,14 +4,14 @@
 
 ## As-built deltas
 
-| Plan                                  | As built                                                                                                                                                                        |
-| ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `packages/hooks/` paths               | `utils/hooks/src/fields/`                                                                                                                                                       |
-| Pass `control` into `useFieldControl` | `useController()` via `FormProvider` — no `control` param                                                                                                                       |
-| `Dhis2Field` / `ui-dhis2` naming      | `D2Field` in `components/dhis2-ui`                                                                                                                                              |
-| `ruleState.isMandatory`               | `ruleState.mandatory`                                                                                                                                                           |
-| `useEnrollmentForm`                   | Does not exist                                                                                                                                                                  |
-| (not in original plan)                | `FieldControlReturn.visibleOptions` — `optionSet.options` filtered by `HIDEOPTION`/`HIDEOPTIONGROUP` rule effects (see `resolveHiddenOptionCodes` in `@dhis2-form-utils/rules`) |
+| Plan                                  | As built                                                                                                                                                                                 |
+| ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/hooks/` paths               | `utils/hooks/src/fields/`                                                                                                                                                                |
+| Pass `control` into `useFieldControl` | `useController()` via `FormProvider` — no `control` param                                                                                                                                |
+| `Dhis2Field` / `ui-dhis2` naming      | `D2Field` in `components/dhis2-ui`                                                                                                                                                       |
+| `ruleState.isMandatory`               | `ruleState.mandatory`                                                                                                                                                                    |
+| `useEnrollmentForm`                   | Does not exist                                                                                                                                                                           |
+| (not in original plan)                | `FieldControlReturn.visibleOptions` — `optionSet.options` filtered by `HIDEOPTION`/`HIDEOPTIONGROUP` rule effects (see `resolveHiddenOptionCodes` in `@nnkogift/dhis2-form-utils-rules`) |
 
 The sections below are retained as historical design reference.
 
@@ -20,9 +20,9 @@ The sections below are retained as historical design reference.
 ## Context & Scope
 
 This plan covers the headless field control hook, the full `valueType → widget` mapping,
-and the per-library renderer packages for `@dhis2-form-utils`.
+and the per-library renderer packages for `@nnkogift/dhis2-form-utils`.
 
-The hook sits inside `@dhis2-form-utils/hooks` and is consumed by every UI adapter
+The hook sits inside `@nnkogift/dhis2-form-utils-hooks` and is consumed by every UI adapter
 package (`ui-dhis2`, `ui-mantine`, `ui-material`). It is the single bridge between
 DHIS2 metadata, React Hook Form, and the program-rule field state store.
 
@@ -690,7 +690,7 @@ and switches on `widgetKind`. This is the component consumers render.
 
 ```tsx
 // packages/ui-dhis2/src/fields/Dhis2Field.tsx
-import { useFieldControl, type FieldControlInput } from '@dhis2-form-utils/hooks';
+import { useFieldControl, type FieldControlInput } from '@nnkogift/dhis2-form-utils-hooks';
 import {
     TextField,
     LongTextField,
@@ -772,7 +772,7 @@ All widgets across all UI libraries receive `FieldControlReturn`. This is the bo
 between the headless hook layer and the visual layer.
 
 ```tsx
-// Shared type — defined in @dhis2-form-utils/hooks and re-exported
+// Shared type — defined in @nnkogift/dhis2-form-utils-hooks and re-exported
 type WidgetProps = {
     control: FieldControlReturn;
 };
@@ -783,7 +783,7 @@ type WidgetProps = {
 ```tsx
 // packages/ui-dhis2/src/fields/widgets/TextField.tsx
 import { InputField } from '@dhis2/ui';
-import type { WidgetProps } from '@dhis2-form-utils/hooks';
+import type { WidgetProps } from '@nnkogift/dhis2-form-utils-hooks';
 
 export function TextField({ control }: WidgetProps) {
     const {
@@ -869,7 +869,7 @@ packages/
 │       │   └── useFieldState.ts            ← existing (from arch doc)
 │       └── index.ts                        ← re-export public surface
 │
-├── ui-dhis2/                               ← @dhis2-form-utils/ui-dhis2
+├── ui-dhis2/                               ← @nnkogift/dhis2-form-utils-dhis2-ui
 │   └── src/
 │       ├── fields/
 │       │   ├── Dhis2Field.tsx              ← dispatcher
@@ -894,14 +894,14 @@ packages/
 │       │       └── ImageField.tsx
 │       └── index.ts
 │
-├── ui-mantine/                             ← @dhis2-form-utils/ui-mantine
+├── ui-mantine/                             ← @nnkogift/dhis2-form-utils-mantine
 │   └── src/fields/                         ← same structure
 │
-└── ui-material/                            ← @dhis2-form-utils/ui-material
+└── ui-material/                            ← @nnkogift/dhis2-form-utils-mui
     └── src/fields/                         ← same structure
 ```
 
-### Public Surface of `@dhis2-form-utils/hooks`
+### Public Surface of `@nnkogift/dhis2-form-utils-hooks`
 
 ```ts
 // packages/hooks/src/index.ts (fields additions)

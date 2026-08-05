@@ -1,7 +1,7 @@
 import { render } from '@testing-library/react'
 import React from 'react'
 import { MemoryRouter, Route, Routes } from 'react-router'
-import { useEventProgramMetadataQuery } from '@dhis2-form-utils/hooks'
+import { useEventProgramMetadataQuery } from '@nnkogift/dhis2-form-utils-hooks'
 import { ProgramStageFormScreen } from '@/components/programs/forms/ProgramStageFormScreen'
 import { TrackerProgramShell } from '@/components/programs/forms/TrackerProgramShell'
 import { useAccessibleOrgUnits } from '@/hooks/useAccessibleOrgUnits'
@@ -9,7 +9,7 @@ import { useCurrentUserSupplementaryData } from '@/hooks/useCurrentUserSupplemen
 import { useOptionGroupsSupplementaryData } from '@/hooks/useOptionGroupsSupplementaryData'
 import { ProgramPage } from './ProgramPage'
 
-jest.mock('@dhis2-form-utils/hooks', () => ({
+jest.mock('@nnkogift/dhis2-form-utils-hooks', () => ({
     useEventProgramMetadataQuery: jest.fn(),
 }))
 jest.mock('@/hooks/useAccessibleOrgUnits')

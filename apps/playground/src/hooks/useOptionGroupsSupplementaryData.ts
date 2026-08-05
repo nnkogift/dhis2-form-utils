@@ -7,7 +7,7 @@ import {
     type OptionGroupCodeMap,
     type ProgramRule,
     type RawOptionGroupsResult,
-} from '@dhis2-form-utils/metadata'
+} from '@nnkogift/dhis2-form-utils-metadata'
 
 /**
  * Resolves the optionGroup ids referenced by `HIDEOPTIONGROUP`/`SHOWOPTIONGROUP` rule actions

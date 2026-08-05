@@ -1,10 +1,10 @@
 import i18n from '@dhis2/d2-i18n'
-import { D2FieldWidget } from '@dhis2-form-utils/dhis2-ui'
+import { D2FieldWidget } from '@nnkogift/dhis2-form-utils-dhis2-ui'
 import {
     type FieldControlInput,
     useFieldControl,
     useFieldRuleEffect,
-} from '@dhis2-form-utils/hooks'
+} from '@nnkogift/dhis2-form-utils-hooks'
 import { useEffect, useId, useRef } from 'react'
 import { FieldEffectBadge } from './FieldEffectBadge'
 import { HiddenFieldPlaceholder } from './HiddenFieldPlaceholder'

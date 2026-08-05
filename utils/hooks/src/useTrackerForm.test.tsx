@@ -4,7 +4,7 @@ import {
     ProgramRuleActionType,
     ProgramRuleVariableSourceType,
     type TrackerProgramMetadata,
-} from '@dhis2-form-utils/metadata';
+} from '@nnkogift/dhis2-form-utils-metadata';
 import { useTrackerForm } from './useTrackerForm';
 
 const teaId = 'tea-age';

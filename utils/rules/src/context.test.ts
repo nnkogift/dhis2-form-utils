@@ -4,7 +4,7 @@ import {
     type ProgramRule,
     type ProgramRuleVariable,
     type ProgramStageMetadata,
-} from '@dhis2-form-utils/metadata';
+} from '@nnkogift/dhis2-form-utils-metadata';
 import { describe, expect, it } from 'vitest';
 import { buildRuleEngine, buildRuleEngineContext, toRuleEventFromInput } from './context';
 import { toRuleEnrollment } from './enrollmentContext';

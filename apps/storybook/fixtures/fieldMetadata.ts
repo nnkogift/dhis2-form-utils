@@ -2,8 +2,8 @@ import type {
     ProgramStageDataElement,
     ProgramTrackedEntityAttribute,
     ValueType,
-} from '@dhis2-form-utils/metadata';
-import type { WidgetKind } from '@dhis2-form-utils/hooks';
+} from '@nnkogift/dhis2-form-utils-metadata';
+import type { WidgetKind } from '@nnkogift/dhis2-form-utils-hooks';
 
 const VALUE_TYPE_BY_WIDGET: Record<WidgetKind, ValueType> = {
     text: 'TEXT',

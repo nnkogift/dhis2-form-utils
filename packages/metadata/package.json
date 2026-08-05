@@ -1,23 +1,57 @@
 {
-    "name": "@dhis2-form-utils/metadata",
+    "name": "@nnkogift/dhis2-form-utils-metadata",
     "version": "0.0.0",
     "description": "Convert DHIS2 metadata into Zod schemas for React Hook Form",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/nnkogift/dhis2-form-utils.git",
+        "directory": "packages/metadata"
+    },
+    "homepage": "https://github.com/nnkogift/dhis2-form-utils#readme",
     "type": "module",
+    "sideEffects": false,
+    "main": "./dist/index.cjs",
+    "module": "./dist/index.js",
+    "types": "./dist/index.d.ts",
     "exports": {
-        ".": "./src/index.ts"
+        ".": {
+            "import": {
+                "types": "./dist/index.d.ts",
+                "default": "./dist/index.js"
+            },
+            "require": {
+                "types": "./dist/index.d.cts",
+                "default": "./dist/index.cjs"
+            }
+        }
+    },
+    "files": [
+        "dist"
+    ],
+    "publishConfig": {
+        "access": "public",
+        "registry": "https://registry.npmjs.org/"
     },
     "scripts": {
+        "build": "tsup && node ../config/copyEntryDtsCts.mjs",
+        "dev": "tsup --watch",
         "typecheck": "tsc --noEmit",
         "test": "vitest run"
     },
-    "dependencies": {
-        "zod": "^3.25.76"
+    "peerDependencies": {
+        "zod": ">=3.0.0"
     },
     "devDependencies": {
-        "@dhis2-form-utils/config": "workspace:*",
+        "@nnkogift/dhis2-form-utils-config": "workspace:*",
         "@dhis2/api-types": "43.0.0-beta.daa0d8e",
         "@dhis2/data-engine": "^3.17.0",
+        "tsup": "^8.5.1",
         "typescript": "^5.9.3",
-        "vitest": "^4.1.7"
+        "vitest": "^4.1.7",
+        "zod": "^3.25.76"
+    },
+    "engines": {
+        "node": ">=18"
     }
 }

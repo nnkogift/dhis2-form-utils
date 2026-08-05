@@ -1,4 +1,4 @@
-import { ProgramRuleActionType } from '@dhis2-form-utils/metadata';
+import { ProgramRuleActionType } from '@nnkogift/dhis2-form-utils-metadata';
 import { describe, expect, it, vi } from 'vitest';
 import { applyEffect, evaluateAndMap } from './evaluate';
 import { partitionEffects } from './partitionEffects';

@@ -1,7 +1,7 @@
 import { DateInput, DateTimePicker, TimeInput } from '@mantine/dates';
 import dayjs from 'dayjs';
-import type { WidgetProps } from '@dhis2-form-utils/hooks';
-import { computeAgeFromDob, resolveFieldValidation } from '@dhis2-form-utils/hooks';
+import type { WidgetProps } from '@nnkogift/dhis2-form-utils-hooks';
+import { computeAgeFromDob, resolveFieldValidation } from '@nnkogift/dhis2-form-utils-hooks';
 
 const today = () => dayjs().endOf('day').toDate();
 

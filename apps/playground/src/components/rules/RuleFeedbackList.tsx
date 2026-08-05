@@ -5,9 +5,12 @@ import {
     createLabelLookup,
     type DevtoolsLabelLookup,
     type RuleDevtoolsMetadata,
-} from '@dhis2-form-utils/devtools'
-import { useFormFeedback, useRuleEffectTrace } from '@dhis2-form-utils/hooks'
-import { feedbackItemKey } from '@dhis2-form-utils/rules'
+} from '@nnkogift/dhis2-form-utils-devtools'
+import {
+    useFormFeedback,
+    useRuleEffectTrace,
+} from '@nnkogift/dhis2-form-utils-hooks'
+import { feedbackItemKey } from '@nnkogift/dhis2-form-utils-rules'
 
 type RuleFeedbackListProps = {
     metadata: RuleDevtoolsMetadata

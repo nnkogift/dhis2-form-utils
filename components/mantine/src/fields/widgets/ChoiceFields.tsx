@@ -1,10 +1,10 @@
 import { Checkbox, MultiSelect, Radio, Select } from '@mantine/core';
-import type { WidgetProps } from '@dhis2-form-utils/hooks';
+import type { WidgetProps } from '@nnkogift/dhis2-form-utils-hooks';
 import {
     joinMultiTextValue,
     parseMultiTextValue,
     resolveFieldValidation,
-} from '@dhis2-form-utils/hooks';
+} from '@nnkogift/dhis2-form-utils-hooks';
 
 const RADIO_RENDER_HINTS = new Set(['RADIO', 'VERTICAL_RADIOBUTTONS', 'HORIZONTAL_RADIOBUTTONS']);
 

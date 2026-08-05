@@ -1,13 +1,13 @@
 import { useCallback, useMemo, useRef, useState } from 'react'
-import { useTrackerMetadataQuery } from '@dhis2-form-utils/hooks'
+import { useTrackerMetadataQuery } from '@nnkogift/dhis2-form-utils-hooks'
 import type {
     EventProgramMetadata,
     OptionGroupCodeMap,
-} from '@dhis2-form-utils/metadata'
+} from '@nnkogift/dhis2-form-utils-metadata'
 import type {
     RuleEventInput,
     RuleSupplementaryDataInput,
-} from '@dhis2-form-utils/rules'
+} from '@nnkogift/dhis2-form-utils-rules'
 import { EVENT_SYSTEM_FIELD_KEYS } from '@/utils/trackerPayloads'
 import { EnrollmentRail } from '../EnrollmentRail'
 import { slotKey, type TrackerSlot } from '../trackerSlot'

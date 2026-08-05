@@ -1,7 +1,7 @@
 import { Provider } from '@dhis2/app-runtime';
-import { FormStateProvider, useEventForm } from '@dhis2-form-utils/hooks';
-import type { EventProgramMetadata, OptionGroupCodeMap } from '@dhis2-form-utils/metadata';
-import { selectProgramStage } from '@dhis2-form-utils/metadata';
+import { FormStateProvider, useEventForm } from '@nnkogift/dhis2-form-utils-hooks';
+import type { EventProgramMetadata, OptionGroupCodeMap } from '@nnkogift/dhis2-form-utils-metadata';
+import { selectProgramStage } from '@nnkogift/dhis2-form-utils-metadata';
 import type { Decorator } from '@storybook/react-vite';
 import { createContext, type ReactNode, useContext, useMemo } from 'react';
 import { FormProvider, type UseFormReturn } from 'react-hook-form';

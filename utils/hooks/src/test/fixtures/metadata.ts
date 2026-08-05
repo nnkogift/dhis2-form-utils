@@ -2,7 +2,7 @@ import type {
     ProgramStageDataElement,
     ProgramTrackedEntityAttribute,
     ValueType,
-} from '@dhis2-form-utils/metadata';
+} from '@nnkogift/dhis2-form-utils-metadata';
 
 export const makePsde = (
     id: string,

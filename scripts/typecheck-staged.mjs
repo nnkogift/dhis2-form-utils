@@ -9,12 +9,12 @@ const FULL_TYPECHECK_PATTERNS = [
 ];
 
 const WORKSPACE_PREFIXES = [
-    ['packages/rules/', '@dhis2-form-utils/rules'],
-    ['packages/metadata/', '@dhis2-form-utils/metadata'],
-    ['packages/hooks/', '@dhis2-form-utils/hooks'],
-    ['packages/dhis2-ui/', '@dhis2-form-utils/dhis2-ui'],
-    ['packages/mantine/', '@dhis2-form-utils/mantine'],
-    ['packages/mui/', '@dhis2-form-utils/mui'],
+    ['packages/rules/', '@nnkogift/dhis2-form-utils-rules'],
+    ['packages/metadata/', '@nnkogift/dhis2-form-utils-metadata'],
+    ['packages/hooks/', '@nnkogift/dhis2-form-utils-hooks'],
+    ['packages/dhis2-ui/', '@nnkogift/dhis2-form-utils-dhis2-ui'],
+    ['packages/mantine/', '@nnkogift/dhis2-form-utils-mantine'],
+    ['packages/mui/', '@nnkogift/dhis2-form-utils-mui'],
     ['apps/playground/', 'playground'],
 ];
 

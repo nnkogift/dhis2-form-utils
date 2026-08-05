@@ -3,8 +3,8 @@ import { ControllerFieldState, ControllerRenderProps, useController } from 'reac
 import type {
     ProgramStageDataElement,
     ProgramTrackedEntityAttribute,
-} from '@dhis2-form-utils/metadata';
-import { resolveHiddenOptionCodes } from '@dhis2-form-utils/rules';
+} from '@nnkogift/dhis2-form-utils-metadata';
+import { resolveHiddenOptionCodes } from '@nnkogift/dhis2-form-utils-rules';
 import { useFieldState, useFormStore } from '../FormStateContext';
 import {
     type FieldConfig,

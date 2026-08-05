@@ -1,5 +1,5 @@
 import { useMemo, useRef, useSyncExternalStore } from 'react';
-import type { ProgramRuleActionType } from '@dhis2-form-utils/metadata';
+import type { ProgramRuleActionType } from '@nnkogift/dhis2-form-utils-metadata';
 import type { RuleTraceEntry } from './buildTraceEntry';
 import { useFormStore } from './FormStateContext';
 

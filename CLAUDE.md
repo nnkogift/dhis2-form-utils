@@ -27,8 +27,8 @@ pnpm lint:fix            # ESLint --fix + Prettier write
 pnpm typecheck           # Type-check all packages
 
 # Per-package typecheck or build
-pnpm --filter @dhis2-form-utils/hooks typecheck
-pnpm --filter @dhis2-form-utils/hooks build
+pnpm --filter @nnkogift/dhis2-form-utils-hooks typecheck
+pnpm --filter @nnkogift/dhis2-form-utils-hooks build
 ```
 
 ## Architecture
@@ -39,11 +39,11 @@ Three-layer monorepo. Dependency direction is strictly downward — UI adapters 
 apps/playground              # Vite dev sandbox
 apps/storybook               # Storybook: component docs + browser tests
 utils/
-  rules/                     # @dhis2-form-utils/rules
-  hooks/                     # @dhis2-form-utils/hooks
-  devtools/                  # @dhis2-form-utils/devtools (optional, dev-only)
+  rules/                     # @nnkogift/dhis2-form-utils-rules
+  hooks/                     # @nnkogift/dhis2-form-utils-hooks
+  devtools/                  # @nnkogift/dhis2-form-utils-devtools (optional, dev-only)
 packages/
-  metadata/                  # @dhis2-form-utils/metadata
+  metadata/                  # @nnkogift/dhis2-form-utils-metadata
   config/                    # Shared tsconfig.base.json
 components/
   dhis2-ui/                  # UI adapter — @dhis2/ui
@@ -51,7 +51,7 @@ components/
   mui/                       # UI adapter — Material UI
 ```
 
-### `@dhis2-form-utils/rules`
+### `@nnkogift/dhis2-form-utils-rules`
 
 Wraps `@dhis2/rule-engine` (DHIS2's official Kotlin/JS rule engine) — never reimplements rule logic. Key exports:
 
@@ -63,7 +63,7 @@ Wraps `@dhis2/rule-engine` (DHIS2's official Kotlin/JS rule engine) — never re
 
 `effectHandlers` is an extension point for apps that reuse standard action types (e.g. `DISPLAYTEXT`) for custom widget communication.
 
-### `@dhis2-form-utils/metadata`
+### `@nnkogift/dhis2-form-utils-metadata`
 
 Converts DHIS2 metadata into Zod schemas:
 
@@ -74,7 +74,7 @@ Each `valueType` maps to a Zod validator. Event `buildSchema` uses coercion; tra
 
 `TrackerProgramMetadata` is the program-level metadata shape for registration (TEAs, enrollment date flags, expanded program rules).
 
-### `@dhis2-form-utils/hooks`
+### `@nnkogift/dhis2-form-utils-hooks`
 
 Composes rules, metadata, and React Hook Form.
 
@@ -119,7 +119,7 @@ results into `fieldStore` and `nonFieldStore`. No `useEffect` or `form.watch` in
 
 See `docs/form-state-architecture.md` for store internals.
 
-### `@dhis2-form-utils/devtools`
+### `@nnkogift/dhis2-form-utils-devtools`
 
 Optional developer-facing package for debugging program rules. Wired in the playground only — not for production form bundles.
 
@@ -127,7 +127,7 @@ Optional developer-facing package for debugging program rules. Wired in the play
 - `RulesPanel` — single panel with **Rules** (catalog of all program rules from metadata — name, actions, condition, scope-aware selected/firing/idle/out-of-scope state), **Trace** (reverse-chronological rule evaluation log), and **Graph** (`@xyflow/react` dependency graph built from observed firings) tabs
 - Optional `metadata` prop (`RuleDevtoolsMetadata`) for human-readable rule, field, section, and stage labels
 - Requires `FormStateProvider` in the tree; attaches to `FormStore` via `RuleDevtoolsScope` + `subscribeTrace`
-- Import styles: `@dhis2-form-utils/devtools/style.css` (includes Tailwind utilities and bundled `@xyflow/react` graph styles)
+- Import styles: `@nnkogift/dhis2-form-utils-devtools/style.css` (includes Tailwind utilities and bundled `@xyflow/react` graph styles)
 
 See `docs/dev-tools.md` for architecture.
 

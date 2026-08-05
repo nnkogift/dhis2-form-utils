@@ -2,8 +2,8 @@
 
 **Status:** Accepted  
 **Date:** 2026-07-01  
-**Package:** `@dhis2-form-utils/hooks`  
-**Depends on:** `@dhis2-form-utils/rules`, `@dhis2-form-utils/metadata`, `@dhis2/rule-engine@3.8.1`,
+**Package:** `@nnkogift/dhis2-form-utils-hooks`  
+**Depends on:** `@nnkogift/dhis2-form-utils-rules`, `@nnkogift/dhis2-form-utils-metadata`, `@dhis2/rule-engine@3.8.1`,
 `@dhis2/api-types/v43`
 
 ---
@@ -60,8 +60,8 @@ This is the pre-fetched metadata the caller passes to `useTrackerForm`. It mirro
 caller owns the fetch; the hook owns nothing about data loading.
 
 In practice this shape is produced by `resolveTrackerProgramMetadata`, given the raw result of `trackerConfigQuery`
-(both exported from `@dhis2-form-utils/metadata`; see ARCHITECTURE.md › Data Fetching). A consumer can also call
-`useTrackerMetadataQuery(programId)` from `@dhis2-form-utils/hooks` for the composed query+resolver in one call — this
+(both exported from `@nnkogift/dhis2-form-utils-metadata`; see ARCHITECTURE.md › Data Fetching). A consumer can also call
+`useTrackerMetadataQuery(programId)` from `@nnkogift/dhis2-form-utils-hooks` for the composed query+resolver in one call — this
 is optional sugar, not a dependency `useTrackerForm` itself has.
 
 All types are derived from `@dhis2/api-types/v43`. No DHIS2 types are hand-written in this library.
@@ -237,7 +237,7 @@ which obscure intent and make the function harder to test in isolation. A dedica
 ### Signature
 
 ```ts
-// In @dhis2-form-utils/rules
+// In @nnkogift/dhis2-form-utils-rules
 
 export function buildEnrollmentRuleEngineContext(
     metadata: TrackerProgramMetadata
@@ -288,7 +288,7 @@ export function buildEnrollmentRuleEngineContext(
 
 `mapDhis2ValueTypeToRuleValueType` is a shared utility already used by `buildRuleEngineContext`. It maps DHIS2's
 `ValueType` (`TEXT | INTEGER | NUMBER | BOOLEAN | DATE | ...`) to the rule engine's `RuleValueType`
-(`TEXT | NUMERIC | BOOLEAN | DATE`). It lives in `@dhis2-form-utils/rules/utils` and is not exported from the package
+(`TEXT | NUMERIC | BOOLEAN | DATE`). It lives in `@nnkogift/dhis2-form-utils-rules/utils` and is not exported from the package
 root.
 
 ---
@@ -311,12 +311,12 @@ type TrackerFormValues = {
 };
 ```
 
-The `occurredAt` field's conditional presence is handled in `buildTrackerSchema` (in `@dhis2-form-utils/metadata`), not
+The `occurredAt` field's conditional presence is handled in `buildTrackerSchema` (in `@nnkogift/dhis2-form-utils-metadata`), not
 in the hook. The hook receives the already-built schema and passes it to `zodResolver`. This keeps the hook's
 responsibility clear: wire the form, wire the store, return both.
 
 ```ts
-// In @dhis2-form-utils/metadata
+// In @nnkogift/dhis2-form-utils-metadata
 
 export function buildTrackerSchema(metadata: TrackerProgramMetadata): z.ZodObject<z.ZodRawShape> {
     const teaFields = Object.fromEntries(
@@ -347,16 +347,19 @@ evaluation-target-agnostic; what changes is the context passed to it and, at eva
 method `FormStore` calls internally.
 
 ```ts
-// In @dhis2-form-utils/hooks
+// In @nnkogift/dhis2-form-utils-hooks
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMemo, useRef } from 'react';
 import type { Resolver, UseFormReturn } from 'react-hook-form';
 import { useForm } from 'react-hook-form';
-import type { TrackerProgramMetadata } from '@dhis2-form-utils/metadata';
-import { buildTrackerSchema } from '@dhis2-form-utils/metadata';
-import type { BuiltRuleEngine, EffectHandlersMap } from '@dhis2-form-utils/rules';
-import { buildEnrollmentRuleEngineContext, buildRuleEngine } from '@dhis2-form-utils/rules';
+import type { TrackerProgramMetadata } from '@nnkogift/dhis2-form-utils-metadata';
+import { buildTrackerSchema } from '@nnkogift/dhis2-form-utils-metadata';
+import type { BuiltRuleEngine, EffectHandlersMap } from '@nnkogift/dhis2-form-utils-rules';
+import {
+    buildEnrollmentRuleEngineContext,
+    buildRuleEngine,
+} from '@nnkogift/dhis2-form-utils-rules';
 import { FormStore } from './formStore';
 
 export type DefaultFormValue = Record<string, string>;
@@ -427,7 +430,7 @@ elements or TEA attributes — it operates on the form's flat `Record<string, un
 evaluation-specific behaviour is the `RuleEngineJs` method called at evaluation time. This is already abstracted behind
 `BuiltRuleEngine` — which wraps the correct method based on how it was built.
 
-`buildRuleEngine` in `@dhis2-form-utils/rules` accepts a `RuleEngineContextJs` and returns a `BuiltRuleEngine` that
+`buildRuleEngine` in `@nnkogift/dhis2-form-utils-rules` accepts a `RuleEngineContextJs` and returns a `BuiltRuleEngine` that
 knows whether to call `evaluateEvent` or `evaluateEnrollment`. When given a context built by
 `buildEnrollmentRuleEngineContext`, it returns a `BuiltRuleEngine` backed by `evaluateEnrollment`. `FormStore` calls
 `builtRuleEngine.evaluate(formValues)` — the dispatch is opaque to the store.
@@ -485,7 +488,7 @@ const handleSubmit = form.handleSubmit((values) => {
 });
 ```
 
-`filterPayload` from `@dhis2-form-utils/rules` strips any field whose `FieldState.isHidden === true` from the submitted
+`filterPayload` from `@nnkogift/dhis2-form-utils-rules` strips any field whose `FieldState.isHidden === true` from the submitted
 values, and — given the optional third `optionGroups` argument (`formStore.optionGroups`, populated from the hook's
 `optionGroups` option) — nulls out a field's value if it currently holds an option code hidden by `HIDEOPTION` or a
 member of a `HIDEOPTIONGROUP`-hidden group. It is the same utility used by `useEventForm` consumers — shared, not
@@ -516,7 +519,7 @@ TEA uids from the metadata the caller already holds.
   the consuming application.
 - `useTrackerForm` does not fetch metadata. The caller owns the fetch — via `trackerConfigQuery` +
   `resolveTrackerProgramMetadata` directly, or the optional `useTrackerMetadataQuery` convenience hook, both from
-  `@dhis2-form-utils/metadata` / `@dhis2-form-utils/hooks` (see ARCHITECTURE.md › Data Fetching).
+  `@nnkogift/dhis2-form-utils-metadata` / `@nnkogift/dhis2-form-utils-hooks` (see ARCHITECTURE.md › Data Fetching).
 - `useTrackerForm` does not generate TEI UIDs, enrollment UIDs, or handle the `trackedEntity` / `enrollment` linkage.
   This is caller responsibility at submission time.
 - Updating an existing enrollment is out of scope for this hook's initial implementation. The design does not foreclose
@@ -527,27 +530,27 @@ TEA uids from the metadata the caller already holds.
 
 ## Affected packages and exports
 
-| Package                      | Change                                                                                                                                                                                                                    |
-| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `@dhis2-form-utils/rules`    | Add `buildEnrollmentRuleEngineContext(metadata: TrackerProgramMetadata): RuleEngineContextJs` to public exports                                                                                                           |
-| `@dhis2-form-utils/metadata` | Add `buildTrackerSchema(metadata: TrackerProgramMetadata): z.ZodObject<...>` and export `TrackerProgramMetadata` type; add `trackerConfigQuery` and `resolveTrackerProgramMetadata` (see ARCHITECTURE.md › Data Fetching) |
-| `@dhis2-form-utils/hooks`    | Add `useTrackerForm`, `UseTrackerFormOptions`, `UseTrackerFormReturn`, and the optional `useTrackerMetadataQuery` convenience hook to public exports                                                                      |
+| Package                               | Change                                                                                                                                                                                                                    |
+| ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `@nnkogift/dhis2-form-utils-rules`    | Add `buildEnrollmentRuleEngineContext(metadata: TrackerProgramMetadata): RuleEngineContextJs` to public exports                                                                                                           |
+| `@nnkogift/dhis2-form-utils-metadata` | Add `buildTrackerSchema(metadata: TrackerProgramMetadata): z.ZodObject<...>` and export `TrackerProgramMetadata` type; add `trackerConfigQuery` and `resolveTrackerProgramMetadata` (see ARCHITECTURE.md › Data Fetching) |
+| `@nnkogift/dhis2-form-utils-hooks`    | Add `useTrackerForm`, `UseTrackerFormOptions`, `UseTrackerFormReturn`, and the optional `useTrackerMetadataQuery` convenience hook to public exports                                                                      |
 
 `TrackerProgramMetadata` and `ExpandedProgramRule` / `ExpandedProgramRuleAction` are exported from
-`@dhis2-form-utils/metadata` since that is where the type is consumed by `buildTrackerSchema`. They are re-exported from
-`@dhis2-form-utils/hooks` for consumer convenience.
+`@nnkogift/dhis2-form-utils-metadata` since that is where the type is consumed by `buildTrackerSchema`. They are re-exported from
+`@nnkogift/dhis2-form-utils-hooks` for consumer convenience.
 
 ---
 
 ## Implementation order
 
-1. `ExpandedProgramRuleAction`, `ExpandedProgramRule`, `TrackerProgramMetadata` — types in `@dhis2-form-utils/metadata`
-2. `trackerConfigQuery` and `resolveTrackerProgramMetadata` — in `@dhis2-form-utils/metadata` (see ARCHITECTURE.md ›
+1. `ExpandedProgramRuleAction`, `ExpandedProgramRule`, `TrackerProgramMetadata` — types in `@nnkogift/dhis2-form-utils-metadata`
+2. `trackerConfigQuery` and `resolveTrackerProgramMetadata` — in `@nnkogift/dhis2-form-utils-metadata` (see ARCHITECTURE.md ›
    Data Fetching)
-3. `buildTrackerSchema` — in `@dhis2-form-utils/metadata`
-4. `buildEnrollmentRuleEngineContext` — in `@dhis2-form-utils/rules`
-5. `useTrackerForm` — in `@dhis2-form-utils/hooks`
-6. `useTrackerMetadataQuery` convenience hook — in `@dhis2-form-utils/hooks`
+3. `buildTrackerSchema` — in `@nnkogift/dhis2-form-utils-metadata`
+4. `buildEnrollmentRuleEngineContext` — in `@nnkogift/dhis2-form-utils-rules`
+5. `useTrackerForm` — in `@nnkogift/dhis2-form-utils-hooks`
+6. `useTrackerMetadataQuery` convenience hook — in `@nnkogift/dhis2-form-utils-hooks`
 7. Unit tests for `buildEnrollmentRuleEngineContext` — TEI_ATTRIBUTE filtering, CALCULATED_VALUE handling,
    programStage-scoped rule exclusion
 8. Unit tests for `resolveTrackerProgramMetadata` — empty `programRules`/`programRuleVariables` treated as valid, not

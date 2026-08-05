@@ -3,7 +3,7 @@ import type {
     ProgramTrackedEntityAttribute,
     ValueType,
     ValueTypeRenderingType,
-} from '@dhis2-form-utils/metadata';
+} from '@nnkogift/dhis2-form-utils-metadata';
 
 export type RenderTypeHint = ValueTypeRenderingType;
 

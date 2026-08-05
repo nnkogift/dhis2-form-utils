@@ -1,4 +1,4 @@
-import type { FormStore } from '@dhis2-form-utils/hooks';
+import type { FormStore } from '@nnkogift/dhis2-form-utils-hooks';
 import { DEFAULT_TRACE_MAX_ENTRIES } from './constants';
 import { createRuleTraceStore, type RuleTraceStore } from './traceStore';
 

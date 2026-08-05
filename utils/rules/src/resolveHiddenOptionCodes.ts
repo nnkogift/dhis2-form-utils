@@ -1,4 +1,4 @@
-import type { OptionGroupCodeMap } from '@dhis2-form-utils/metadata';
+import type { OptionGroupCodeMap } from '@nnkogift/dhis2-form-utils-metadata';
 import type { FieldState } from './types';
 
 /**

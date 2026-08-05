@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import type { RuleTraceEntry } from '@dhis2-form-utils/hooks';
+import type { RuleTraceEntry } from '@nnkogift/dhis2-form-utils-hooks';
 import { createRuleTraceStore } from './traceStore';
 
 const sampleEntry = (id: string): RuleTraceEntry => ({

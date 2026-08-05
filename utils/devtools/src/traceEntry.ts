@@ -1,4 +1,4 @@
-import type { RuleTraceEntry } from '@dhis2-form-utils/hooks';
+import type { RuleTraceEntry } from '@nnkogift/dhis2-form-utils-hooks';
 
 /**
  * Resolves which trace entry the dependency graph should render.

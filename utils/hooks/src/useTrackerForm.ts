@@ -1,19 +1,22 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMemo, useRef } from 'react';
 import { Resolver, useForm, type UseFormReturn } from 'react-hook-form';
-import type { OptionGroupCodeMap, TrackerProgramMetadata } from '@dhis2-form-utils/metadata';
-import { buildTrackerSchema } from '@dhis2-form-utils/metadata';
+import type {
+    OptionGroupCodeMap,
+    TrackerProgramMetadata,
+} from '@nnkogift/dhis2-form-utils-metadata';
+import { buildTrackerSchema } from '@nnkogift/dhis2-form-utils-metadata';
 import type {
     BuiltRuleEngine,
     EffectHandlersMap,
     RuleEventInput,
     RuleSupplementaryDataInput,
-} from '@dhis2-form-utils/rules';
+} from '@nnkogift/dhis2-form-utils-rules';
 import {
     buildEnrollmentRuleEngine,
     buildEnrollmentRuleEngineContext,
     toRuleEventFromInput,
-} from '@dhis2-form-utils/rules';
+} from '@nnkogift/dhis2-form-utils-rules';
 import { FormStore } from './formStore';
 import type { DefaultFormValue } from './formValue';
 

@@ -1,4 +1,4 @@
-import { D2Field, FormFeedback } from '@dhis2-form-utils/mui';
+import { D2Field, FormFeedback } from '@nnkogift/dhis2-form-utils-mui';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { ProgrammeRegistrationForm } from '../../components/ProgrammeRegistrationForm';
 import { withTrackerForm } from '../../decorators/withTrackerForm';

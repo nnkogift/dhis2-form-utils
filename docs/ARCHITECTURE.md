@@ -28,21 +28,21 @@ dhis2-form-utils/
 │   ├── playground/              # Vite + React dev sandbox
 │   └── storybook/               # Storybook — component docs + browser tests
 ├── utils/
-│   ├── rules/                   # @dhis2-form-utils/rules
-│   └── hooks/                   # @dhis2-form-utils/hooks
+│   ├── rules/                   # @nnkogift/dhis2-form-utils-rules
+│   └── hooks/                   # @nnkogift/dhis2-form-utils-hooks
 ├── packages/
-│   ├── metadata/                # @dhis2-form-utils/metadata
+│   ├── metadata/                # @nnkogift/dhis2-form-utils-metadata
 │   └── config/                  # Shared tsconfig + ESLint config
 ├── components/
-│   ├── dhis2-ui/                # @dhis2-form-utils/dhis2-ui
-│   ├── mantine/                 # @dhis2-form-utils/mantine
-│   └── mui/                     # @dhis2-form-utils/mui
+│   ├── dhis2-ui/                # @nnkogift/dhis2-form-utils-dhis2-ui
+│   ├── mantine/                 # @nnkogift/dhis2-form-utils-mantine
+│   └── mui/                     # @nnkogift/dhis2-form-utils-mui
 ├── pnpm-workspace.yaml
 └── eslint.config.js
 ```
 
 All internal packages reference each other via the workspace protocol
-(`"@dhis2-form-utils/hooks": "workspace:*"`). `@dhis2/app-runtime` and `@dhis2/rule-engine` are
+(`"@nnkogift/dhis2-form-utils-hooks": "workspace:*"`). `@dhis2/app-runtime` and `@dhis2/rule-engine` are
 peer dependencies of the hooks and rules packages respectively — they are never bundled.
 
 ---
@@ -53,16 +53,16 @@ peer dependencies of the hooks and rules packages respectively — they are neve
 apps/playground
       │
       ▼
-@dhis2-form-utils/dhis2-ui
-@dhis2-form-utils/mantine
-@dhis2-form-utils/mui
+@nnkogift/dhis2-form-utils-dhis2-ui
+@nnkogift/dhis2-form-utils-mantine
+@nnkogift/dhis2-form-utils-mui
       │
       ▼
-@dhis2-form-utils/hooks
+@nnkogift/dhis2-form-utils-hooks
       │
-      ├──▶ @dhis2-form-utils/rules
+      ├──▶ @nnkogift/dhis2-form-utils-rules
       │         └──▶ @dhis2/rule-engine   (peer — provided by the host application)
-      ├──▶ @dhis2-form-utils/metadata
+      ├──▶ @nnkogift/dhis2-form-utils-metadata
       └──▶ @dhis2/app-runtime             (peer — provided by the host application)
 ```
 
@@ -70,7 +70,7 @@ apps/playground
 
 ## Layer 3 — Core Utilities
 
-### `@dhis2-form-utils/rules`
+### `@nnkogift/dhis2-form-utils-rules`
 
 #### What `@dhis2/rule-engine` already provides
 
@@ -115,10 +115,10 @@ priority ordering of rules. It is the same runtime used across the DHIS2 platfor
 Android — using it directly means `dhis2-form-utils` stays in sync with any updates to rule
 behaviour or new action types without needing to track those changes independently.
 
-#### What `@dhis2-form-utils/rules` adds
+#### What `@nnkogift/dhis2-form-utils-rules` adds
 
 `@dhis2/rule-engine` solves expression evaluation correctly, but it does not address how evaluation
-output is integrated into a React form lifecycle. `@dhis2-form-utils/rules` wraps the engine and
+output is integrated into a React form lifecycle. `@nnkogift/dhis2-form-utils-rules` wraps the engine and
 adds what is missing for a form-library context:
 
 **Typed `RuleEffect` consumption** — the raw `RuleEffect` objects from the engine are translated
@@ -144,15 +144,15 @@ export type FieldStateMap = Record<string, FieldState>;
 optionGroup ids hidden by `HIDEOPTIONGROUP` — group _membership_ (which option codes belong to a
 group) is resolved separately, since it requires an `optionGroups` API fetch the metadata package
 doesn't do on its own. Callers fetch it (e.g. via `extractReferencedOptionGroupIds` +
-`optionGroupsQuery` + `resolveOptionGroups` from `@dhis2-form-utils/metadata`) and pass it as the
+`optionGroupsQuery` + `resolveOptionGroups` from `@nnkogift/dhis2-form-utils-metadata`) and pass it as the
 `optionGroups` option to `useEventForm`/`useTrackerForm`. `resolveHiddenOptionCodes` (in
-`@dhis2-form-utils/rules`) unions `hiddenOptions` with the resolved group members into a single
+`@nnkogift/dhis2-form-utils-rules`) unions `hiddenOptions` with the resolved group members into a single
 `Set<string>` of hidden codes — `useFieldControl` uses it to compute `FieldControlReturn.visibleOptions`
 for widgets to render, and `filterPayload`'s optional third argument uses it to null out a submitted
 value that references a now-hidden option.
 
 **Context assembly** — the engine requires all program rule variables to be resolved before
-evaluation. `@dhis2-form-utils/rules` provides `buildRuleEngineContext`, which takes fetched
+evaluation. `@nnkogift/dhis2-form-utils-rules` provides `buildRuleEngineContext`, which takes fetched
 program metadata and constructs the `RuleEngineContext` once, and `buildRuleEngine`, which
 constructs the `RuleEngine` for a specific evaluation session (current values, existing enrollment
 events). This separation keeps the expensive context-build step outside the reactive render loop.
@@ -160,7 +160,7 @@ events). This separation keeps the expensive context-build step outside the reac
 ```ts
 // packages/rules/src/context.ts
 import { RuleEngineContext, RuleEngine } from '@dhis2/rule-engine';
-import type { ProgramStageMetadata } from '@dhis2-form-utils/metadata';
+import type { ProgramStageMetadata } from '@nnkogift/dhis2-form-utils-metadata';
 
 export function buildRuleEngineContext(metadata: ProgramStageMetadata): RuleEngineContext {
     return RuleEngineContext.builder()
@@ -200,7 +200,7 @@ export function evaluateAndMap(
 **Custom action support** — some DHIS2 implementations define local conventions on top of the
 standard rule model (for example, using `DISPLAYTEXT` to pass machine-readable instructions to
 custom widgets, or using `ASSIGN` to populate fields that only exist in the custom form layer).
-`@dhis2-form-utils/rules` exposes an `effectHandlers` extension point: a map of action type
+`@nnkogift/dhis2-form-utils-rules` exposes an `effectHandlers` extension point: a map of action type
 strings to handler functions that run after the standard `evaluateAndMap` pass. This lets consuming
 apps add interpretation logic for these patterns without forking the library.
 
@@ -232,12 +232,12 @@ export function filterPayload(
 ): Record<string, unknown>;
 ```
 
-In summary: `@dhis2/rule-engine` does the expression evaluation; `@dhis2-form-utils/rules` makes
+In summary: `@dhis2/rule-engine` does the expression evaluation; `@nnkogift/dhis2-form-utils-rules` makes
 that evaluation output usable inside a React Hook Form lifecycle.
 
 ---
 
-### `@dhis2-form-utils/metadata`
+### `@nnkogift/dhis2-form-utils-metadata`
 
 Handles the translation from DHIS2 metadata objects (programs, program stages, data elements,
 tracked entity attributes, option sets) into Zod schemas that React Hook Form can consume via
@@ -271,7 +271,7 @@ export function buildSchema(metadata: ProgramStageMetadata): z.ZodObject<z.ZodRa
 
 #### Query objects and resolvers
 
-`@dhis2-form-utils/metadata` also owns the standardised query definitions and resolver functions
+`@nnkogift/dhis2-form-utils-metadata` also owns the standardised query definitions and resolver functions
 that produce `ProgramStageMetadata` and `TrackerProgramMetadata` from the DHIS2 API. This keeps
 metadata _fetching_ decoupled from the form hooks: the query objects and resolvers are plain,
 dependency-free exports — no React, no `@dhis2/app-runtime` runtime dependency, only a type-only
@@ -310,7 +310,7 @@ any DHIS2 application. It provides:
 
 Because `@dhis2/app-runtime`'s `Provider` owns the connection configuration, `dhis2-form-utils`
 needs no equivalent setup of its own. Metadata _fetching_ is deliberately decoupled from the form
-hooks: `@dhis2-form-utils/metadata` exports the query objects and resolver functions; the hooks
+hooks: `@nnkogift/dhis2-form-utils-metadata` exports the query objects and resolver functions; the hooks
 package never fetches internally. A consuming app fetches metadata however it likes — directly
 with `useDataQuery` and an exported query object, or through the thin convenience hooks described
 below — and passes the resolved result into `useEventForm` / `useTrackerForm` via `options.metadata`.
@@ -320,7 +320,7 @@ below — and passes the resolved result into `useEventForm` / `useTrackerForm` 
 A `Query` passed to `useDataQuery` is a static object, defined once outside the component. Dynamic
 values are supplied by making individual `id` or `params` values functions of a `variables` object,
 injected at call time via `useDataQuery(query, { variables })` (or `refetch(variables)`).
-`@dhis2-form-utils/metadata` follows this exactly — every exported query is a plain object, never
+`@nnkogift/dhis2-form-utils-metadata` follows this exactly — every exported query is a plain object, never
 a factory function:
 
 ```ts
@@ -423,7 +423,7 @@ import {
     programStageConfigQuery,
     PROGRAM_RULE_FIELDS,
     withExtraFields,
-} from '@dhis2-form-utils/metadata';
+} from '@nnkogift/dhis2-form-utils-metadata';
 
 const customQuery = {
     ...programStageConfigQuery,
@@ -442,14 +442,17 @@ through a parameterised builder function.
 
 ### Piping into the hooks
 
-`@dhis2-form-utils/hooks` adds two optional convenience hooks that compose the query and resolver.
+`@nnkogift/dhis2-form-utils-hooks` adds two optional convenience hooks that compose the query and resolver.
 Neither is called internally by `useEventForm` or `useTrackerForm`, and neither is required —
 `useEventForm`/`useTrackerForm` keep their hard "no internal fetch" constraint unchanged:
 
 ```ts
 // utils/hooks/src/queries/useProgramStageMetadataQuery.ts
 import { useDataQuery } from '@dhis2/app-runtime';
-import { programStageConfigQuery, resolveEventProgramMetadata } from '@dhis2-form-utils/metadata';
+import {
+    programStageConfigQuery,
+    resolveEventProgramMetadata,
+} from '@nnkogift/dhis2-form-utils-metadata';
 
 export function useProgramStageMetadataQuery(programId: string, programStageId: string) {
     const { data, loading, error } = useDataQuery(programStageConfigQuery, {
@@ -466,7 +469,7 @@ const { form, formStore } = useEventForm({ options: { programStageId, metadata }
 
 A consumer is free to skip the convenience hook entirely and call
 `useDataQuery(programStageConfigQuery, { variables })` plus `resolveEventProgramMetadata` directly
-— both are exported standalone from `@dhis2-form-utils/metadata` with no dependency on `hooks` or
+— both are exported standalone from `@nnkogift/dhis2-form-utils-metadata` with no dependency on `hooks` or
 React beyond what `useDataQuery` itself requires. The equivalent `useTrackerMetadataQuery` follows
 the same shape for `trackerConfigQuery` / `resolveTrackerProgramMetadata`.
 
@@ -476,9 +479,9 @@ before any hook from this library is called.
 
 ---
 
-## Layer 2 — Headless Hooks (`@dhis2-form-utils/hooks`)
+## Layer 2 — Headless Hooks (`@nnkogift/dhis2-form-utils-hooks`)
 
-This package composes `@dhis2-form-utils/rules`, `@dhis2-form-utils/metadata`, and React Hook Form
+This package composes `@nnkogift/dhis2-form-utils-rules`, `@nnkogift/dhis2-form-utils-metadata`, and React Hook Form
 into hooks that manage schema generation, form initialisation, and reactive rule evaluation.
 
 Only **`useEventForm`** is implemented today. `useTrackerForm` and `useDataEntryForm` are planned.
@@ -562,7 +565,7 @@ pushes results into per-field and non-field external stores. Field components su
 
 ### Submission
 
-Submission is the caller's responsibility. Use `filterPayload` from `@dhis2-form-utils/rules` to
+Submission is the caller's responsibility. Use `filterPayload` from `@nnkogift/dhis2-form-utils-rules` to
 strip hidden fields and substitute assigned values, then post via `useDataMutation`:
 
 ```ts
@@ -587,7 +590,7 @@ Each adapter package exports field dispatchers, section wrappers, and feedback p
 
 ```tsx
 // components/dhis2-ui/src/fields/D2Field.tsx
-import { useFieldControl } from '@dhis2-form-utils/hooks';
+import { useFieldControl } from '@nnkogift/dhis2-form-utils-hooks';
 
 export function D2Field({ field }: { field: FieldControlInput }) {
     const control = useFieldControl(field);
@@ -603,7 +606,7 @@ export function D2Field({ field }: { field: FieldControlInput }) {
 
 ```tsx
 // components/dhis2-ui/src/fields/widgets/TextField.tsx
-import { resolveFieldValidation, type WidgetProps } from '@dhis2-form-utils/hooks';
+import { resolveFieldValidation, type WidgetProps } from '@nnkogift/dhis2-form-utils-hooks';
 
 export function D2TextField({ control }: WidgetProps) {
     const { fieldConfig, field, isMandatory, isDisabled } = control;
@@ -626,8 +629,8 @@ export function D2TextField({ control }: WidgetProps) {
 }
 ```
 
-The same `D2Field` + `useFieldControl` pattern is implemented in `@dhis2-form-utils/mantine` and
-`@dhis2-form-utils/mui`. Only the design-system widget implementations differ.
+The same `D2Field` + `useFieldControl` pattern is implemented in `@nnkogift/dhis2-form-utils-mantine` and
+`@nnkogift/dhis2-form-utils-mui`. Only the design-system widget implementations differ.
 
 `useFieldState(fieldId)` is exported for advanced use cases but is not called directly by adapter
 field components — `useFieldControl` composes it internally.
@@ -721,7 +724,7 @@ changes.
 mutation queuing. The hooks layer can opt into these using the runtime's `useOnlineStatus` hook and
 offline-aware mutation options, without touching the UI adapter layer.
 
-**New rule action types** — because `@dhis2-form-utils/rules` wraps `@dhis2/rule-engine` rather
+**New rule action types** — because `@nnkogift/dhis2-form-utils-rules` wraps `@dhis2/rule-engine` rather
 than reimplementing it, any new action types that DHIS2 adds to the engine are automatically
 available. Support for surfacing them in the `FieldStateMap` or `effectHandlers` can be added
 incrementally without changing the underlying evaluation logic.

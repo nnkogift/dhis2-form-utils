@@ -1,5 +1,8 @@
-export { ProgramRuleActionType, ProgramRuleVariableSourceType } from '@dhis2-form-utils/metadata';
-export type { OptionGroupCodeMap } from '@dhis2-form-utils/metadata';
+export {
+    ProgramRuleActionType,
+    ProgramRuleVariableSourceType,
+} from '@nnkogift/dhis2-form-utils-metadata';
+export type { OptionGroupCodeMap } from '@nnkogift/dhis2-form-utils-metadata';
 export type { ValueType } from '@dhis2/api-types/v43';
 export type {
     FieldState,

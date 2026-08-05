@@ -29,14 +29,17 @@ Learn more about the architecture [here](/docs/ARCHITECTURE.md)
 
 ## Packages
 
-| Package                      | Description                                                                                            |
-| ---------------------------- | ------------------------------------------------------------------------------------------------------ |
-| `@dhis2-form-utils/rules`    | Wraps `@dhis2/rule-engine` — adds React-form integration, typed field state, and custom action support |
-| `@dhis2-form-utils/metadata` | Converts DHIS2 metadata into Zod schemas                                                               |
-| `@dhis2-form-utils/hooks`    | Headless React hooks — composes all of the above                                                       |
-| `@dhis2-form-utils/dhis2-ui` | Field components and forms for DHIS2 UI                                                                |
-| `@dhis2-form-utils/mantine`  | Field components and forms for Mantine UI                                                              |
-| `@dhis2-form-utils/mui`      | Field components and forms for Material UI                                                             |
+| Package                               | Description                                                                                            |
+| ------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| `@nnkogift/dhis2-form-utils-rules`    | Wraps `@dhis2/rule-engine` — adds React-form integration, typed field state, and custom action support |
+| `@nnkogift/dhis2-form-utils-metadata` | Converts DHIS2 metadata into Zod schemas                                                               |
+| `@nnkogift/dhis2-form-utils-hooks`    | Headless React hooks — composes all of the above                                                       |
+| `@nnkogift/dhis2-form-utils-dhis2-ui` | Field components and forms for DHIS2 UI                                                                |
+| `@nnkogift/dhis2-form-utils-mantine`  | Field components and forms for Mantine UI                                                              |
+| `@nnkogift/dhis2-form-utils-mui`      | Field components and forms for Material UI                                                             |
+| `@nnkogift/dhis2-form-utils-devtools` | Optional rule debugging panels (trace / graph) — not for production form bundles                       |
+
+See [docs/releasing.md](docs/releasing.md) for npm publish channels (`alpha` / `beta` / `latest`) and Changesets workflow.
 
 ---
 
@@ -47,12 +50,12 @@ as a dependency automatically.
 
 ```bash
 # Headless only
-pnpm add @dhis2-form-utils/hooks
+pnpm add @nnkogift/dhis2-form-utils-hooks @nnkogift/dhis2-form-utils-metadata
 
 # With a UI adapter
-pnpm add @dhis2-form-utils/dhis2-ui
-pnpm add @dhis2-form-utils/mantine
-pnpm add @dhis2-form-utils/mui
+pnpm add @nnkogift/dhis2-form-utils-dhis2-ui
+pnpm add @nnkogift/dhis2-form-utils-mantine
+pnpm add @nnkogift/dhis2-form-utils-mui
 ```
 
 Peer dependencies:
@@ -104,14 +107,14 @@ import {
     FormStateProvider,
     useEventForm,
     programMetadataExportQuery,
-} from '@dhis2-form-utils/hooks';
-import { D2Field } from '@dhis2-form-utils/dhis2-ui';
-import { filterPayload } from '@dhis2-form-utils/rules';
+} from '@nnkogift/dhis2-form-utils-hooks';
+import { D2Field } from '@nnkogift/dhis2-form-utils-dhis2-ui';
+import { filterPayload } from '@nnkogift/dhis2-form-utils-rules';
 import {
     resolveEventProgramMetadata,
     selectProgramStage,
     type EventProgramMetadata,
-} from '@dhis2-form-utils/metadata';
+} from '@nnkogift/dhis2-form-utils-metadata';
 import { useDataQuery } from '@dhis2/app-runtime';
 import { FormProvider } from 'react-hook-form';
 
@@ -167,7 +170,7 @@ function EventEntryForm({
 
 `D2Field` calls `useFieldControl` internally — it merges DHIS2 metadata, React Hook Form state,
 and per-field rule-engine state into a single widget contract. The same pattern works with
-`@dhis2-form-utils/mantine` and `@dhis2-form-utils/mui`.
+`@nnkogift/dhis2-form-utils-mantine` and `@nnkogift/dhis2-form-utils-mui`.
 
 ### Headless hook
 
@@ -181,7 +184,7 @@ import {
     useFieldControl,
     useSectionState,
     useFormFeedback,
-} from '@dhis2-form-utils/hooks';
+} from '@nnkogift/dhis2-form-utils-hooks';
 import { FormProvider } from 'react-hook-form';
 
 function CustomField({ psde }) {
@@ -260,7 +263,7 @@ const ruleState = useFieldState('dataElementUid');
 All standard DHIS2 action types are handled: `HIDEFIELD`, `HIDESECTION`, `ASSIGN`,
 `SHOWWARNING`, `SHOWERROR`, `WARNINGONCOMPLETE`, `ERRORONCOMPLETE`, `SETMANDATORYFIELD`,
 `HIDEOPTION`, `HIDEOPTIONGROUP`, `SHOWOPTION`, `SHOWOPTIONGROUP`, `DISPLAYTEXT`, and
-`DISPLAYKEYVALUEPAIR`. At submission time, call `filterPayload` from `@dhis2-form-utils/rules`
+`DISPLAYKEYVALUEPAIR`. At submission time, call `filterPayload` from `@nnkogift/dhis2-form-utils-rules`
 to strip hidden fields and substitute assigned values before posting the payload.
 
 Because the evaluation is built on `@dhis2/rule-engine` rather than a custom implementation, any

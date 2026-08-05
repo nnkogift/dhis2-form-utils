@@ -1,6 +1,6 @@
 import { renderHook } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import { eventProgramConfigQuery } from '@dhis2-form-utils/metadata';
+import { eventProgramConfigQuery } from '@nnkogift/dhis2-form-utils-metadata';
 
 type MockQueryResult = { data: unknown; loading: boolean; error: unknown };
 

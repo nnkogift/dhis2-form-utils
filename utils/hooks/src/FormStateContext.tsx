@@ -13,7 +13,7 @@ import {
     type FeedbackMap,
     type FieldState,
     type SectionState,
-} from '@dhis2-form-utils/rules';
+} from '@nnkogift/dhis2-form-utils-rules';
 import type { FormStore } from './formStore';
 import { FieldStateStore } from './store/fieldStateStore';
 import { NonFieldStateStore } from './store/nonFieldStateStore';

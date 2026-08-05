@@ -1,7 +1,7 @@
 import { Provider } from '@dhis2/app-runtime';
-import { FormStateProvider, FormStore } from '@dhis2-form-utils/hooks';
-import type { FieldStateMap, SectionStateMap, FeedbackMap } from '@dhis2-form-utils/rules';
-import { createEmptyFieldState } from '@dhis2-form-utils/rules';
+import { FormStateProvider, FormStore } from '@nnkogift/dhis2-form-utils-hooks';
+import type { FieldStateMap, SectionStateMap, FeedbackMap } from '@nnkogift/dhis2-form-utils-rules';
+import { createEmptyFieldState } from '@nnkogift/dhis2-form-utils-rules';
 import type { Decorator } from '@storybook/react';
 import { useMemo } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';

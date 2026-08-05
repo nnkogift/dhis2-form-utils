@@ -2,9 +2,9 @@ name: CI
 
 on:
     push:
-        branches: [main, master]
+        branches: [main, master, beta, alpha]
     pull_request:
-        branches: [main, master]
+        branches: [main, master, beta, alpha]
 
 permissions:
     contents: read
@@ -76,8 +76,29 @@ jobs:
               with:
                   name: build-dist
                   path: |
+                      packages/*/dist
                       utils/*/dist
                       components/*/dist
+
+    package-check:
+        runs-on: ubuntu-latest
+        needs: build
+        steps:
+            - uses: actions/checkout@v4
+            - uses: pnpm/action-setup@v4
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 24
+                  cache: pnpm
+            - run: pnpm install --frozen-lockfile
+            - uses: actions/download-artifact@v4
+              with:
+                  name: build-dist
+                  path: .
+            - name: publint
+              run: pnpm publint:packages
+            - name: size-limit
+              run: pnpm size
 
     storybook-test:
         runs-on: ubuntu-latest

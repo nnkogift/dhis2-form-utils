@@ -22,7 +22,7 @@ import {
     type ProgramRuleAction,
     type ProgramRuleVariable,
     type ProgramStageMetadata,
-} from '@dhis2-form-utils/metadata';
+} from '@nnkogift/dhis2-form-utils-metadata';
 import type { RuleEffect } from './evaluate';
 import { normalizeEffect, toRuleAction, toStringValue } from './ruleInterop';
 import { ruleValueTypeFromDhis2 } from './ruleValueType';

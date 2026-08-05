@@ -1,0 +1,44 @@
+[
+    {
+        "name": "metadata (ESM)",
+        "path": "packages/metadata/dist/**/*.js",
+        "limit": "10 KB",
+        "gzip": true
+    },
+    {
+        "name": "rules (ESM)",
+        "path": "utils/rules/dist/**/*.js",
+        "limit": "10 KB",
+        "gzip": true
+    },
+    {
+        "name": "hooks (ESM)",
+        "path": "utils/hooks/dist/**/*.js",
+        "limit": "15 KB",
+        "gzip": true
+    },
+    {
+        "name": "dhis2-ui (ESM)",
+        "path": "components/dhis2-ui/dist/index.js",
+        "limit": "5 KB",
+        "gzip": true
+    },
+    {
+        "name": "mantine (ESM)",
+        "path": "components/mantine/dist/index.js",
+        "limit": "5 KB",
+        "gzip": true
+    },
+    {
+        "name": "mui (ESM)",
+        "path": "components/mui/dist/index.js",
+        "limit": "5 KB",
+        "gzip": true
+    },
+    {
+        "name": "devtools (ESM)",
+        "path": "utils/devtools/dist/index.js",
+        "limit": "20 KB",
+        "gzip": true
+    }
+]

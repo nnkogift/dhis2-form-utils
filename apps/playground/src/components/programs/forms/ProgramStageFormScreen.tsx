@@ -3,12 +3,12 @@ import type {
     EventProgramMetadata,
     OptionGroupCodeMap,
     TrackerProgramMetadata,
-} from '@dhis2-form-utils/metadata'
-import { selectProgramStage } from '@dhis2-form-utils/metadata'
+} from '@nnkogift/dhis2-form-utils-metadata'
+import { selectProgramStage } from '@nnkogift/dhis2-form-utils-metadata'
 import type {
     RuleEventInput,
     RuleSupplementaryDataInput,
-} from '@dhis2-form-utils/rules'
+} from '@nnkogift/dhis2-form-utils-rules'
 import { ProgramEventForm } from './ProgramEventForm'
 
 type ProgramStageFormScreenProps = {

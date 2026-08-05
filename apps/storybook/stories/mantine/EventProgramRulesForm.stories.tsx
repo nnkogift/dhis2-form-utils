@@ -1,4 +1,4 @@
-import { D2Field, FormFeedback } from '@dhis2-form-utils/mantine';
+import { D2Field, FormFeedback } from '@nnkogift/dhis2-form-utils-mantine';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { MantineProvider } from '@mantine/core';
 import { ProgrammeEventForm } from '../../components/ProgrammeEventForm';

@@ -1,9 +1,6 @@
-import { defineConfig } from 'tsup';
+import { createLibTsupConfig } from '@nnkogift/dhis2-form-utils-config/createLibTsupConfig';
 
-export default defineConfig((options) => ({
-    entry: ['src/index.ts'],
-    format: ['esm', 'cjs'],
-    dts: true,
-    sourcemap: true,
-    clean: !options.watch,
-}));
+export default createLibTsupConfig({
+    preserveModules: true,
+    external: ['@dhis2/rule-engine', '@nnkogift/dhis2-form-utils-metadata'],
+});

@@ -1,4 +1,4 @@
-import type { FeedbackMap, SectionState, SectionStateMap } from '@dhis2-form-utils/rules';
+import type { FeedbackMap, SectionState, SectionStateMap } from '@nnkogift/dhis2-form-utils-rules';
 
 type Listener = () => void;
 

@@ -1,9 +1,13 @@
-import { debounce, type DebouncedFunc } from 'lodash-es';
 import type { RefObject } from 'react';
 import type { UseFormReturn } from 'react-hook-form';
-import type { OptionGroupCodeMap } from '@dhis2-form-utils/metadata';
-import type { BuiltRuleEngine, EffectHandlersMap, RuleEffect } from '@dhis2-form-utils/rules';
+import type { OptionGroupCodeMap } from '@nnkogift/dhis2-form-utils-metadata';
+import type {
+    BuiltRuleEngine,
+    EffectHandlersMap,
+    RuleEffect,
+} from '@nnkogift/dhis2-form-utils-rules';
 import { buildTraceEntry, type RuleTraceEntry } from './buildTraceEntry';
+import { debounce, type DebouncedFn } from './debounce';
 import { evaluateFormState } from './evaluateFormState';
 import { createFieldStateStore, type FieldStateStore } from './store/fieldStateStore';
 import { createNonFieldStateStore, type NonFieldStateStore } from './store/nonFieldStateStore';
@@ -17,7 +21,7 @@ export class FormStore {
     readonly nonFieldStore: NonFieldStateStore = createNonFieldStateStore();
 
     private unsubscribe: (() => void) | null = null;
-    private debouncedEvaluate: DebouncedFunc<() => void> | null = null;
+    private debouncedEvaluate: DebouncedFn<() => void> | null = null;
     private prevAssignments: Record<string, unknown> = {};
     private engine: BuiltRuleEngine | null = null;
     private form: UseFormReturn<Record<string, unknown>> | null = null;

@@ -1,4 +1,4 @@
-import { D2Field, FormFeedback } from '@dhis2-form-utils/dhis2-ui';
+import { D2Field, FormFeedback } from '@nnkogift/dhis2-form-utils-dhis2-ui';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { ProgrammeEventForm } from '../../components/ProgrammeEventForm';
 import { withEventForm } from '../../decorators/withEventForm';

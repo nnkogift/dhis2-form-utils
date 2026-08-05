@@ -1,1 +1,1 @@
-export { joinMultiTextValue, parseMultiTextValue } from '@dhis2-form-utils/metadata';
+export { joinMultiTextValue, parseMultiTextValue } from '@nnkogift/dhis2-form-utils-metadata';

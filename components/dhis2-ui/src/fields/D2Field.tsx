@@ -1,6 +1,10 @@
 // fallow-ignore-file code-duplication
-import { type FieldControlInput, useFieldControl, type WidgetProps } from '@dhis2-form-utils/hooks';
-import type { WidgetKind } from '@dhis2-form-utils/hooks';
+import {
+    type FieldControlInput,
+    useFieldControl,
+    type WidgetProps,
+} from '@nnkogift/dhis2-form-utils-hooks';
+import type { WidgetKind } from '@nnkogift/dhis2-form-utils-hooks';
 import type { ComponentType } from 'react';
 import {
     D2AgeField,

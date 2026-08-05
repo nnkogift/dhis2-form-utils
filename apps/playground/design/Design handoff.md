@@ -1,6 +1,6 @@
 # Design handoff — Program Rules Playground
 
-Audience: a coding agent implementing these designs in the `playground` app (DHIS2 App Platform, React, TypeScript, Tailwind v4 + `@dhis2/ui` + `@dhis2-form-utils/*`).
+Audience: a coding agent implementing these designs in the `playground` app (DHIS2 App Platform, React, TypeScript, Tailwind v4 + `@dhis2/ui` + `@nnkogift/dhis2-form-utils-*`).
 
 Reference design: **`Program Rules Playground App.dc.html`** (interactive; click a program row, switch rail items and panel tabs).
 Explorations and the recreation of the current UI: `Program Rules Playground.dc.html` (options 1a–1e).
@@ -114,7 +114,7 @@ Rule card: white, radius 5, padding `11px 12px 11px 14px`, `flex-shrink: 0`, wit
 
 Card body: rule name (13px / 600), effect badges, then the condition in 11px mono `--grey-700` (hidden when `showConditions` is off). Clicking a card selects it and switches to Graph.
 
-**Scope is a new concept:** a rule is *in scope* when the slot you are viewing is the slot it applies to (`programStage` on the rule, or registration for attribute-only rules). Reuse `filterEventProgramRules` from `@dhis2-form-utils/metadata` per stage; attribute-only rules belong to registration.
+**Scope is a new concept:** a rule is *in scope* when the slot you are viewing is the slot it applies to (`programStage` on the rule, or registration for attribute-only rules). Reuse `filterEventProgramRules` from `@nnkogift/dhis2-form-utils-metadata` per stage; attribute-only rules belong to registration.
 
 ---
 

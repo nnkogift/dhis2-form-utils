@@ -7,7 +7,7 @@ import {
     NoticeBox,
     Tag,
 } from '@dhis2/ui';
-import type { RuleTraceEntry, TraceEffect } from '@dhis2-form-utils/hooks';
+import type { RuleTraceEntry, TraceEffect } from '@nnkogift/dhis2-form-utils-hooks';
 import { useEffect, useState } from 'react';
 import type { DevtoolsLabelLookup } from './createLabelLookup';
 import { EffectBadge } from './EffectBadge';

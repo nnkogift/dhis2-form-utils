@@ -60,7 +60,7 @@ export const PROGRAM_TEA_FIELDS: string = [
 // since `ProgramRuleActionParams` can only express `option`/`optionGroup` as flat `{id}` refs
 // (see the comment on `PROGRAM_RULE_ACTION_FIELDS` in fieldFilters.ts). DHIS2 still returns the
 // deeper fields at runtime; consumers that need them (e.g. `option.code`) read them via a cast,
-// same as the existing `@dhis2-form-utils/rules` context builders do.
+// same as the existing `@nnkogift/dhis2-form-utils-rules` context builders do.
 // `programSection` is requested even though it is absent from OpenAPI v43 — DHIS2 simply omits
 // it on versions where the field doesn't exist.
 const PROGRAM_RULE_ACTIONS_FIELD =

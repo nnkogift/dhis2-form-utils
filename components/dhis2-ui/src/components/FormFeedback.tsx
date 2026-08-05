@@ -1,5 +1,5 @@
 import { NoticeBox } from '@dhis2/ui';
-import { useFormFeedback } from '@dhis2-form-utils/hooks';
+import { useFormFeedback } from '@nnkogift/dhis2-form-utils-hooks';
 
 type FeedbackItem = ReturnType<typeof useFormFeedback>[string];
 

@@ -1,6 +1,6 @@
 # Program Rules Playground
 
-This is a playground app for testing and debugging DHIS2 program rules. It exercises the `@dhis2-form-utils` hooks, rules, and metadata packages against real form configurations, and uses `@dhis2-form-utils/devtools` (rule trace and dependency graph panels) to inspect rule evaluation live.
+This is a playground app for testing and debugging DHIS2 program rules. It exercises the `@nnkogift/dhis2-form-utils` hooks, rules, and metadata packages against real form configurations, and uses `@nnkogift/dhis2-form-utils-devtools` (rule trace and dependency graph panels) to inspect rule evaluation live.
 
 This project was bootstrapped with [DHIS2 Application Platform](https://github.com/dhis2/app-platform).
 
