@@ -96,24 +96,18 @@ function Root() {
 ### Composed form with UI adapter
 
 Fetch event program metadata via `GET /api/programs/{id}/metadata` (use the exported
-`programMetadataExportQuery` helper with `useDataQuery`, then `resolveEventProgramMetadata`), then
-wire the hook, providers, and field components:
+`useEventProgramMetadataQuery` hook, a thin wrapper around `eventProgramConfigQuery` +
+`resolveEventProgramMetadata`), then wire the hook, providers, and field components:
 
 ```tsx
 import {
     FormStateProvider,
     useEventForm,
-    programMetadataExportQuery,
+    useEventProgramMetadataQuery,
 } from '@dhis2-form-utils/hooks';
 import { D2Field } from '@dhis2-form-utils/dhis2-ui';
 import { filterPayload } from '@dhis2-form-utils/rules';
-import {
-    resolveEventProgramMetadata,
-    selectProgramStage,
-    type EventProgramMetadata,
-} from '@dhis2-form-utils/metadata';
-import { useDataQuery } from '@dhis2/app-runtime';
-import { FormProvider } from 'react-hook-form';
+import { selectProgramStage } from '@dhis2-form-utils/metadata';
 
 function EventEntryForm({
     programId,
@@ -122,10 +116,7 @@ function EventEntryForm({
     programId: string;
     programStageId: string;
 }) {
-    const { data } = useDataQuery(programMetadataExportQuery(programId));
-    const metadata: EventProgramMetadata | undefined = data?.programMetadata
-        ? resolveEventProgramMetadata(data.programMetadata, programId)
-        : undefined;
+    const { metadata } = useEventProgramMetadataQuery(programId);
     if (!metadata) return null;
 
     const stageMetadata = selectProgramStage(metadata, programStageId);
@@ -149,22 +140,22 @@ function EventEntryForm({
 
     return (
         <FormStateProvider formStore={formStore} form={form}>
-            <FormProvider {...form}>
-                <form onSubmit={onSubmit}>
-                    {(stageMetadata?.programStageDataElements ?? []).map((psde) => (
-                        <D2Field
-                            key={psde.dataElement.id}
-                            field={{ kind: 'dataElement', config: psde }}
-                        />
-                    ))}
-                    <button type="submit">Save</button>
-                </form>
-            </FormProvider>
+            <form onSubmit={onSubmit}>
+                {(stageMetadata?.programStageDataElements ?? []).map((psde) => (
+                    <D2Field
+                        key={psde.dataElement.id}
+                        field={{ kind: 'dataElement', config: psde }}
+                    />
+                ))}
+                <button type="submit">Save</button>
+            </form>
         </FormStateProvider>
     );
 }
 ```
 
+`FormStateProvider` wraps React Hook Form's own `FormProvider` internally, so there's no need
+to render `FormProvider` yourself — `FormStateProvider` is the only provider a form needs.
 `D2Field` calls `useFieldControl` internally — it merges DHIS2 metadata, React Hook Form state,
 and per-field rule-engine state into a single widget contract. The same pattern works with
 `@dhis2-form-utils/mantine` and `@dhis2-form-utils/mui`.
@@ -182,7 +173,6 @@ import {
     useSectionState,
     useFormFeedback,
 } from '@dhis2-form-utils/hooks';
-import { FormProvider } from 'react-hook-form';
 
 function CustomField({ psde }) {
     const control = useFieldControl({ kind: 'dataElement', config: psde });
@@ -197,9 +187,7 @@ function CustomForm({ metadata }) {
 
     return (
         <FormStateProvider formStore={formStore} form={form}>
-            <FormProvider {...form}>
-                <form onSubmit={form.handleSubmit(() => {})}>{/* CustomField or D2Field */}</form>
-            </FormProvider>
+            <form onSubmit={form.handleSubmit(() => {})}>{/* CustomField or D2Field */}</form>
         </FormStateProvider>
     );
 }
@@ -273,15 +261,18 @@ See [form state architecture](/docs/form-state-architecture.md) for the full sto
 
 ## Supported hooks
 
-| Hook               | Status    | Use case                               |
-| ------------------ | --------- | -------------------------------------- |
-| `useEventForm`     | Available | Single tracker event                   |
-| `useTrackerForm`   | Planned   | Enrollment + events (tracker programs) |
-| `useDataEntryForm` | Planned   | Aggregate data sets                    |
+| Hook               | Status    | Use case                                 |
+| ------------------ | --------- | ---------------------------------------- |
+| `useEventForm`     | Available | Single tracker event                     |
+| `useTrackerForm`   | Available | Tracker registration (enrollment + TEAs) |
+| `useDataEntryForm` | Planned   | Aggregate data sets                      |
 
-`useEventForm` returns `{ form, formStore }`. Rule state stores live on `formStore`
-(`formStore.fieldStore`, `formStore.nonFieldStore`) and are consumed through
-`FormStateProvider` and the companion hooks below.
+`useEventForm`/`useTrackerForm` both return `{ form, formStore }`. Rule state stores live on
+`formStore` (`formStore.fieldStore`, `formStore.nonFieldStore`) and are consumed through
+`FormStateProvider` and the companion hooks below. `useTrackerForm` covers registration only
+(TEAs + enrollment system fields) — the first program stage's data entry still goes through
+a separate `useEventForm` call. See [use-tracker-form](/docs/use-tracker-form.md) for the
+full picture.
 
 | Companion hook    | Purpose                                   |
 | ----------------- | ----------------------------------------- |

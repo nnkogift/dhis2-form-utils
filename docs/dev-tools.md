@@ -141,7 +141,7 @@ return (
     <FormStateProvider formStore={formStore} form={form}>
         <RuleDevtoolsScope formStore={formStore}>
             <div className="flex h-full flex-1 min-h-0">
-                <FormProvider {...form}>{/* ...form fields... */}</FormProvider>
+                {/* ...form fields... */}
                 <RulesPanel metadata={{ formKind: 'event', metadata: program, programStageId }} />
             </div>
         </RuleDevtoolsScope>
