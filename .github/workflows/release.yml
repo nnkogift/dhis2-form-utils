@@ -2,7 +2,9 @@ name: Release
 
 on:
     push:
-        branches: [main, beta, alpha]
+        # main and beta temporarily disabled until those channels are ready to release;
+        # re-add them here when it's time to promote.
+        branches: [alpha]
 
 concurrency:
     group: release-${{ github.ref }}

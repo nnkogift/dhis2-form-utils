@@ -13,6 +13,8 @@ export default tseslint.config(
             '**/dist/**',
             '**/node_modules/**',
             '**/storybook-static/**',
+            'apps/docs/build/**',
+            'apps/docs/.docusaurus/**',
             '**/coverage/**',
             '**/.storybook/**',
             'eslint.config.js',
