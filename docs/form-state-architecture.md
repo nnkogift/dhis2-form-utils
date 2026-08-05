@@ -1,6 +1,6 @@
 # Form State Architecture
 
-**Package:** `@dhis2-form-utils/hooks`  
+**Package:** `@nnkogift/dhis2-form-utils-hooks`  
 **Primary file:** `useEventForm.ts`  
 **Status:** Implemented (Phase 1)
 
@@ -138,7 +138,7 @@ type FieldStateMap = Record<string, FieldState>;
 ```
 
 `hiddenOptions`/`hiddenOptionGroups` are resolved into a rendered/submitted option-code set via
-`resolveHiddenOptionCodes` — see ARCHITECTURE.md § "What `@dhis2-form-utils/rules` adds" for the
+`resolveHiddenOptionCodes` — see ARCHITECTURE.md § "What `@nnkogift/dhis2-form-utils-rules` adds" for the
 full optionGroups-fetch-and-thread flow.
 
 ### `SectionStateMap`

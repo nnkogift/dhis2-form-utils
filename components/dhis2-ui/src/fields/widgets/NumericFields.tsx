@@ -1,6 +1,6 @@
-import type { WidgetProps } from '@dhis2-form-utils/hooks';
+import type { WidgetProps } from '@nnkogift/dhis2-form-utils-hooks';
 import { InputField } from '@dhis2/ui';
-import { resolveFieldValidation } from '@dhis2-form-utils/hooks';
+import { resolveFieldValidation } from '@nnkogift/dhis2-form-utils-hooks';
 import { D2TextField } from './TextField';
 
 function D2TypedTextField({ control, type }: WidgetProps & { type?: 'email' | 'tel' | 'number' }) {

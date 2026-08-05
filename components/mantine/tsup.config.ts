@@ -1,10 +1,14 @@
-import { defineConfig } from 'tsup';
+import { createLibTsupConfig } from '@nnkogift/dhis2-form-utils-config/createLibTsupConfig';
 
-export default defineConfig((options) => ({
-    entry: ['src/index.ts'],
-    format: ['esm', 'cjs'],
-    dts: true,
-    sourcemap: true,
-    clean: !options.watch,
-    external: ['react', 'react-dom', 'react-hook-form', '@mantine/core', '@dhis2-form-utils/hooks'],
-}));
+export default createLibTsupConfig({
+    external: [
+        'react',
+        'react-dom',
+        'react-hook-form',
+        '@mantine/core',
+        '@mantine/dates',
+        '@mantine/hooks',
+        'dayjs',
+        '@nnkogift/dhis2-form-utils-hooks',
+    ],
+});

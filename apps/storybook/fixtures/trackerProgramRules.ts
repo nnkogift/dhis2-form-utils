@@ -1,4 +1,4 @@
-import { resolveTrackerProgramMetadata } from '@dhis2-form-utils/metadata';
+import { resolveTrackerProgramMetadata } from '@nnkogift/dhis2-form-utils-metadata';
 import trackerProgramRulesJson from './tracker-program-rules-example.json';
 import { buildRawTrackerConfig } from './metadataExport';
 import type { MetadataExport } from './metadataExport';

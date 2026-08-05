@@ -4,8 +4,8 @@ import {
     getEffectVariant,
     getEffectVisual,
     type EffectVisualVariant,
-} from '@dhis2-form-utils/devtools'
-import type { ProgramRuleActionType } from '@dhis2-form-utils/metadata'
+} from '@nnkogift/dhis2-form-utils-devtools'
+import type { ProgramRuleActionType } from '@nnkogift/dhis2-form-utils-metadata'
 
 const BADGE_LABELS: Partial<Record<EffectVisualVariant, string>> = {
     hide: i18n.t('Hidden'),

@@ -1,4 +1,4 @@
-import type { WidgetKind } from '@dhis2-form-utils/hooks';
+import type { WidgetKind } from '@nnkogift/dhis2-form-utils-hooks';
 import type { PlayFunction } from '@storybook/react';
 import { expect, screen, userEvent, within } from 'storybook/test';
 import type { FieldStoryArgs } from '../decorators/fieldStory';

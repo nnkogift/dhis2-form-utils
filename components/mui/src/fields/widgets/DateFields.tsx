@@ -4,8 +4,8 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import dayjs, { type Dayjs } from 'dayjs';
-import type { WidgetProps } from '@dhis2-form-utils/hooks';
-import { computeAgeFromDob, resolveFieldValidation } from '@dhis2-form-utils/hooks';
+import type { WidgetProps } from '@nnkogift/dhis2-form-utils-hooks';
+import { computeAgeFromDob, resolveFieldValidation } from '@nnkogift/dhis2-form-utils-hooks';
 import type { ReactNode } from 'react';
 
 const parseDayjs = (value: string): Dayjs | null => {

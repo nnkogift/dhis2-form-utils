@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { RuleTraceEntry } from '@dhis2-form-utils/hooks';
+import type { RuleTraceEntry } from '@nnkogift/dhis2-form-utils-hooks';
 import { getActiveRuleIds, resolveGraphTraceEntry } from './traceEntry';
 
 const entry = (id: string, ruleIds: string[]): RuleTraceEntry => ({

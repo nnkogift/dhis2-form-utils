@@ -5,7 +5,7 @@ import {
     resolveEventProgramMetadata,
     type EventProgramMetadata,
     type RawEventProgramConfigResult,
-} from '@dhis2-form-utils/metadata';
+} from '@nnkogift/dhis2-form-utils-metadata';
 
 export type UseEventProgramMetadataQueryResult = {
     metadata: EventProgramMetadata | undefined;

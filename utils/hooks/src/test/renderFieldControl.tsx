@@ -1,7 +1,7 @@
 import { FormStore } from '../formStore';
 import { FormStateProvider } from '../FormStateContext';
-import type { OptionGroupCodeMap } from '@dhis2-form-utils/metadata';
-import type { FieldStateMap } from '@dhis2-form-utils/rules';
+import type { OptionGroupCodeMap } from '@nnkogift/dhis2-form-utils-metadata';
+import type { FieldStateMap } from '@nnkogift/dhis2-form-utils-rules';
 import { renderHook, type RenderHookOptions } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { useMemo } from 'react';

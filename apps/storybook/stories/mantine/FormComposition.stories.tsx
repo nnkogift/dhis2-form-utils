@@ -1,6 +1,6 @@
-import { D2Field } from '@dhis2-form-utils/mantine';
-import type { FieldStateMap } from '@dhis2-form-utils/rules';
-import { createEmptyFieldState } from '@dhis2-form-utils/rules';
+import { D2Field } from '@nnkogift/dhis2-form-utils-mantine';
+import type { FieldStateMap } from '@nnkogift/dhis2-form-utils-rules';
+import { createEmptyFieldState } from '@nnkogift/dhis2-form-utils-rules';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect } from 'storybook/test';
 import { MantineProvider } from '@mantine/core';

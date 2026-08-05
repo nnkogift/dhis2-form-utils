@@ -1,6 +1,6 @@
 import { Provider } from '@dhis2/app-runtime';
-import { FormStateProvider, useTrackerForm } from '@dhis2-form-utils/hooks';
-import type { TrackerProgramMetadata } from '@dhis2-form-utils/metadata';
+import { FormStateProvider, useTrackerForm } from '@nnkogift/dhis2-form-utils-hooks';
+import type { TrackerProgramMetadata } from '@nnkogift/dhis2-form-utils-metadata';
 import type { Decorator } from '@storybook/react-vite';
 import { createContext, type ReactNode, useContext, useMemo } from 'react';
 import { FormProvider, type UseFormReturn } from 'react-hook-form';

@@ -1,18 +1,15 @@
-import { defineConfig } from 'tsup';
+import { createLibTsupConfig } from '@nnkogift/dhis2-form-utils-config/createLibTsupConfig';
 
-export default defineConfig((options) => ({
-    entry: ['src/index.ts'],
-    format: ['esm', 'cjs'],
-    dts: true,
-    sourcemap: true,
-    clean: !options.watch,
+export default createLibTsupConfig({
     external: [
         'react',
         'react-dom',
         'react-hook-form',
         '@mui/material',
+        '@mui/x-date-pickers',
         '@emotion/react',
         '@emotion/styled',
-        '@dhis2-form-utils/hooks',
+        'dayjs',
+        '@nnkogift/dhis2-form-utils-hooks',
     ],
-}));
+});

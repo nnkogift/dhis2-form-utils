@@ -6,8 +6,8 @@ import {
     IconQueue16,
     IconUser16,
 } from '@dhis2/ui'
-import type { TrackerProgramMetadata } from '@dhis2-form-utils/hooks'
-import type { EventProgramMetadata } from '@dhis2-form-utils/metadata'
+import type { TrackerProgramMetadata } from '@nnkogift/dhis2-form-utils-hooks'
+import type { EventProgramMetadata } from '@nnkogift/dhis2-form-utils-metadata'
 import type { TrackerSlot } from './trackerSlot'
 import { slotKey } from './trackerSlot'
 

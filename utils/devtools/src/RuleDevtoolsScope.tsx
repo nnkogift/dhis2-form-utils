@@ -1,4 +1,4 @@
-import type { FormStore } from '@dhis2-form-utils/hooks';
+import type { FormStore } from '@nnkogift/dhis2-form-utils-hooks';
 import { createContext, useContext, useEffect, useMemo, type ReactNode } from 'react';
 import { attachRuleDevtools } from './attach';
 import type { RuleTraceStore } from './traceStore';

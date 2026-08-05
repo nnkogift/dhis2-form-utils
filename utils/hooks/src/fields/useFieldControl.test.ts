@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { createEmptyFieldState } from '@dhis2-form-utils/rules';
+import { createEmptyFieldState } from '@nnkogift/dhis2-form-utils-rules';
 import { useFieldControl } from './useFieldControl';
 import { resolveWidgetKind } from './widgetKind';
 import { makeGeneratedPtea, makePsde, makePsdeWithOptionSet } from '../test/fixtures/metadata';

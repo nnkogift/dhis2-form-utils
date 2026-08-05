@@ -5,7 +5,7 @@ import {
     ProgramRuleVariableSourceType,
     type EventProgramMetadata,
     type TrackerProgramMetadata,
-} from '@dhis2-form-utils/metadata';
+} from '@nnkogift/dhis2-form-utils-metadata';
 import { useEventForm } from './useEventForm';
 
 const baseMetadata = {

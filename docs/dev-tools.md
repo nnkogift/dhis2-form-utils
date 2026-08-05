@@ -11,7 +11,7 @@ One panel, three tabs, driven by one trace stream:
 - **Trace** — a reverse-chronological log of every evaluation cycle: which field(s) changed, which rules fired, what effects they produced.
 - **Graph** — a node/edge visualization of fields, sections, feedback areas, and the rules connecting them, built up from what's actually been observed.
 
-Ships as a new package, `@dhis2-form-utils/devtools`, attached directly to a running form's `FormStore` via side panels.
+Ships as a new package, `@nnkogift/dhis2-form-utils-devtools`, attached directly to a running form's `FormStore` via side panels.
 
 ---
 
@@ -95,13 +95,13 @@ Attaching at the store level rather than threading a prop through hook options m
 apps/playground
       │
       ▼
-@dhis2-form-utils/devtools   ◄── NEW, optional, dev-only
+@nnkogift/dhis2-form-utils-devtools   ◄── NEW, optional, dev-only
       │
       ▼
-@dhis2-form-utils/hooks       (needs only FormStore + RuleTraceEntry types)
+@nnkogift/dhis2-form-utils-hooks       (needs only FormStore + RuleTraceEntry types)
 ```
 
-`devtools` uses runtime hooks from `hooks` and imports shared form types. It has no dependency on `@dhis2-form-utils/metadata` or `@dhis2/api-types`.
+`devtools` uses runtime hooks from `hooks` and imports shared form types. It has no dependency on `@nnkogift/dhis2-form-utils-metadata` or `@dhis2/api-types`.
 
 ```ts
 // devtools/src/attach.ts
@@ -167,7 +167,7 @@ Without `metadata`, rule/field/section/stage names fall back to raw UIDs — the
 ```tsx
 // devtools/src/RulesPanel.tsx
 function RulesPanel({ metadata }: RulesPanelProps) {
-    const formStore = useFormStore(); // from @dhis2-form-utils/hooks context
+    const formStore = useFormStore(); // from @nnkogift/dhis2-form-utils-hooks context
     const traceStore = useRuleTraceStore(); // from RuleDevtoolsScope
     const labelLookup = useMemo(() => createLabelLookup(metadata), [metadata]);
 
@@ -206,7 +206,7 @@ Clicking a trace-timeline entry highlights the exact rule-node and edges that en
 
 - `<RulesPanel>` — single right-hand panel with three tabs: **Rules** (catalog of all program rules from metadata, 4-state scope/firing accent), **Trace**, and **Graph**. The Graph tab includes a fullscreen expand button that opens the dependency graph in a large modal.
 - `<RuleDevtoolsScope>` — wraps the panel; owns the shared trace store subscription.
-- Graph rendered with **`@xyflow/react`** (v12.11.1). React Flow styles are bundled into `@dhis2-form-utils/devtools/style.css` — consumers need only that single stylesheet import.
+- Graph rendered with **`@xyflow/react`** (v12.11.1). React Flow styles are bundled into `@nnkogift/dhis2-form-utils-devtools/style.css` — consumers need only that single stylesheet import.
 - This is the one new runtime dependency in this design, scoped entirely to the optional `devtools` package — never imported by `hooks`, never in a production form bundle.
 
 ---

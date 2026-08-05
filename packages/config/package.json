@@ -1,9 +1,14 @@
 {
-    "name": "@dhis2-form-utils/config",
+    "name": "@nnkogift/dhis2-form-utils-config",
     "version": "0.0.0",
     "private": true,
+    "type": "module",
     "exports": {
         "./tsconfig.base.json": "./tsconfig.base.json",
-        "./tailwind-theme.css": "./tailwind-theme.css"
+        "./tailwind-theme.css": "./tailwind-theme.css",
+        "./createLibTsupConfig": "./createLibTsupConfig.mjs"
+    },
+    "devDependencies": {
+        "tsup": "^8.5.1"
     }
 }

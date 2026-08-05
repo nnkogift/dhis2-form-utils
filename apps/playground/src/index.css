@@ -1,5 +1,5 @@
 @import 'tailwindcss';
-@import '@dhis2-form-utils/config/tailwind-theme.css';
+@import '@nnkogift/dhis2-form-utils-config/tailwind-theme.css';
 
 html {
     color-scheme: light;

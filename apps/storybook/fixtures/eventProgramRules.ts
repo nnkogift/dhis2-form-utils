@@ -1,4 +1,4 @@
-import { resolveEventProgramMetadata } from '@dhis2-form-utils/metadata';
+import { resolveEventProgramMetadata } from '@nnkogift/dhis2-form-utils-metadata';
 import eventProgramRulesJson from './event-program-rules-example.json';
 import { buildOptionGroupCodeMap, buildRawEventProgramConfig } from './metadataExport';
 import type { MetadataExport } from './metadataExport';

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-deprecated -- @dhis2/rule-engine Kotlin/JS interop requires these APIs */
 import { RuleActionJs, RuleEffectJs } from '@dhis2/rule-engine';
-import type { ProgramRuleActionType } from '@dhis2-form-utils/metadata';
+import type { ProgramRuleActionType } from '@nnkogift/dhis2-form-utils-metadata';
 import type { RuleEffect } from './evaluate';
 
 export const toStringValue = (value: unknown, fallback: string): string => {

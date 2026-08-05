@@ -31,7 +31,7 @@ export type {
     ExpandedProgramRuleAction,
     EventProgramMetadata,
     TrackerProgramMetadata,
-} from '@dhis2-form-utils/metadata';
+} from '@nnkogift/dhis2-form-utils-metadata';
 export type { FieldConfig, RenderTypeHint } from './fields/fieldConfig';
 export type { WidgetKind } from './fields/widgetKind';
 export type { FieldControlInput, FieldControlReturn, WidgetProps } from './fields/useFieldControl';

@@ -1,4 +1,4 @@
-import { ProgramRuleActionType } from '@dhis2-form-utils/metadata';
+import { ProgramRuleActionType } from '@nnkogift/dhis2-form-utils-metadata';
 import type { RuleEffect } from './evaluate';
 
 const FIELD_SCOPED_TYPES = new Set<string>([

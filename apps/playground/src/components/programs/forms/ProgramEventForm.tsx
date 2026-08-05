@@ -3,19 +3,22 @@ import {
     createLabelLookup,
     RuleDevtoolsScope,
     RulesPanel,
-} from '@dhis2-form-utils/devtools'
-import { FormStateProvider, useEventForm } from '@dhis2-form-utils/hooks'
+} from '@nnkogift/dhis2-form-utils-devtools'
+import {
+    FormStateProvider,
+    useEventForm,
+} from '@nnkogift/dhis2-form-utils-hooks'
 import type {
     EventProgramMetadata,
     OptionGroupCodeMap,
     ProgramStageMetadata,
     TrackerProgramMetadata,
-} from '@dhis2-form-utils/metadata'
+} from '@nnkogift/dhis2-form-utils-metadata'
 import {
     filterPayload,
     type RuleEventInput,
     type RuleSupplementaryDataInput,
-} from '@dhis2-form-utils/rules'
+} from '@nnkogift/dhis2-form-utils-rules'
 import i18n from '@dhis2/d2-i18n'
 import React, { useEffect, useMemo, useState } from 'react'
 import { GhostToggleButton } from '@/components/rules/GhostToggleButton'

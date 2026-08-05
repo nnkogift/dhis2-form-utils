@@ -3,11 +3,11 @@ import i18n from '@dhis2/d2-i18n'
 import type {
     ProgramStageDataElement,
     ProgramStageMetadata,
-} from '@dhis2-form-utils/metadata'
+} from '@nnkogift/dhis2-form-utils-metadata'
 import {
     getProgramStageSectionDataElementIds,
     resolveFormSectionLayout,
-} from '@dhis2-form-utils/metadata'
+} from '@nnkogift/dhis2-form-utils-metadata'
 import { RuleAwareField } from '@/components/rules/RuleAwareField'
 import { defaultSectionTitle, FormSectionCard } from './FormSectionCard'
 

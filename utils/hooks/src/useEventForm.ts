@@ -5,20 +5,20 @@ import type {
     EventProgramMetadata,
     OptionGroupCodeMap,
     TrackerProgramMetadata,
-} from '@dhis2-form-utils/metadata';
-import { buildSchema, selectProgramStage } from '@dhis2-form-utils/metadata';
+} from '@nnkogift/dhis2-form-utils-metadata';
+import { buildSchema, selectProgramStage } from '@nnkogift/dhis2-form-utils-metadata';
 import type {
     BuiltRuleEngine,
     EffectHandlersMap,
     RuleEventInput,
     RuleSupplementaryDataInput,
-} from '@dhis2-form-utils/rules';
+} from '@nnkogift/dhis2-form-utils-rules';
 import {
     buildRuleEngine,
     buildRuleEngineContext,
     toRuleEnrollment,
     toRuleEventFromInput,
-} from '@dhis2-form-utils/rules';
+} from '@nnkogift/dhis2-form-utils-rules';
 import { FormStore } from './formStore';
 import type { DefaultFormValue } from './formValue';
 

@@ -1,10 +1,10 @@
-import { FormSection } from '@dhis2-form-utils/dhis2-ui';
-import type { FieldControlInput } from '@dhis2-form-utils/hooks';
-import type { ProgramStageDataElement } from '@dhis2-form-utils/metadata';
+import { FormSection } from '@nnkogift/dhis2-form-utils-dhis2-ui';
+import type { FieldControlInput } from '@nnkogift/dhis2-form-utils-hooks';
+import type { ProgramStageDataElement } from '@nnkogift/dhis2-form-utils-metadata';
 import {
     getProgramStageSectionDataElementIds,
     resolveFormSectionLayout,
-} from '@dhis2-form-utils/metadata';
+} from '@nnkogift/dhis2-form-utils-metadata';
 import { useMemo } from 'react';
 import type { ComponentType, ReactNode } from 'react';
 import { useFormContext } from 'react-hook-form';

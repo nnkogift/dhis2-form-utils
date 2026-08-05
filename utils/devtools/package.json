@@ -1,22 +1,41 @@
 {
-    "name": "@dhis2-form-utils/devtools",
+    "name": "@nnkogift/dhis2-form-utils-devtools",
     "version": "0.0.0",
     "description": "Developer tools for debugging DHIS2 program rules in dhis2-form-utils forms",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/nnkogift/dhis2-form-utils.git",
+        "directory": "utils/devtools"
+    },
+    "homepage": "https://github.com/nnkogift/dhis2-form-utils#readme",
     "type": "module",
+    "sideEffects": [
+        "./dist/index.css"
+    ],
     "main": "./dist/index.cjs",
     "module": "./dist/index.js",
     "types": "./dist/index.d.ts",
     "exports": {
         ".": {
-            "import": "./dist/index.js",
-            "require": "./dist/index.cjs",
-            "types": "./dist/index.d.ts"
+            "import": {
+                "types": "./dist/index.d.ts",
+                "default": "./dist/index.js"
+            },
+            "require": {
+                "types": "./dist/index.d.cts",
+                "default": "./dist/index.cjs"
+            }
         },
         "./style.css": "./dist/index.css"
     },
     "files": [
         "dist"
     ],
+    "publishConfig": {
+        "access": "public",
+        "registry": "https://registry.npmjs.org/"
+    },
     "scripts": {
         "build": "tsup && tailwindcss -i ./src/tailwind.css -o ./dist/index.css --minify",
         "dev": "concurrently -n tsup,css -c blue,magenta \"tsup --watch\" \"tailwindcss -i ./src/tailwind.css -o ./dist/index.css --watch\"",
@@ -24,8 +43,8 @@
         "test": "vitest run"
     },
     "dependencies": {
-        "@dhis2-form-utils/hooks": "workspace:*",
-        "@dhis2-form-utils/metadata": "workspace:*",
+        "@nnkogift/dhis2-form-utils-hooks": "workspace:*",
+        "@nnkogift/dhis2-form-utils-metadata": "workspace:*",
         "@xyflow/react": "^12.11.1"
     },
     "peerDependencies": {
@@ -35,7 +54,7 @@
         "react-dom": ">=18.0.0"
     },
     "devDependencies": {
-        "@dhis2-form-utils/config": "workspace:*",
+        "@nnkogift/dhis2-form-utils-config": "workspace:*",
         "@dhis2/d2-i18n": "^1.2.0",
         "@dhis2/ui": "^10.15.1",
         "@tailwindcss/cli": "^4.3.2",
@@ -50,5 +69,8 @@
         "tsup": "^8.5.1",
         "typescript": "^5.9.3",
         "vitest": "^4.1.7"
+    },
+    "engines": {
+        "node": ">=18"
     }
 }

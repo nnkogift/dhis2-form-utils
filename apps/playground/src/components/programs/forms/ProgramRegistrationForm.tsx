@@ -5,18 +5,18 @@ import {
     RuleDevtoolsScope,
     RulesPanel,
     type ProgramStageRef,
-} from '@dhis2-form-utils/devtools'
+} from '@nnkogift/dhis2-form-utils-devtools'
 import {
     FormStateProvider,
     type TrackerProgramMetadata,
     useTrackerForm,
-} from '@dhis2-form-utils/hooks'
-import type { OptionGroupCodeMap } from '@dhis2-form-utils/metadata'
+} from '@nnkogift/dhis2-form-utils-hooks'
+import type { OptionGroupCodeMap } from '@nnkogift/dhis2-form-utils-metadata'
 import {
     filterPayload,
     type RuleEventInput,
     type RuleSupplementaryDataInput,
-} from '@dhis2-form-utils/rules'
+} from '@nnkogift/dhis2-form-utils-rules'
 import React, { useEffect, useMemo, useState } from 'react'
 import { FormProvider, type UseFormReturn } from 'react-hook-form'
 import { GhostToggleButton } from '@/components/rules/GhostToggleButton'

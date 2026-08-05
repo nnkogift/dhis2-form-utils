@@ -5,6 +5,9 @@ React form library for DHIS2 data entry. See `README.md` for the product overvie
 `CLAUDE.md` for architecture and the full list of build/test/lint/dev commands (do not duplicate
 those here).
 
+Publishable packages live under `@nnkogift/dhis2-form-utils-*`. Release channels, Changesets, and
+npm secrets are documented in `docs/releasing.md`.
+
 ## Cursor Cloud specific instructions
 
 ### Services
