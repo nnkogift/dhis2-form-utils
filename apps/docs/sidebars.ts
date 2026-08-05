@@ -14,6 +14,7 @@ const sidebars: SidebarsConfig = {
                 'about/form-state-and-reactive-loop',
                 'about/rule-devtools-design',
                 'about/tracker-form-design',
+                'about/unsupported-fields-handoff',
             ],
         },
         {
