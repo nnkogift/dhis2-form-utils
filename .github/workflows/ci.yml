@@ -2,12 +2,38 @@ name: CI
 
 on:
     push:
-        branches: [main, master]
+        branches: [main, alpha, beta]
+        paths-ignore:
+            - '**.md'
+            - 'docs/**'
+            - '.idea/**'
+            - '.vscode/**'
+            - '.cursor/**'
+            - '.agents/**'
+            - '*.svg'
+            - 'LICENSE'
+            - '.gitignore'
+            - '.github/ISSUE_TEMPLATE/**'
     pull_request:
-        branches: [main, master]
+        branches: [main, alpha, beta]
+        paths-ignore:
+            - '**.md'
+            - 'docs/**'
+            - '.idea/**'
+            - '.vscode/**'
+            - '.cursor/**'
+            - '.agents/**'
+            - '*.svg'
+            - 'LICENSE'
+            - '.gitignore'
+            - '.github/ISSUE_TEMPLATE/**'
 
 permissions:
     contents: read
+
+concurrency:
+    group: ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+    cancel-in-progress: true
 
 jobs:
     lint:
