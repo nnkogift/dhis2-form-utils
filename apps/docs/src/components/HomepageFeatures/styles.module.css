@@ -1,0 +1,18 @@
+.features {
+    display: flex;
+    align-items: center;
+    padding: 3rem 0 4rem;
+    width: 100%;
+}
+
+.featureCard {
+    height: 100%;
+    padding: 1.5rem;
+}
+
+.featureIcon {
+    width: 40px;
+    height: 40px;
+    color: var(--ifm-color-primary);
+    margin-bottom: 0.75rem;
+}

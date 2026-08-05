@@ -6,6 +6,8 @@ packages:
 allowBuilds:
     '@dhis2/cli-helpers-engine': false
     '@parcel/watcher': false
+    '@swc/core': true
+    core-js: false
     core-js-pure: false
     esbuild: true
     fallow: false
@@ -26,6 +28,7 @@ publicHoistPattern:
 
 onlyBuiltDependencies:
     - '@dhis2/cli-helpers-engine'
+    - '@swc/core'
     - core-js-pure
     - esbuild
     - msw
