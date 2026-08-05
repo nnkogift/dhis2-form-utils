@@ -16,6 +16,7 @@ export type EventFormFieldProps = {
 
 type ProgrammeEventFormProps = {
     Field: ComponentType<EventFormFieldProps>;
+    Feedback?: ComponentType;
     submitLabel?: string;
 };
 
@@ -37,7 +38,11 @@ function SectionCard({ title, children }: { title?: string; children: ReactNode 
     );
 }
 
-export function ProgrammeEventForm({ Field, submitLabel = 'Save' }: ProgrammeEventFormProps) {
+export function ProgrammeEventForm({
+    Field,
+    Feedback,
+    submitLabel = 'Save',
+}: ProgrammeEventFormProps) {
     const { handleSubmit } = useFormContext<Record<string, string>>();
     const { stageMetadata } = useEventFormStory();
     const programStageDataElements = useMemo(
@@ -131,6 +136,7 @@ export function ProgrammeEventForm({ Field, submitLabel = 'Save' }: ProgrammeEve
             }}
         >
             {fieldContent}
+            {Feedback ? <Feedback /> : null}
             <button type="submit" style={{ marginTop: 16 }}>
                 {submitLabel}
             </button>

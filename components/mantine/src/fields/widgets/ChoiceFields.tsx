@@ -11,7 +11,7 @@ export function D2BooleanField({ control }: WidgetProps) {
     return (
         <SegmentedControl
             name={field.name}
-            value={field.value as string}
+            value={(field.value as string | undefined) ?? ''}
             disabled={isDisabled}
             data={[
                 { label: 'Yes', value: 'true' },
