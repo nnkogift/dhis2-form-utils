@@ -146,9 +146,6 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
-# Design-tool exported design-system bundle (scratch, regenerated on demand)
-apps/playground/design/_ds/
-
 .fallow/
 
 # Personal, machine-local Cursor skill symlinks — never portable across clones/CI
