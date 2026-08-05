@@ -758,6 +758,7 @@
                 "displayName": "Tom Wakiki",
                 "username": "system"
             },
+            "programStage": { "id": "xizfjWb34Ed" },
             "dataElements": [{ "id": "asNLLxuXPkN" }],
             "programIndicators": [],
             "sortOrder": 2,
@@ -1287,7 +1288,7 @@
             "id": "xizfjWb34Ed",
             "attributeValues": [],
             "repeatable": true,
-            "programStageSections": [],
+            "programStageSections": [{ "id": "ykSoYFhrMb1" }],
             "notificationTemplates": []
         },
         {
