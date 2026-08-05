@@ -828,26 +828,27 @@ export function TextField({ control }: WidgetProps) {
 
 ## 7. `valueType` → Widget → Component Map
 
-| `valueType`                         | `widgetKind` | DHIS2 UI                        | Mantine                          | Material UI                 |
-| ----------------------------------- | ------------ | ------------------------------- | -------------------------------- | --------------------------- |
-| `TEXT`, `LETTER`, `URL`, `USERNAME` | `text`       | `InputField`                    | `TextInput`                      | `TextField`                 |
-| `LONG_TEXT`                         | `longText`   | `TextAreaField`                 | `Textarea`                       | `TextField multiline`       |
-| `EMAIL`                             | `email`      | `InputField type=email`         | `TextInput type=email`           | `TextField type=email`      |
-| `PHONE_NUMBER`                      | `phone`      | `InputField type=tel`           | `TextInput type=tel`             | `TextField type=tel`        |
-| `NUMBER`, `UNIT_INTERVAL`           | `number`     | `InputField type=number`        | `NumberInput`                    | `TextField type=number`     |
-| `INTEGER`, `INTEGER_*`              | `integer`    | `InputField type=number step=1` | `NumberInput allowDecimal=false` | `TextField type=number`     |
-| `PERCENTAGE`                        | `percentage` | `InputField` + `%` suffix       | `NumberInput` + `%`              | `TextField` + `%` adornment |
-| `BOOLEAN`                           | `boolean`    | `SingleSelectField` (Yes/No/—)  | `SegmentedControl`               | `ToggleButtonGroup`         |
-| `TRUE_ONLY`                         | `trueOnly`   | `Checkbox`                      | `Checkbox`                       | `Checkbox`                  |
-| `DATE`                              | `date`       | `CalendarInput`                 | `DateInput`                      | `DatePicker`                |
-| `DATETIME`                          | `datetime`   | custom composite                | `DateTimePicker`                 | `DateTimePicker`            |
-| `TIME`                              | `time`       | `InputField type=time`          | `TimeInput`                      | `TimePicker`                |
-| `AGE`                               | `age`        | `CalendarInput` + age display   | `DateInput` + age display        | `DatePicker` + age display  |
-| any + `optionSet`                   | `select`     | `SingleSelectField`             | `Select`                         | `Select`                    |
-| `COORDINATE`                        | `coordinate` | Two `InputField` (lat + lng)    | Two `NumberInput`                | Two `TextField`             |
-| `FILE_RESOURCE`                     | `file`       | `FileInputField`                | `FileInput`                      | `Button` file type          |
-| `IMAGE`                             | `image`      | `FileInputField` + preview      | `FileInput` + preview            | `Button` file + preview     |
-| `ORGANISATION_UNIT`                 | `orgUnit`    | DHIS2 `OrgUnitField`            | Custom tree picker               | Custom tree picker          |
+| `valueType`                         | `widgetKind`  | DHIS2 UI                            | Mantine                          | Material UI                 |
+| ----------------------------------- | ------------- | ----------------------------------- | -------------------------------- | --------------------------- |
+| `TEXT`, `LETTER`, `URL`, `USERNAME` | `text`        | `InputField`                        | `TextInput`                      | `TextField`                 |
+| `LONG_TEXT`                         | `longText`    | `TextAreaField`                     | `Textarea`                       | `TextField multiline`       |
+| `EMAIL`                             | `email`       | `InputField type=email`             | `TextInput type=email`           | `TextField type=email`      |
+| `PHONE_NUMBER`                      | `phone`       | `InputField type=tel`               | `TextInput type=tel`             | `TextField type=tel`        |
+| `NUMBER`, `UNIT_INTERVAL`           | `number`      | `InputField type=number`            | `NumberInput`                    | `TextField type=number`     |
+| `INTEGER`, `INTEGER_*`              | `integer`     | `InputField type=number step=1`     | `NumberInput allowDecimal=false` | `TextField type=number`     |
+| `PERCENTAGE`                        | `percentage`  | `InputField` + `%` suffix           | `NumberInput` + `%`              | `TextField` + `%` adornment |
+| `BOOLEAN`                           | `boolean`     | Yes/No/(—) `Radio`                  | Yes/No/(—) `Radio.Group`         | Yes/No/(—) `RadioGroup`     |
+| `TRUE_ONLY`                         | `trueOnly`    | `Checkbox`                          | `Checkbox`                       | `Checkbox`                  |
+| `DATE`                              | `date`        | `CalendarInput`                     | `DateInput`                      | `DatePicker`                |
+| `DATETIME`                          | `datetime`    | `CalendarInput` + `InputField` time | `DateTimePicker`                 | `DateTimePicker`            |
+| `TIME`                              | `time`        | `InputField type=time`              | `TimeInput`                      | `TimePicker`                |
+| `AGE`                               | `age`         | `CalendarInput` + age display       | `DateInput` + age display        | `DatePicker` + age display  |
+| any + `optionSet` (not MULTI_TEXT)  | `select`      | `SingleSelectField`                 | `Select`                         | `Select`                    |
+| `MULTI_TEXT` + `optionSet`          | `multiSelect` | `MultiSelectField` (CSV codes)      | `MultiSelect` (CSV codes)        | multi `TextField select`    |
+| `COORDINATE`                        | `coordinate`  | Two `InputField` (lat + lng)        | Two `NumberInput`                | Two `TextField`             |
+| `FILE_RESOURCE`                     | `file`        | `FileInputField`                    | `FileInput`                      | `Button` file type          |
+| `IMAGE`                             | `image`       | `FileInputField` + preview          | `FileInput` + preview            | `Button` file + preview     |
+| `ORGANISATION_UNIT`                 | `orgUnit`     | DHIS2 `OrgUnitField`                | Custom tree picker               | Custom tree picker          |
 
 ---
 
@@ -1005,10 +1006,10 @@ Same as Phase 3 for MUI primitives.
 These do not block Phase 1 or the dispatcher skeleton, but must be resolved before
 the relevant widgets are written.
 
-| #   | Question                                                                                                                                                                                                            | Impact                                        |
-| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------- |
-| 1   | **`AGE` storage** — does the field store a date-of-birth string (`DATE` format) and compute age client-side for display, or store the actual age in years? DHIS2 practice is date-of-birth, but needs confirmation. | `AgeField` widget implementation              |
-| 2   | **`COORDINATE` serialisation** — does the field store as `"lat,lng"` (single string, DHIS2 convention) or are lat and lng submitted as separate form values that are serialised on submit?                          | `CoordinateField` and tracker payload builder |
-| 3   | **`renderTypeHint` enforcement** — should the hook enforce hints (e.g. RADIO vs DROPDOWN for option sets), or is it purely advisory for UI adapter authors?                                                         | All option-set widgets                        |
-| 4   | **`ORGANISATION_UNIT` data fetching** — the org unit picker requires a hierarchy query. Should the `OrgUnitField` widget trigger its own `useDataQuery`, or should the parent form pre-fetch and pass options down? | `OrgUnitField` in all adapters                |
-| 5   | **`multiSelect`** — DHIS2 has `MULTI_TEXT` in newer versions and some programmes use multi-select option sets. Should `WidgetKind` include `'multiSelect'` now, or defer until there is a concrete use case?        | `widgetKind.ts`, all `SelectField` widgets    |
+| #   | Question                                                                                                                                                                                                            | Impact                                          |
+| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- |
+| 1   | **`AGE` storage** — does the field store a date-of-birth string (`DATE` format) and compute age client-side for display, or store the actual age in years? DHIS2 practice is date-of-birth, but needs confirmation. | `AgeField` widget implementation                |
+| 2   | **`COORDINATE` serialisation** — does the field store as `"lat,lng"` (single string, DHIS2 convention) or are lat and lng submitted as separate form values that are serialised on submit?                          | `CoordinateField` and tracker payload builder   |
+| 3   | **`renderTypeHint` enforcement** — should the hook enforce hints (e.g. RADIO vs DROPDOWN for option sets), or is it purely advisory for UI adapter authors?                                                         | All option-set widgets                          |
+| 4   | **`ORGANISATION_UNIT` data fetching** — the org unit picker requires a hierarchy query. Should the `OrgUnitField` widget trigger its own `useDataQuery`, or should the parent form pre-fetch and pass options down? | `OrgUnitField` in all adapters                  |
+| 5   | **`multiSelect`** — **Resolved:** `WidgetKind` includes `'multiSelect'`. `MULTI_TEXT` + `optionSet` maps to multi-select; RHF stores comma-separated option codes.                                                  | `widgetKind.ts`, all `MultiSelectField` widgets |

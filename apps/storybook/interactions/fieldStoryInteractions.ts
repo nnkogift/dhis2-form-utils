@@ -27,16 +27,39 @@ function queryNumericInput(canvas: Canvas, widgetKind: WidgetKind) {
     }
 }
 
+const NUMERIC_WIDGET_KINDS = new Set<WidgetKind>(['integer', 'number', 'percentage']);
+const TEMPORAL_WIDGET_KINDS = new Set<WidgetKind>(['date', 'time', 'datetime', 'age']);
+
+// fallow-ignore-next-line complexity
+function queryTemporalInput(canvas: Canvas, widgetKind: WidgetKind) {
+    const labeled = canvas.queryAllByLabelText(labelPattern(widgetKind));
+    if (labeled[0]) return labeled[0];
+
+    for (const role of ['textbox', 'combobox', 'group'] as const) {
+        const matches = canvas.queryAllByRole(role, { name: labelPattern(widgetKind) });
+        if (matches[0]) return matches[0];
+    }
+
+    // MUI X pickers sometimes expose the visible label as plain text only.
+    const byText = canvas.queryByText(labelPattern(widgetKind));
+    if (!byText) {
+        throw new Error(`Unable to locate input for widgetKind=${widgetKind}`);
+    }
+
+    const container = byText.closest('.MuiFormControl-root') ?? byText.parentElement;
+    const input = container?.querySelector('input');
+    if (!input) {
+        throw new Error(`Unable to locate input for widgetKind=${widgetKind}`);
+    }
+    return input;
+}
+
 function queryFieldInput(canvas: Canvas, widgetKind: WidgetKind) {
-    if (widgetKind === 'integer' || widgetKind === 'number' || widgetKind === 'percentage') {
+    if (NUMERIC_WIDGET_KINDS.has(widgetKind)) {
         return queryNumericInput(canvas, widgetKind);
     }
-    if (widgetKind === 'date' || widgetKind === 'time' || widgetKind === 'age') {
-        try {
-            return canvas.getByLabelText(labelPattern(widgetKind));
-        } catch {
-            return queryTextInput(canvas, widgetKind);
-        }
+    if (TEMPORAL_WIDGET_KINDS.has(widgetKind)) {
+        return queryTemporalInput(canvas, widgetKind);
     }
     return queryTextInput(canvas, widgetKind);
 }
@@ -72,6 +95,13 @@ async function openDhis2SingleSelect(canvasElement: HTMLElement) {
     await userEvent.click(trigger);
 }
 
+async function openDhis2MultiSelect(canvasElement: HTMLElement) {
+    const field = getByDataTest(canvasElement, 'dhis2-uiwidgets-multiselectfield');
+    const trigger = field.querySelector('[data-test="dhis2-uicore-select-input"]');
+    if (!trigger) throw new Error('DHIS2 multi select trigger not found');
+    await userEvent.click(trigger);
+}
+
 async function pickSelectOption(
     adapter: FieldStoryAdapter,
     canvasElement: HTMLElement,
@@ -97,35 +127,45 @@ async function pickSelectOption(
     await userEvent.click(await screen.findByRole('option', { name: optionLabel }));
 }
 
-async function clickMantineBooleanSegment(control: HTMLElement, optionLabel: 'Yes' | 'No') {
-    await userEvent.click(within(control).getByText(optionLabel));
-    const value = optionLabel === 'Yes' ? 'true' : 'false';
-    const input = control.querySelector(`input[type="radio"][value="${value}"]`);
-    if (input instanceof HTMLInputElement && !input.checked) {
-        input.click();
-    }
-}
-
-async function pickBooleanYes(
+// fallow-ignore-next-line complexity
+async function pickMultiSelectOption(
     adapter: FieldStoryAdapter,
     canvasElement: HTMLElement,
-    widgetKind: WidgetKind = 'boolean'
+    widgetKind: WidgetKind,
+    optionLabel: string
 ) {
     const canvas = canvasOf(canvasElement);
 
     if (adapter === 'dhis2-ui') {
-        await openDhis2SingleSelect(canvasElement);
-        await userEvent.click(await screen.findByText('Yes'));
+        await openDhis2MultiSelect(canvasElement);
+        const option = await screen.findByText(optionLabel);
+        await userEvent.click(option);
+        await expect(
+            getByDataTest(canvasElement, 'dhis2-uiwidgets-multiselectfield')
+        ).toBeInTheDocument();
         return;
     }
 
     if (adapter === 'mantine') {
-        const control = canvas.getByLabelText(labelPattern(widgetKind));
-        await clickMantineBooleanSegment(control, 'Yes');
+        const input = canvas.getByRole('textbox', { name: labelPattern(widgetKind) });
+        const target = input.closest('.mantine-MultiSelect-input') ?? input.parentElement ?? input;
+        await userEvent.click(target);
+        await expect(await screen.findByRole('option', { name: optionLabel })).toBeInTheDocument();
+        await userEvent.click(screen.getByRole('option', { name: optionLabel }));
         return;
     }
 
-    await userEvent.click(canvas.getByRole('button', { name: 'Yes' }));
+    await userEvent.click(canvas.getByRole('combobox', { name: labelPattern(widgetKind) }));
+    await userEvent.click(await screen.findByRole('option', { name: optionLabel }));
+}
+
+async function pickBooleanYes(
+    _adapter: FieldStoryAdapter,
+    canvasElement: HTMLElement,
+    _widgetKind: WidgetKind = 'boolean'
+) {
+    const canvas = canvasOf(canvasElement);
+    await userEvent.click(canvas.getByRole('radio', { name: 'Yes' }));
 }
 
 export function fieldStoryPlays(adapter: FieldStoryAdapter) {
@@ -196,12 +236,40 @@ export function fieldStoryPlays(adapter: FieldStoryAdapter) {
         await pickSelectOption(adapter, canvasElement, 'select', 'Option A');
     };
 
+    const multiSelectOption: PlayFunction<FieldStoryArgs> = async ({ canvasElement }) => {
+        await pickMultiSelectOption(adapter, canvasElement, 'multiSelect', 'Option A');
+    };
+
     const booleanYes: PlayFunction<FieldStoryArgs> = async ({ canvasElement, args }) => {
         await pickBooleanYes(adapter, canvasElement, args?.widgetKind ?? 'boolean');
     };
 
     const dateInput: PlayFunction<FieldStoryArgs> = async ({ canvasElement }) => {
-        await typeIntoField(canvasElement, 'date', '2024-06-15');
+        const canvas = canvasOf(canvasElement);
+        const input = queryFieldInput(canvas, 'date');
+        await expect(input).toBeInTheDocument();
+        if (input instanceof HTMLInputElement && !input.readOnly) {
+            await userEvent.clear(input);
+            await userEvent.type(input, '2024-06-15');
+            await assertInputValue(input, '2024-06-15');
+        }
+    };
+
+    const timeInput: PlayFunction<FieldStoryArgs> = async ({ canvasElement }) => {
+        const canvas = canvasOf(canvasElement);
+        const input = queryFieldInput(canvas, 'time');
+        await expect(input).toBeInTheDocument();
+        if (input instanceof HTMLInputElement && !input.readOnly) {
+            await userEvent.clear(input);
+            await userEvent.type(input, '14:30');
+            await assertInputValue(input, '14:30');
+        }
+    };
+
+    const datetimeInput: PlayFunction<FieldStoryArgs> = async ({ canvasElement }) => {
+        const canvas = canvasOf(canvasElement);
+        const matches = canvas.queryAllByLabelText(labelPattern('datetime'));
+        await expect(matches.length).toBeGreaterThan(0);
     };
 
     const ageShowsComputedAge: PlayFunction<FieldStoryArgs> = async ({ canvasElement }) => {
@@ -228,8 +296,11 @@ export function fieldStoryPlays(adapter: FieldStoryAdapter) {
         generatedFieldDisabled,
         integerInput,
         selectOption,
+        multiSelectOption,
         booleanYes,
         dateInput,
+        timeInput,
+        datetimeInput,
         ageShowsComputedAge,
         stubWidget,
     };

@@ -20,12 +20,15 @@ const VALUE_TYPE_BY_WIDGET: Record<WidgetKind, ValueType> = {
     time: 'TIME',
     age: 'AGE',
     select: 'TEXT',
+    multiSelect: 'MULTI_TEXT',
     orgUnit: 'ORGANISATION_UNIT',
     coordinate: 'COORDINATE',
     file: 'FILE_RESOURCE',
     image: 'IMAGE',
     unsupported: 'REFERENCE',
 };
+
+const OPTION_SET_WIDGETS = new Set<WidgetKind>(['select', 'multiSelect']);
 
 export const makeFieldPsde = (
     widgetKind: WidgetKind,
@@ -45,7 +48,7 @@ export const makeFieldPsde = (
         },
     };
 
-    if (widgetKind === 'select' && base.dataElement) {
+    if (OPTION_SET_WIDGETS.has(widgetKind) && base.dataElement) {
         base.dataElement = {
             ...base.dataElement,
             optionSet: {
@@ -94,9 +97,11 @@ export const TIER1_WIDGET_KINDS = [
     'boolean',
     'trueOnly',
     'select',
+    'multiSelect',
     'date',
     'time',
+    'datetime',
     'age',
 ] as const satisfies readonly WidgetKind[];
 
-export const STUB_WIDGET_KINDS = ['datetime', 'orgUnit'] as const satisfies readonly WidgetKind[];
+export const STUB_WIDGET_KINDS = ['orgUnit'] as const satisfies readonly WidgetKind[];

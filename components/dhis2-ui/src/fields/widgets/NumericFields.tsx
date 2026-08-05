@@ -3,10 +3,7 @@ import { InputField } from '@dhis2/ui';
 import { resolveFieldValidation } from '@dhis2-form-utils/hooks';
 import { D2TextField } from './TextField';
 
-function D2TypedTextField({
-    control,
-    type,
-}: WidgetProps & { type?: 'email' | 'tel' | 'number' | 'time' | 'date' }) {
+function D2TypedTextField({ control, type }: WidgetProps & { type?: 'email' | 'tel' | 'number' }) {
     const { fieldConfig, field, isMandatory, isDisabled } = control;
     const { validationText, hasError, hasWarning } = resolveFieldValidation(control);
 
@@ -58,8 +55,4 @@ export function D2PercentageField({ control }: WidgetProps) {
             }}
         />
     );
-}
-
-export function D2TimeField(props: WidgetProps) {
-    return <D2TypedTextField {...props} type="time" />;
 }

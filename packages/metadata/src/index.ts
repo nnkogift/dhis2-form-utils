@@ -34,6 +34,7 @@ export {
 } from './fieldFilters';
 export { buildSchema } from './buildSchema';
 export { buildTrackerSchema } from './buildTrackerSchema';
+export { joinMultiTextValue, parseMultiTextValue } from './multiTextValue';
 export {
     CONSTANT_FIELDS,
     EVENT_PROGRAM_FIELDS,

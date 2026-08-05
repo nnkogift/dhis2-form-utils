@@ -66,23 +66,6 @@ async function typeTriggerText(canvasElement: HTMLElement, value: string) {
     }
 }
 
-const MANTINE_BOOLEAN_SEGMENT_VALUE: Record<'Yes' | 'No', string> = {
-    Yes: 'true',
-    No: 'false',
-};
-
-async function clickMantineBooleanSegment(control: HTMLElement, optionLabel: 'Yes' | 'No') {
-    await userEvent.click(within(control).getByText(optionLabel));
-    const input = control.querySelector(
-        `input[type="radio"][value="${MANTINE_BOOLEAN_SEGMENT_VALUE[optionLabel]}"]`
-    );
-    if (input instanceof HTMLInputElement && !input.checked) {
-        input.click();
-    }
-}
-
-// Branches dispatch on the 3 UI adapters' distinct boolean-widget DOM shapes.
-// fallow-ignore-next-line complexity
 async function pickBooleanOption(
     adapter: EventProgramRulesAdapter,
     canvasElement: HTMLElement,
@@ -92,27 +75,24 @@ async function pickBooleanOption(
     const canvas = canvasOf(canvasElement);
 
     if (adapter === 'dhis2-ui') {
-        const field = Array.from(
-            canvasElement.querySelectorAll('[data-test="dhis2-uiwidgets-singleselectfield"]')
-        ).find((element) => fieldLabel.test(element.textContent ?? ''));
+        const field = Array.from(canvasElement.querySelectorAll('fieldset')).find((element) =>
+            fieldLabel.test(element.querySelector('legend')?.textContent?.trim() ?? '')
+        );
         if (!field) {
             throw new Error(`DHIS2 boolean field matching ${fieldLabel} not found`);
         }
-        const trigger = field.querySelector('[data-test="dhis2-uicore-select-input"]');
-        if (!trigger) throw new Error('DHIS2 single select trigger not found');
-        await userEvent.click(trigger);
-        await userEvent.click(await screen.findByText(optionLabel));
+        await userEvent.click(within(field).getByRole('radio', { name: optionLabel }));
         return;
     }
 
     if (adapter === 'mantine') {
-        const control = canvas.getByLabelText(fieldLabel);
-        await clickMantineBooleanSegment(control, optionLabel);
+        const control = canvas.getByRole('radiogroup', { name: fieldLabel });
+        await userEvent.click(within(control).getByRole('radio', { name: optionLabel }));
         return;
     }
 
     const group = canvas.getByRole('group', { name: fieldLabel });
-    await userEvent.click(within(group).getByRole('button', { name: optionLabel }));
+    await userEvent.click(within(group).getByRole('radio', { name: optionLabel }));
 }
 
 function isColourMenuOpen(adapter: EventProgramRulesAdapter): boolean {

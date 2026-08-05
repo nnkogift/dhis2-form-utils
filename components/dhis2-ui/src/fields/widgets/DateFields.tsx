@@ -1,8 +1,53 @@
-import { InputField } from '@dhis2/ui';
+import { CalendarInput, InputField } from '@dhis2/ui';
 import type { WidgetProps } from '@dhis2-form-utils/hooks';
-import { resolveFieldValidation } from '@dhis2-form-utils/hooks';
+import { computeAgeFromDob, resolveFieldValidation } from '@dhis2-form-utils/hooks';
+
+const todayIso = (): string => new Date().toISOString().slice(0, 10);
+
+type DateSelectPayload = {
+    calendarDateString?: string;
+} | null;
+
+const readDatePart = (value: string): string => {
+    if (!value) return '';
+    return value.includes('T') ? value.slice(0, 10) : value;
+};
+
+const readTimePart = (value: string): string => {
+    if (!value.includes('T')) return '';
+    return value.slice(11, 16);
+};
 
 export function D2DateField({ control }: WidgetProps) {
+    const { fieldConfig, field, isMandatory, isDisabled } = control;
+    const { validationText, hasError, hasWarning } = resolveFieldValidation(control);
+    const dateValue = field.value as string;
+
+    return (
+        <CalendarInput
+            name={field.name}
+            label={fieldConfig.label}
+            helpText={fieldConfig.description}
+            required={isMandatory}
+            disabled={isDisabled}
+            warning={hasWarning}
+            error={hasError}
+            validationText={validationText}
+            calendar="gregory"
+            format="YYYY-MM-DD"
+            date={dateValue || undefined}
+            clearable={!isMandatory}
+            pastOnly={!fieldConfig.allowFutureDate}
+            maxDate={fieldConfig.allowFutureDate ? undefined : todayIso()}
+            onDateSelect={(payload: DateSelectPayload) => {
+                field.onChange(payload?.calendarDateString ?? '');
+            }}
+            onBlur={field.onBlur}
+        />
+    );
+}
+
+export function D2TimeField({ control }: WidgetProps) {
     const { fieldConfig, field, isMandatory, isDisabled } = control;
     const { validationText, hasError, hasWarning } = resolveFieldValidation(control);
 
@@ -14,7 +59,7 @@ export function D2DateField({ control }: WidgetProps) {
             helpText={fieldConfig.description}
             required={isMandatory}
             disabled={isDisabled}
-            type="date"
+            type="time"
             warning={hasWarning}
             error={hasError}
             validationText={validationText}
@@ -26,16 +71,59 @@ export function D2DateField({ control }: WidgetProps) {
     );
 }
 
-function computeAgeFromDob(dob: string): string {
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(dob)) return '';
-    const birth = new Date(dob);
-    const today = new Date();
-    let age = today.getFullYear() - birth.getFullYear();
-    const monthDiff = today.getMonth() - birth.getMonth();
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
-        age -= 1;
-    }
-    return age >= 0 ? String(age) : '';
+export function D2DateTimeField({ control }: WidgetProps) {
+    const { fieldConfig, field, isMandatory, isDisabled } = control;
+    const { validationText, hasError, hasWarning } = resolveFieldValidation(control);
+    const value = field.value as string;
+    const datePart = readDatePart(value);
+    const timePart = readTimePart(value);
+
+    const commit = (nextDate: string, nextTime: string) => {
+        if (!nextDate && !nextTime) {
+            field.onChange('');
+            return;
+        }
+        field.onChange(`${nextDate}T${nextTime || '00:00'}`);
+    };
+
+    return (
+        <div>
+            <CalendarInput
+                name={`${field.name}-date`}
+                label={fieldConfig.label}
+                helpText={fieldConfig.description}
+                required={isMandatory}
+                disabled={isDisabled}
+                warning={hasWarning}
+                error={hasError}
+                validationText={validationText}
+                calendar="gregory"
+                format="YYYY-MM-DD"
+                date={datePart || undefined}
+                clearable={!isMandatory}
+                pastOnly={!fieldConfig.allowFutureDate}
+                maxDate={fieldConfig.allowFutureDate ? undefined : todayIso()}
+                onDateSelect={(payload: DateSelectPayload) => {
+                    commit(payload?.calendarDateString ?? '', timePart);
+                }}
+                onBlur={field.onBlur}
+            />
+            <InputField
+                name={`${field.name}-time`}
+                value={timePart}
+                label={`${fieldConfig.label} (time)`}
+                required={isMandatory}
+                disabled={isDisabled}
+                type="time"
+                warning={hasWarning}
+                error={hasError}
+                onChange={({ value: nextTime }) => {
+                    commit(datePart, nextTime ?? '');
+                }}
+                onBlur={field.onBlur}
+            />
+        </div>
+    );
 }
 
 export function D2AgeField({ control }: WidgetProps) {

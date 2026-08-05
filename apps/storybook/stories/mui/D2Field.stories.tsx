@@ -61,6 +61,11 @@ export const Select: Story = {
     play: plays.selectOption,
 };
 
+export const MultiSelect: Story = {
+    args: { widgetKind: 'multiSelect' },
+    play: plays.multiSelectOption,
+};
+
 export const Boolean: Story = {
     args: { widgetKind: 'boolean' },
     play: plays.booleanYes,
@@ -69,6 +74,16 @@ export const Boolean: Story = {
 export const Date: Story = {
     args: { widgetKind: 'date' },
     play: plays.dateInput,
+};
+
+export const Time: Story = {
+    args: { widgetKind: 'time' },
+    play: plays.timeInput,
+};
+
+export const DateTime: Story = {
+    args: { widgetKind: 'datetime' },
+    play: plays.datetimeInput,
 };
 
 export const Age: Story = {

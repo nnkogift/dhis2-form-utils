@@ -15,6 +15,7 @@ export type WidgetKind =
     | 'time'
     | 'age'
     | 'select'
+    | 'multiSelect'
     | 'orgUnit'
     | 'coordinate'
     | 'file'
@@ -22,7 +23,9 @@ export type WidgetKind =
     | 'unsupported';
 
 export function resolveWidgetKind(config: FieldConfig): WidgetKind {
-    if (config.optionSet) return 'select';
+    if (config.optionSet) {
+        return config.valueType === 'MULTI_TEXT' ? 'multiSelect' : 'select';
+    }
 
     switch (config.valueType) {
         case 'TEXT':

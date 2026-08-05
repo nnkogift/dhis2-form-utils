@@ -46,6 +46,24 @@ describe('filterPayload', () => {
         expect(filterPayload({ de1: 'opt2' }, fieldState)).toEqual({ de1: 'opt2' });
     });
 
+    it('strips hidden codes from a comma-separated MULTI_TEXT value', () => {
+        const fieldState: FieldStateMap = {
+            de1: { ...createEmptyFieldState(), hiddenOptions: new Set(['opt1']) },
+        };
+
+        expect(filterPayload({ de1: 'opt1,opt2,opt3' }, fieldState)).toEqual({
+            de1: 'opt2,opt3',
+        });
+    });
+
+    it('nulls a MULTI_TEXT value when every code is hidden', () => {
+        const fieldState: FieldStateMap = {
+            de1: { ...createEmptyFieldState(), hiddenOptions: new Set(['opt1', 'opt2']) },
+        };
+
+        expect(filterPayload({ de1: 'opt1,opt2' }, fieldState)).toEqual({ de1: null });
+    });
+
     it('only guards against directly hidden options when optionGroups is omitted', () => {
         const fieldState: FieldStateMap = {
             de1: { ...createEmptyFieldState(), hiddenOptionGroups: new Set(['og1']) },

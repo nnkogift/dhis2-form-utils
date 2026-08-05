@@ -38,6 +38,8 @@ export type { FieldControlInput, FieldControlReturn, WidgetProps } from './field
 export { useFieldControl } from './fields/useFieldControl';
 export { resolveWidgetKind } from './fields/widgetKind';
 export { buildFieldSchema } from './fields/fieldValidation';
+export { joinMultiTextValue, parseMultiTextValue } from './fields/multiTextValue';
 export { resolveFieldValidation } from './fields/fieldFeedback';
+export { computeAgeFromDob } from './fields/computeAgeFromDob';
 export { useRuleEffectTrace, useFieldRuleEffect, useSectionRuleEffect } from './useRuleEffectTrace';
 export type { RuleEffectTrace } from './useRuleEffectTrace';

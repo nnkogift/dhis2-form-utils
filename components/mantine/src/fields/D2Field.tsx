@@ -1,11 +1,20 @@
-import { type FieldControlInput, useFieldControl } from '@dhis2-form-utils/hooks';
+// fallow-ignore-file code-duplication
+import {
+    type FieldControlInput,
+    useFieldControl,
+    type WidgetKind,
+    type WidgetProps,
+} from '@dhis2-form-utils/hooks';
+import type { ComponentType } from 'react';
 import {
     D2AgeField,
     D2BooleanField,
     D2DateField,
+    D2DateTimeField,
     D2EmailField,
     D2IntegerField,
     D2LongTextField,
+    D2MultiSelectField,
     D2NumberField,
     D2PercentageField,
     D2PhoneField,
@@ -20,44 +29,34 @@ export type D2FieldProps = {
     field: FieldControlInput;
 };
 
+const WIDGET_BY_KIND: Record<WidgetKind, ComponentType<WidgetProps>> = {
+    text: D2TextField,
+    longText: D2LongTextField,
+    email: D2EmailField,
+    phone: D2PhoneField,
+    number: D2NumberField,
+    integer: D2IntegerField,
+    percentage: D2PercentageField,
+    boolean: D2BooleanField,
+    trueOnly: D2TrueOnlyField,
+    date: D2DateField,
+    time: D2TimeField,
+    age: D2AgeField,
+    select: D2SelectField,
+    multiSelect: D2MultiSelectField,
+    datetime: D2DateTimeField,
+    coordinate: D2UnsupportedField,
+    orgUnit: D2UnsupportedField,
+    file: D2UnsupportedField,
+    image: D2UnsupportedField,
+    unsupported: D2UnsupportedField,
+};
+
 export function D2Field({ field }: D2FieldProps) {
     const fieldControl = useFieldControl({ ...field });
 
     if (fieldControl.isHidden) return null;
 
-    switch (fieldControl.widgetKind) {
-        case 'text':
-            return <D2TextField control={fieldControl} />;
-        case 'longText':
-            return <D2LongTextField control={fieldControl} />;
-        case 'email':
-            return <D2EmailField control={fieldControl} />;
-        case 'phone':
-            return <D2PhoneField control={fieldControl} />;
-        case 'number':
-            return <D2NumberField control={fieldControl} />;
-        case 'integer':
-            return <D2IntegerField control={fieldControl} />;
-        case 'percentage':
-            return <D2PercentageField control={fieldControl} />;
-        case 'boolean':
-            return <D2BooleanField control={fieldControl} />;
-        case 'trueOnly':
-            return <D2TrueOnlyField control={fieldControl} />;
-        case 'date':
-            return <D2DateField control={fieldControl} />;
-        case 'time':
-            return <D2TimeField control={fieldControl} />;
-        case 'age':
-            return <D2AgeField control={fieldControl} />;
-        case 'select':
-            return <D2SelectField control={fieldControl} />;
-        case 'datetime':
-        case 'coordinate':
-        case 'orgUnit':
-        case 'file':
-        case 'image':
-        case 'unsupported':
-            return <D2UnsupportedField control={fieldControl} />;
-    }
+    const Widget = WIDGET_BY_KIND[fieldControl.widgetKind];
+    return <Widget control={fieldControl} />;
 }
