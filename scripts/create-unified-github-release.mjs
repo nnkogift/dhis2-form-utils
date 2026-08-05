@@ -72,15 +72,20 @@ function runInherit(command, args) {
     execFileSync(command, args, { stdio: 'inherit', env });
 }
 
-let tagExists = false;
-try {
-    run('git', ['rev-parse', tag]);
-    tagExists = true;
-} catch {
-    tagExists = false;
+/**
+ * @param {string} command
+ * @param {string[]} args
+ */
+function succeeds(command, args) {
+    try {
+        run(command, args);
+        return true;
+    } catch {
+        return false;
+    }
 }
 
-if (!tagExists) {
+if (!succeeds('git', ['rev-parse', tag])) {
     console.log(`Creating tag ${tag}…`);
     runInherit('git', ['tag', '-a', tag, '-m', `Release ${tag}`]);
 }
@@ -91,15 +96,7 @@ try {
     console.log(`Tag ${tag} may already exist on origin — continuing.`);
 }
 
-let releaseExists = false;
-try {
-    run('gh', ['release', 'view', tag]);
-    releaseExists = true;
-} catch {
-    releaseExists = false;
-}
-
-if (releaseExists) {
+if (succeeds('gh', ['release', 'view', tag])) {
     console.log(`GitHub Release ${tag} already exists — updating notes.`);
     runInherit('gh', ['release', 'edit', tag, '--title', tag, '--notes', body]);
 } else {
