@@ -32,3 +32,20 @@ onlyBuiltDependencies:
     - core-js-pure
     - esbuild
     - msw
+
+# Dependabot remediation: force patched versions of transitive deps whose
+# direct parents (Docusaurus, changesets, eslint-plugin-react) are already
+# on their latest release but haven't picked up the fix yet.
+overrides:
+    'brace-expansion@<1.1.16': '1.1.16'
+    'brace-expansion@>=2.0.0 <2.1.4': '2.1.4'
+    'brace-expansion@>=4.0.0 <5.0.9': '5.0.9'
+    'js-yaml@>=3.0.0 <3.15.0': '3.15.0'
+    'js-yaml@>=4.0.0 <4.3.0': '4.3.0'
+    fast-uri: '3.1.5'
+    shell-quote: '1.9.0'
+    uuid: '11.1.1'
+    postcss: '8.5.23'
+    loader-utils: '1.4.2'
+    undici: '7.29.0'
+    serialize-javascript: '7.0.5'
