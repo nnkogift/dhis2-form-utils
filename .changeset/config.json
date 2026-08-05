@@ -17,10 +17,5 @@
     "access": "public",
     "baseBranch": "main",
     "updateInternalDependencies": "patch",
-    "ignore": [
-        "dhis2-form-utils",
-        "program-rules-playground",
-        "storybook",
-        "@nnkogift/dhis2-form-utils-config"
-    ]
+    "ignore": ["program-rules-playground", "storybook", "@nnkogift/dhis2-form-utils-config"]
 }
