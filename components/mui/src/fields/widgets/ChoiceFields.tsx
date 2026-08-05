@@ -9,12 +9,12 @@ import {
     RadioGroup,
     TextField,
 } from '@mui/material';
-import type { WidgetProps } from '@dhis2-form-utils/hooks';
+import type { WidgetProps } from '@nnkogift/dhis2-form-utils-hooks';
 import {
     joinMultiTextValue,
     parseMultiTextValue,
     resolveFieldValidation,
-} from '@dhis2-form-utils/hooks';
+} from '@nnkogift/dhis2-form-utils-hooks';
 
 // fallow-ignore-next-line complexity
 export function D2BooleanField({ control }: WidgetProps) {

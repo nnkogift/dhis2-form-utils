@@ -1,5 +1,5 @@
-import { D2Field } from '@dhis2-form-utils/mantine';
-import type { WidgetKind } from '@dhis2-form-utils/hooks';
+import { D2Field } from '@nnkogift/dhis2-form-utils-mantine';
+import type { WidgetKind } from '@nnkogift/dhis2-form-utils-hooks';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { MantineProvider } from '@mantine/core';
 import { makeFieldPsde } from '../../fixtures/fieldMetadata';

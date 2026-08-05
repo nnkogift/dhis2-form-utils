@@ -1,4 +1,4 @@
-import { useSectionState } from '@dhis2-form-utils/hooks';
+import { useSectionState } from '@nnkogift/dhis2-form-utils-hooks';
 import type { ReactNode } from 'react';
 
 export type FormSectionProps = {

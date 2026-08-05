@@ -19,8 +19,8 @@ import {
     useReactFlow,
 } from '@xyflow/react';
 import { NoticeBox } from '@dhis2/ui';
-import type { RuleTraceEntry } from '@dhis2-form-utils/hooks';
-import type { FormStore } from '@dhis2-form-utils/hooks';
+import type { RuleTraceEntry } from '@nnkogift/dhis2-form-utils-hooks';
+import type { FormStore } from '@nnkogift/dhis2-form-utils-hooks';
 import { buildGraphFromTrace, type GraphNode, type RuleDependencyGraph } from './buildGraph';
 import { computeGraphLayout, prepareFlowGraph } from './graphLayout';
 import type { DevtoolsLabelLookup } from './createLabelLookup';

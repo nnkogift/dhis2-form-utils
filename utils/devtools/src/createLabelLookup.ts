@@ -2,8 +2,8 @@ import type {
     EventProgramMetadata,
     ProgramStageMetadata,
     TrackerProgramMetadata,
-} from '@dhis2-form-utils/metadata';
-import { selectProgramStage } from '@dhis2-form-utils/metadata';
+} from '@nnkogift/dhis2-form-utils-metadata';
+import { selectProgramStage } from '@nnkogift/dhis2-form-utils-metadata';
 
 export type ProgramStageRef = {
     id?: string;

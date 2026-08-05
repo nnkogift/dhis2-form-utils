@@ -1,5 +1,5 @@
-import { ProgramRuleActionType } from '@dhis2-form-utils/metadata';
-import type { RuleEffect } from '@dhis2-form-utils/rules';
+import { ProgramRuleActionType } from '@nnkogift/dhis2-form-utils-metadata';
+import type { RuleEffect } from '@nnkogift/dhis2-form-utils-rules';
 
 export type TraceEffect = {
     type: ProgramRuleActionType;

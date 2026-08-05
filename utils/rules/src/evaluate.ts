@@ -1,4 +1,4 @@
-import { ProgramRuleActionType } from '@dhis2-form-utils/metadata';
+import { ProgramRuleActionType } from '@nnkogift/dhis2-form-utils-metadata';
 import { partitionEffects } from './partitionEffects';
 import { buildFeedbackMap, buildSectionMap } from './sectionFeedback';
 import {

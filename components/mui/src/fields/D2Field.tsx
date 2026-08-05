@@ -4,7 +4,7 @@ import {
     useFieldControl,
     type WidgetKind,
     type WidgetProps,
-} from '@dhis2-form-utils/hooks';
+} from '@nnkogift/dhis2-form-utils-hooks';
 import type { ComponentType } from 'react';
 import {
     D2AgeField,

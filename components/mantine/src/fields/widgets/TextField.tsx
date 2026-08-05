@@ -1,6 +1,6 @@
 import { Textarea, TextInput } from '@mantine/core';
-import type { WidgetProps } from '@dhis2-form-utils/hooks';
-import { resolveFieldValidation } from '@dhis2-form-utils/hooks';
+import type { WidgetProps } from '@nnkogift/dhis2-form-utils-hooks';
+import { resolveFieldValidation } from '@nnkogift/dhis2-form-utils-hooks';
 
 type D2TextFieldOptions = {
     type?: string;

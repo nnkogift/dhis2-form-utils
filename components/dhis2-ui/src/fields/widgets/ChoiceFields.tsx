@@ -6,12 +6,12 @@ import {
     SingleSelectField,
     SingleSelectOption,
 } from '@dhis2/ui';
-import type { WidgetProps } from '@dhis2-form-utils/hooks';
+import type { WidgetProps } from '@nnkogift/dhis2-form-utils-hooks';
 import {
     joinMultiTextValue,
     parseMultiTextValue,
     resolveFieldValidation,
-} from '@dhis2-form-utils/hooks';
+} from '@nnkogift/dhis2-form-utils-hooks';
 
 const BOOLEAN_OPTIONS = [
     { label: 'Yes', value: 'true' },

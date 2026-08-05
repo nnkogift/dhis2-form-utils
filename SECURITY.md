@@ -38,7 +38,7 @@ directly:
 A useful vulnerability report helps triage and reproduce the issue quickly. Please include as much of the following as
 possible:
 
-- **Package(s) affected** — e.g. `@dhis2-form-utils/rules`, `@dhis2-form-utils/hooks`, a specific UI adapter
+- **Package(s) affected** — e.g. `@nnkogift/dhis2-form-utils-rules`, `@nnkogift/dhis2-form-utils-hooks`, a specific UI adapter
 - **Description** — what the vulnerability is and why it is a security concern
 - **Reproduction steps** — a minimal code example, test case, or proof of concept
 - **Impact** — what an attacker could achieve and under what conditions
@@ -70,14 +70,14 @@ patience and understanding are appreciated — this commitment is made in good f
 
 The following are considered security-relevant within this library:
 
-| Area                                | Examples                                                                                                                                                               |
-| ----------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Rule engine expression handling** | Expression injection or unsafe evaluation when processing DHIS2 program rule expressions passed to `@dhis2/rule-engine` context builders                               |
-| **Payload filtering**               | Bugs in `filterPayload` that cause sensitive field data to be included in submission payloads despite being hidden/disabled by program rules                           |
-| **Unsafe rendering in UI adapters** | XSS vulnerabilities introduced by UI adapter components that render dynamic DHIS2 metadata (labels, descriptions, option names) without proper sanitisation            |
-| **`FieldStateMap` data leakage**    | Typed field state exposing values that should be suppressed or stripped based on rule outcomes                                                                         |
-| **Dependency vulnerabilities**      | Critical or high-severity CVEs in direct dependencies that affect the security posture of consuming applications                                                       |
-| **Hook behaviour**                  | Security-relevant edge cases in `@dhis2-form-utils/hooks` that cause form state to misrepresent rule outcomes (e.g. showing hidden fields, submitting disabled values) |
+| Area                                | Examples                                                                                                                                                                        |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Rule engine expression handling** | Expression injection or unsafe evaluation when processing DHIS2 program rule expressions passed to `@dhis2/rule-engine` context builders                                        |
+| **Payload filtering**               | Bugs in `filterPayload` that cause sensitive field data to be included in submission payloads despite being hidden/disabled by program rules                                    |
+| **Unsafe rendering in UI adapters** | XSS vulnerabilities introduced by UI adapter components that render dynamic DHIS2 metadata (labels, descriptions, option names) without proper sanitisation                     |
+| **`FieldStateMap` data leakage**    | Typed field state exposing values that should be suppressed or stripped based on rule outcomes                                                                                  |
+| **Dependency vulnerabilities**      | Critical or high-severity CVEs in direct dependencies that affect the security posture of consuming applications                                                                |
+| **Hook behaviour**                  | Security-relevant edge cases in `@nnkogift/dhis2-form-utils-hooks` that cause form state to misrepresent rule outcomes (e.g. showing hidden fields, submitting disabled values) |
 
 ### Out of Scope
 

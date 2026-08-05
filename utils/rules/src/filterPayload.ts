@@ -1,5 +1,5 @@
-import type { OptionGroupCodeMap } from '@dhis2-form-utils/metadata';
-import { parseMultiTextValue } from '@dhis2-form-utils/metadata';
+import type { OptionGroupCodeMap } from '@nnkogift/dhis2-form-utils-metadata';
+import { parseMultiTextValue } from '@nnkogift/dhis2-form-utils-metadata';
 import { resolveHiddenOptionCodes } from './resolveHiddenOptionCodes';
 import type { FieldStateMap } from './types';
 

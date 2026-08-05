@@ -1,4 +1,4 @@
-import type { TrackerProgramMetadata } from '@dhis2-form-utils/hooks'
+import type { TrackerProgramMetadata } from '@nnkogift/dhis2-form-utils-hooks'
 import {
     buildEventPayload,
     buildTrackerRegistrationPayload,

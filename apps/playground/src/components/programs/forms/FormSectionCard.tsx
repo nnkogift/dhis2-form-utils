@@ -1,6 +1,9 @@
 import type { ReactNode } from 'react'
 import i18n from '@dhis2/d2-i18n'
-import { useSectionRuleEffect, useSectionState } from '@dhis2-form-utils/hooks'
+import {
+    useSectionRuleEffect,
+    useSectionState,
+} from '@nnkogift/dhis2-form-utils-hooks'
 import { HiddenSectionPlaceholder } from '@/components/rules/HiddenSectionPlaceholder'
 import { useRuleDisplay } from '@/components/rules/RuleDisplayContext'
 

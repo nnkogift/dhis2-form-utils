@@ -1,6 +1,6 @@
 import { Button, IconFullscreen16 } from '@dhis2/ui';
-import type { RuleTraceEntry } from '@dhis2-form-utils/hooks';
-import { useFormStateContext, useFormStore } from '@dhis2-form-utils/hooks';
+import type { RuleTraceEntry } from '@nnkogift/dhis2-form-utils-hooks';
+import { useFormStateContext, useFormStore } from '@nnkogift/dhis2-form-utils-hooks';
 import { useCallback, useMemo, useState, useSyncExternalStore } from 'react';
 import { buildGraphFromTrace } from './buildGraph';
 import { createLabelLookup, type RuleDevtoolsMetadata } from './createLabelLookup';

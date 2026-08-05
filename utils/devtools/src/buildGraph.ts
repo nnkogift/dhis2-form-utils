@@ -1,4 +1,4 @@
-import type { RuleTraceEntry } from '@dhis2-form-utils/hooks';
+import type { RuleTraceEntry } from '@nnkogift/dhis2-form-utils-hooks';
 import type { DevtoolsLabelLookup } from './createLabelLookup';
 
 export type GraphNodeKind = 'field' | 'section' | 'feedback' | 'rule';

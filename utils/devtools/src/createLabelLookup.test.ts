@@ -1,4 +1,7 @@
-import type { EventProgramMetadata, TrackerProgramMetadata } from '@dhis2-form-utils/metadata';
+import type {
+    EventProgramMetadata,
+    TrackerProgramMetadata,
+} from '@nnkogift/dhis2-form-utils-metadata';
 import { describe, expect, it } from 'vitest';
 import { createLabelLookup } from './createLabelLookup';
 

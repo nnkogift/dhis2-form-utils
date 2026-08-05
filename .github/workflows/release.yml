@@ -1,0 +1,75 @@
+name: Release
+
+on:
+    push:
+        branches: [main, beta, alpha]
+
+concurrency:
+    group: release-${{ github.ref }}
+    cancel-in-progress: false
+
+permissions:
+    contents: write
+    pull-requests: write
+    # Required for npm trusted publishing (OIDC)
+    id-token: write
+    # Required to publish to GitHub Packages
+    packages: write
+
+jobs:
+    release:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                  # Fetch full history for accurate changelogs / tags
+                  fetch-depth: 0
+
+            - uses: pnpm/action-setup@v4
+
+            - uses: actions/setup-node@v4
+              with:
+                  # Trusted publishing needs Node >= 22.14 and npm >= 11.5.1
+                  node-version: 24
+                  cache: pnpm
+                  # Do not set registry-url here: setup-node would write an auth
+                  # .npmrc that blocks npm's OIDC auto-detection.
+
+            - name: Ensure npm supports OIDC trusted publishing
+              run: npm install -g npm@latest
+
+            - run: pnpm install --frozen-lockfile
+
+            - name: Build packages
+              run: pnpm build:packages
+
+            - name: Create release PR or publish to npm
+              id: changesets
+              uses: changesets/action@v1
+              with:
+                  version: pnpm version-packages
+                  # Creates per-package git tags and pushes them; with
+                  # createGithubReleases, also opens GitHub Releases for those tags.
+                  publish: pnpm exec changeset publish
+                  title: 'chore: version packages'
+                  commit: 'chore: version packages'
+                  createGithubReleases: true
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  # Empty on purpose: changesets/action skips writing a real
+                  # auth token to .npmrc, so npm can use GitHub OIDC instead.
+                  NPM_TOKEN: ''
+
+            - name: Publish to GitHub Packages
+              if: steps.changesets.outputs.published == 'true'
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  PUBLISHED_PACKAGES: ${{ steps.changesets.outputs.publishedPackages }}
+              run: node scripts/publish-github-packages.mjs
+
+            - name: Create unified v* tag and GitHub Release
+              if: steps.changesets.outputs.published == 'true'
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  PUBLISHED_PACKAGES: ${{ steps.changesets.outputs.publishedPackages }}
+              run: node scripts/create-unified-github-release.mjs

@@ -5,7 +5,7 @@ import {
     ProgramRuleActionType,
     ProgramRuleVariableSourceType,
     type TrackerProgramMetadata,
-} from '@dhis2-form-utils/metadata';
+} from '@nnkogift/dhis2-form-utils-metadata';
 import { FormStateProvider } from './FormStateContext';
 import { useFieldRuleEffect, useSectionRuleEffect } from './useRuleEffectTrace';
 import { useTrackerForm } from './useTrackerForm';

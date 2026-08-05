@@ -1,5 +1,5 @@
-import type { FieldControlInput } from '@dhis2-form-utils/hooks';
-import type { ProgramTrackedEntityAttribute } from '@dhis2-form-utils/metadata';
+import type { FieldControlInput } from '@nnkogift/dhis2-form-utils-hooks';
+import type { ProgramTrackedEntityAttribute } from '@nnkogift/dhis2-form-utils-metadata';
 import { useFormContext } from 'react-hook-form';
 import type { ComponentType } from 'react';
 import { useTrackerFormStory } from '../decorators/withTrackerForm';

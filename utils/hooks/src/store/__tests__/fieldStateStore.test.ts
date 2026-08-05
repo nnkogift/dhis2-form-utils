@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { createEmptyFieldState, type FieldStateMap } from '@dhis2-form-utils/rules';
+import { createEmptyFieldState, type FieldStateMap } from '@nnkogift/dhis2-form-utils-rules';
 import { createFieldStateStore } from '../fieldStateStore';
 
 describe('createFieldStateStore', () => {

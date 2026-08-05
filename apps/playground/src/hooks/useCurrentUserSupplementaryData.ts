@@ -1,6 +1,6 @@
 import { useDataQuery } from '@dhis2/app-runtime'
 import { useMemo } from 'react'
-import type { RuleSupplementaryDataInput } from '@dhis2-form-utils/rules'
+import type { RuleSupplementaryDataInput } from '@nnkogift/dhis2-form-utils-rules'
 
 const SUPPLEMENTARY_DATA_FIELDS = ['userGroups[id]', 'userRoles[id]'].join(',')
 

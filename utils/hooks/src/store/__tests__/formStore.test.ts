@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, afterEach } from 'vitest';
-import { ProgramRuleActionType } from '@dhis2-form-utils/metadata';
+import { ProgramRuleActionType } from '@nnkogift/dhis2-form-utils-metadata';
 import { createRef } from 'react';
 import type { UseFormReturn } from 'react-hook-form';
 import type { RuleTraceEntry } from '../../buildTraceEntry';

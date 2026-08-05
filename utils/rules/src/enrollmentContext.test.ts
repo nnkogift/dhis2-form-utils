@@ -2,7 +2,7 @@ import {
     ProgramRuleActionType,
     ProgramRuleVariableSourceType,
     type TrackerProgramMetadata,
-} from '@dhis2-form-utils/metadata';
+} from '@nnkogift/dhis2-form-utils-metadata';
 import { describe, expect, it } from 'vitest';
 import { toRuleEventFromInput } from './context';
 import { buildEnrollmentRuleEngine, buildEnrollmentRuleEngineContext } from './enrollmentContext';

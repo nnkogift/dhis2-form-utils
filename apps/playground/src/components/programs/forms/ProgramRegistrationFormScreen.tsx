@@ -1,12 +1,12 @@
 import i18n from '@dhis2/d2-i18n'
 import { Center, CircularLoader, NoticeBox } from '@dhis2/ui'
-import type { ProgramStageRef } from '@dhis2-form-utils/devtools'
-import type { TrackerProgramMetadata } from '@dhis2-form-utils/hooks'
-import type { OptionGroupCodeMap } from '@dhis2-form-utils/metadata'
+import type { ProgramStageRef } from '@nnkogift/dhis2-form-utils-devtools'
+import type { TrackerProgramMetadata } from '@nnkogift/dhis2-form-utils-hooks'
+import type { OptionGroupCodeMap } from '@nnkogift/dhis2-form-utils-metadata'
 import type {
     RuleEventInput,
     RuleSupplementaryDataInput,
-} from '@dhis2-form-utils/rules'
+} from '@nnkogift/dhis2-form-utils-rules'
 import { ProgramRegistrationForm } from './ProgramRegistrationForm'
 
 type ProgramRegistrationFormScreenProps = {

@@ -1,0 +1,26 @@
+{
+    "$schema": "https://unpkg.com/@changesets/config@3.1.1/schema.json",
+    "changelog": ["@changesets/changelog-github", { "repo": "nnkogift/dhis2-form-utils" }],
+    "commit": false,
+    "fixed": [
+        [
+            "@nnkogift/dhis2-form-utils-metadata",
+            "@nnkogift/dhis2-form-utils-rules",
+            "@nnkogift/dhis2-form-utils-hooks",
+            "@nnkogift/dhis2-form-utils-dhis2-ui",
+            "@nnkogift/dhis2-form-utils-mantine",
+            "@nnkogift/dhis2-form-utils-mui",
+            "@nnkogift/dhis2-form-utils-devtools"
+        ]
+    ],
+    "linked": [],
+    "access": "public",
+    "baseBranch": "main",
+    "updateInternalDependencies": "patch",
+    "ignore": [
+        "dhis2-form-utils",
+        "program-rules-playground",
+        "storybook",
+        "@nnkogift/dhis2-form-utils-config"
+    ]
+}

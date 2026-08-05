@@ -3,8 +3,8 @@ import type {
     RawEventProgramConfigResult,
     RawOptionGroupsResult,
     RawTrackerConfigResult,
-} from '@dhis2-form-utils/metadata';
-import { resolveOptionGroups } from '@dhis2-form-utils/metadata';
+} from '@nnkogift/dhis2-form-utils-metadata';
+import { resolveOptionGroups } from '@nnkogift/dhis2-form-utils-metadata';
 
 /**
  * Denormalizes a full flat DHIS2 metadata-export JSON package (the shape of

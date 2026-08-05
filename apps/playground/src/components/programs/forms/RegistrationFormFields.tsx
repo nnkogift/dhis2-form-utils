@@ -1,8 +1,8 @@
 import { useMemo } from 'react'
 import i18n from '@dhis2/d2-i18n'
-import type { TrackerProgramMetadata } from '@dhis2-form-utils/hooks'
-import type { ProgramTrackedEntityAttribute } from '@dhis2-form-utils/metadata'
-import { resolveFormSectionLayout } from '@dhis2-form-utils/metadata'
+import type { TrackerProgramMetadata } from '@nnkogift/dhis2-form-utils-hooks'
+import type { ProgramTrackedEntityAttribute } from '@nnkogift/dhis2-form-utils-metadata'
+import { resolveFormSectionLayout } from '@nnkogift/dhis2-form-utils-metadata'
 import { RuleAwareField } from '@/components/rules/RuleAwareField'
 import { defaultSectionTitle, FormSectionCard } from './FormSectionCard'
 

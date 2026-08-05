@@ -1,5 +1,5 @@
 import { createContext, type ReactNode, useContext } from 'react'
-import type { DevtoolsLabelLookup } from '@dhis2-form-utils/devtools'
+import type { DevtoolsLabelLookup } from '@nnkogift/dhis2-form-utils-devtools'
 
 type RuleDisplayContextValue = {
     ghostsEnabled: boolean

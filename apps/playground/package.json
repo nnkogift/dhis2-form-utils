@@ -14,11 +14,11 @@
         "format": "prettier . -w"
     },
     "dependencies": {
-        "@dhis2-form-utils/devtools": "workspace:*",
-        "@dhis2-form-utils/dhis2-ui": "workspace:*",
-        "@dhis2-form-utils/hooks": "workspace:*",
-        "@dhis2-form-utils/metadata": "workspace:*",
-        "@dhis2-form-utils/rules": "workspace:*",
+        "@nnkogift/dhis2-form-utils-devtools": "workspace:*",
+        "@nnkogift/dhis2-form-utils-dhis2-ui": "workspace:*",
+        "@nnkogift/dhis2-form-utils-hooks": "workspace:*",
+        "@nnkogift/dhis2-form-utils-metadata": "workspace:*",
+        "@nnkogift/dhis2-form-utils-rules": "workspace:*",
         "@dhis2/app-runtime": "^3.17.0",
         "@dhis2/d2-i18n": "^1.2.0",
         "@dhis2/ui": "^10.15.1",
@@ -31,7 +31,7 @@
         "zod": "^3.25.76"
     },
     "devDependencies": {
-        "@dhis2-form-utils/config": "workspace:*",
+        "@nnkogift/dhis2-form-utils-config": "workspace:*",
         "@dhis2/cli-app-scripts": "^12.11.1",
         "@dhis2/config-eslint": "^0.2.2",
         "@dhis2/config-prettier": "^0.2.2",

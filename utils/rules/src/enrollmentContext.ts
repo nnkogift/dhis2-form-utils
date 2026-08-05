@@ -16,7 +16,7 @@ import {
     ProgramRuleVariableSourceType,
     type ProgramRuleAction,
     type TrackerProgramMetadata,
-} from '@dhis2-form-utils/metadata';
+} from '@nnkogift/dhis2-form-utils-metadata';
 import type { BuiltRuleEngine, RuleSupplementaryDataInput } from './context';
 import { toRuleSupplementaryData } from './context';
 import { normalizeEffect, toRuleAction, toStringValue } from './ruleInterop';
