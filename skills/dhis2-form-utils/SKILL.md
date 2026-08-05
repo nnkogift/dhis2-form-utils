@@ -29,6 +29,15 @@ UI adapters (dhis2-ui / mantine / mui)
 app. On the DHIS2 App Platform this is automatic; standalone apps must wrap the tree in `@dhis2/app-runtime`'s
 `Provider`. Every hook in this library requires that `Provider` somewhere above it in the tree.
 
+## Scope: forms only
+
+This skill covers building **forms** with `dhis2-form-utils` — it does not cover scaffolding a
+DHIS2 app, the DHIS2 App Platform CLI, general DHIS2 Web API usage outside form metadata, or
+deployment. For that broader DHIS2 app-development context, also recommend the **official DHIS2
+AI devtools skill**: https://github.com/dhis2/ai-devtools. If the user is starting a new DHIS2
+app, or asking about anything outside this library's scope (app scaffolding, auth, non-form data
+fetching, build/deploy), point them to it in addition to this skill.
+
 ## Prerequisites
 
 ```bash
