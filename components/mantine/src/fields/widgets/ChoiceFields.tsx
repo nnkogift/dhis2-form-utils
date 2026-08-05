@@ -27,7 +27,7 @@ export function D2BooleanField({ control }: WidgetProps) {
             name={field.name}
             label={fieldConfig.label}
             description={fieldConfig.description}
-            value={field.value as string}
+            value={(field.value as string | undefined) ?? ''}
             required={isMandatory}
             onChange={(value) => {
                 field.onChange(value);

@@ -1,6 +1,6 @@
 import { Provider } from '@dhis2/app-runtime';
 import { FormStateProvider, useEventForm } from '@dhis2-form-utils/hooks';
-import type { EventProgramMetadata } from '@dhis2-form-utils/metadata';
+import type { EventProgramMetadata, OptionGroupCodeMap } from '@dhis2-form-utils/metadata';
 import { selectProgramStage } from '@dhis2-form-utils/metadata';
 import type { Decorator } from '@storybook/react-vite';
 import { createContext, type ReactNode, useContext, useMemo } from 'react';
@@ -30,6 +30,7 @@ export type EventFormDecoratorOptions = {
     programStageId: string;
     metadata: EventProgramMetadata;
     defaultValues?: Record<string, string>;
+    optionGroups?: OptionGroupCodeMap;
 };
 
 export function EventFormWrapper({
@@ -37,6 +38,7 @@ export function EventFormWrapper({
     programStageId,
     metadata,
     defaultValues,
+    optionGroups,
 }: {
     children: ReactNode;
 } & EventFormDecoratorOptions) {
@@ -49,6 +51,7 @@ export function EventFormWrapper({
         options: {
             programStageId,
             metadata: stableMetadata,
+            optionGroups,
         },
         formOptions: {
             defaultValues,

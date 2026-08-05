@@ -1,0 +1,1606 @@
+{
+    "system": {
+        "id": "eed3d451-4ff5-4193-b951-ffcc68954299",
+        "rev": "58a531e",
+        "version": "2.43.0.1",
+        "date": "2026-08-04T13:34:42.727+0000"
+    },
+    "optionSets": [
+        {
+            "created": "2026-07-31T06:14:43.125",
+            "lastUpdated": "2026-07-31T06:14:43.125",
+            "lastUpdatedBy": {
+                "id": "GOLswS44mh8",
+                "code": null,
+                "name": "Tom Wakiki",
+                "displayName": "Tom Wakiki",
+                "username": "system"
+            },
+            "createdBy": {
+                "id": "GOLswS44mh8",
+                "code": null,
+                "name": "Tom Wakiki",
+                "displayName": "Tom Wakiki",
+                "username": "system"
+            },
+            "valueType": "TEXT",
+            "version": 0,
+            "name": "PRT Colours",
+            "translations": [],
+            "options": [
+                { "id": "ZFBcP9btQS8" },
+                { "id": "NLRszpAjTkR" },
+                { "id": "CvIbmmMx7Ip" },
+                { "id": "T2Vx5igYUMF" }
+            ],
+            "id": "YbEJsIrYQjn",
+            "attributeValues": []
+        }
+    ],
+    "categoryOptionCombos": [
+        {
+            "code": "default",
+            "name": "default",
+            "created": "2011-12-24T12:24:25.319",
+            "lastUpdated": "2011-12-24T12:24:25.319",
+            "translations": [],
+            "categoryCombo": { "id": "bjDvmb4bfuf" },
+            "categoryOptions": [{ "id": "xYerKDKCefk" }],
+            "ignoreApproval": false,
+            "id": "HllvX50cXC0",
+            "attributeValues": []
+        }
+    ],
+    "dataElements": [
+        {
+            "name": "PRT Hideable section field A",
+            "created": "2026-07-31T06:14:43.277",
+            "lastUpdated": "2026-07-31T06:14:43.277",
+            "translations": [],
+            "createdBy": {
+                "id": "GOLswS44mh8",
+                "code": null,
+                "name": "Tom Wakiki",
+                "displayName": "Tom Wakiki",
+                "username": "system"
+            },
+            "lastUpdatedBy": {
+                "id": "GOLswS44mh8",
+                "code": null,
+                "name": "Tom Wakiki",
+                "displayName": "Tom Wakiki",
+                "username": "system"
+            },
+            "shortName": "PRT Hideable field A",
+            "formName": "Hideable section field A",
+            "legendSets": [],
+            "aggregationType": "NONE",
+            "valueType": "TEXT",
+            "domainType": "TRACKER",
+            "aggregationLevels": [],
+            "zeroIsSignificant": false,
+            "id": "tML1M280G0U",
+            "attributeValues": [],
+            "categoryCombo": { "id": "bjDvmb4bfuf" }
+        },
+        {
+            "name": "PRT Number input",
+            "created": "2026-07-31T06:14:43.277",
+            "lastUpdated": "2026-07-31T06:14:43.277",
+            "translations": [],
+            "createdBy": {
+                "id": "GOLswS44mh8",
+                "code": null,
+                "name": "Tom Wakiki",
+                "displayName": "Tom Wakiki",
+                "username": "system"
+            },
+            "lastUpdatedBy": {
+                "id": "GOLswS44mh8",
+                "code": null,
+                "name": "Tom Wakiki",
+                "displayName": "Tom Wakiki",
+                "username": "system"
+            },
+            "shortName": "PRT Number input",
+            "formName": "Number input",
+            "legendSets": [],
+            "aggregationType": "SUM",
+            "valueType": "NUMBER",
+            "domainType": "TRACKER",
+            "aggregationLevels": [],
+            "zeroIsSignificant": false,
+            "id": "whUEYdoURdQ",
+            "attributeValues": [],
+            "categoryCombo": { "id": "bjDvmb4bfuf" }
+        },
+        {
+            "name": "PRT Mandatory target",
+            "created": "2026-07-31T06:14:43.277",
+            "lastUpdated": "2026-07-31T06:14:43.277",
+            "translations": [],
+            "createdBy": {
+                "id": "GOLswS44mh8",
+                "code": null,
+                "name": "Tom Wakiki",
+                "displayName": "Tom Wakiki",
+                "username": "system"
+            },
+            "lastUpdatedBy": {
+                "id": "GOLswS44mh8",
+                "code": null,
+                "name": "Tom Wakiki",
+                "displayName": "Tom Wakiki",
+                "username": "system"
+            },
+            "shortName": "PRT Mandatory target",
+            "formName": "Mandatory target",
+            "legendSets": [],
+            "aggregationType": "NONE",
+            "valueType": "TEXT",
+            "domainType": "TRACKER",
+            "aggregationLevels": [],
+            "zeroIsSignificant": false,
+            "id": "ikV37IrPaOv",
+            "attributeValues": [],
+            "categoryCombo": { "id": "bjDvmb4bfuf" }
+        },
+        {
+            "name": "PRT Hideable section field B",
+            "created": "2026-07-31T06:14:43.277",
+            "lastUpdated": "2026-07-31T06:14:43.277",
+            "translations": [],
+            "createdBy": {
+                "id": "GOLswS44mh8",
+                "code": null,
+                "name": "Tom Wakiki",
+                "displayName": "Tom Wakiki",
+                "username": "system"
+            },
+            "lastUpdatedBy": {
+                "id": "GOLswS44mh8",
+                "code": null,
+                "name": "Tom Wakiki",
+                "displayName": "Tom Wakiki",
+                "username": "system"
+            },
+            "shortName": "PRT Hideable field B",
+            "formName": "Hideable section field B",
+            "legendSets": [],
+            "aggregationType": "NONE",
+            "valueType": "TEXT",
+            "domainType": "TRACKER",
+            "aggregationLevels": [],
+            "zeroIsSignificant": false,
+            "id": "WPQgcRftJEG",
+            "attributeValues": [],
+            "categoryCombo": { "id": "bjDvmb4bfuf" }
+        },
+        {
+            "name": "PRT Hide target field",
+            "created": "2026-07-31T06:14:43.277",
+            "lastUpdated": "2026-07-31T06:14:43.277",
+            "translations": [],
+            "createdBy": {
+                "id": "GOLswS44mh8",
+                "code": null,
+                "name": "Tom Wakiki",
+                "displayName": "Tom Wakiki",
+                "username": "system"
+            },
+            "lastUpdatedBy": {
+                "id": "GOLswS44mh8",
+                "code": null,
+                "name": "Tom Wakiki",
+                "displayName": "Tom Wakiki",
+                "username": "system"
+            },
+            "shortName": "PRT Hide target field",
+            "formName": "Hide target field",
+            "legendSets": [],
+            "aggregationType": "NONE",
+            "valueType": "TEXT",
+            "domainType": "TRACKER",
+            "aggregationLevels": [],
+            "zeroIsSignificant": false,
+            "id": "sKYuUOftlgO",
+            "attributeValues": [],
+            "categoryCombo": { "id": "bjDvmb4bfuf" }
+        },
+        {
+            "name": "PRT Assigned value (number x 2)",
+            "created": "2026-07-31T06:14:43.277",
+            "lastUpdated": "2026-07-31T06:14:43.277",
+            "translations": [],
+            "createdBy": {
+                "id": "GOLswS44mh8",
+                "code": null,
+                "name": "Tom Wakiki",
+                "displayName": "Tom Wakiki",
+                "username": "system"
+            },
+            "lastUpdatedBy": {
+                "id": "GOLswS44mh8",
+                "code": null,
+                "name": "Tom Wakiki",
+                "displayName": "Tom Wakiki",
+                "username": "system"
+            },
+            "shortName": "PRT Assigned value",
+            "formName": "Assigned value (number x 2)",
+            "legendSets": [],
+            "aggregationType": "SUM",
+            "valueType": "NUMBER",
+            "domainType": "TRACKER",
+            "aggregationLevels": [],
+            "zeroIsSignificant": false,
+            "id": "rhmbkRxkgFT",
+            "attributeValues": [],
+            "categoryCombo": { "id": "bjDvmb4bfuf" }
+        },
+        {
+            "name": "PRT Toggle hide section",
+            "created": "2026-07-31T06:14:43.276",
+            "lastUpdated": "2026-07-31T06:14:43.276",
+            "translations": [],
+            "createdBy": {
+                "id": "GOLswS44mh8",
+                "code": null,
+                "name": "Tom Wakiki",
+                "displayName": "Tom Wakiki",
+                "username": "system"
+            },
+            "lastUpdatedBy": {
+                "id": "GOLswS44mh8",
+                "code": null,
+                "name": "Tom Wakiki",
+                "displayName": "Tom Wakiki",
+                "username": "system"
+            },
+            "shortName": "PRT Toggle hide section",
+            "formName": "Toggle hide section",
+            "legendSets": [],
+            "aggregationType": "NONE",
+            "valueType": "BOOLEAN",
+            "domainType": "TRACKER",
+            "aggregationLevels": [],
+            "zeroIsSignificant": false,
+            "id": "eUjDjDsjC78",
+            "attributeValues": [],
+            "categoryCombo": { "id": "bjDvmb4bfuf" }
+        },
+        {
+            "name": "PRT Trigger text",
+            "created": "2026-07-31T06:14:43.277",
+            "lastUpdated": "2026-07-31T06:14:43.277",
+            "translations": [],
+            "createdBy": {
+                "id": "GOLswS44mh8",
+                "code": null,
+                "name": "Tom Wakiki",
+                "displayName": "Tom Wakiki",
+                "username": "system"
+            },
+            "lastUpdatedBy": {
+                "id": "GOLswS44mh8",
+                "code": null,
+                "name": "Tom Wakiki",
+                "displayName": "Tom Wakiki",
+                "username": "system"
+            },
+            "shortName": "PRT Trigger text",
+            "formName": "Trigger text",
+            "legendSets": [],
+            "aggregationType": "NONE",
+            "valueType": "TEXT",
+            "domainType": "TRACKER",
+            "aggregationLevels": [],
+            "zeroIsSignificant": false,
+            "id": "Np1H391NjPi",
+            "attributeValues": [],
+            "categoryCombo": { "id": "bjDvmb4bfuf" }
+        },
+        {
+            "name": "PRT Colour",
+            "created": "2026-07-31T06:14:43.277",
+            "lastUpdated": "2026-07-31T06:14:43.277",
+            "translations": [],
+            "createdBy": {
+                "id": "GOLswS44mh8",
+                "code": null,
+                "name": "Tom Wakiki",
+                "displayName": "Tom Wakiki",
+                "username": "system"
+            },
+            "lastUpdatedBy": {
+                "id": "GOLswS44mh8",
+                "code": null,
+                "name": "Tom Wakiki",
+                "displayName": "Tom Wakiki",
+                "username": "system"
+            },
+            "shortName": "PRT Colour",
+            "formName": "Colour",
+            "legendSets": [],
+            "aggregationType": "NONE",
+            "valueType": "TEXT",
+            "domainType": "TRACKER",
+            "aggregationLevels": [],
+            "zeroIsSignificant": false,
+            "optionSet": { "id": "YbEJsIrYQjn" },
+            "id": "MZrYHJoBYQG",
+            "attributeValues": [],
+            "categoryCombo": { "id": "bjDvmb4bfuf" }
+        },
+        {
+            "name": "PRT Toggle hide field",
+            "created": "2026-07-31T06:14:43.275",
+            "lastUpdated": "2026-07-31T06:14:43.275",
+            "translations": [],
+            "createdBy": {
+                "id": "GOLswS44mh8",
+                "code": null,
+                "name": "Tom Wakiki",
+                "displayName": "Tom Wakiki",
+                "username": "system"
+            },
+            "lastUpdatedBy": {
+                "id": "GOLswS44mh8",
+                "code": null,
+                "name": "Tom Wakiki",
+                "displayName": "Tom Wakiki",
+                "username": "system"
+            },
+            "shortName": "PRT Toggle hide field",
+            "formName": "Toggle hide field",
+            "legendSets": [],
+            "aggregationType": "NONE",
+            "valueType": "BOOLEAN",
+            "domainType": "TRACKER",
+            "aggregationLevels": [],
+            "zeroIsSignificant": false,
+            "id": "CRPvieGoVZb",
+            "attributeValues": [],
+            "categoryCombo": { "id": "bjDvmb4bfuf" }
+        }
+    ],
+    "categoryOptions": [
+        {
+            "created": "2011-12-24T12:24:24.149",
+            "lastUpdated": "2016-04-12T20:37:48.414",
+            "createdBy": {
+                "id": "GOLswS44mh8",
+                "code": null,
+                "name": "Tom Wakiki",
+                "displayName": "Tom Wakiki",
+                "username": "system"
+            },
+            "code": "default",
+            "name": "default",
+            "shortName": "default",
+            "translations": [{ "locale": "en_GB", "property": "NAME", "value": "default" }],
+            "organisationUnits": [],
+            "id": "xYerKDKCefk",
+            "attributeValues": []
+        }
+    ],
+    "categoryCombos": [
+        {
+            "created": "2011-12-24T12:24:25.203",
+            "lastUpdated": "2016-04-12T20:37:49.126",
+            "code": "default",
+            "name": "default",
+            "categories": [{ "id": "GLevLNI9wkl" }],
+            "dataDimensionType": "DISAGGREGATION",
+            "skipTotal": false,
+            "translations": [],
+            "id": "bjDvmb4bfuf"
+        }
+    ],
+    "options": [
+        {
+            "code": "YELLOW",
+            "name": "Yellow",
+            "created": "2026-07-31T06:14:42.409",
+            "lastUpdated": "2026-07-31T06:14:43.062",
+            "translations": [],
+            "optionSet": { "id": "YbEJsIrYQjn" },
+            "sortOrder": 3,
+            "id": "T2Vx5igYUMF",
+            "attributeValues": []
+        },
+        {
+            "code": "RED",
+            "name": "Red",
+            "created": "2026-07-31T06:14:42.409",
+            "lastUpdated": "2026-07-31T06:14:43.060",
+            "translations": [],
+            "optionSet": { "id": "YbEJsIrYQjn" },
+            "sortOrder": 0,
+            "id": "ZFBcP9btQS8",
+            "attributeValues": []
+        },
+        {
+            "code": "BLUE",
+            "name": "Blue",
+            "created": "2026-07-31T06:14:42.409",
+            "lastUpdated": "2026-07-31T06:14:43.062",
+            "translations": [],
+            "optionSet": { "id": "YbEJsIrYQjn" },
+            "sortOrder": 2,
+            "id": "CvIbmmMx7Ip",
+            "attributeValues": []
+        },
+        {
+            "code": "GREEN",
+            "name": "Green",
+            "created": "2026-07-31T06:14:42.409",
+            "lastUpdated": "2026-07-31T06:14:43.062",
+            "translations": [],
+            "optionSet": { "id": "YbEJsIrYQjn" },
+            "sortOrder": 1,
+            "id": "NLRszpAjTkR",
+            "attributeValues": []
+        }
+    ],
+    "programRuleVariables": [
+        {
+            "name": "prt_toggle_hide_section",
+            "created": "2026-07-31T06:14:44.040",
+            "lastUpdated": "2026-07-31T06:14:44.040",
+            "translations": [],
+            "lastUpdatedBy": {
+                "id": "GOLswS44mh8",
+                "code": null,
+                "name": "Tom Wakiki",
+                "displayName": "Tom Wakiki",
+                "username": "system"
+            },
+            "program": { "id": "xo87zwzLEqc" },
+            "dataElement": { "id": "eUjDjDsjC78" },
+            "useCodeForOptionSet": false,
+            "id": "m7Kb29o54ml",
+            "programRuleVariableSourceType": "DATAELEMENT_CURRENT_EVENT",
+            "valueType": "BOOLEAN"
+        },
+        {
+            "name": "prt_colour",
+            "created": "2026-07-31T06:14:44.041",
+            "lastUpdated": "2026-07-31T06:14:44.041",
+            "translations": [],
+            "lastUpdatedBy": {
+                "id": "GOLswS44mh8",
+                "code": null,
+                "name": "Tom Wakiki",
+                "displayName": "Tom Wakiki",
+                "username": "system"
+            },
+            "program": { "id": "xo87zwzLEqc" },
+            "dataElement": { "id": "MZrYHJoBYQG" },
+            "useCodeForOptionSet": true,
+            "id": "Fm979tAhuWz",
+            "programRuleVariableSourceType": "DATAELEMENT_CURRENT_EVENT",
+            "valueType": "TEXT"
+        },
+        {
+            "name": "prt_toggle_hide_field",
+            "created": "2026-07-31T06:14:44.040",
+            "lastUpdated": "2026-07-31T06:14:44.040",
+            "translations": [],
+            "lastUpdatedBy": {
+                "id": "GOLswS44mh8",
+                "code": null,
+                "name": "Tom Wakiki",
+                "displayName": "Tom Wakiki",
+                "username": "system"
+            },
+            "program": { "id": "xo87zwzLEqc" },
+            "dataElement": { "id": "CRPvieGoVZb" },
+            "useCodeForOptionSet": false,
+            "id": "G00tNlkZoOI",
+            "programRuleVariableSourceType": "DATAELEMENT_CURRENT_EVENT",
+            "valueType": "BOOLEAN"
+        },
+        {
+            "name": "prt_calc_double",
+            "created": "2026-07-31T06:14:44.041",
+            "lastUpdated": "2026-07-31T06:14:44.041",
+            "translations": [],
+            "lastUpdatedBy": {
+                "id": "GOLswS44mh8",
+                "code": null,
+                "name": "Tom Wakiki",
+                "displayName": "Tom Wakiki",
+                "username": "system"
+            },
+            "program": { "id": "xo87zwzLEqc" },
+            "useCodeForOptionSet": false,
+            "id": "r5HneDLplaf",
+            "programRuleVariableSourceType": "CALCULATED_VALUE",
+            "valueType": "NUMBER"
+        },
+        {
+            "name": "prt_number",
+            "created": "2026-07-31T06:14:44.041",
+            "lastUpdated": "2026-07-31T06:14:44.041",
+            "translations": [],
+            "lastUpdatedBy": {
+                "id": "GOLswS44mh8",
+                "code": null,
+                "name": "Tom Wakiki",
+                "displayName": "Tom Wakiki",
+                "username": "system"
+            },
+            "program": { "id": "xo87zwzLEqc" },
+            "dataElement": { "id": "whUEYdoURdQ" },
+            "useCodeForOptionSet": false,
+            "id": "ajFJ3KBm3wQ",
+            "programRuleVariableSourceType": "DATAELEMENT_CURRENT_EVENT",
+            "valueType": "NUMBER"
+        },
+        {
+            "name": "prt_trigger_text",
+            "created": "2026-07-31T06:14:44.041",
+            "lastUpdated": "2026-07-31T06:14:44.041",
+            "translations": [],
+            "lastUpdatedBy": {
+                "id": "GOLswS44mh8",
+                "code": null,
+                "name": "Tom Wakiki",
+                "displayName": "Tom Wakiki",
+                "username": "system"
+            },
+            "program": { "id": "xo87zwzLEqc" },
+            "dataElement": { "id": "Np1H391NjPi" },
+            "useCodeForOptionSet": false,
+            "id": "LMxOWo6Ix3X",
+            "programRuleVariableSourceType": "DATAELEMENT_CURRENT_EVENT",
+            "valueType": "TEXT"
+        }
+    ],
+    "programRules": [
+        {
+            "name": "PRT-E01 HIDEFIELD when toggle is on",
+            "created": "2026-07-31T06:14:44.244",
+            "lastUpdated": "2026-07-31T06:14:44.244",
+            "translations": [],
+            "lastUpdatedBy": {
+                "id": "GOLswS44mh8",
+                "code": null,
+                "name": "Tom Wakiki",
+                "displayName": "Tom Wakiki",
+                "username": "system"
+            },
+            "description": "PRT-E01 HIDEFIELD when toggle is on",
+            "program": { "id": "xo87zwzLEqc" },
+            "programRuleActions": [{ "id": "OAbFKfjbsh7" }],
+            "condition": "#{prt_toggle_hide_field} == true",
+            "id": "qhJZXKFrNoO"
+        },
+        {
+            "name": "PRT-E07 ASSIGN number x 2 to data element",
+            "created": "2026-07-31T06:14:44.245",
+            "lastUpdated": "2026-07-31T06:14:44.245",
+            "translations": [],
+            "lastUpdatedBy": {
+                "id": "GOLswS44mh8",
+                "code": null,
+                "name": "Tom Wakiki",
+                "displayName": "Tom Wakiki",
+                "username": "system"
+            },
+            "description": "PRT-E07 ASSIGN number x 2 to data element",
+            "program": { "id": "xo87zwzLEqc" },
+            "programRuleActions": [{ "id": "MFqJqgIoB5Q" }],
+            "condition": "d2:hasValue('prt_number')",
+            "priority": 1,
+            "id": "crykMNZfXZE"
+        },
+        {
+            "name": "PRT-E06 ERRORONCOMPLETE when number == 99",
+            "created": "2026-07-31T06:14:44.245",
+            "lastUpdated": "2026-07-31T06:14:44.245",
+            "translations": [],
+            "lastUpdatedBy": {
+                "id": "GOLswS44mh8",
+                "code": null,
+                "name": "Tom Wakiki",
+                "displayName": "Tom Wakiki",
+                "username": "system"
+            },
+            "description": "PRT-E06 ERRORONCOMPLETE when number == 99",
+            "program": { "id": "xo87zwzLEqc" },
+            "programRuleActions": [{ "id": "ltr5csOS19M" }],
+            "condition": "d2:hasValue('prt_number') && #{prt_number} == 99",
+            "id": "fu1recuVsZ3"
+        },
+        {
+            "name": "PRT-E10 SETMANDATORYFIELD via trigger text",
+            "created": "2026-07-31T06:14:44.245",
+            "lastUpdated": "2026-07-31T06:14:44.245",
+            "translations": [],
+            "lastUpdatedBy": {
+                "id": "GOLswS44mh8",
+                "code": null,
+                "name": "Tom Wakiki",
+                "displayName": "Tom Wakiki",
+                "username": "system"
+            },
+            "description": "PRT-E10 SETMANDATORYFIELD via trigger text",
+            "program": { "id": "xo87zwzLEqc" },
+            "programRuleActions": [{ "id": "pRalrwkn66H" }],
+            "condition": "#{prt_trigger_text} == 'mandatory'",
+            "id": "iy7ZDF92RfF"
+        },
+        {
+            "name": "PRT-E08 ASSIGN to calculated value variable",
+            "created": "2026-07-31T06:14:44.245",
+            "lastUpdated": "2026-07-31T06:14:44.245",
+            "translations": [],
+            "lastUpdatedBy": {
+                "id": "GOLswS44mh8",
+                "code": null,
+                "name": "Tom Wakiki",
+                "displayName": "Tom Wakiki",
+                "username": "system"
+            },
+            "description": "PRT-E08 ASSIGN to calculated value variable",
+            "program": { "id": "xo87zwzLEqc" },
+            "programRuleActions": [{ "id": "mgNxDuu95iE" }],
+            "condition": "d2:hasValue('prt_number')",
+            "priority": 1,
+            "id": "eqqp9o0E071"
+        },
+        {
+            "name": "PRT-E16 SCHEDULEMESSAGE when number == 912",
+            "created": "2026-07-31T06:14:44.246",
+            "lastUpdated": "2026-07-31T06:14:44.246",
+            "translations": [],
+            "lastUpdatedBy": {
+                "id": "GOLswS44mh8",
+                "code": null,
+                "name": "Tom Wakiki",
+                "displayName": "Tom Wakiki",
+                "username": "system"
+            },
+            "description": "PRT-E16 SCHEDULEMESSAGE when number == 912",
+            "program": { "id": "xo87zwzLEqc" },
+            "programRuleActions": [{ "id": "du781QMHscm" }],
+            "condition": "d2:hasValue('prt_number') && #{prt_number} == 912",
+            "id": "AW85XSl6OIJ"
+        },
+        {
+            "name": "PRT-E11 DISPLAYTEXT in feedback widget",
+            "created": "2026-07-31T06:14:44.245",
+            "lastUpdated": "2026-07-31T06:14:44.245",
+            "translations": [],
+            "lastUpdatedBy": {
+                "id": "GOLswS44mh8",
+                "code": null,
+                "name": "Tom Wakiki",
+                "displayName": "Tom Wakiki",
+                "username": "system"
+            },
+            "description": "PRT-E11 DISPLAYTEXT in feedback widget",
+            "program": { "id": "xo87zwzLEqc" },
+            "programRuleActions": [{ "id": "k9WPgm79mUd" }],
+            "condition": "d2:hasValue('prt_trigger_text')",
+            "id": "xT7wWX8kAFy"
+        },
+        {
+            "name": "PRT-E14 SHOWOPTIONGROUP warm colours",
+            "created": "2026-07-31T06:14:44.245",
+            "lastUpdated": "2026-07-31T06:14:44.245",
+            "translations": [],
+            "lastUpdatedBy": {
+                "id": "GOLswS44mh8",
+                "code": null,
+                "name": "Tom Wakiki",
+                "displayName": "Tom Wakiki",
+                "username": "system"
+            },
+            "description": "PRT-E14 SHOWOPTIONGROUP warm colours",
+            "program": { "id": "xo87zwzLEqc" },
+            "programRuleActions": [{ "id": "zPGbwKz6inb" }],
+            "condition": "#{prt_trigger_text} == 'showwarm'",
+            "id": "GdfPFrA8QN0"
+        },
+        {
+            "name": "PRT-E13 HIDEOPTIONGROUP warm colours",
+            "created": "2026-07-31T06:14:44.245",
+            "lastUpdated": "2026-07-31T06:14:44.245",
+            "translations": [],
+            "lastUpdatedBy": {
+                "id": "GOLswS44mh8",
+                "code": null,
+                "name": "Tom Wakiki",
+                "displayName": "Tom Wakiki",
+                "username": "system"
+            },
+            "description": "PRT-E13 HIDEOPTIONGROUP warm colours",
+            "program": { "id": "xo87zwzLEqc" },
+            "programRuleActions": [{ "id": "uZr29xjB3Sf" }],
+            "condition": "#{prt_trigger_text} == 'hidewarm'",
+            "id": "DTrHukWiqI1"
+        },
+        {
+            "name": "PRT-E03 SHOWWARNING when number > 100",
+            "created": "2026-07-31T06:14:44.245",
+            "lastUpdated": "2026-07-31T06:14:44.245",
+            "translations": [],
+            "lastUpdatedBy": {
+                "id": "GOLswS44mh8",
+                "code": null,
+                "name": "Tom Wakiki",
+                "displayName": "Tom Wakiki",
+                "username": "system"
+            },
+            "description": "PRT-E03 SHOWWARNING when number > 100",
+            "program": { "id": "xo87zwzLEqc" },
+            "programRuleActions": [{ "id": "AOsBbDQITh6" }],
+            "condition": "d2:hasValue('prt_number') && #{prt_number} > 100",
+            "id": "M876DDMuJib"
+        },
+        {
+            "name": "PRT-E05 WARNINGONCOMPLETE when number == 50",
+            "created": "2026-07-31T06:14:44.245",
+            "lastUpdated": "2026-07-31T06:14:44.245",
+            "translations": [],
+            "lastUpdatedBy": {
+                "id": "GOLswS44mh8",
+                "code": null,
+                "name": "Tom Wakiki",
+                "displayName": "Tom Wakiki",
+                "username": "system"
+            },
+            "description": "PRT-E05 WARNINGONCOMPLETE when number == 50",
+            "program": { "id": "xo87zwzLEqc" },
+            "programRuleActions": [{ "id": "PEkj16zRUOC" }],
+            "condition": "d2:hasValue('prt_number') && #{prt_number} == 50",
+            "id": "LMTi0BehJhG"
+        },
+        {
+            "name": "PRT-E02 HIDESECTION when toggle is on",
+            "created": "2026-07-31T06:14:44.245",
+            "lastUpdated": "2026-08-04T10:13:07.646",
+            "translations": [],
+            "lastUpdatedBy": {
+                "id": "xE7jOejl9FI",
+                "code": null,
+                "name": "John Traore",
+                "displayName": "John Traore",
+                "username": "admin"
+            },
+            "description": "PRT-E02 HIDESECTION when toggle is on",
+            "program": { "id": "xo87zwzLEqc" },
+            "programRuleActions": [{ "id": "LxtXYObY7tV" }],
+            "condition": "#{prt_toggle_hide_section} == true",
+            "id": "xI3Oytk6C7Q"
+        },
+        {
+            "name": "PRT-E04 SHOWERROR when number < 0",
+            "created": "2026-07-31T06:14:44.245",
+            "lastUpdated": "2026-07-31T06:14:44.245",
+            "translations": [],
+            "lastUpdatedBy": {
+                "id": "GOLswS44mh8",
+                "code": null,
+                "name": "Tom Wakiki",
+                "displayName": "Tom Wakiki",
+                "username": "system"
+            },
+            "description": "PRT-E04 SHOWERROR when number < 0",
+            "program": { "id": "xo87zwzLEqc" },
+            "programRuleActions": [{ "id": "nexYFTh30KA" }],
+            "condition": "d2:hasValue('prt_number') && #{prt_number} < 0",
+            "id": "Ou4TBsxJ74L"
+        },
+        {
+            "name": "PRT-E12 HIDEOPTION Red via trigger text",
+            "created": "2026-07-31T06:14:44.245",
+            "lastUpdated": "2026-07-31T06:14:44.245",
+            "translations": [],
+            "lastUpdatedBy": {
+                "id": "GOLswS44mh8",
+                "code": null,
+                "name": "Tom Wakiki",
+                "displayName": "Tom Wakiki",
+                "username": "system"
+            },
+            "description": "PRT-E12 HIDEOPTION Red via trigger text",
+            "program": { "id": "xo87zwzLEqc" },
+            "programRuleActions": [{ "id": "ocT2tMgXrnV" }],
+            "condition": "#{prt_trigger_text} == 'hidered'",
+            "id": "TDMN3ZssUFA"
+        },
+        {
+            "name": "PRT-E15 SENDMESSAGE when number == 911",
+            "created": "2026-07-31T06:14:44.245",
+            "lastUpdated": "2026-07-31T06:14:44.245",
+            "translations": [],
+            "lastUpdatedBy": {
+                "id": "GOLswS44mh8",
+                "code": null,
+                "name": "Tom Wakiki",
+                "displayName": "Tom Wakiki",
+                "username": "system"
+            },
+            "description": "PRT-E15 SENDMESSAGE when number == 911",
+            "program": { "id": "xo87zwzLEqc" },
+            "programRuleActions": [{ "id": "zOIEGKICsB3" }],
+            "condition": "d2:hasValue('prt_number') && #{prt_number} == 911",
+            "id": "TzqohkBqxDW"
+        },
+        {
+            "name": "PRT-E09 DISPLAYKEYVALUEPAIR from calculated value",
+            "created": "2026-07-31T06:14:44.245",
+            "lastUpdated": "2026-07-31T06:14:44.245",
+            "translations": [],
+            "lastUpdatedBy": {
+                "id": "GOLswS44mh8",
+                "code": null,
+                "name": "Tom Wakiki",
+                "displayName": "Tom Wakiki",
+                "username": "system"
+            },
+            "description": "PRT-E09 DISPLAYKEYVALUEPAIR from calculated value",
+            "program": { "id": "xo87zwzLEqc" },
+            "programRuleActions": [{ "id": "AImBlOWyU3L" }],
+            "condition": "d2:hasValue('prt_calc_double')",
+            "priority": 2,
+            "id": "Qrsh5kf5CxJ"
+        }
+    ],
+    "programStageSections": [
+        {
+            "name": "Main Section",
+            "created": "2026-08-04T09:52:54.498",
+            "lastUpdated": "2026-08-04T10:06:40.411",
+            "translations": [],
+            "lastUpdatedBy": {
+                "id": "xE7jOejl9FI",
+                "code": null,
+                "name": "John Traore",
+                "displayName": "John Traore",
+                "username": "admin"
+            },
+            "programStage": { "id": "kMag6BUwNgH" },
+            "dataElements": [
+                { "id": "CRPvieGoVZb" },
+                { "id": "eUjDjDsjC78" },
+                { "id": "whUEYdoURdQ" },
+                { "id": "Np1H391NjPi" },
+                { "id": "MZrYHJoBYQG" },
+                { "id": "sKYuUOftlgO" },
+                { "id": "rhmbkRxkgFT" },
+                { "id": "ikV37IrPaOv" }
+            ],
+            "programIndicators": [],
+            "sortOrder": 0,
+            "renderType": { "MOBILE": { "type": "LISTING" }, "DESKTOP": { "type": "LISTING" } },
+            "id": "VzcUU2fyyMp"
+        },
+        {
+            "name": "Section to Hide",
+            "created": "2026-08-04T09:54:15.860",
+            "lastUpdated": "2026-08-04T10:06:40.411",
+            "translations": [],
+            "lastUpdatedBy": {
+                "id": "xE7jOejl9FI",
+                "code": null,
+                "name": "John Traore",
+                "displayName": "John Traore",
+                "username": "admin"
+            },
+            "programStage": { "id": "kMag6BUwNgH" },
+            "dataElements": [{ "id": "tML1M280G0U" }, { "id": "WPQgcRftJEG" }],
+            "programIndicators": [],
+            "sortOrder": 1,
+            "renderType": { "MOBILE": { "type": "LISTING" }, "DESKTOP": { "type": "LISTING" } },
+            "id": "UPoo9MczdHb"
+        }
+    ],
+    "programRuleActions": [
+        {
+            "created": "2026-07-31T06:14:44.104",
+            "lastUpdated": "2026-07-31T06:14:44.104",
+            "translations": [],
+            "lastUpdatedBy": {
+                "id": "GOLswS44mh8",
+                "code": null,
+                "name": "Tom Wakiki",
+                "displayName": "Tom Wakiki",
+                "username": "system"
+            },
+            "programRule": { "id": "xT7wWX8kAFy" },
+            "programRuleActionType": "DISPLAYTEXT",
+            "location": "feedback",
+            "content": "Trigger text is: ",
+            "data": "#{prt_trigger_text}",
+            "id": "k9WPgm79mUd"
+        },
+        {
+            "created": "2026-07-31T06:14:44.103",
+            "lastUpdated": "2026-07-31T06:14:44.103",
+            "translations": [],
+            "lastUpdatedBy": {
+                "id": "GOLswS44mh8",
+                "code": null,
+                "name": "Tom Wakiki",
+                "displayName": "Tom Wakiki",
+                "username": "system"
+            },
+            "programRule": { "id": "fu1recuVsZ3" },
+            "programRuleActionType": "ERRORONCOMPLETE",
+            "dataElement": { "id": "whUEYdoURdQ" },
+            "content": "99 blocks completion",
+            "id": "ltr5csOS19M"
+        },
+        {
+            "created": "2026-07-31T06:14:44.103",
+            "lastUpdated": "2026-08-04T10:13:07.619",
+            "translations": [],
+            "lastUpdatedBy": {
+                "id": "xE7jOejl9FI",
+                "code": null,
+                "name": "John Traore",
+                "displayName": "John Traore",
+                "username": "admin"
+            },
+            "programRule": { "id": "xI3Oytk6C7Q" },
+            "programRuleActionType": "HIDESECTION",
+            "programStageSection": { "id": "UPoo9MczdHb" },
+            "id": "LxtXYObY7tV"
+        },
+        {
+            "created": "2026-07-31T06:14:44.104",
+            "lastUpdated": "2026-07-31T06:14:44.104",
+            "translations": [],
+            "lastUpdatedBy": {
+                "id": "GOLswS44mh8",
+                "code": null,
+                "name": "Tom Wakiki",
+                "displayName": "Tom Wakiki",
+                "username": "system"
+            },
+            "programRule": { "id": "TzqohkBqxDW" },
+            "programRuleActionType": "SENDMESSAGE",
+            "templateUid": "RiN94vzafgJ",
+            "id": "zOIEGKICsB3"
+        },
+        {
+            "created": "2026-07-31T06:14:44.104",
+            "lastUpdated": "2026-07-31T06:14:44.104",
+            "translations": [],
+            "lastUpdatedBy": {
+                "id": "GOLswS44mh8",
+                "code": null,
+                "name": "Tom Wakiki",
+                "displayName": "Tom Wakiki",
+                "username": "system"
+            },
+            "programRule": { "id": "crykMNZfXZE" },
+            "programRuleActionType": "ASSIGN",
+            "dataElement": { "id": "rhmbkRxkgFT" },
+            "data": "#{prt_number} * 2",
+            "id": "MFqJqgIoB5Q"
+        },
+        {
+            "created": "2026-07-31T06:14:44.104",
+            "lastUpdated": "2026-07-31T06:14:44.104",
+            "translations": [],
+            "lastUpdatedBy": {
+                "id": "GOLswS44mh8",
+                "code": null,
+                "name": "Tom Wakiki",
+                "displayName": "Tom Wakiki",
+                "username": "system"
+            },
+            "programRule": { "id": "DTrHukWiqI1" },
+            "programRuleActionType": "HIDEOPTIONGROUP",
+            "dataElement": { "id": "MZrYHJoBYQG" },
+            "optionGroup": { "id": "DzCgVCUt1pu" },
+            "id": "uZr29xjB3Sf"
+        },
+        {
+            "created": "2026-07-31T06:14:44.103",
+            "lastUpdated": "2026-07-31T06:14:44.103",
+            "translations": [],
+            "lastUpdatedBy": {
+                "id": "GOLswS44mh8",
+                "code": null,
+                "name": "Tom Wakiki",
+                "displayName": "Tom Wakiki",
+                "username": "system"
+            },
+            "programRule": { "id": "M876DDMuJib" },
+            "programRuleActionType": "SHOWWARNING",
+            "dataElement": { "id": "whUEYdoURdQ" },
+            "content": "Number exceeds 100: ",
+            "data": "#{prt_number}",
+            "id": "AOsBbDQITh6"
+        },
+        {
+            "created": "2026-07-31T06:14:44.104",
+            "lastUpdated": "2026-07-31T06:14:44.104",
+            "translations": [],
+            "lastUpdatedBy": {
+                "id": "GOLswS44mh8",
+                "code": null,
+                "name": "Tom Wakiki",
+                "displayName": "Tom Wakiki",
+                "username": "system"
+            },
+            "programRule": { "id": "eqqp9o0E071" },
+            "programRuleActionType": "ASSIGN",
+            "content": "#{prt_calc_double}",
+            "data": "#{prt_number} * 2",
+            "id": "mgNxDuu95iE"
+        },
+        {
+            "created": "2026-07-31T06:14:44.104",
+            "lastUpdated": "2026-07-31T06:14:44.104",
+            "translations": [],
+            "lastUpdatedBy": {
+                "id": "GOLswS44mh8",
+                "code": null,
+                "name": "Tom Wakiki",
+                "displayName": "Tom Wakiki",
+                "username": "system"
+            },
+            "programRule": { "id": "TDMN3ZssUFA" },
+            "programRuleActionType": "HIDEOPTION",
+            "dataElement": { "id": "MZrYHJoBYQG" },
+            "option": { "id": "ZFBcP9btQS8" },
+            "id": "ocT2tMgXrnV"
+        },
+        {
+            "created": "2026-07-31T06:14:44.104",
+            "lastUpdated": "2026-07-31T06:14:44.104",
+            "translations": [],
+            "lastUpdatedBy": {
+                "id": "GOLswS44mh8",
+                "code": null,
+                "name": "Tom Wakiki",
+                "displayName": "Tom Wakiki",
+                "username": "system"
+            },
+            "programRule": { "id": "iy7ZDF92RfF" },
+            "programRuleActionType": "SETMANDATORYFIELD",
+            "dataElement": { "id": "ikV37IrPaOv" },
+            "id": "pRalrwkn66H"
+        },
+        {
+            "created": "2026-07-31T06:14:44.103",
+            "lastUpdated": "2026-07-31T06:14:44.103",
+            "translations": [],
+            "lastUpdatedBy": {
+                "id": "GOLswS44mh8",
+                "code": null,
+                "name": "Tom Wakiki",
+                "displayName": "Tom Wakiki",
+                "username": "system"
+            },
+            "programRule": { "id": "qhJZXKFrNoO" },
+            "programRuleActionType": "HIDEFIELD",
+            "dataElement": { "id": "sKYuUOftlgO" },
+            "content": "Hidden by PRT-E01; the entered value was cleared.",
+            "id": "OAbFKfjbsh7"
+        },
+        {
+            "created": "2026-07-31T06:14:44.104",
+            "lastUpdated": "2026-07-31T06:14:44.104",
+            "translations": [],
+            "lastUpdatedBy": {
+                "id": "GOLswS44mh8",
+                "code": null,
+                "name": "Tom Wakiki",
+                "displayName": "Tom Wakiki",
+                "username": "system"
+            },
+            "programRule": { "id": "Qrsh5kf5CxJ" },
+            "programRuleActionType": "DISPLAYKEYVALUEPAIR",
+            "location": "indicators",
+            "content": "Calculated double",
+            "data": "#{prt_calc_double}",
+            "id": "AImBlOWyU3L"
+        },
+        {
+            "created": "2026-07-31T06:14:44.104",
+            "lastUpdated": "2026-07-31T06:14:44.104",
+            "translations": [],
+            "lastUpdatedBy": {
+                "id": "GOLswS44mh8",
+                "code": null,
+                "name": "Tom Wakiki",
+                "displayName": "Tom Wakiki",
+                "username": "system"
+            },
+            "programRule": { "id": "AW85XSl6OIJ" },
+            "programRuleActionType": "SCHEDULEMESSAGE",
+            "data": "d2:addDays(V{event_date}, 7)",
+            "templateUid": "jp7GnqdKpm7",
+            "id": "du781QMHscm"
+        },
+        {
+            "created": "2026-07-31T06:14:44.103",
+            "lastUpdated": "2026-07-31T06:14:44.103",
+            "translations": [],
+            "lastUpdatedBy": {
+                "id": "GOLswS44mh8",
+                "code": null,
+                "name": "Tom Wakiki",
+                "displayName": "Tom Wakiki",
+                "username": "system"
+            },
+            "programRule": { "id": "Ou4TBsxJ74L" },
+            "programRuleActionType": "SHOWERROR",
+            "dataElement": { "id": "whUEYdoURdQ" },
+            "content": "Number cannot be negative",
+            "id": "nexYFTh30KA"
+        },
+        {
+            "created": "2026-07-31T06:14:44.103",
+            "lastUpdated": "2026-07-31T06:14:44.103",
+            "translations": [],
+            "lastUpdatedBy": {
+                "id": "GOLswS44mh8",
+                "code": null,
+                "name": "Tom Wakiki",
+                "displayName": "Tom Wakiki",
+                "username": "system"
+            },
+            "programRule": { "id": "LMTi0BehJhG" },
+            "programRuleActionType": "WARNINGONCOMPLETE",
+            "dataElement": { "id": "whUEYdoURdQ" },
+            "content": "Completing with the sentinel warning value 50",
+            "id": "PEkj16zRUOC"
+        },
+        {
+            "created": "2026-07-31T06:14:44.104",
+            "lastUpdated": "2026-07-31T06:14:44.104",
+            "translations": [],
+            "lastUpdatedBy": {
+                "id": "GOLswS44mh8",
+                "code": null,
+                "name": "Tom Wakiki",
+                "displayName": "Tom Wakiki",
+                "username": "system"
+            },
+            "programRule": { "id": "GdfPFrA8QN0" },
+            "programRuleActionType": "SHOWOPTIONGROUP",
+            "dataElement": { "id": "MZrYHJoBYQG" },
+            "optionGroup": { "id": "DzCgVCUt1pu" },
+            "id": "zPGbwKz6inb"
+        }
+    ],
+    "programStages": [
+        {
+            "name": "PRT — Event Program Rules Test",
+            "created": "2026-07-31T06:14:43.683",
+            "lastUpdated": "2026-08-04T10:07:15.950",
+            "translations": [],
+            "createdBy": {
+                "id": "GOLswS44mh8",
+                "code": null,
+                "name": "Tom Wakiki",
+                "displayName": "Tom Wakiki",
+                "username": "system"
+            },
+            "lastUpdatedBy": {
+                "id": "xE7jOejl9FI",
+                "code": null,
+                "name": "John Traore",
+                "displayName": "John Traore",
+                "username": "admin"
+            },
+            "minDaysFromStart": 0,
+            "program": { "id": "xo87zwzLEqc" },
+            "programStageDataElements": [
+                {
+                    "created": "2026-08-04T09:54:21.831",
+                    "lastUpdated": "2026-08-04T10:06:40.440",
+                    "translations": [],
+                    "favorites": [],
+                    "sharing": { "users": {}, "userGroups": {} },
+                    "programStage": { "id": "kMag6BUwNgH" },
+                    "dataElement": { "id": "CRPvieGoVZb" },
+                    "compulsory": false,
+                    "allowProvidedElsewhere": false,
+                    "sortOrder": 1,
+                    "displayInReports": false,
+                    "allowFutureDate": false,
+                    "renderOptionsAsRadio": false,
+                    "renderType": {
+                        "MOBILE": { "type": "DEFAULT" },
+                        "DESKTOP": { "type": "DEFAULT" }
+                    },
+                    "skipSynchronization": false,
+                    "skipAnalytics": false,
+                    "favorite": false,
+                    "id": "rz41WnVONor",
+                    "attributeValues": []
+                },
+                {
+                    "created": "2026-08-04T09:54:21.833",
+                    "lastUpdated": "2026-08-04T10:06:40.441",
+                    "translations": [],
+                    "favorites": [],
+                    "sharing": { "users": {}, "userGroups": {} },
+                    "programStage": { "id": "kMag6BUwNgH" },
+                    "dataElement": { "id": "eUjDjDsjC78" },
+                    "compulsory": false,
+                    "allowProvidedElsewhere": false,
+                    "sortOrder": 2,
+                    "displayInReports": false,
+                    "allowFutureDate": false,
+                    "renderOptionsAsRadio": false,
+                    "renderType": {
+                        "MOBILE": { "type": "DEFAULT" },
+                        "DESKTOP": { "type": "DEFAULT" }
+                    },
+                    "skipSynchronization": false,
+                    "skipAnalytics": false,
+                    "favorite": false,
+                    "id": "vHTasmgIYWr",
+                    "attributeValues": []
+                },
+                {
+                    "created": "2026-08-04T09:54:21.832",
+                    "lastUpdated": "2026-08-04T10:06:40.438",
+                    "translations": [],
+                    "favorites": [],
+                    "sharing": { "users": {}, "userGroups": {} },
+                    "programStage": { "id": "kMag6BUwNgH" },
+                    "dataElement": { "id": "whUEYdoURdQ" },
+                    "compulsory": false,
+                    "allowProvidedElsewhere": false,
+                    "sortOrder": 3,
+                    "displayInReports": false,
+                    "allowFutureDate": false,
+                    "renderOptionsAsRadio": false,
+                    "renderType": {
+                        "MOBILE": { "type": "DEFAULT" },
+                        "DESKTOP": { "type": "DEFAULT" }
+                    },
+                    "skipSynchronization": false,
+                    "skipAnalytics": false,
+                    "favorite": false,
+                    "id": "f0sDUPtxadZ",
+                    "attributeValues": []
+                },
+                {
+                    "created": "2026-08-04T09:54:21.833",
+                    "lastUpdated": "2026-08-04T10:06:40.439",
+                    "translations": [],
+                    "favorites": [],
+                    "sharing": { "users": {}, "userGroups": {} },
+                    "programStage": { "id": "kMag6BUwNgH" },
+                    "dataElement": { "id": "Np1H391NjPi" },
+                    "compulsory": false,
+                    "allowProvidedElsewhere": false,
+                    "sortOrder": 4,
+                    "displayInReports": false,
+                    "allowFutureDate": false,
+                    "renderOptionsAsRadio": false,
+                    "renderType": {
+                        "MOBILE": { "type": "DEFAULT" },
+                        "DESKTOP": { "type": "DEFAULT" }
+                    },
+                    "skipSynchronization": false,
+                    "skipAnalytics": false,
+                    "favorite": false,
+                    "id": "pJ4Irn3TMRa",
+                    "attributeValues": []
+                },
+                {
+                    "created": "2026-08-04T09:54:21.833",
+                    "lastUpdated": "2026-08-04T10:06:40.441",
+                    "translations": [],
+                    "favorites": [],
+                    "sharing": { "users": {}, "userGroups": {} },
+                    "programStage": { "id": "kMag6BUwNgH" },
+                    "dataElement": { "id": "MZrYHJoBYQG" },
+                    "compulsory": false,
+                    "allowProvidedElsewhere": false,
+                    "sortOrder": 5,
+                    "displayInReports": false,
+                    "allowFutureDate": false,
+                    "renderOptionsAsRadio": false,
+                    "renderType": {
+                        "MOBILE": { "type": "DEFAULT" },
+                        "DESKTOP": { "type": "DEFAULT" }
+                    },
+                    "skipSynchronization": false,
+                    "skipAnalytics": false,
+                    "favorite": false,
+                    "id": "mrfXsLde7y7",
+                    "attributeValues": []
+                },
+                {
+                    "created": "2026-08-04T09:54:21.833",
+                    "lastUpdated": "2026-08-04T10:06:40.440",
+                    "translations": [],
+                    "favorites": [],
+                    "sharing": { "users": {}, "userGroups": {} },
+                    "programStage": { "id": "kMag6BUwNgH" },
+                    "dataElement": { "id": "sKYuUOftlgO" },
+                    "compulsory": false,
+                    "allowProvidedElsewhere": false,
+                    "sortOrder": 6,
+                    "displayInReports": false,
+                    "allowFutureDate": false,
+                    "renderOptionsAsRadio": false,
+                    "renderType": {
+                        "MOBILE": { "type": "DEFAULT" },
+                        "DESKTOP": { "type": "DEFAULT" }
+                    },
+                    "skipSynchronization": false,
+                    "skipAnalytics": false,
+                    "favorite": false,
+                    "id": "XgFrtvYYbPz",
+                    "attributeValues": []
+                },
+                {
+                    "created": "2026-08-04T09:54:21.834",
+                    "lastUpdated": "2026-08-04T10:06:40.440",
+                    "translations": [],
+                    "favorites": [],
+                    "sharing": { "users": {}, "userGroups": {} },
+                    "programStage": { "id": "kMag6BUwNgH" },
+                    "dataElement": { "id": "rhmbkRxkgFT" },
+                    "compulsory": false,
+                    "allowProvidedElsewhere": false,
+                    "sortOrder": 7,
+                    "displayInReports": false,
+                    "allowFutureDate": false,
+                    "renderOptionsAsRadio": false,
+                    "renderType": {
+                        "MOBILE": { "type": "DEFAULT" },
+                        "DESKTOP": { "type": "DEFAULT" }
+                    },
+                    "skipSynchronization": false,
+                    "skipAnalytics": false,
+                    "favorite": false,
+                    "id": "AKBfZXLQ4kd",
+                    "attributeValues": []
+                },
+                {
+                    "created": "2026-08-04T09:54:21.835",
+                    "lastUpdated": "2026-08-04T10:06:40.439",
+                    "translations": [],
+                    "favorites": [],
+                    "sharing": { "users": {}, "userGroups": {} },
+                    "programStage": { "id": "kMag6BUwNgH" },
+                    "dataElement": { "id": "ikV37IrPaOv" },
+                    "compulsory": false,
+                    "allowProvidedElsewhere": false,
+                    "sortOrder": 8,
+                    "displayInReports": false,
+                    "allowFutureDate": false,
+                    "renderOptionsAsRadio": false,
+                    "renderType": {
+                        "MOBILE": { "type": "DEFAULT" },
+                        "DESKTOP": { "type": "DEFAULT" }
+                    },
+                    "skipSynchronization": false,
+                    "skipAnalytics": false,
+                    "favorite": false,
+                    "id": "hRg7XqqnhUa",
+                    "attributeValues": []
+                },
+                {
+                    "created": "2026-08-04T09:54:21.832",
+                    "lastUpdated": "2026-08-04T10:06:40.439",
+                    "translations": [],
+                    "favorites": [],
+                    "sharing": { "users": {}, "userGroups": {} },
+                    "programStage": { "id": "kMag6BUwNgH" },
+                    "dataElement": { "id": "tML1M280G0U" },
+                    "compulsory": false,
+                    "allowProvidedElsewhere": false,
+                    "sortOrder": 9,
+                    "displayInReports": false,
+                    "allowFutureDate": false,
+                    "renderOptionsAsRadio": false,
+                    "renderType": {
+                        "MOBILE": { "type": "DEFAULT" },
+                        "DESKTOP": { "type": "DEFAULT" }
+                    },
+                    "skipSynchronization": false,
+                    "skipAnalytics": false,
+                    "favorite": false,
+                    "id": "DwGsGI8hpjs",
+                    "attributeValues": []
+                },
+                {
+                    "created": "2026-08-04T09:54:21.834",
+                    "lastUpdated": "2026-08-04T10:06:40.439",
+                    "translations": [],
+                    "favorites": [],
+                    "sharing": { "users": {}, "userGroups": {} },
+                    "programStage": { "id": "kMag6BUwNgH" },
+                    "dataElement": { "id": "WPQgcRftJEG" },
+                    "compulsory": false,
+                    "allowProvidedElsewhere": false,
+                    "sortOrder": 10,
+                    "displayInReports": false,
+                    "allowFutureDate": false,
+                    "renderOptionsAsRadio": false,
+                    "renderType": {
+                        "MOBILE": { "type": "DEFAULT" },
+                        "DESKTOP": { "type": "DEFAULT" }
+                    },
+                    "skipSynchronization": false,
+                    "skipAnalytics": false,
+                    "favorite": false,
+                    "id": "NO2lZKYSkOb",
+                    "attributeValues": []
+                }
+            ],
+            "executionDateLabel": "Event date",
+            "autoGenerateEvent": true,
+            "validationStrategy": "ON_COMPLETE",
+            "displayGenerateEventBox": true,
+            "featureType": "NONE",
+            "blockEntryForm": false,
+            "preGenerateUID": false,
+            "remindCompleted": false,
+            "generatedByEnrollmentDate": false,
+            "allowGenerateNextVisit": false,
+            "openAfterEnrollment": false,
+            "sortOrder": 1,
+            "hideDueDate": false,
+            "enableUserAssignment": false,
+            "referral": false,
+            "id": "kMag6BUwNgH",
+            "attributeValues": [],
+            "repeatable": false,
+            "programStageSections": [{ "id": "VzcUU2fyyMp" }, { "id": "UPoo9MczdHb" }],
+            "notificationTemplates": []
+        }
+    ],
+    "categories": [
+        {
+            "code": "default",
+            "name": "default",
+            "created": "2012-11-21T12:15:18.537",
+            "lastUpdated": "2026-07-31T06:11:30.844",
+            "translations": [],
+            "createdBy": {
+                "id": "GOLswS44mh8",
+                "code": null,
+                "name": "Tom Wakiki",
+                "displayName": "Tom Wakiki",
+                "username": "system"
+            },
+            "shortName": "default",
+            "dataDimensionType": "DISAGGREGATION",
+            "dataDimension": false,
+            "categoryOptions": [{ "id": "xYerKDKCefk" }],
+            "id": "GLevLNI9wkl",
+            "attributeValues": []
+        }
+    ],
+    "programNotificationTemplates": [
+        {
+            "name": "PRT Event schedule message",
+            "created": "2026-07-31T06:14:43.534",
+            "lastUpdated": "2026-07-31T06:14:43.534",
+            "translations": [],
+            "lastUpdatedBy": {
+                "id": "GOLswS44mh8",
+                "code": null,
+                "name": "Tom Wakiki",
+                "displayName": "Tom Wakiki",
+                "username": "system"
+            },
+            "subjectTemplate": "PRT SCHEDULEMESSAGE fired",
+            "messageTemplate": "SCHEDULEMESSAGE was scheduled in V{program_name} (event date + 7 days).",
+            "notificationTrigger": "PROGRAM_RULE",
+            "notificationRecipient": "USERS_AT_ORGANISATION_UNIT",
+            "deliveryChannels": [],
+            "sendRepeatable": false,
+            "id": "jp7GnqdKpm7"
+        },
+        {
+            "name": "PRT Event send message",
+            "created": "2026-07-31T06:14:43.533",
+            "lastUpdated": "2026-07-31T06:14:43.533",
+            "translations": [],
+            "lastUpdatedBy": {
+                "id": "GOLswS44mh8",
+                "code": null,
+                "name": "Tom Wakiki",
+                "displayName": "Tom Wakiki",
+                "username": "system"
+            },
+            "subjectTemplate": "PRT SENDMESSAGE fired",
+            "messageTemplate": "SENDMESSAGE was triggered in V{program_name} at V{org_unit_name}.",
+            "notificationTrigger": "PROGRAM_RULE",
+            "notificationRecipient": "USERS_AT_ORGANISATION_UNIT",
+            "deliveryChannels": [],
+            "sendRepeatable": false,
+            "id": "RiN94vzafgJ"
+        }
+    ],
+    "optionGroups": [
+        {
+            "name": "PRT Warm colours",
+            "created": "2026-07-31T06:14:43.242",
+            "lastUpdated": "2026-07-31T06:14:43.242",
+            "translations": [],
+            "createdBy": {
+                "id": "GOLswS44mh8",
+                "code": null,
+                "name": "Tom Wakiki",
+                "displayName": "Tom Wakiki",
+                "username": "system"
+            },
+            "lastUpdatedBy": {
+                "id": "GOLswS44mh8",
+                "code": null,
+                "name": "Tom Wakiki",
+                "displayName": "Tom Wakiki",
+                "username": "system"
+            },
+            "shortName": "PRT Warm colours",
+            "id": "DzCgVCUt1pu",
+            "options": [{ "id": "T2Vx5igYUMF" }, { "id": "ZFBcP9btQS8" }],
+            "optionSet": { "id": "YbEJsIrYQjn" }
+        }
+    ],
+    "programs": [
+        {
+            "created": "2026-07-31T06:14:43.828",
+            "lastUpdated": "2026-08-04T10:07:15.875",
+            "lastUpdatedBy": {
+                "id": "xE7jOejl9FI",
+                "code": null,
+                "name": "John Traore",
+                "displayName": "John Traore",
+                "username": "admin"
+            },
+            "createdBy": {
+                "id": "GOLswS44mh8",
+                "code": null,
+                "name": "Tom Wakiki",
+                "displayName": "Tom Wakiki",
+                "username": "system"
+            },
+            "name": "PRT — Event Program Rules Test",
+            "shortName": "PRT Event Rules Test",
+            "description": "Single-event program exercising every client-relevant program rule action type.",
+            "version": 2,
+            "programType": "WITHOUT_REGISTRATION",
+            "displayIncidentDate": true,
+            "ignoreOverdueEvents": false,
+            "userRoles": [],
+            "onlyEnrollOnce": false,
+            "notificationTemplates": [{ "id": "jp7GnqdKpm7" }, { "id": "RiN94vzafgJ" }],
+            "selectEnrollmentDatesInFuture": false,
+            "selectIncidentDatesInFuture": false,
+            "categoryCombo": { "id": "bjDvmb4bfuf" },
+            "enrollmentCategoryCombo": { "id": "bjDvmb4bfuf" },
+            "skipOffline": false,
+            "displayFrontPageList": true,
+            "useFirstStageDuringRegistration": false,
+            "featureType": "NONE",
+            "expiryDays": 0,
+            "completeEventsExpiryDays": 0,
+            "openDaysAfterCoEndDate": 0,
+            "minAttributesRequiredToSearch": 1,
+            "maxTeiCountToReturn": 0,
+            "accessLevel": "OPEN",
+            "enableChangeLog": false,
+            "translations": [],
+            "id": "xo87zwzLEqc",
+            "organisationUnits": [{ "id": "ImspTQPwCqd" }, { "id": "DiszpKrYNg8" }],
+            "programStages": [{ "id": "kMag6BUwNgH" }],
+            "programSections": [],
+            "programTrackedEntityAttributes": [],
+            "categoryMappings": [],
+            "attributeValues": []
+        }
+    ]
+}
