@@ -512,13 +512,12 @@ const { form, formStore } = useEventForm({
 | `form`          | `UseFormReturn` | React Hook Form instance with Zod resolver |
 | `formStore`     | `FormStore`     | Owns rule evaluation and external stores   |
 
-Wrap children in `FormStateProvider` and RHF `FormProvider` before rendering fields:
+Wrap children in `FormStateProvider` before rendering fields — it wraps RHF's own
+`FormProvider` internally, so there's no need to render `FormProvider` separately:
 
 ```tsx
 <FormStateProvider formStore={formStore} form={form}>
-    <FormProvider {...form}>
-        {/* D2Field or custom components using useFieldControl */}
-    </FormProvider>
+    {/* D2Field or custom components using useFieldControl */}
 </FormStateProvider>
 ```
 
