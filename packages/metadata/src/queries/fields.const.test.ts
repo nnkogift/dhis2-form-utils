@@ -28,7 +28,7 @@ describe('withExtraFields', () => {
 describe('field constants', () => {
     it('PROGRAM_STAGE_FIELDS matches the expected fixture string', () => {
         expect(PROGRAM_STAGE_FIELDS).toBe(
-            'id,displayName,repeatable,sortOrder,programStageDataElements[id,compulsory,allowProvidedElsewhere,allowFutureDate,displayInReports,renderType,dataElement[id,displayName,displayFormName,valueType,description,optionSet[id,options[id,code,displayName]]]],programStageSections[id,displayName,sortOrder,renderType,programStageSectionDataElements[sortOrder,dataElement[id,displayName,displayFormName,valueType,description,optionSet[id,options[id,code,displayName]]]]]'
+            'id,displayName,repeatable,sortOrder,programStageDataElements[id,compulsory,allowProvidedElsewhere,allowFutureDate,displayInReports,renderType,dataElement[id,displayName,displayFormName,valueType,description,optionSet[id,options[id,code,displayName]]]],programStageSections[id,displayName,sortOrder,renderType,dataElements[sortOrder,dataElement[id,displayName,displayFormName,valueType,description,optionSet[id,options[id,code,displayName]]]]]'
         );
     });
 

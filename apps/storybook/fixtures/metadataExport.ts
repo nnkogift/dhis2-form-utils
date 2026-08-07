@@ -351,7 +351,7 @@ function resolveProgramStageSection(ref: Ref, indices: Indices) {
         id: section.id,
         displayName: section.name,
         sortOrder: section.sortOrder,
-        programStageSectionDataElements: (section.dataElements ?? []).map((deRef, index) => ({
+        dataElements: (section.dataElements ?? []).map((deRef, index) => ({
             sortOrder: index,
             dataElement: resolveDataElementRef(deRef, indices),
         })),

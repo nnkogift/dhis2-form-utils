@@ -62,9 +62,9 @@ export function resolveFormSectionLayout<TSection, TField>(options: {
 }
 
 export function getProgramStageSectionDataElementIds(section: {
-    programStageSectionDataElements?: Array<{ dataElement?: { id?: string } }>;
+    dataElements?: Array<{ dataElement?: { id?: string } }>;
 }): string[] {
-    return (section.programStageSectionDataElements ?? [])
+    return (section.dataElements ?? [])
         .map((item) => item.dataElement?.id)
         .filter((id): id is string => Boolean(id));
 }

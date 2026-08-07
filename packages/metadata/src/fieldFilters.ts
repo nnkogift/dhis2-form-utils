@@ -43,7 +43,7 @@ export const PROGRAM_STAGE_SECTION_FIELDS = [
     'displayName',
     'sortOrder',
     'renderType',
-    'programStageSectionDataElements[sortOrder,dataElement[id,displayName,displayFormName,valueType,description,optionSet[id,options[id,code,displayName]]]]',
+    'dataElements[sortOrder,dataElement[id,displayName,displayFormName,valueType,description,optionSet[id,options[id,code,displayName]]]]',
 ] as const;
 
 // Note: `programSection` is deliberately excluded here — it is not a real field on
@@ -95,10 +95,10 @@ export const PROGRAM_RULE_VARIABLE_FIELDS = [
     'trackedEntityAttribute[id,displayName,valueType]',
 ] as const;
 
-// Note: `programStageSections` is deliberately excluded here — its real DHIS2 API field name
-// for nested data elements is `programStageSectionDataElements`, but `ProgramStageSectionParams`
-// (the generated type) stubs that relationship as a flat `dataElements: { id: string }[]`
-// instead, under a different key. Requesting the real field name through this array would make
+// Note: `programStageSections` is deliberately excluded here — `ProgramStageSectionParams`
+// (the generated type) stubs its `dataElements` relationship as a flat `{ id: string }[]`,
+// not the expandable nested shape (`{ sortOrder, dataElement: {...} }`) actually requested and
+// returned by the API. Requesting the expanded shape through this array would make
 // `PickWithFieldFilters` collapse the *entire* derived type to `never` (same limitation as
 // `programRuleActions` and `programSection` above). `ProgramStageMetadata` below adds
 // `programStageSections` back via a manual type intersection using the hand-written
@@ -154,7 +154,7 @@ export type ProgramStageSection = {
     displayName?: string;
     sortOrder?: number;
     renderType?: { type?: string };
-    programStageSectionDataElements?: ProgramStageSectionDataElement[];
+    dataElements?: ProgramStageSectionDataElement[];
 };
 
 type ApiProgramRuleAction = PickWithFieldFilters<
