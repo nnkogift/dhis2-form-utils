@@ -34,6 +34,29 @@ describe('fromProgramStageDataElement', () => {
         });
         expect(config.renderTypeHint).toBe('VERTICAL_RADIOBUTTONS');
     });
+
+    it('falls back to MOBILE render type hint when DESKTOP is not configured', () => {
+        const config = fromProgramStageDataElement({
+            ...makePsde('de-1', 'TEXT'),
+            renderType: {
+                MOBILE: { type: 'DROPDOWN' },
+            },
+        });
+        expect(config.renderTypeHint).toBe('DROPDOWN');
+    });
+
+    it('returns undefined render type hint when renderType has neither device', () => {
+        const config = fromProgramStageDataElement({
+            ...makePsde('de-1', 'TEXT'),
+            renderType: {},
+        });
+        expect(config.renderTypeHint).toBeUndefined();
+    });
+
+    it('returns undefined render type hint when renderType is absent', () => {
+        const config = fromProgramStageDataElement(makePsde('de-1', 'TEXT'));
+        expect(config.renderTypeHint).toBeUndefined();
+    });
 });
 
 describe('fromProgramTrackedEntityAttribute', () => {

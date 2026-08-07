@@ -32,7 +32,7 @@ const resolveRenderTypeHint = (
     renderType?: ProgramStageDataElement['renderType']
 ): RenderTypeHint | undefined => {
     if (!renderType) return undefined;
-    return renderType.DESKTOP.type;
+    return renderType.DESKTOP?.type ?? renderType.MOBILE?.type;
 };
 
 type OptionSetInput = {

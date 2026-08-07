@@ -9,6 +9,7 @@ import type {
     ProgramTrackedEntityAttributeParams,
     TrackedEntityAttributeParams,
     ValueType,
+    ValueTypeRenderingObject,
 } from '@dhis2/api-types/v43';
 import type { PickWithFieldFilters } from '@dhis2/api-types/utils';
 
@@ -139,10 +140,18 @@ export type DataElementRef = PickWithFieldFilters<
     typeof DATA_ELEMENT_REF_FIELDS
 >;
 
-export type ProgramStageDataElement = PickWithFieldFilters<
-    ProgramStageDataElementParams,
-    typeof PROGRAM_STAGE_DATA_ELEMENT_FIELDS
->;
+/**
+ * The OpenAPI schema models `renderType` as a `[key: string]: ValueTypeRenderingObject` index
+ * signature, which makes every key (including `DESKTOP`) look required to TypeScript. In
+ * reality DHIS2 only populates the devices an admin configured custom rendering for in the
+ * Maintenance app, so any combination of `DESKTOP`/`MOBILE` — including neither — is valid.
+ */
+export type RenderTypeByDevice = Partial<Record<'DESKTOP' | 'MOBILE', ValueTypeRenderingObject>>;
+
+export type ProgramStageDataElement = Omit<
+    PickWithFieldFilters<ProgramStageDataElementParams, typeof PROGRAM_STAGE_DATA_ELEMENT_FIELDS>,
+    'renderType'
+> & { renderType?: RenderTypeByDevice };
 
 export type ProgramStageSectionDataElement = {
     sortOrder?: number;
@@ -192,10 +201,13 @@ export type TrackedEntityAttributeRef = PickWithFieldFilters<
     typeof TRACKED_ENTITY_ATTRIBUTE_REF_FIELDS
 >;
 
-export type ProgramTrackedEntityAttribute = PickWithFieldFilters<
-    ProgramTrackedEntityAttributeParams,
-    typeof PROGRAM_TRACKED_ENTITY_ATTRIBUTE_FIELDS
->;
+export type ProgramTrackedEntityAttribute = Omit<
+    PickWithFieldFilters<
+        ProgramTrackedEntityAttributeParams,
+        typeof PROGRAM_TRACKED_ENTITY_ATTRIBUTE_FIELDS
+    >,
+    'renderType'
+> & { renderType?: RenderTypeByDevice };
 
 /** Global DHIS2 constants used by program rules via `C{uid}`. */
 export const CONSTANT_FIELDS = ['id', 'value'] as const;
