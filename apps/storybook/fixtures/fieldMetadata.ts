@@ -23,6 +23,7 @@ const VALUE_TYPE_BY_WIDGET: Record<WidgetKind, ValueType> = {
     multiSelect: 'MULTI_TEXT',
     orgUnit: 'ORGANISATION_UNIT',
     coordinate: 'COORDINATE',
+    geojson: 'GEOJSON',
     file: 'FILE_RESOURCE',
     image: 'IMAGE',
     unsupported: 'REFERENCE',
@@ -104,4 +105,11 @@ export const TIER1_WIDGET_KINDS = [
     'age',
 ] as const satisfies readonly WidgetKind[];
 
-export const STUB_WIDGET_KINDS = ['orgUnit'] as const satisfies readonly WidgetKind[];
+/** Widgets backed by real components but needing network data (org units, file uploads) or a MapLibre canvas — mocked via MSW in stories. */
+export const NETWORK_WIDGET_KINDS = [
+    'coordinate',
+    'geojson',
+    'orgUnit',
+    'file',
+    'image',
+] as const satisfies readonly WidgetKind[];

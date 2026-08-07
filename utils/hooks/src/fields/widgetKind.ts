@@ -18,6 +18,7 @@ export type WidgetKind =
     | 'multiSelect'
     | 'orgUnit'
     | 'coordinate'
+    | 'geojson'
     | 'file'
     | 'image'
     | 'unsupported';
@@ -63,8 +64,9 @@ export function resolveWidgetKind(config: FieldConfig): WidgetKind {
         case 'AGE':
             return 'age';
         case 'COORDINATE':
-        case 'GEOJSON':
             return 'coordinate';
+        case 'GEOJSON':
+            return 'geojson';
         case 'FILE_RESOURCE':
             return 'file';
         case 'IMAGE':

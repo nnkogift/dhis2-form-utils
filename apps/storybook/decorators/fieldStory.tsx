@@ -1,6 +1,6 @@
 import type { WidgetKind } from '@nnkogift/dhis2-form-utils-hooks';
 import type { Decorator, Meta } from '@storybook/react';
-import { STUB_WIDGET_KINDS, TIER1_WIDGET_KINDS } from '../fixtures/fieldMetadata';
+import { NETWORK_WIDGET_KINDS, TIER1_WIDGET_KINDS } from '../fixtures/fieldMetadata';
 import { fieldStateFor, FormWrapper } from './withFormDecorators';
 
 export type FieldStoryArgs = {
@@ -51,7 +51,7 @@ export const withFieldStoryForm: Decorator = (Story, { args }) => {
 export const fieldStoryArgTypes: Meta['argTypes'] = {
     widgetKind: {
         control: 'select',
-        options: [...TIER1_WIDGET_KINDS, ...STUB_WIDGET_KINDS],
+        options: [...TIER1_WIDGET_KINDS, ...NETWORK_WIDGET_KINDS],
     },
     mandatory: { control: 'boolean' },
     hidden: { control: 'boolean' },

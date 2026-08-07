@@ -54,6 +54,15 @@ import { D2Field } from '@nnkogift/dhis2-form-utils-dhis2-ui';
 </FormStateProvider>;
 ```
 
+:::note TEA `ORGANISATION_UNIT` vs. the enrollment `orgUnit` field
+If a TEA's `valueType` is `ORGANISATION_UNIT`, `D2Field` renders it with the same `orgUnit`
+widget (`D2OrgUnitField`) used for data elements — keyed by the TEA's uid, going through the
+`<D2Field>` loop above like any other TEA. This is a **different field** from the enrollment
+system field `orgUnit` (the tracked entity's registering org unit) — that one is still
+caller-owned, rendered with your own picker as shown in the comment above, and is not part of
+`metadata.programTrackedEntityAttributes`.
+:::
+
 ## 4. Split the payload at submission time
 
 The Tracker API (`POST /api/tracker`) expects TEA values on the tracked entity, and only system

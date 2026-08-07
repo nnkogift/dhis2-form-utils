@@ -7,5 +7,6 @@ export default createLibTsupConfig({
         'react-hook-form',
         '@dhis2/ui',
         '@nnkogift/dhis2-form-utils-hooks',
+        '@nnkogift/dhis2-form-utils-map',
     ],
 });

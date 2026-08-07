@@ -40,6 +40,7 @@
         "test": "vitest run"
     },
     "dependencies": {
+        "@nnkogift/dhis2-form-utils-map": "workspace:*",
         "@nnkogift/dhis2-form-utils-metadata": "workspace:*",
         "@nnkogift/dhis2-form-utils-rules": "workspace:*"
     },
@@ -54,6 +55,7 @@
     "devDependencies": {
         "@nnkogift/dhis2-form-utils-config": "workspace:*",
         "@dhis2/app-runtime": "^3.17.0",
+        "@dhis2/data-engine": "^3.17.0",
         "@hookform/resolvers": "^5.2.2",
         "@testing-library/react": "^16.3.2",
         "@types/react": "^18.3.29",

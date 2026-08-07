@@ -30,4 +30,34 @@ describe('resolveWidgetKind', () => {
         const config = fromProgramStageDataElement(makePsde('de-1', 'REFERENCE'));
         expect(resolveWidgetKind(config)).toBe('unsupported');
     });
+
+    it('maps COORDINATE to coordinate', () => {
+        expect(resolveWidgetKind(fromProgramStageDataElement(makePsde('de-1', 'COORDINATE')))).toBe(
+            'coordinate'
+        );
+    });
+
+    it('maps GEOJSON to geojson', () => {
+        expect(resolveWidgetKind(fromProgramStageDataElement(makePsde('de-1', 'GEOJSON')))).toBe(
+            'geojson'
+        );
+    });
+
+    it('maps ORGANISATION_UNIT to orgUnit', () => {
+        expect(
+            resolveWidgetKind(fromProgramStageDataElement(makePsde('de-1', 'ORGANISATION_UNIT')))
+        ).toBe('orgUnit');
+    });
+
+    it('maps FILE_RESOURCE to file', () => {
+        expect(
+            resolveWidgetKind(fromProgramStageDataElement(makePsde('de-1', 'FILE_RESOURCE')))
+        ).toBe('file');
+    });
+
+    it('maps IMAGE to image', () => {
+        expect(resolveWidgetKind(fromProgramStageDataElement(makePsde('de-1', 'IMAGE')))).toBe(
+            'image'
+        );
+    });
 });

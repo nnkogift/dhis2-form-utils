@@ -42,6 +42,7 @@ const sidebars: SidebarsConfig = {
                 'reference/hooks',
                 'reference/rules',
                 'reference/metadata',
+                'reference/map',
                 'reference/dhis2-ui',
                 'reference/mantine',
                 'reference/mui',

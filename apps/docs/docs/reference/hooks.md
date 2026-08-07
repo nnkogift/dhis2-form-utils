@@ -71,7 +71,19 @@ with `useDataQuery` + a resolver directly if you need more control.
 ```ts
 function useEventProgramMetadataQuery(programId: string): UseEventProgramMetadataQueryResult;
 function useTrackerMetadataQuery(programId: string): UseTrackerMetadataQueryResult;
+function useOrganisationUnitsQuery(roots?: string[]): UseOrganisationUnitsQueryResult;
+
+type UseOrganisationUnitsQueryResult = {
+    organisationUnits: OrgUnitNode[]; // flattened list under `roots` (id, displayName, ancestors)
+    roots: string[]; // effective roots — `roots` param, or resolved from `me` when omitted
+    loading: boolean;
+    error: Error | undefined;
+};
 ```
+
+`useOrganisationUnitsQuery` is the default data source for `D2OrgUnitField` (the `orgUnit` widget)
+in all three UI adapters — when no `OrgUnitPickerProvider` ancestor is present, it falls back to
+the logged-in user's data-capture organisation units.
 
 ## Provider and context
 
@@ -142,6 +154,29 @@ function joinMultiTextValue(values: string[]): string;
 function parseMultiTextValue(value: string): string[];
 function computeAgeFromDob(dob: string): number | undefined;
 ```
+
+### Org unit / file upload support
+
+```ts
+function useFileResourceUpload(): UseFileResourceUploadReturn;
+
+type FileResourceUploadResult = { id: string; name: string };
+type UseFileResourceUploadReturn = {
+    upload: (file: File) => Promise<FileResourceUploadResult>;
+    uploading: boolean;
+    error: Error | undefined;
+};
+
+function OrgUnitPickerProvider(props: { roots?: string[]; children: ReactNode }): JSX.Element;
+function useOrgUnitPickerContext(): OrgUnitPickerContextValue | undefined;
+
+type OrgUnitPickerContextValue = { roots?: string[] };
+```
+
+`useFileResourceUpload` wraps `useDataMutation` to POST a `File` to `fileResources` and resolve the
+created resource's `id`/`name` — used by the `file`/`image` widgets. `OrgUnitPickerProvider` is
+optional; wrap it around a form (or higher) to scope the `orgUnit` widget's picker to specific root
+organisation units instead of the logged-in user's default data-capture org units.
 
 ## Rule trace (for devtools)
 

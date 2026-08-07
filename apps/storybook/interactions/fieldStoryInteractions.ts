@@ -277,14 +277,101 @@ export function fieldStoryPlays(adapter: FieldStoryAdapter) {
         await expect(canvas.getByText(/Age: \d+ years/)).toBeInTheDocument();
     };
 
-    const stubWidget =
-        (widgetKind: WidgetKind): PlayFunction<FieldStoryArgs> =>
+    // Coordinate/GeoJson map canvas interactions (WebGL hit-testing) are unreliable in headless
+    // browsers, so these plays exercise the accessible numeric-input / textarea fallback paths
+    // instead — which also matches how a screen-reader user would use these widgets. Both widgets
+    // derive their inputs' displayed `value` from the RHF field value (not local state), so
+    // re-reading an input after editing a sibling input verifies the round trip through
+    // `field.onChange`, not just an uncontrolled DOM value.
+    // dhis2-ui's InputField doesn't wire <label for>/aria-labelledby to its <input>, so
+    // getByLabelText fails there; Mantine's NumberInput renders type="text"/inputmode="numeric"
+    // (role "textbox", not "spinbutton"), so getByRole('spinbutton') fails there. Try both.
+    function queryCoordinateInput(canvas: Canvas, labelText: RegExp): HTMLElement {
+        try {
+            return canvas.getByRole('spinbutton', { name: labelText });
+        } catch {
+            try {
+                return canvas.getByLabelText(labelText);
+            } catch {
+                return canvas.getByRole('textbox', { name: labelText });
+            }
+        }
+    }
+
+    const coordinateInput: PlayFunction<FieldStoryArgs> = async ({ canvasElement }) => {
+        const canvas = canvasOf(canvasElement);
+        const lng = queryCoordinateInput(canvas, /Longitude/i);
+        const lat = queryCoordinateInput(canvas, /Latitude/i);
+
+        await userEvent.clear(lng);
+        await userEvent.type(lng, '35.703');
+        await assertInputValue(lng, '35.703');
+
+        await userEvent.clear(lat);
+        await userEvent.type(lat, '-5.639');
+        await assertInputValue(lat, '-5.639');
+
+        // Re-query: proves longitude survived the latitude edit via field.value, not local state.
+        await assertInputValue(queryCoordinateInput(canvas, /Longitude/i), '35.703');
+    };
+
+    const geojsonDraw: PlayFunction<FieldStoryArgs> = async ({ canvasElement }) => {
+        const canvas = canvasOf(canvasElement);
+        const textarea = canvas.getByRole('textbox', { name: /Geometry \(JSON\)/i });
+        await userEvent.clear(textarea);
+        // userEvent.type() parses `{`/`}` as its keyboard DSL (e.g. "{enter}"), so paste the
+        // literal JSON instead of typing it character by character.
+        await userEvent.click(textarea);
+        await userEvent.paste('{"type":"Point","coordinates":[10.9,59.8]}');
+        await userEvent.tab();
+        await expect(canvas.queryByText(/Not a valid GeoJSON geometry/i)).not.toBeInTheDocument();
+    };
+
+    const orgUnitSelect: PlayFunction<FieldStoryArgs> = async ({ canvasElement }) => {
+        const canvas = canvasOf(canvasElement);
+
+        if (adapter === 'dhis2-ui') {
+            // OrganisationUnitTree does two sequential fetches (root list, then the root's own
+            // node data) before rendering "Bo District" — longer than the default 1s timeout.
+            const node = await screen.findByText('Bo District', {}, { timeout: 5000 });
+            await userEvent.click(node);
+            await expect(
+                await screen.findByText(/Selected: Bo District/i, {}, { timeout: 5000 })
+            ).toBeInTheDocument();
+            return;
+        }
+
+        const control =
+            adapter === 'mantine'
+                ? canvas.getByRole('textbox', { name: labelPattern('orgUnit') })
+                : canvas.getByRole('combobox', { name: labelPattern('orgUnit') });
+        await userEvent.click(control);
+        const option = await screen.findByText(/Bo District/i);
+        await userEvent.click(option);
+        await expect((control as HTMLInputElement).value).toContain('Bo District');
+    };
+
+    const fileUpload =
+        (widgetKind: 'file' | 'image' = 'file'): PlayFunction<FieldStoryArgs> =>
         async ({ canvasElement }) => {
             const canvas = canvasOf(canvasElement);
-            await expect(
-                canvas.getByText(new RegExp(`Widget not yet implemented: ${widgetKind}`))
-            ).toBeInTheDocument();
-            await expect(queryFieldInput(canvas, widgetKind)).toBeDisabled();
+            const input = canvasElement.querySelector('input[type="file"]');
+            if (!input) throw new Error('File input not found');
+            const file = new File(['fixture'], 'fixture.png', { type: 'image/png' });
+            await userEvent.upload(input as HTMLInputElement, file);
+
+            if (widgetKind === 'image') {
+                // D2ImageField renders <img src=".../fileResources/{id}/data"> only once
+                // `field.value` (the uploaded UUID) is non-empty — this is the observable
+                // proof the upload → field.onChange round trip succeeded.
+                await expect(await screen.findByRole('img')).toHaveAttribute(
+                    'src',
+                    expect.stringContaining('fixture-uuid-0000-0000-000000000000')
+                );
+                return;
+            }
+
+            await expect(canvas.queryByText(/Upload failed/i)).not.toBeInTheDocument();
         };
 
     return {
@@ -302,6 +389,9 @@ export function fieldStoryPlays(adapter: FieldStoryAdapter) {
         timeInput,
         datetimeInput,
         ageShowsComputedAge,
-        stubWidget,
+        coordinateInput,
+        geojsonDraw,
+        orgUnitSelect,
+        fileUpload,
     };
 }

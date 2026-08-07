@@ -10,6 +10,8 @@ export default createLibTsupConfig({
         '@hookform/resolvers',
         '@hookform/resolvers/zod',
         'zod',
+        '@nnkogift/dhis2-form-utils-map/coordinateValue',
+        '@nnkogift/dhis2-form-utils-map/geojsonValue',
         '@nnkogift/dhis2-form-utils-metadata',
         '@nnkogift/dhis2-form-utils-rules',
     ],

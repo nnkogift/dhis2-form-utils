@@ -3,6 +3,7 @@
     "references": [
         { "path": "utils/rules" },
         { "path": "utils/hooks" },
+        { "path": "packages/map" },
         { "path": "packages/metadata" },
         { "path": "components/dhis2-ui" },
         { "path": "components/mantine" },

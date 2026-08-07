@@ -1,4 +1,6 @@
 import { z } from 'zod';
+import { parseCoordinateValue } from '@nnkogift/dhis2-form-utils-map/coordinateValue';
+import { isValidGeojsonGeometry } from '@nnkogift/dhis2-form-utils-map/geojsonValue';
 import type { FieldConfig } from './fieldConfig';
 import { parseMultiTextValue } from './multiTextValue';
 
@@ -19,6 +21,7 @@ const multiTextOptionSchema = (codes: string[]): z.ZodTypeAny => {
  * Per-field Zod schema for useController validation.
  * Form values are stored as strings in RHF; this differs from buildSchema() coercion.
  */
+// fallow-ignore-next-line complexity
 export function buildFieldSchema(config: FieldConfig): z.ZodTypeAny {
     let base: z.ZodTypeAny;
 
@@ -84,6 +87,24 @@ export function buildFieldSchema(config: FieldConfig): z.ZodTypeAny {
                 break;
             case 'TRUE_ONLY':
                 base = z.enum(['true', '']);
+                break;
+            case 'COORDINATE':
+                base = z
+                    .string()
+                    .refine(
+                        (value) => parseCoordinateValue(value) !== null,
+                        'Must be a valid [longitude,latitude] coordinate'
+                    );
+                break;
+            case 'GEOJSON':
+                base = z.string().refine(isValidGeojsonGeometry, 'Must be valid GeoJSON geometry');
+                break;
+            case 'ORGANISATION_UNIT':
+                base = z.string().length(11, 'Must be a valid organisation unit');
+                break;
+            case 'FILE_RESOURCE':
+            case 'IMAGE':
+                base = z.string().uuid('Must be a valid file reference');
                 break;
             default:
                 base = z.string();

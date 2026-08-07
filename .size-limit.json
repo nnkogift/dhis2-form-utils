@@ -12,6 +12,12 @@
         "gzip": true
     },
     {
+        "name": "map (ESM, excl. maplibre-gl/terra-draw)",
+        "path": "packages/map/dist/**/*.js",
+        "limit": "15 KB",
+        "gzip": true
+    },
+    {
         "name": "hooks (ESM)",
         "path": "utils/hooks/dist/**/*.js",
         "limit": "15 KB",

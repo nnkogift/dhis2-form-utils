@@ -21,6 +21,11 @@ export { useEventProgramMetadataQuery } from './queries/useEventProgramMetadataQ
 export type { UseEventProgramMetadataQueryResult } from './queries/useEventProgramMetadataQuery';
 export { useTrackerMetadataQuery } from './queries/useTrackerMetadataQuery';
 export type { UseTrackerMetadataQueryResult } from './queries/useTrackerMetadataQuery';
+export { useOrganisationUnitsQuery } from './queries/useOrganisationUnitsQuery';
+export type {
+    UseOrganisationUnitsQueryResult,
+    OrgUnitNode,
+} from './queries/useOrganisationUnitsQuery';
 export { useEventForm } from './useEventForm';
 export type { UseEventFormOptions, UseEventFormReturn } from './useEventForm';
 export { useTrackerForm } from './useTrackerForm';
@@ -40,6 +45,20 @@ export { resolveWidgetKind } from './fields/widgetKind';
 export { buildFieldSchema } from './fields/fieldValidation';
 export { joinMultiTextValue, parseMultiTextValue } from './fields/multiTextValue';
 export { resolveFieldValidation } from './fields/fieldFeedback';
+export { useFileResourceUpload } from './fields/useFileResourceUpload';
+export type {
+    FileResourceUploadResult,
+    UseFileResourceUploadReturn,
+} from './fields/useFileResourceUpload';
+export {
+    OrgUnitPickerContext,
+    OrgUnitPickerProvider,
+    useOrgUnitPickerContext,
+} from './fields/orgUnitPickerContext';
+export type {
+    OrgUnitPickerContextValue,
+    OrgUnitPickerProviderProps,
+} from './fields/orgUnitPickerContext';
 export { computeAgeFromDob } from './fields/computeAgeFromDob';
 export { useRuleEffectTrace, useFieldRuleEffect, useSectionRuleEffect } from './useRuleEffectTrace';
 export type { RuleEffectTrace } from './useRuleEffectTrace';

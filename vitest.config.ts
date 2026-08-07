@@ -6,6 +6,7 @@ export default defineConfig({
             'components/dhis2-ui',
             'components/mantine',
             'components/mui',
+            'packages/map',
             'packages/metadata',
             'utils/rules',
             'utils/hooks',

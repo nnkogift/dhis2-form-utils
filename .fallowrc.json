@@ -25,5 +25,11 @@
   },
   "rules": {
     "unused-dependencies": "warn"
-  }
+  },
+  "ignoreDependencies": [
+    // Used only via subpath imports (./coordinateValue, ./geojsonValue) and a
+    // side-effect CSS import (./style.css) in dhis2-ui/mantine/mui/hooks —
+    // fallow's dependency-usage detector doesn't resolve those import forms.
+    "@nnkogift/dhis2-form-utils-map"
+  ]
 }

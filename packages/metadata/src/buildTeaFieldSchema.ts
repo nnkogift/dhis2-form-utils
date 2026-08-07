@@ -17,6 +17,54 @@ const rejectFutureDates = (schema: z.ZodTypeAny): z.ZodTypeAny =>
         message: 'Date cannot be in the future',
     });
 
+// Mirrors packages/map/src/coordinateValue.ts's parseCoordinateValue — duplicated here (rather than
+// depending on @nnkogift/dhis2-form-utils-map) because packages/metadata is meant to stay usable
+// standalone, without pulling in a map-rendering package.
+// fallow-ignore-next-line code-duplication
+// fallow-ignore-next-line complexity
+const isValidCoordinateString = (value: string): boolean => {
+    let parsed: unknown;
+    try {
+        parsed = JSON.parse(value);
+    } catch {
+        return false;
+    }
+    if (!Array.isArray(parsed) || parsed.length !== 2) return false;
+    const lng: unknown = parsed[0];
+    const lat: unknown = parsed[1];
+    if (typeof lng !== 'number' || typeof lat !== 'number') return false;
+    if (!Number.isFinite(lng) || !Number.isFinite(lat)) return false;
+    return lng >= -180 && lng <= 180 && lat >= -90 && lat <= 90;
+};
+
+const GEOJSON_GEOMETRY_TYPES = new Set([
+    'Point',
+    'MultiPoint',
+    'LineString',
+    'MultiLineString',
+    'Polygon',
+    'MultiPolygon',
+    'GeometryCollection',
+]);
+
+// fallow-ignore-next-line code-duplication
+// Mirrors packages/map/src/geojsonValue.ts's isValidGeojsonGeometry — see the note above
+// isValidCoordinateString for why this is duplicated rather than imported.
+const isValidGeojsonGeometryString = (value: string): boolean => {
+    let parsed: unknown;
+    try {
+        parsed = JSON.parse(value);
+    } catch {
+        return false;
+    }
+    if (typeof parsed !== 'object' || parsed === null) return false;
+    const candidate = parsed as { type?: unknown; coordinates?: unknown; geometries?: unknown };
+    if (typeof candidate.type !== 'string' || !GEOJSON_GEOMETRY_TYPES.has(candidate.type))
+        return false;
+    if (candidate.type === 'GeometryCollection') return Array.isArray(candidate.geometries);
+    return Array.isArray(candidate.coordinates);
+};
+
 const multiTextOptionSchema = (codes: string[]): z.ZodTypeAny => {
     const codeSet = new Set(codes);
     return z.string().refine(
@@ -72,6 +120,17 @@ const valueTypeToStringSchema = (valueType: ValueType | undefined): z.ZodTypeAny
             return z.enum(['true', '']);
         case 'ORGANISATION_UNIT':
             return z.string().min(11).max(11);
+        case 'COORDINATE':
+            return z
+                .string()
+                .refine(isValidCoordinateString, 'Must be a valid [longitude,latitude] coordinate');
+        case 'GEOJSON':
+            return z
+                .string()
+                .refine(isValidGeojsonGeometryString, 'Must be valid GeoJSON geometry');
+        case 'FILE_RESOURCE':
+        case 'IMAGE':
+            return z.string().uuid('Must be a valid file reference');
         default:
             return z.string();
     }

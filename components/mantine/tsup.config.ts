@@ -10,5 +10,6 @@ export default createLibTsupConfig({
         '@mantine/hooks',
         'dayjs',
         '@nnkogift/dhis2-form-utils-hooks',
+        '@nnkogift/dhis2-form-utils-map',
     ],
 });

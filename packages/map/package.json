@@ -1,0 +1,76 @@
+{
+    "name": "@nnkogift/dhis2-form-utils-map",
+    "version": "0.1.0-alpha.0",
+    "description": "MapLibre-based coordinate picker and GeoJSON editor building blocks for DHIS2 form widgets",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/nnkogift/dhis2-form-utils.git",
+        "directory": "packages/map"
+    },
+    "homepage": "https://github.com/nnkogift/dhis2-form-utils#readme",
+    "type": "module",
+    "sideEffects": false,
+    "main": "./dist/index.cjs",
+    "module": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+        ".": {
+            "import": {
+                "types": "./dist/index.d.ts",
+                "default": "./dist/index.js"
+            },
+            "require": {
+                "types": "./dist/index.d.cts",
+                "default": "./dist/index.cjs"
+            }
+        },
+        "./coordinateValue": {
+            "types": "./dist/coordinateValue.d.ts",
+            "default": "./dist/coordinateValue.js"
+        },
+        "./geojsonValue": {
+            "types": "./dist/geojsonValue.d.ts",
+            "default": "./dist/geojsonValue.js"
+        },
+        "./style.css": "./dist/style.css"
+    },
+    "files": [
+        "dist"
+    ],
+    "publishConfig": {
+        "access": "public",
+        "registry": "https://registry.npmjs.org/"
+    },
+    "scripts": {
+        "build": "tsup && node ../config/copyEntryDtsCts.mjs && node scripts/copyMapLibreCss.mjs",
+        "dev": "tsup --watch",
+        "typecheck": "tsc --noEmit",
+        "test": "vitest run"
+    },
+    "dependencies": {
+        "maplibre-gl": "^6.1.0",
+        "terra-draw": "^1.32.2",
+        "terra-draw-maplibre-gl-adapter": "^1.4.1"
+    },
+    "peerDependencies": {
+        "react": ">=18.0.0",
+        "react-dom": ">=18.0.0"
+    },
+    "devDependencies": {
+        "@nnkogift/dhis2-form-utils-config": "workspace:*",
+        "@testing-library/react": "^16.3.2",
+        "@types/geojson": "^7946.0.16",
+        "@types/react": "^18.3.29",
+        "@types/react-dom": "^18.3.7",
+        "jsdom": "^29.1.1",
+        "react": "^18.3.1",
+        "react-dom": "^18.3.1",
+        "tsup": "^8.5.1",
+        "typescript": "^5.9.3",
+        "vitest": "^4.1.10"
+    },
+    "engines": {
+        "node": ">=18"
+    }
+}

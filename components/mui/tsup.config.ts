@@ -11,5 +11,6 @@ export default createLibTsupConfig({
         '@emotion/styled',
         'dayjs',
         '@nnkogift/dhis2-form-utils-hooks',
+        '@nnkogift/dhis2-form-utils-map',
     ],
 });

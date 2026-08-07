@@ -91,7 +91,27 @@ export const Age: Story = {
     play: plays.ageShowsComputedAge,
 };
 
-export const StubWidget: Story = {
+export const Coordinate: Story = {
+    args: { widgetKind: 'coordinate' },
+    play: plays.coordinateInput,
+};
+
+export const GeoJson: Story = {
+    args: { widgetKind: 'geojson' },
+    play: plays.geojsonDraw,
+};
+
+export const OrgUnit: Story = {
     args: { widgetKind: 'orgUnit' },
-    play: plays.stubWidget('orgUnit'),
+    play: plays.orgUnitSelect,
+};
+
+export const FileUpload: Story = {
+    args: { widgetKind: 'file' },
+    play: plays.fileUpload('file'),
+};
+
+export const ImageUpload: Story = {
+    args: { widgetKind: 'image' },
+    play: plays.fileUpload('image'),
 };

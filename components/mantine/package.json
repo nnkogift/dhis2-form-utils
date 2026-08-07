@@ -40,9 +40,11 @@
         "test": "vitest run"
     },
     "dependencies": {
-        "@nnkogift/dhis2-form-utils-hooks": "workspace:*"
+        "@nnkogift/dhis2-form-utils-hooks": "workspace:*",
+        "@nnkogift/dhis2-form-utils-map": "workspace:*"
     },
     "peerDependencies": {
+        "@dhis2/app-runtime": ">=3.0.0",
         "@mantine/core": ">=7.0.0",
         "@mantine/dates": ">=7.0.0",
         "@mantine/hooks": ">=7.0.0",
@@ -53,6 +55,7 @@
     },
     "devDependencies": {
         "@nnkogift/dhis2-form-utils-config": "workspace:*",
+        "@dhis2/app-runtime": "^3.17.0",
         "@mantine/core": "^7.17.8",
         "@mantine/dates": "^7.17.8",
         "@mantine/hooks": "^7.17.8",
