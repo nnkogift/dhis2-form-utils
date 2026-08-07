@@ -1,5 +1,5 @@
 {
-    "name": "docs",
+    "name": "@nnkogift/dhis2-form-utils-docs",
     "version": "0.0.0",
     "private": true,
     "scripts": {

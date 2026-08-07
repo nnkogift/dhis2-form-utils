@@ -10,17 +10,14 @@
             "@nnkogift/dhis2-form-utils-dhis2-ui",
             "@nnkogift/dhis2-form-utils-mantine",
             "@nnkogift/dhis2-form-utils-mui",
-            "@nnkogift/dhis2-form-utils-devtools"
+            "@nnkogift/dhis2-form-utils-devtools",
+            "@nnkogift/dhis2-form-utils-storybook",
+            "@nnkogift/dhis2-form-utils-docs"
         ]
     ],
     "linked": [],
     "access": "public",
     "baseBranch": "main",
     "updateInternalDependencies": "patch",
-    "ignore": [
-        "storybook",
-        "docs",
-        "@nnkogift/dhis2-form-utils-config",
-        "@nnkogift/dhis2-form-utils-map"
-    ]
+    "ignore": ["@nnkogift/dhis2-form-utils-config", "@nnkogift/dhis2-form-utils-map"]
 }
