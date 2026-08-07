@@ -1,5 +1,6 @@
 import {
     CheckboxField,
+    Field,
     MultiSelectField,
     MultiSelectOption,
     Radio,
@@ -12,6 +13,7 @@ import {
     parseMultiTextValue,
     resolveFieldValidation,
 } from '@nnkogift/dhis2-form-utils-hooks';
+import { useMemo } from 'react';
 
 const BOOLEAN_OPTIONS = [
     { label: 'Yes', value: 'true' },
@@ -20,47 +22,54 @@ const BOOLEAN_OPTIONS = [
 
 const RADIO_RENDER_HINTS = new Set(['RADIO', 'VERTICAL_RADIOBUTTONS', 'HORIZONTAL_RADIOBUTTONS']);
 
-// fallow-ignore-next-line complexity
 export function D2BooleanField({ control }: WidgetProps) {
-    const { fieldConfig, field, isMandatory, isDisabled } = control;
-    const { validationText, hasError, hasWarning } = resolveFieldValidation(control);
-    const options = isMandatory
-        ? [...BOOLEAN_OPTIONS]
-        : [...BOOLEAN_OPTIONS, { label: '—', value: '' }];
+    const { fieldConfig, field, isMandatory, isDisabled } = useMemo(() => control, [control]);
+    const { validationText, hasError, hasWarning } = useMemo(
+        () => resolveFieldValidation(control),
+        [control]
+    );
 
     return (
-        <fieldset>
-            <legend>
-                {fieldConfig.label}
-                {isMandatory ? ' *' : ''}
-            </legend>
-            {fieldConfig.description ? <p>{fieldConfig.description}</p> : null}
-            {options.map((option) => (
-                <Radio
-                    key={option.label}
-                    name={field.name}
-                    label={option.label}
-                    value={option.value}
-                    checked={field.value === option.value}
-                    disabled={isDisabled}
-                    onChange={({ value }) => {
-                        field.onChange(value ?? '');
-                    }}
-                    onBlur={field.onBlur}
-                />
-            ))}
-            {validationText ? (
-                <p data-error={hasError || undefined} data-warning={hasWarning || undefined}>
-                    {validationText}
-                </p>
-            ) : null}
-        </fieldset>
+        <Field
+            label={fieldConfig.label}
+            helpText={fieldConfig.description}
+            warning={hasWarning}
+            error={hasError}
+            required={isMandatory}
+            disabled={isDisabled}
+            validationText={validationText}
+        >
+            <div
+                style={{
+                    display: 'flex',
+                    gap: 16,
+                }}
+            >
+                {BOOLEAN_OPTIONS.map((option) => (
+                    <Radio
+                        key={option.label}
+                        name={field.name}
+                        label={option.label}
+                        value={option.value}
+                        checked={field.value === option.value}
+                        disabled={isDisabled}
+                        onChange={({ value }) => {
+                            field.onChange(value ?? '');
+                        }}
+                        onBlur={field.onBlur}
+                    />
+                ))}
+            </div>
+        </Field>
     );
 }
 
 export function D2TrueOnlyField({ control }: WidgetProps) {
-    const { fieldConfig, field, isMandatory, isDisabled } = control;
-    const { validationText, hasError, hasWarning } = resolveFieldValidation(control);
+    const { fieldConfig, field, isMandatory, isDisabled } = useMemo(() => control, [control]);
+    const { validationText, hasError, hasWarning } = useMemo(
+        () => resolveFieldValidation(control),
+        [control]
+    );
 
     return (
         <CheckboxField
@@ -137,11 +146,13 @@ export function D2SelectField({ control }: WidgetProps) {
 export function D2MultiSelectField({ control }: WidgetProps) {
     const { fieldConfig, field, isMandatory, isDisabled } = control;
     const { validationText, hasError, hasWarning } = resolveFieldValidation(control);
-    const options = (control.visibleOptions ?? fieldConfig.optionSet?.options ?? []).map(
-        (option) => ({
-            label: option.label,
-            value: option.code,
-        })
+    const options = useMemo(
+        () =>
+            (control.visibleOptions ?? fieldConfig.optionSet?.options ?? []).map((option) => ({
+                label: option.label,
+                value: option.code,
+            })),
+        [control.visibleOptions, fieldConfig.optionSet?.options]
     );
     const selected = parseMultiTextValue(field.value as string);
 

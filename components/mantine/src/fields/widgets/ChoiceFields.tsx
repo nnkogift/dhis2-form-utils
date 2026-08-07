@@ -1,26 +1,21 @@
-import { Checkbox, MultiSelect, Radio, Select } from '@mantine/core';
+import { Checkbox, Group, MultiSelect, Radio, Select } from '@mantine/core';
 import type { WidgetProps } from '@nnkogift/dhis2-form-utils-hooks';
 import {
     joinMultiTextValue,
     parseMultiTextValue,
     resolveFieldValidation,
 } from '@nnkogift/dhis2-form-utils-hooks';
+import { useMemo } from 'react';
 
 const RADIO_RENDER_HINTS = new Set(['RADIO', 'VERTICAL_RADIOBUTTONS', 'HORIZONTAL_RADIOBUTTONS']);
+const BOOLEAN_OPTIONS = [
+    { label: 'Yes', value: 'true' },
+    { label: 'No', value: 'false' },
+];
 
 export function D2BooleanField({ control }: WidgetProps) {
-    const { fieldConfig, field, isMandatory, isDisabled } = control;
-    const { validationText, hasError } = resolveFieldValidation(control);
-    const options = isMandatory
-        ? [
-              { label: 'Yes', value: 'true' },
-              { label: 'No', value: 'false' },
-          ]
-        : [
-              { label: 'Yes', value: 'true' },
-              { label: 'No', value: 'false' },
-              { label: '—', value: '' },
-          ];
+    const { fieldConfig, field, isMandatory, isDisabled } = useMemo(() => control, [control]);
+    const { validationText, hasError } = useMemo(() => resolveFieldValidation(control), [control]);
 
     return (
         <Radio.Group
@@ -35,21 +30,23 @@ export function D2BooleanField({ control }: WidgetProps) {
             onBlur={field.onBlur}
             error={hasError ? validationText : undefined}
         >
-            {options.map((option) => (
-                <Radio
-                    key={option.label}
-                    value={option.value}
-                    label={option.label}
-                    disabled={isDisabled}
-                />
-            ))}
+            <Group mt="xs">
+                {BOOLEAN_OPTIONS.map((option) => (
+                    <Radio
+                        key={option.label}
+                        value={option.value}
+                        label={option.label}
+                        disabled={isDisabled}
+                    />
+                ))}
+            </Group>
         </Radio.Group>
     );
 }
 
 export function D2TrueOnlyField({ control }: WidgetProps) {
-    const { fieldConfig, field, isMandatory, isDisabled } = control;
-    const { validationText, hasError } = resolveFieldValidation(control);
+    const { fieldConfig, field, isMandatory, isDisabled } = useMemo(() => control, [control]);
+    const { validationText, hasError } = useMemo(() => resolveFieldValidation(control), [control]);
 
     return (
         <Checkbox
@@ -70,13 +67,15 @@ export function D2TrueOnlyField({ control }: WidgetProps) {
 
 // fallow-ignore-next-line complexity
 export function D2SelectField({ control }: WidgetProps) {
-    const { fieldConfig, field, isMandatory, isDisabled } = control;
-    const { validationText, hasError } = resolveFieldValidation(control);
-    const options = (control.visibleOptions ?? fieldConfig.optionSet?.options ?? []).map(
-        (option) => ({
-            label: option.label,
-            value: option.code,
-        })
+    const { fieldConfig, field, isMandatory, isDisabled } = useMemo(() => control, [control]);
+    const { validationText, hasError } = useMemo(() => resolveFieldValidation(control), [control]);
+    const options = useMemo(
+        () =>
+            (control.visibleOptions ?? fieldConfig.optionSet?.options ?? []).map((option) => ({
+                label: option.label,
+                value: option.code,
+            })),
+        [control.visibleOptions, fieldConfig.optionSet?.options]
     );
 
     if (fieldConfig.renderTypeHint && RADIO_RENDER_HINTS.has(fieldConfig.renderTypeHint)) {
@@ -93,14 +92,16 @@ export function D2SelectField({ control }: WidgetProps) {
                 onBlur={field.onBlur}
                 error={hasError ? validationText : undefined}
             >
-                {options.map((option) => (
-                    <Radio
-                        key={option.value}
-                        value={option.value}
-                        label={option.label}
-                        disabled={isDisabled}
-                    />
-                ))}
+                <Group mt="xs">
+                    {options.map((option) => (
+                        <Radio
+                            key={option.value}
+                            value={option.value}
+                            label={option.label}
+                            disabled={isDisabled}
+                        />
+                    ))}
+                </Group>
             </Radio.Group>
         );
     }

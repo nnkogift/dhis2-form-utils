@@ -74,8 +74,15 @@ async function pickBooleanOption(
     const canvas = canvasOf(canvasElement);
 
     if (adapter === 'dhis2-ui') {
-        const field = Array.from(canvasElement.querySelectorAll('fieldset')).find((element) =>
-            fieldLabel.test(element.querySelector('legend')?.textContent?.trim() ?? '')
+        // D2BooleanField renders dhis2-ui's <Field label=...>, not a <fieldset>/<legend>.
+        const field = Array.from(
+            canvasElement.querySelectorAll('[data-test="dhis2-uicore-field"]')
+        ).find((element) =>
+            fieldLabel.test(
+                element
+                    .querySelector('[data-test="dhis2-uicore-field-label"]')
+                    ?.textContent?.trim() ?? ''
+            )
         );
         if (!field) {
             throw new Error(`DHIS2 boolean field matching ${fieldLabel} not found`);
