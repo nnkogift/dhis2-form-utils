@@ -1,10 +1,62 @@
 import { z } from 'zod';
-import { parseCoordinateValue } from '@nnkogift/dhis2-form-utils-map/coordinateValue';
-import { isValidGeojsonGeometry } from '@nnkogift/dhis2-form-utils-map/geojsonValue';
 import type { FieldConfig } from './fieldConfig';
 import { parseMultiTextValue } from './multiTextValue';
 
 const DATETIME_PATTERN = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/;
+const COORDINATE_BOUNDS = { lngMin: -180, lngMax: 180, latMin: -90, latMax: 90 };
+const GEOJSON_GEOMETRY_TYPES = new Set([
+    'Point',
+    'MultiPoint',
+    'LineString',
+    'MultiLineString',
+    'Polygon',
+    'MultiPolygon',
+    'GeometryCollection',
+]);
+
+// Mirrors packages/map/src/coordinateValue.ts's parseCoordinateValue — duplicated here (rather
+// than depending on @nnkogift/dhis2-form-utils-map) because the hooks package is meant to stay
+// usable standalone, without pulling in a map-rendering package. See the same note in
+// packages/metadata/src/buildTeaFieldSchema.ts.
+// fallow-ignore-next-line code-duplication
+// fallow-ignore-next-line complexity
+const isValidCoordinateString = (value: string): boolean => {
+    let parsed: unknown;
+    try {
+        parsed = JSON.parse(value);
+    } catch {
+        return false;
+    }
+    if (!Array.isArray(parsed) || parsed.length !== 2) return false;
+    const lng: unknown = parsed[0];
+    const lat: unknown = parsed[1];
+    if (typeof lng !== 'number' || typeof lat !== 'number') return false;
+    if (!Number.isFinite(lng) || !Number.isFinite(lat)) return false;
+    return (
+        lng >= COORDINATE_BOUNDS.lngMin &&
+        lng <= COORDINATE_BOUNDS.lngMax &&
+        lat >= COORDINATE_BOUNDS.latMin &&
+        lat <= COORDINATE_BOUNDS.latMax
+    );
+};
+
+// Mirrors packages/map/src/geojsonValue.ts's isValidGeojsonGeometry — see the note above
+// isValidCoordinateString for why this is duplicated rather than imported.
+// fallow-ignore-next-line code-duplication
+const isValidGeojsonGeometryString = (value: string): boolean => {
+    let parsed: unknown;
+    try {
+        parsed = JSON.parse(value);
+    } catch {
+        return false;
+    }
+    if (typeof parsed !== 'object' || parsed === null) return false;
+    const candidate = parsed as { type?: unknown; coordinates?: unknown; geometries?: unknown };
+    if (typeof candidate.type !== 'string' || !GEOJSON_GEOMETRY_TYPES.has(candidate.type))
+        return false;
+    if (candidate.type === 'GeometryCollection') return Array.isArray(candidate.geometries);
+    return Array.isArray(candidate.coordinates);
+};
 
 const multiTextOptionSchema = (codes: string[]): z.ZodTypeAny => {
     const codeSet = new Set(codes);
@@ -92,12 +144,14 @@ export function buildFieldSchema(config: FieldConfig): z.ZodTypeAny {
                 base = z
                     .string()
                     .refine(
-                        (value) => parseCoordinateValue(value) !== null,
+                        isValidCoordinateString,
                         'Must be a valid [longitude,latitude] coordinate'
                     );
                 break;
             case 'GEOJSON':
-                base = z.string().refine(isValidGeojsonGeometry, 'Must be valid GeoJSON geometry');
+                base = z
+                    .string()
+                    .refine(isValidGeojsonGeometryString, 'Must be valid GeoJSON geometry');
                 break;
             case 'ORGANISATION_UNIT':
                 base = z.string().length(11, 'Must be a valid organisation unit');

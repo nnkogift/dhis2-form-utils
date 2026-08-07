@@ -143,7 +143,7 @@ Plug-and-play `EventForm` / `TrackerForm` components are planned but not yet exp
 - All hooks require a `@dhis2/app-runtime` `Provider` in the component tree.
 - TypeScript strict mode is on across all packages. Types are derived from Zod schemas via `z.infer<>`. No `any`.
 - Internal packages reference each other with `"workspace:*"`.
-- Each package builds with `tsup` to `dist/` as both ESM and CJS with declarations.
+- Each publishable package builds with `tsup` to `dist/` as both ESM and CJS with declarations. `packages/map` is the exception: it's a source-only (JIT) internal package with no build step — `dhis2-ui`/`mantine`/`mui`/etc. compile its `.ts` source directly as part of their own `tsup` bundle via `package.json` `exports` pointing straight at `src/`.
 - Unit tests are co-located with source. `evaluateAndMap` in the rules package is a pure function and can be tested with fixture rule sets — no DOM or network needed.
 - CI pipeline (`.github/workflows/ci.yml`): `build` runs first and uploads `dist/` artifacts; `lint`, `type-check`, `unit-test`, and `storybook-test` all depend on `build` and run in parallel, downloading those artifacts. A non-blocking `fallow` dead-code check (`continue-on-error`) runs after `lint`. There is no e2e job.
 - Branch naming: `feature/`, `fix/`, `chore/`, `refactor/`. Commits: Conventional Commits (`feat:`, `fix:`, `docs:`, `chore:`).
