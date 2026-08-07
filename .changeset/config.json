@@ -17,5 +17,10 @@
     "access": "public",
     "baseBranch": "main",
     "updateInternalDependencies": "patch",
-    "ignore": ["storybook", "@nnkogift/dhis2-form-utils-config", "@nnkogift/dhis2-form-utils-map"]
+    "ignore": [
+        "storybook",
+        "docs",
+        "@nnkogift/dhis2-form-utils-config",
+        "@nnkogift/dhis2-form-utils-map"
+    ]
 }
