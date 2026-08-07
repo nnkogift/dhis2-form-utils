@@ -1,5 +1,15 @@
 # @nnkogift/dhis2-form-utils-devtools
 
+## 0.1.0-alpha.1
+
+### Patch Changes
+
+- [#31](https://github.com/nnkogift/dhis2-form-utils/pull/31) [`2ed1bc2`](https://github.com/nnkogift/dhis2-form-utils/commit/2ed1bc2f605285daf6c44ef7330f9e07b2f61fbd) Thanks [@github-actions](https://github.com/apps/github-actions)! - Bump `vitest` dev dependency to `^4.1.10`.
+
+- Updated dependencies [[`2ed1bc2`](https://github.com/nnkogift/dhis2-form-utils/commit/2ed1bc2f605285daf6c44ef7330f9e07b2f61fbd), [`2ed1bc2`](https://github.com/nnkogift/dhis2-form-utils/commit/2ed1bc2f605285daf6c44ef7330f9e07b2f61fbd), [`2ed1bc2`](https://github.com/nnkogift/dhis2-form-utils/commit/2ed1bc2f605285daf6c44ef7330f9e07b2f61fbd), [`2ed1bc2`](https://github.com/nnkogift/dhis2-form-utils/commit/2ed1bc2f605285daf6c44ef7330f9e07b2f61fbd)]:
+    - @nnkogift/dhis2-form-utils-metadata@0.1.0-alpha.1
+    - @nnkogift/dhis2-form-utils-hooks@0.1.0-alpha.1
+
 ## 0.1.0-alpha.0
 
 ### Minor Changes

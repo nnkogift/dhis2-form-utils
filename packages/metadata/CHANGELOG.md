@@ -1,5 +1,19 @@
 # @nnkogift/dhis2-form-utils-metadata
 
+## 0.1.0-alpha.1
+
+### Minor Changes
+
+- [#31](https://github.com/nnkogift/dhis2-form-utils/pull/31) [`2ed1bc2`](https://github.com/nnkogift/dhis2-form-utils/commit/2ed1bc2f605285daf6c44ef7330f9e07b2f61fbd) Thanks [@github-actions](https://github.com/apps/github-actions)! - Add coordinate, geoJson, orgUnit, file, and image field widgets across all UI adapters, backed by a new internal MapLibre-based map picker.
+
+### Patch Changes
+
+- [#31](https://github.com/nnkogift/dhis2-form-utils/pull/31) [`2ed1bc2`](https://github.com/nnkogift/dhis2-form-utils/commit/2ed1bc2f605285daf6c44ef7330f9e07b2f61fbd) Thanks [@github-actions](https://github.com/apps/github-actions)! - Fall back to the MOBILE render type hint when DESKTOP is not configured for a data element.
+
+- [#31](https://github.com/nnkogift/dhis2-form-utils/pull/31) [`2ed1bc2`](https://github.com/nnkogift/dhis2-form-utils/commit/2ed1bc2f605285daf6c44ef7330f9e07b2f61fbd) Thanks [@github-actions](https://github.com/apps/github-actions)! - Correct `programStageSectionDataElements` to `dataElements` when resolving program stage section field order.
+
+- [#31](https://github.com/nnkogift/dhis2-form-utils/pull/31) [`2ed1bc2`](https://github.com/nnkogift/dhis2-form-utils/commit/2ed1bc2f605285daf6c44ef7330f9e07b2f61fbd) Thanks [@github-actions](https://github.com/apps/github-actions)! - Add missing `SCHEDULEEVENT`/`CREATEEVENT` to `ProgramRuleActionType`.
+
 ## 0.1.0-alpha.0
 
 ### Minor Changes

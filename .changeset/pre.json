@@ -11,7 +11,16 @@
         "@nnkogift/dhis2-form-utils-metadata": "0.0.0",
         "@nnkogift/dhis2-form-utils-devtools": "0.0.0",
         "@nnkogift/dhis2-form-utils-hooks": "0.0.0",
-        "@nnkogift/dhis2-form-utils-rules": "0.0.0"
+        "@nnkogift/dhis2-form-utils-rules": "0.0.0",
+        "@nnkogift/dhis2-form-utils-docs": "0.0.0",
+        "@nnkogift/dhis2-form-utils-storybook": "0.0.0",
+        "@nnkogift/dhis2-form-utils-map": "0.0.0"
     },
-    "changesets": ["initial-publish-setup"]
+    "changesets": [
+        "devtools-vitest-bump",
+        "field-widgets-map-integration",
+        "fix-mobile-render-hint",
+        "fix-program-stage-section-data-elements",
+        "fix-schedule-create-event-action-type"
+    ]
 }

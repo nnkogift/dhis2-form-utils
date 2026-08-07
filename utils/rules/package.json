@@ -1,6 +1,6 @@
 {
     "name": "@nnkogift/dhis2-form-utils-rules",
-    "version": "0.1.0-alpha.0",
+    "version": "0.1.0-alpha.1",
     "description": "DHIS2 program rule evaluation and field state mapping for React forms",
     "license": "MIT",
     "repository": {
