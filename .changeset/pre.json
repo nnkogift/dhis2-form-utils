@@ -21,6 +21,7 @@
         "field-widgets-map-integration",
         "fix-mobile-render-hint",
         "fix-program-stage-section-data-elements",
-        "fix-schedule-create-event-action-type"
+        "fix-schedule-create-event-action-type",
+        "map-jit-package"
     ]
 }

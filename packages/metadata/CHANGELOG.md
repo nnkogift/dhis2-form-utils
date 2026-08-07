@@ -1,5 +1,7 @@
 # @nnkogift/dhis2-form-utils-metadata
 
+## 0.1.0-alpha.2
+
 ## 0.1.0-alpha.1
 
 ### Minor Changes

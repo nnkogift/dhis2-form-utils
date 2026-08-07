@@ -1,5 +1,17 @@
 # @nnkogift/dhis2-form-utils-hooks
 
+## 0.1.0-alpha.2
+
+### Patch Changes
+
+- [`555194a`](https://github.com/nnkogift/dhis2-form-utils/commit/555194a2be7e867157959696251516bf938f9fe9) Thanks [@nnkogift](https://github.com/nnkogift)! - Fix a broken runtime import in the published ESM build: `fieldValidation.ts` imported `parseCoordinateValue`/`isValidGeojsonGeometry` from the internal, unpublished `@nnkogift/dhis2-form-utils-map` package, which tsup's `preserveModules` build left as an unresolved bare specifier in `dist/fields/fieldValidation.js` — breaking `COORDINATE`/`GEOJSON` field validation for consuming apps. The coordinate/GeoJSON validators are now duplicated locally (matching the existing pattern in `@nnkogift/dhis2-form-utils-metadata`) so `hooks` no longer depends on the map package at all.
+
+    Internally, `@nnkogift/dhis2-form-utils-map` is now a source-only (JIT) package with no build step of its own — `dhis2-ui`/`mantine`/`mui` compile its TypeScript source directly as part of their own bundles, removing the build-order dependency on a separately-built `dist/`.
+
+- Updated dependencies []:
+    - @nnkogift/dhis2-form-utils-metadata@0.1.0-alpha.2
+    - @nnkogift/dhis2-form-utils-rules@0.1.0-alpha.2
+
 ## 0.1.0-alpha.1
 
 ### Minor Changes

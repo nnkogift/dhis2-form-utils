@@ -1,6 +1,6 @@
 {
     "name": "@nnkogift/dhis2-form-utils-devtools",
-    "version": "0.1.0-alpha.1",
+    "version": "0.1.0-alpha.2",
     "description": "Developer tools for debugging DHIS2 program rules in dhis2-form-utils forms",
     "license": "MIT",
     "repository": {
