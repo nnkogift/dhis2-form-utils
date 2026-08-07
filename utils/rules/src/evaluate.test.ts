@@ -204,6 +204,31 @@ describe('evaluateAndMap', () => {
 
         expect(handler).toHaveBeenCalledTimes(1);
     });
+
+    it('reaches effectHandlers for SCHEDULEEVENT/CREATEEVENT instead of being silently dropped', () => {
+        const scheduleHandler = vi.fn();
+        const createHandler = vi.fn();
+        const engine = {
+            evaluate: () => [
+                { ruleId, ruleActionType: ProgramRuleActionType.SCHEDULEEVENT, data: '2026-08-07' },
+                { ruleId, ruleActionType: ProgramRuleActionType.CREATEEVENT },
+            ],
+        };
+
+        const result = evaluateAndMap(
+            engine,
+            {},
+            {
+                SCHEDULEEVENT: scheduleHandler,
+                CREATEEVENT: createHandler,
+            }
+        );
+
+        expect(scheduleHandler).toHaveBeenCalledTimes(1);
+        expect(createHandler).toHaveBeenCalledTimes(1);
+        expect(Object.keys(result.fieldMap)).toHaveLength(0);
+        expect(Object.keys(result.sectionMap)).toHaveLength(0);
+    });
 });
 
 describe('filterPayload', () => {

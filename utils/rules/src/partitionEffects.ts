@@ -21,6 +21,7 @@ export type PartitionedEffects = {
     fieldEffects: RuleEffect[];
     sectionEffects: RuleEffect[];
     feedbackEffects: RuleEffect[];
+    /** Untargeted effects (e.g. SCHEDULEEVENT, CREATEEVENT) — reachable only via effectHandlers. */
     passthroughEffects: RuleEffect[];
 };
 

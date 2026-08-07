@@ -23,9 +23,16 @@ const uploadMutation: Mutation = {
     data: (variables: QueryVariables) => ({ file: variables.file as File }),
 };
 
+/**
+ * `id`/`name` are cross-checked against `@dhis2/api-types/v43`'s `FileResource` schema — both
+ * exist there. What `@dhis2/api-types` can't confirm is the create-response *envelope*: whether
+ * `POST fileResources` resolves to `{ response: { fileResource } }` or a top-level
+ * `{ fileResource }` — api-types models REST resource schemas, not mutation-response bodies, so
+ * that's a `@dhis2/data-engine`/DHIS2 webMessage behavior, not something derivable from the OpenAPI
+ * schema. Both paths are handled defensively until confirmed against a live instance during QA
+ * (see useFileResourceUpload.test.ts).
+ */
 type RawFileResourceResponse = {
-    // Response shape not verified against a live DHIS2 instance — both are
-    // handled defensively until confirmed during QA (see useFileResourceUpload.test.ts).
     response?: { fileResource?: FileResourceUploadResult };
     fileResource?: FileResourceUploadResult;
 };

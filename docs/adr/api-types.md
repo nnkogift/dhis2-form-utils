@@ -28,6 +28,17 @@ official OpenAPI schema, drifted from the API, and covered only a subset of `Val
   from API shapes.
 - Fields not yet in the OpenAPI spec — document the gap and extend locally until api-types catches up.
 
+## Maintenance note
+
+`ProgramRuleActionType` in `packages/metadata/src/enums.ts` unions the official
+`@dhis2/api-types/v43` type with 4 local extensions (`SHOWFIELD`, `SHOWOPTION`, `SHOWOPTIONGROUP`,
+`UNSETMANDATORYFIELD`) not yet in the OpenAPI spec. The _runtime const_ object, used by the rules
+package for `Object.values()` dispatch, must be kept in sync with the full union by hand — it does
+not derive from the type automatically. When bumping `@dhis2/api-types`, re-diff
+`ProgramRuleActionType`'s members against the new version and update the const (this caught a gap
+where `SCHEDULEEVENT`/`CREATEEVENT` were present in the official type but missing from the const,
+silently dropping those effects into `passthroughEffects` with no handler).
+
 ## Consequences
 
 - Types may mark API fields as optional; normalisers must apply defaults.

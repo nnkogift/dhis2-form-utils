@@ -1,6 +1,11 @@
 import type { ProgramRuleActionType as ApiProgramRuleActionType } from '@dhis2/api-types/v43';
 
-/** Rule-engine action types including extensions not yet in the OpenAPI spec. */
+/**
+ * Rule-engine action types including extensions not yet in the OpenAPI spec.
+ * SHOWFIELD/SHOWOPTION/SHOWOPTIONGROUP/UNSETMANDATORYFIELD are local extensions; every other
+ * member (including SCHEDULEEVENT/CREATEEVENT) comes from ApiProgramRuleActionType — re-diff
+ * this union against @dhis2/api-types/v43 on every api-types upgrade.
+ */
 export type ProgramRuleActionType =
     | ApiProgramRuleActionType
     | 'SHOWFIELD'
@@ -29,6 +34,8 @@ export const ProgramRuleActionType = {
     UNSETMANDATORYFIELD: 'UNSETMANDATORYFIELD',
     SENDMESSAGE: 'SENDMESSAGE',
     SCHEDULEMESSAGE: 'SCHEDULEMESSAGE',
+    SCHEDULEEVENT: 'SCHEDULEEVENT',
+    CREATEEVENT: 'CREATEEVENT',
 } as const satisfies Record<string, ProgramRuleActionType>;
 
 /** DHIS2 programRuleVariableSourceType values (mirrors @dhis2/api-types). */

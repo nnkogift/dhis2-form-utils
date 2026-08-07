@@ -166,6 +166,8 @@ export function evaluateAndMap(
     const sectionMap = buildSectionMap(sectionEffects);
     const feedback = buildFeedbackMap(feedbackEffects);
 
+    // SCHEDULEEVENT/CREATEEVENT effects have no field/section/feedback target — they fall into
+    // partitionEffects' passthroughEffects and are only reachable here via effectHandlers.
     if (effectHandlers) {
         for (const effect of effects) {
             effectHandlers[effect.ruleActionType]?.(effect);

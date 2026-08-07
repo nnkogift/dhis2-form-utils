@@ -1,7 +1,18 @@
 import { useDataQuery } from '@dhis2/app-runtime';
+import type { UserParams } from '@dhis2/api-types/v43';
+import type { PickWithFieldFilters } from '@dhis2/api-types/utils';
 import type { Query, QueryVariables } from '@dhis2/data-engine';
 import { useEffect, useMemo } from 'react';
 
+/**
+ * Cross-checked against `@dhis2/api-types/v43`'s `OrganisationUnitParams`: `id`/`displayName` are
+ * real fields there. `ancestors` is a real relation too, but `OrganisationUnitParams` stubs it as a
+ * flat `{ id }[]` reference rather than the expandable `{ id, displayName }[]` shape requested below
+ * — the same generator limitation documented for `programRuleActions`/`programStageSections` in
+ * `packages/metadata/src/fieldFilters.ts` (a field-filter entry naming an unrepresentable relation
+ * collapses `PickWithFieldFilters`'s derived type to `never`), so this is hand-typed rather than
+ * derived, matching that file's `ProgramStageSection` precedent.
+ */
 export type OrgUnitNode = {
     id: string;
     displayName: string;
@@ -16,15 +27,22 @@ export type UseOrganisationUnitsQueryResult = {
     error: Error | undefined;
 };
 
-// Nested fields are optional despite the DHIS2 API contract guaranteeing them — an unmatched
-// mock (Storybook/tests) or an unexpected server response can still omit them at runtime.
-type RawMeResult = { me?: { organisationUnits?: Array<{ id: string }> } };
+const ME_ORG_UNIT_FIELDS = ['organisationUnits[id]'] as const;
+
+/**
+ * `me.organisationUnits[].id` is derived from the real `UserParams` schema, so the field exists.
+ * What's *not* confirmable from `@dhis2/api-types` is the response envelope — that `me` returns
+ * `{ organisationUnits: [...] }` at the query's own alias key, and that `organisationUnits` (plural
+ * resource) returns `{ organisationUnits: { organisationUnits: [...] } }` — those are
+ * `@dhis2/data-engine` query-shape artifacts, not REST schema facts, and still need live-instance QA.
+ */
+type RawMeResult = { me?: PickWithFieldFilters<UserParams, typeof ME_ORG_UNIT_FIELDS> };
 type RawOrgUnitsResult = { organisationUnits?: { organisationUnits?: OrgUnitNode[] } };
 
 const meQuery: Query = {
     me: {
         resource: 'me',
-        params: { fields: 'organisationUnits[id]' },
+        params: { fields: ME_ORG_UNIT_FIELDS.join(',') },
     },
 };
 
@@ -59,7 +77,11 @@ export function useOrganisationUnitsQuery(roots?: string[]): UseOrganisationUnit
     } = useDataQuery<RawMeResult>(meQuery, { lazy: hasExplicitRoots });
 
     const effectiveRoots = useMemo(
-        () => roots ?? meData?.me?.organisationUnits?.map((ou) => ou.id) ?? [],
+        () =>
+            roots ??
+            (meData?.me?.organisationUnits ?? [])
+                .map((ou) => ou.id)
+                .filter((id): id is string => Boolean(id)),
         [roots, meData]
     );
 
