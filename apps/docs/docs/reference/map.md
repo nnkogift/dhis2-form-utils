@@ -6,9 +6,12 @@ MapLibre GL JS building blocks for the `coordinate` and `geojson` widgets — a 
 Mantine, or MUI dependency. Each UI adapter (`dhis2-ui`, `mantine`, `mui`) wraps these components
 with its own field chrome (label, validation, accessible numeric inputs / textarea fallback).
 
-```bash
-pnpm add @nnkogift/dhis2-form-utils-map
-```
+:::note Internal package
+`@nnkogift/dhis2-form-utils-map` is an internal workspace package, not published to npm. It's
+bundled directly into `dhis2-ui`, `mantine`, and `mui` at build time — install one of those
+adapters instead of this package directly. This reference doc describes the API those adapters
+build on.
+:::
 
 ## Wire formats
 
@@ -74,8 +77,8 @@ function isValidGeojsonGeometry(value: string): boolean;
 `parseCoordinateValue` range-validates (`lng` ∈ [-180, 180], `lat` ∈ [-90, 90]) and returns `null`
 for empty/malformed/out-of-range input. These are also importable via subpath exports
 (`@nnkogift/dhis2-form-utils-map/coordinateValue`, `.../geojsonValue`) that exclude MapLibre/
-terra-draw from the bundle — used internally by `buildFieldSchema` in the hooks package to avoid
-pulling map-rendering code into form validation.
+terra-draw from the bundle — used internally by `buildFieldSchema` in the hooks package (bundled
+in at build time) to avoid pulling map-rendering code into form validation.
 
 ## Default basemap
 
@@ -90,6 +93,6 @@ swap in your own style (MapTiler, Protomaps, a DHIS2-hosted tile server, ...) vi
 prop before deploying at scale. The default exists so the widgets work out of the box in
 development, tests, and Storybook.
 
-Importing either component pulls in `maplibre-gl`'s stylesheet as a side effect
-(`@nnkogift/dhis2-form-utils-map/style.css`) via each UI adapter — no manual CSS import needed
-when using `D2Field` from `dhis2-ui`, `mantine`, or `mui`.
+Each UI adapter (`dhis2-ui`, `mantine`, `mui`) imports `maplibre-gl`'s stylesheet
+(`maplibre-gl/dist/maplibre-gl.css`) directly as a side effect alongside the map widgets — no
+manual CSS import needed when using `D2Field` from `dhis2-ui`, `mantine`, or `mui`.

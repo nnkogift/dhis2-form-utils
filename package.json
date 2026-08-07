@@ -24,7 +24,7 @@
         "changeset": "changeset",
         "version-packages": "changeset version && pnpm install --lockfile-only",
         "release": "pnpm build:packages && changeset publish",
-        "publint:packages": "pnpm --filter '@nnkogift/dhis2-form-utils-*' --filter '!@nnkogift/dhis2-form-utils-config' exec publint",
+        "publint:packages": "pnpm --filter '@nnkogift/dhis2-form-utils-*' --filter '!@nnkogift/dhis2-form-utils-config' --filter '!@nnkogift/dhis2-form-utils-map' exec publint",
         "size": "size-limit",
         "precommit": "lint-staged && node scripts/typecheck-staged.mjs",
         "prepare": "husky",

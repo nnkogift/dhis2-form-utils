@@ -1,6 +1,7 @@
 {
     "name": "@nnkogift/dhis2-form-utils-map",
-    "version": "0.1.0-alpha.0",
+    "version": "0.0.0",
+    "private": true,
     "description": "MapLibre-based coordinate picker and GeoJSON editor building blocks for DHIS2 form widgets",
     "license": "MIT",
     "repository": {
@@ -38,10 +39,6 @@
     "files": [
         "dist"
     ],
-    "publishConfig": {
-        "access": "public",
-        "registry": "https://registry.npmjs.org/"
-    },
     "scripts": {
         "build": "tsup && node ../config/copyEntryDtsCts.mjs && node scripts/copyMapLibreCss.mjs",
         "dev": "tsup --watch",

@@ -10,7 +10,7 @@ import {
     parseGeojsonGeometry,
     stringifyGeojsonGeometry,
 } from '@nnkogift/dhis2-form-utils-map';
-import '@nnkogift/dhis2-form-utils-map/style.css';
+import 'maplibre-gl/dist/maplibre-gl.css';
 import { useEffect, useState } from 'react';
 
 // fallow-ignore-next-line complexity

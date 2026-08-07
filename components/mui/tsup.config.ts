@@ -11,6 +11,8 @@ export default createLibTsupConfig({
         '@emotion/styled',
         'dayjs',
         '@nnkogift/dhis2-form-utils-hooks',
-        '@nnkogift/dhis2-form-utils-map',
+        'maplibre-gl',
+        'terra-draw',
+        'terra-draw-maplibre-gl-adapter',
     ],
 });

@@ -41,7 +41,9 @@
     },
     "dependencies": {
         "@nnkogift/dhis2-form-utils-hooks": "workspace:*",
-        "@nnkogift/dhis2-form-utils-map": "workspace:*"
+        "maplibre-gl": "^6.1.0",
+        "terra-draw": "^1.32.2",
+        "terra-draw-maplibre-gl-adapter": "^1.4.1"
     },
     "peerDependencies": {
         "@dhis2/app-runtime": ">=3.0.0",
@@ -55,6 +57,7 @@
     },
     "devDependencies": {
         "@nnkogift/dhis2-form-utils-config": "workspace:*",
+        "@nnkogift/dhis2-form-utils-map": "workspace:*",
         "@dhis2/app-runtime": "^3.17.0",
         "@mantine/core": "^7.17.8",
         "@mantine/dates": "^7.17.8",
