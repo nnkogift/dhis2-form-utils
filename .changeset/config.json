@@ -11,7 +11,7 @@
             "@nnkogift/dhis2-form-utils-mantine",
             "@nnkogift/dhis2-form-utils-mui",
             "@nnkogift/dhis2-form-utils-devtools",
-            "@nnkogift/dhis2-form-utils-storybook",
+            "@nnkogift/dhis2-form-storybook",
             "@nnkogift/dhis2-form-utils-docs"
         ]
     ],

@@ -1,5 +1,5 @@
 {
-    "name": "@nnkogift/dhis2-form-utils-storybook",
+    "name": "@nnkogift/dhis2-form-storybook",
     "version": "0.1.0-alpha.4",
     "private": true,
     "type": "module",

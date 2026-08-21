@@ -10,7 +10,7 @@
         {
             "name": "storybook",
             "runtimeExecutable": "pnpm",
-            "runtimeArgs": ["--filter", "@nnkogift/dhis2-form-utils-storybook", "dev"],
+            "runtimeArgs": ["--filter", "@nnkogift/dhis2-form-storybook", "dev"],
             "port": 6006
         }
     ]

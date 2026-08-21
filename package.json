@@ -16,7 +16,7 @@
         "lint:fix": "eslint . --fix && prettier --write .",
         "typecheck": "pnpm -r --if-present run typecheck",
         "format": "prettier --write .",
-        "storybook": "pnpm --filter storybook dev",
+        "storybook": "pnpm --filter @nnkogift/dhis2-form-storybook dev",
         "docs": "pnpm --filter docs start",
         "build:docs": "pnpm --filter docs build",
         "dev:packages": "pnpm --filter '@nnkogift/dhis2-form-utils-*' --parallel run --if-present dev",

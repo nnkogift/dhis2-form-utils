@@ -13,7 +13,7 @@
         "@nnkogift/dhis2-form-utils-hooks": "0.0.0",
         "@nnkogift/dhis2-form-utils-rules": "0.0.0",
         "@nnkogift/dhis2-form-utils-docs": "0.0.0",
-        "@nnkogift/dhis2-form-utils-storybook": "0.0.0",
+        "@nnkogift/dhis2-form-storybook": "0.0.0",
         "@nnkogift/dhis2-form-utils-map": "0.0.0"
     },
     "changesets": [
