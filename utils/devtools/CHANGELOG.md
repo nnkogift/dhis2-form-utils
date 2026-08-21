@@ -1,5 +1,19 @@
 # @nnkogift/dhis2-form-utils-devtools
 
+## 0.1.0-alpha.5
+
+### Minor Changes
+
+- [`cd2bf5a`](https://github.com/nnkogift/dhis2-form-utils/commit/cd2bf5a4ffd83a28452daf2093756c11bfed9fce) Thanks [@nnkogift](https://github.com/nnkogift)! - Add a read-only rule details modal to the Rules panel, opened from an info button on each rule card. It lazily fetches the full `programRules/{id}` resource when opened (showing a loading spinner) — code, description, program, stage, priority, last-updated info, the raw condition with typed variable chips resolved against `programRuleVariables`, and every action's target/expression/content — so the catalog list query stays lightweight. Requires `@dhis2/app-runtime` as a peer dependency.
+
+- [`aeec7ab`](https://github.com/nnkogift/dhis2-form-utils/commit/aeec7abf3a4cdcdfb61d97e0becb019db4dd6144) Thanks [@nnkogift](https://github.com/nnkogift)! - Sort firing rules to the top of the Rules panel list, with a FLIP-style transform animation (respecting `prefers-reduced-motion`) so cards visibly slide into place as their firing state changes.
+
+### Patch Changes
+
+- Updated dependencies []:
+    - @nnkogift/dhis2-form-utils-metadata@0.1.0-alpha.5
+    - @nnkogift/dhis2-form-utils-hooks@0.1.0-alpha.5
+
 ## 0.1.0-alpha.4
 
 ### Minor Changes
