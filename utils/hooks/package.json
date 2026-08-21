@@ -1,6 +1,6 @@
 {
     "name": "@nnkogift/dhis2-form-utils-hooks",
-    "version": "0.1.0-alpha.2",
+    "version": "0.1.0-alpha.3",
     "description": "Headless React hooks for DHIS2 form lifecycle",
     "license": "MIT",
     "repository": {

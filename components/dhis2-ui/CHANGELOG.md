@@ -1,5 +1,12 @@
 # @nnkogift/dhis2-form-utils-dhis2-ui
 
+## 0.1.0-alpha.3
+
+### Patch Changes
+
+- Updated dependencies []:
+    - @nnkogift/dhis2-form-utils-hooks@0.1.0-alpha.3
+
 ## 0.1.0-alpha.2
 
 ### Patch Changes
