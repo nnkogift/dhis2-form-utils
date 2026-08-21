@@ -1,5 +1,17 @@
 # @nnkogift/dhis2-form-utils-devtools
 
+## 0.1.0-alpha.4
+
+### Minor Changes
+
+- [`ecb861a`](https://github.com/nnkogift/dhis2-form-utils/commit/ecb861aa2eb764465966b1345e39e0e8fe467d7b) Thanks [@nnkogift](https://github.com/nnkogift)! - Add an in-scope/all segmented control to the Rules panel header, so the Rules tab can be filtered down to only the current stage's rules (default) or show every rule in the program.
+
+### Patch Changes
+
+- Updated dependencies []:
+    - @nnkogift/dhis2-form-utils-metadata@0.1.0-alpha.4
+    - @nnkogift/dhis2-form-utils-hooks@0.1.0-alpha.4
+
 ## 0.1.0-alpha.3
 
 ### Patch Changes
