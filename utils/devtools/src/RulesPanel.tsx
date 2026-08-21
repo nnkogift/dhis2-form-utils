@@ -1,4 +1,4 @@
-import { Button, IconFullscreen16, SegmentedControl } from '@dhis2/ui';
+import { Button, IconFullscreen16, IconInfo16, SegmentedControl } from '@dhis2/ui';
 import type { RuleTraceEntry } from '@nnkogift/dhis2-form-utils-hooks';
 import { useFormStateContext, useFormStore } from '@nnkogift/dhis2-form-utils-hooks';
 import { useCallback, useMemo, useState, useSyncExternalStore } from 'react';
@@ -11,6 +11,7 @@ import { translate } from './i18n';
 import type { CatalogRule } from './resolveProgramRulesList';
 import { resolveProgramRulesList } from './resolveProgramRulesList';
 import { useRuleTraceStore } from './RuleDevtoolsScope';
+import { RuleDetailsModal, type RuleDetailsStatus } from './RuleDetailsModal';
 import { RuleGraphModal } from './RuleGraphModal';
 import { RuleGraphView } from './RuleGraphView';
 import { TraceTimeline } from './TraceTimeline';
@@ -58,6 +59,13 @@ function resolveCardStatus(inScope: boolean, firing: boolean): RuleCardStatus {
     return firing
         ? { label: translate('Firing'), className: 'text-dhis2-teal-700' }
         : { label: translate('Idle'), className: 'text-dhis2-grey-600' };
+}
+
+function resolveDetailsStatus(inScope: boolean, firing: boolean): RuleDetailsStatus {
+    if (!inScope) {
+        return 'out-of-scope';
+    }
+    return firing ? 'firing' : 'idle';
 }
 
 function formatActionLabel(action: ReturnType<typeof formatRuleActionSummary>): string {
@@ -108,6 +116,7 @@ export function RulesPanel({ metadata, showConditions = true }: RulesPanelProps)
     const [highlightRuleId, setHighlightRuleId] = useState<string | null>(null);
     const [graphModalOpen, setGraphModalOpen] = useState(false);
     const [scopeFilter, setScopeFilter] = useState<RuleScopeFilter>('scoped');
+    const [detailsRuleId, setDetailsRuleId] = useState<string | null>(null);
 
     const labelLookup = useMemo(() => createLabelLookup(metadata), [metadata]);
     const catalog = useMemo(() => resolveProgramRulesList(metadata), [metadata]);
@@ -169,6 +178,22 @@ export function RulesPanel({ metadata, showConditions = true }: RulesPanelProps)
         }
         return null;
     }, [highlightedRuleName, selectedEntry]);
+
+    const detailsRule = useMemo(
+        () => catalog.find((rule) => rule.id === detailsRuleId) ?? null,
+        [catalog, detailsRuleId]
+    );
+    const detailsStatus = detailsRule
+        ? resolveDetailsStatus(
+              isRuleInScope(detailsRule, scopeStageId),
+              activeRuleIds.has(detailsRule.id)
+          )
+        : 'idle';
+    const detailsProgramStageName = detailsRule
+        ? detailsRule.programStageId === null
+            ? null
+            : labelLookup.resolveStageName(detailsRule.programStageId)
+        : undefined;
 
     const graphProps = {
         entries,
@@ -283,6 +308,9 @@ export function RulesPanel({ metadata, showConditions = true }: RulesPanelProps)
                             setHighlightRuleId(ruleId);
                             setTab('graph');
                         }}
+                        onOpenDetails={(ruleId) => {
+                            setDetailsRuleId(ruleId);
+                        }}
                     />
                 ) : tab === 'trace' ? (
                     <TraceTimeline
@@ -326,6 +354,18 @@ export function RulesPanel({ metadata, showConditions = true }: RulesPanelProps)
                 subtitle={graphSubtitle}
                 layoutKey={graphModalOpen ? 'open' : 'closed'}
             />
+
+            <RuleDetailsModal
+                open={detailsRuleId != null}
+                onClose={() => {
+                    setDetailsRuleId(null);
+                }}
+                ruleId={detailsRuleId}
+                ruleName={detailsRule?.name ?? ''}
+                status={detailsStatus}
+                programStageName={detailsProgramStageName}
+                programRuleVariables={metadata.metadata.programRuleVariables}
+            />
         </aside>
     );
 }
@@ -339,6 +379,7 @@ type RulesTabProps = {
     showConditions: boolean;
     labelLookup: ReturnType<typeof createLabelLookup>;
     onSelectRule: (ruleId: string) => void;
+    onOpenDetails: (ruleId: string) => void;
 };
 
 function RulesTab({
@@ -350,6 +391,7 @@ function RulesTab({
     showConditions,
     labelLookup,
     onSelectRule,
+    onOpenDetails,
 }: RulesTabProps) {
     if (!catalog.length) {
         return (
@@ -408,10 +450,24 @@ function RulesTab({
                                 >
                                     {rule.name}
                                 </h3>
-                                <span
-                                    className={`shrink-0 text-[11px] font-semibold ${status.className}`}
-                                >
-                                    {status.label}
+                                <span className="flex shrink-0 items-center gap-[6px]">
+                                    <span
+                                        className={`text-[11px] font-semibold ${status.className}`}
+                                    >
+                                        {status.label}
+                                    </span>
+                                    <button
+                                        type="button"
+                                        title={translate('Program rule details')}
+                                        aria-label={translate('Program rule details')}
+                                        onClick={(event) => {
+                                            event.stopPropagation();
+                                            onOpenDetails(rule.id);
+                                        }}
+                                        className="inline-flex size-[22px] shrink-0 cursor-pointer items-center justify-center rounded-[3px] border-0 bg-transparent text-dhis2-grey-600 hover:bg-dhis2-grey-200 hover:text-dhis2-blue-600"
+                                    >
+                                        <IconInfo16 />
+                                    </button>
                                 </span>
                             </div>
 
