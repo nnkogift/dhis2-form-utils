@@ -2,7 +2,7 @@ import { Provider } from '@dhis2/app-runtime';
 import { FormStateProvider, useTrackerForm } from '@nnkogift/dhis2-form-utils-hooks';
 import type { TrackerProgramMetadata } from '@nnkogift/dhis2-form-utils-metadata';
 import type { Decorator } from '@storybook/react-vite';
-import { createContext, type ReactNode, useContext, useMemo } from 'react';
+import { createContext, type CSSProperties, type ReactNode, useContext, useMemo } from 'react';
 import { FormProvider, type UseFormReturn } from 'react-hook-form';
 
 const runtimeConfig = {
@@ -28,6 +28,8 @@ export type TrackerFormDecoratorOptions = {
     programId: string;
     metadata: TrackerProgramMetadata;
     defaultValues?: Record<string, string>;
+    /** Overrides the default single-column `maxWidth: 480` wrapper, e.g. for side-by-side layouts. */
+    containerStyle?: CSSProperties;
 };
 
 export function TrackerFormWrapper({
@@ -35,6 +37,7 @@ export function TrackerFormWrapper({
     programId,
     metadata,
     defaultValues,
+    containerStyle,
 }: {
     children: ReactNode;
 } & TrackerFormDecoratorOptions) {
@@ -63,7 +66,9 @@ export function TrackerFormWrapper({
             >
                 <FormProvider {...form}>
                     <TrackerFormStoryContext.Provider value={{ metadata: stableMetadata }}>
-                        <div style={{ maxWidth: 480, padding: 16 }}>{children}</div>
+                        <div style={containerStyle ?? { maxWidth: 480, padding: 16 }}>
+                            {children}
+                        </div>
                     </TrackerFormStoryContext.Provider>
                 </FormProvider>
             </FormStateProvider>

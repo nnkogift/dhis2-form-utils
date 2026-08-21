@@ -9,6 +9,7 @@
         "test": "vitest run --project=storybook"
     },
     "dependencies": {
+        "@nnkogift/dhis2-form-utils-devtools": "workspace:*",
         "@nnkogift/dhis2-form-utils-dhis2-ui": "workspace:*",
         "@nnkogift/dhis2-form-utils-hooks": "workspace:*",
         "@nnkogift/dhis2-form-utils-mantine": "workspace:*",

@@ -1,3 +1,4 @@
+import type { ProgramStageRef } from '@nnkogift/dhis2-form-utils-devtools';
 import { resolveTrackerProgramMetadata } from '@nnkogift/dhis2-form-utils-metadata';
 import trackerProgramRulesJson from './tracker-program-rules-example.json';
 import { buildRawTrackerConfig } from './metadataExport';
@@ -18,4 +19,8 @@ const exportData = trackerProgramRulesJson as MetadataExport;
 
 export const trackerProgramRulesMetadata = resolveTrackerProgramMetadata(
     buildRawTrackerConfig(exportData, TRACKER_RULES_PROGRAM_ID)
+);
+
+export const TRACKER_RULES_PROGRAM_STAGES: ProgramStageRef[] = (exportData.programStages ?? []).map(
+    (stage) => ({ id: stage.id, displayName: stage.name })
 );
