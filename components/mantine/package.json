@@ -1,6 +1,6 @@
 {
     "name": "@nnkogift/dhis2-form-utils-mantine",
-    "version": "0.1.0-alpha.4",
+    "version": "0.1.0-alpha.5",
     "description": "Mantine field components and forms for dhis2-form-utils",
     "license": "MIT",
     "repository": {

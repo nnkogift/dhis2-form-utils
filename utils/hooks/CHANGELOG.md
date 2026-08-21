@@ -1,5 +1,13 @@
 # @nnkogift/dhis2-form-utils-hooks
 
+## 0.1.0-alpha.5
+
+### Patch Changes
+
+- Updated dependencies []:
+    - @nnkogift/dhis2-form-utils-metadata@0.1.0-alpha.5
+    - @nnkogift/dhis2-form-utils-rules@0.1.0-alpha.5
+
 ## 0.1.0-alpha.4
 
 ### Patch Changes
