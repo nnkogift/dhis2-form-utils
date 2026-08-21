@@ -1,4 +1,4 @@
-import { Button, IconFullscreen16 } from '@dhis2/ui';
+import { Button, IconFullscreen16, SegmentedControl } from '@dhis2/ui';
 import type { RuleTraceEntry } from '@nnkogift/dhis2-form-utils-hooks';
 import { useFormStateContext, useFormStore } from '@nnkogift/dhis2-form-utils-hooks';
 import { useCallback, useMemo, useState, useSyncExternalStore } from 'react';
@@ -25,6 +25,8 @@ export type RulesPanelProps = {
 };
 
 type DevtoolsTab = 'rules' | 'trace' | 'graph';
+
+type RuleScopeFilter = 'scoped' | 'all';
 
 type RuleCardStatus = {
     label: string;
@@ -80,6 +82,11 @@ function countObservedRules(entries: readonly RuleTraceEntry[]): number {
 
 const PANEL_TAB_KEYS: DevtoolsTab[] = ['rules', 'trace', 'graph'];
 
+const SCOPE_FILTER_OPTIONS = [
+    { label: translate('In scope'), value: 'scoped' satisfies RuleScopeFilter },
+    { label: translate('All'), value: 'all' satisfies RuleScopeFilter },
+];
+
 function resolveTabLabel(key: DevtoolsTab): string {
     switch (key) {
         case 'rules':
@@ -100,6 +107,7 @@ export function RulesPanel({ metadata, showConditions = true }: RulesPanelProps)
     const [selectedEntryId, setSelectedEntryId] = useState<string | null>(null);
     const [highlightRuleId, setHighlightRuleId] = useState<string | null>(null);
     const [graphModalOpen, setGraphModalOpen] = useState(false);
+    const [scopeFilter, setScopeFilter] = useState<RuleScopeFilter>('scoped');
 
     const labelLookup = useMemo(() => createLabelLookup(metadata), [metadata]);
     const catalog = useMemo(() => resolveProgramRulesList(metadata), [metadata]);
@@ -200,12 +208,21 @@ export function RulesPanel({ metadata, showConditions = true }: RulesPanelProps)
                             {translate('Rules')}
                         </h2>
                     </div>
-                    <span className="shrink-0 text-xs text-dhis2-grey-600">
-                        {translate('{{scoped}} in scope · {{firing}} firing', {
-                            scoped: scopedRules.length,
-                            firing: firingCount,
-                        })}
-                    </span>
+                    <div className="flex shrink-0 items-center gap-dp8">
+                        <span className="text-xs text-dhis2-grey-600">
+                            {translate('{{scoped}} in scope · {{firing}} firing', {
+                                scoped: scopedRules.length,
+                                firing: firingCount,
+                            })}
+                        </span>
+                        <SegmentedControl
+                            options={SCOPE_FILTER_OPTIONS}
+                            selected={scopeFilter}
+                            onChange={({ value }) => {
+                                setScopeFilter(value as RuleScopeFilter);
+                            }}
+                        />
+                    </div>
                 </div>
                 <div className="flex">
                     {PANEL_TAB_KEYS.map((key) => (
@@ -257,6 +274,7 @@ export function RulesPanel({ metadata, showConditions = true }: RulesPanelProps)
                     <RulesTab
                         catalog={catalog}
                         scopeStageId={scopeStageId}
+                        scopeFilter={scopeFilter}
                         activeRuleIds={activeRuleIds}
                         selectedRuleId={highlightRuleId}
                         showConditions={showConditions}
@@ -315,6 +333,7 @@ export function RulesPanel({ metadata, showConditions = true }: RulesPanelProps)
 type RulesTabProps = {
     catalog: CatalogRule[];
     scopeStageId: string | null;
+    scopeFilter: RuleScopeFilter;
     activeRuleIds: ReadonlySet<string>;
     selectedRuleId: string | null;
     showConditions: boolean;
@@ -325,6 +344,7 @@ type RulesTabProps = {
 function RulesTab({
     catalog,
     scopeStageId,
+    scopeFilter,
     activeRuleIds,
     selectedRuleId,
     showConditions,
@@ -339,9 +359,22 @@ function RulesTab({
         );
     }
 
+    const visibleRules =
+        scopeFilter === 'all'
+            ? catalog
+            : catalog.filter((rule) => isRuleInScope(rule, scopeStageId));
+
+    if (!visibleRules.length) {
+        return (
+            <p className="m-0 text-sm leading-normal text-dhis2-grey-600">
+                {translate('No rules are in scope for this stage.')}
+            </p>
+        );
+    }
+
     return (
         <ul className="m-0 flex list-none flex-col gap-[10px] p-0">
-            {catalog.map((rule) => {
+            {visibleRules.map((rule) => {
                 const inScope = isRuleInScope(rule, scopeStageId);
                 const firing = activeRuleIds.has(rule.id);
                 const isSelected = selectedRuleId === rule.id;
