@@ -1,5 +1,5 @@
 /** Split a DHIS2 MULTI_TEXT form value into option codes. */
-export function parseMultiTextValue(value: string): string[] {
+export function parseMultiTextValue(value: string | undefined | null): string[] {
     if (!value) return [];
     return value
         .split(',')
