@@ -1,7 +1,7 @@
 import { Button, IconFullscreen16, IconInfo16, SegmentedControl } from '@dhis2/ui';
 import type { RuleTraceEntry } from '@nnkogift/dhis2-form-utils-hooks';
 import { useFormStateContext, useFormStore } from '@nnkogift/dhis2-form-utils-hooks';
-import { useCallback, useMemo, useState, useSyncExternalStore } from 'react';
+import { useCallback, useMemo, useRef, useState, useSyncExternalStore } from 'react';
 import { buildGraphFromTrace } from './buildGraph';
 import { createLabelLookup, type RuleDevtoolsMetadata } from './createLabelLookup';
 import { EffectBadge } from './EffectBadge';
@@ -16,6 +16,7 @@ import { RuleGraphModal } from './RuleGraphModal';
 import { RuleGraphView } from './RuleGraphView';
 import { TraceTimeline } from './TraceTimeline';
 import { getActiveRuleIds, resolveGraphTraceEntry } from './traceEntry';
+import { useFlipReorder } from './useFlipReorder';
 
 export type { RuleDevtoolsMetadata } from './createLabelLookup';
 
@@ -382,6 +383,18 @@ type RulesTabProps = {
     onOpenDetails: (ruleId: string) => void;
 };
 
+function sortRulesFiringFirst(
+    visibleRules: CatalogRule[],
+    activeRuleIds: ReadonlySet<string>
+): CatalogRule[] {
+    const firing: CatalogRule[] = [];
+    const idle: CatalogRule[] = [];
+    for (const rule of visibleRules) {
+        (activeRuleIds.has(rule.id) ? firing : idle).push(rule);
+    }
+    return [...firing, ...idle];
+}
+
 function RulesTab({
     catalog,
     scopeStageId,
@@ -393,6 +406,23 @@ function RulesTab({
     onSelectRule,
     onOpenDetails,
 }: RulesTabProps) {
+    const listRef = useRef<HTMLUListElement>(null);
+
+    const visibleRules =
+        scopeFilter === 'all'
+            ? catalog
+            : catalog.filter((rule) => isRuleInScope(rule, scopeStageId));
+
+    const sortedRules = useMemo(
+        () => sortRulesFiringFirst(visibleRules, activeRuleIds),
+        [visibleRules, activeRuleIds]
+    );
+
+    useFlipReorder(
+        useMemo(() => sortedRules.map((rule) => rule.id), [sortedRules]),
+        listRef
+    );
+
     if (!catalog.length) {
         return (
             <p className="m-0 text-sm leading-normal text-dhis2-grey-600">
@@ -401,12 +431,7 @@ function RulesTab({
         );
     }
 
-    const visibleRules =
-        scopeFilter === 'all'
-            ? catalog
-            : catalog.filter((rule) => isRuleInScope(rule, scopeStageId));
-
-    if (!visibleRules.length) {
+    if (!sortedRules.length) {
         return (
             <p className="m-0 text-sm leading-normal text-dhis2-grey-600">
                 {translate('No rules are in scope for this stage.')}
@@ -415,15 +440,15 @@ function RulesTab({
     }
 
     return (
-        <ul className="m-0 flex list-none flex-col gap-[10px] p-0">
-            {visibleRules.map((rule) => {
+        <ul ref={listRef} className="m-0 flex list-none flex-col gap-[10px] p-0">
+            {sortedRules.map((rule) => {
                 const inScope = isRuleInScope(rule, scopeStageId);
                 const firing = activeRuleIds.has(rule.id);
                 const isSelected = selectedRuleId === rule.id;
                 const status = resolveCardStatus(inScope, firing);
 
                 return (
-                    <li key={rule.id} className="m-0 shrink-0">
+                    <li key={rule.id} data-rule-id={rule.id} className="m-0 shrink-0">
                         <article
                             role="button"
                             tabIndex={0}
