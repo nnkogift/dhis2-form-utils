@@ -17,6 +17,7 @@
         "@nnkogift/dhis2-form-utils-map": "0.0.0"
     },
     "changesets": [
+        "chatty-ears-camp",
         "devtools-vitest-bump",
         "field-widgets-map-integration",
         "fix-mobile-render-hint",

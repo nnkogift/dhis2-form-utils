@@ -1,5 +1,11 @@
 # @nnkogift/dhis2-form-utils-metadata
 
+## 0.1.0-alpha.3
+
+### Patch Changes
+
+- [`12f537f`](https://github.com/nnkogift/dhis2-form-utils/commit/12f537f968a0b01e5f7264eda2c7c543b38e4154) Thanks [@nnkogift](https://github.com/nnkogift)! - fix: handle falsy values in `parseMultiTextValue`
+
 ## 0.1.0-alpha.2
 
 ## 0.1.0-alpha.1
