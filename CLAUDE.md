@@ -123,8 +123,9 @@ See `docs/form-state-architecture.md` for store internals.
 
 Optional developer-facing package for debugging program rules. Wired in the playground only — not for production form bundles.
 
-- `RuleDevtoolsScope` — shared trace subscription for multiple devtools panels; wrap form + panels
-- `RulesPanel` — single panel with **Rules** (catalog of all program rules from metadata — name, actions, condition, scope-aware selected/firing/idle/out-of-scope state), **Trace** (reverse-chronological rule evaluation log), and **Graph** (`@xyflow/react` dependency graph built from observed firings) tabs
+- `RuleDevtoolsScope` — shared trace subscription for multiple devtools panels; wrap form + panels (`./scope` subpath preferred)
+- `RulesPanel` — single panel with **Rules** (catalog of all program rules from metadata — name, actions, condition, scope-aware selected/firing/idle/out-of-scope state), **Trace** (reverse-chronological rule evaluation log), and **Graph** (`@xyflow/react` dependency graph built from observed firings) tabs; Graph tab/modal are lazy-loaded inside the panel
+- `./effect-styles` — badge/feedback helpers without pulling the Graph stack
 - Optional `metadata` prop (`RuleDevtoolsMetadata`) for human-readable rule, field, section, and stage labels
 - Requires `FormStateProvider` in the tree; attaches to `FormStore` via `RuleDevtoolsScope` + `subscribeTrace`
 - Import styles: `@nnkogift/dhis2-form-utils-devtools/style.css` (includes Tailwind utilities and bundled `@xyflow/react` graph styles)

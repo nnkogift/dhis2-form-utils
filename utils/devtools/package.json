@@ -27,6 +27,26 @@
                 "default": "./dist/index.cjs"
             }
         },
+        "./effect-styles": {
+            "import": {
+                "types": "./dist/effectStyles.d.ts",
+                "default": "./dist/effectStyles.js"
+            },
+            "require": {
+                "types": "./dist/index.d.cts",
+                "default": "./dist/index.cjs"
+            }
+        },
+        "./scope": {
+            "import": {
+                "types": "./dist/RuleDevtoolsScope.d.ts",
+                "default": "./dist/RuleDevtoolsScope.js"
+            },
+            "require": {
+                "types": "./dist/index.d.cts",
+                "default": "./dist/index.cjs"
+            }
+        },
         "./style.css": "./dist/index.css"
     },
     "files": [
@@ -37,7 +57,7 @@
         "registry": "https://registry.npmjs.org/"
     },
     "scripts": {
-        "build": "tsup && tailwindcss -i ./src/tailwind.css -o ./dist/index.css --minify",
+        "build": "tsup && tailwindcss -i ./src/tailwind.css -o ./dist/index.css --minify && node ../../packages/config/copyEntryDtsCts.mjs",
         "dev": "concurrently -n tsup,css -c blue,magenta \"tsup --watch\" \"tailwindcss -i ./src/tailwind.css -o ./dist/index.css --watch\"",
         "typecheck": "tsc --noEmit",
         "test": "vitest run"

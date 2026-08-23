@@ -1,12 +1,11 @@
-import type { FormStore } from '@nnkogift/dhis2-form-utils-hooks';
 import { createContext, useContext, useEffect, useMemo, type ReactNode } from 'react';
-import { attachRuleDevtools } from './attach';
+import { attachRuleDevtools, type TraceAttachableFormStore } from './attach';
 import type { RuleTraceStore } from './traceStore';
 
 const RuleTraceContext = createContext<RuleTraceStore | null>(null);
 
 export type RuleDevtoolsScopeProps = {
-    formStore: FormStore;
+    formStore: TraceAttachableFormStore;
     children: ReactNode;
 };
 
