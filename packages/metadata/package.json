@@ -1,6 +1,6 @@
 {
     "name": "@nnkogift/dhis2-form-utils-metadata",
-    "version": "0.1.0-alpha.5",
+    "version": "0.1.0-alpha.6",
     "description": "Convert DHIS2 metadata into Zod schemas for React Hook Form",
     "license": "MIT",
     "repository": {

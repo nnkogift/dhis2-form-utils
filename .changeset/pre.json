@@ -18,14 +18,16 @@
     },
     "changesets": [
         "chatty-ears-camp",
+        "devtools-lazy-graph-split",
         "devtools-vitest-bump",
         "field-widgets-map-integration",
         "fix-mobile-render-hint",
         "fix-program-stage-section-data-elements",
         "fix-schedule-create-event-action-type",
+        "hideprogramstage-target-metadata",
         "map-jit-package",
         "rules-panel-details-modal",
         "rules-panel-firing-sort",
-        "rules-panel-scope-filter"
+        "rules-panel-form-relative-scope"
     ]
 }
