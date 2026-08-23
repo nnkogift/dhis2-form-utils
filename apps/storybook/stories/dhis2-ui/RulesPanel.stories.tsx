@@ -27,6 +27,41 @@ const STAGE_SELECTOR_OPTIONS = [
     })),
 ];
 
+function resolveStageLabel(activeStageId: string): string {
+    return (
+        STAGE_SELECTOR_OPTIONS.find((option) => option.value === activeStageId)?.label ??
+        activeStageId
+    );
+}
+
+function StageSlotPlaceholder({ stageLabel }: { stageLabel: string }) {
+    return (
+        <div
+            style={{
+                padding: 16,
+                border: '1px dashed #a0a7ae',
+                borderRadius: 4,
+                color: '#333',
+            }}
+        >
+            <p style={{ margin: 0, fontWeight: 500 }}>Viewing: {stageLabel}</p>
+            <p style={{ margin: '8px 0 0' }}>
+                This story only wires a live form for the registration slot — there&apos;s no
+                event-stage form here to render. Switching stages simulates the host app navigating
+                to that stage&apos;s slot so you can see <code>RulesPanel</code>
+                &apos;s scope filter react to <code>activeProgramStageId</code> below.
+            </p>
+        </div>
+    );
+}
+
+function ActiveSlot({ activeStageId }: { activeStageId: string }) {
+    if (activeStageId === '') {
+        return <ProgrammeRegistrationForm Field={D2Field} Feedback={FormFeedback} />;
+    }
+    return <StageSlotPlaceholder stageLabel={resolveStageLabel(activeStageId)} />;
+}
+
 function RulesPanelStory() {
     const formStore = useFormStore();
     const [activeStageId, setActiveStageId] = useState('');
@@ -43,7 +78,7 @@ function RulesPanelStory() {
                         }}
                     />
                 </div>
-                <ProgrammeRegistrationForm Field={D2Field} Feedback={FormFeedback} />
+                <ActiveSlot activeStageId={activeStageId} />
             </div>
             <RulesPanel
                 metadata={{
