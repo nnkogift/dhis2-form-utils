@@ -1,5 +1,21 @@
 # @nnkogift/dhis2-form-utils-devtools
 
+## 0.1.0-alpha.6
+
+### Minor Changes
+
+- [`c9612c9`](https://github.com/nnkogift/dhis2-form-utils/commit/c9612c9e7941c063b81c1af33ca0e49582b6a9b8) Thanks [@nnkogift](https://github.com/nnkogift)! - Code-split the Graph tab (`@xyflow/react`) behind `React.lazy`, switch the package to `preserveModules`, and add `./effect-styles` and `./scope` subpath exports so badge helpers and the scope wrapper no longer pull the graph stack.
+
+- [`6a58a5e`](https://github.com/nnkogift/dhis2-form-utils/commit/6a58a5e9c6512d500b1103616bd0cac01ef9d66b) Thanks [@nnkogift](https://github.com/nnkogift)! - `RulesPanel`'s Rules tab gains an "In scope" / "All" segmented control that filters (or, in "All", dims and labels) rules against the form currently on screen, plus a new optional `activeProgramStageId` prop so a host app can tell the panel which slot is visible when that isn't implied by the `metadata` prop alone (e.g. a tracker/registration context navigating between stages).
+
+    Scope is strict and form-relative, not a mirror of how the DHIS2 rule engine itself evaluates rules: a rule with no `programStage` is in scope only while the registration/enrollment slot is being viewed, and a rule with a `programStage` is in scope only while that exact stage is being viewed — never both, never everywhere. Out-of-scope cards show an "Applies to registration" or "Applies to {{stage}}" caption depending on which side of that split they're on.
+
+### Patch Changes
+
+- Updated dependencies [[`39cf4c8`](https://github.com/nnkogift/dhis2-form-utils/commit/39cf4c808ddb0640304883b398d849667a80273e)]:
+    - @nnkogift/dhis2-form-utils-metadata@0.1.0-alpha.6
+    - @nnkogift/dhis2-form-utils-hooks@0.1.0-alpha.6
+
 ## 0.1.0-alpha.5
 
 ### Minor Changes

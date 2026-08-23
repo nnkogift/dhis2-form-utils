@@ -1,5 +1,18 @@
 # @nnkogift/dhis2-form-storybook
 
+## 0.1.0-alpha.6
+
+### Patch Changes
+
+- Updated dependencies [[`c9612c9`](https://github.com/nnkogift/dhis2-form-utils/commit/c9612c9e7941c063b81c1af33ca0e49582b6a9b8), [`39cf4c8`](https://github.com/nnkogift/dhis2-form-utils/commit/39cf4c808ddb0640304883b398d849667a80273e), [`6a58a5e`](https://github.com/nnkogift/dhis2-form-utils/commit/6a58a5e9c6512d500b1103616bd0cac01ef9d66b)]:
+    - @nnkogift/dhis2-form-utils-devtools@0.1.0-alpha.6
+    - @nnkogift/dhis2-form-utils-metadata@0.1.0-alpha.6
+    - @nnkogift/dhis2-form-utils-rules@0.1.0-alpha.6
+    - @nnkogift/dhis2-form-utils-hooks@0.1.0-alpha.6
+    - @nnkogift/dhis2-form-utils-dhis2-ui@0.1.0-alpha.6
+    - @nnkogift/dhis2-form-utils-mantine@0.1.0-alpha.6
+    - @nnkogift/dhis2-form-utils-mui@0.1.0-alpha.6
+
 ## 0.1.0-alpha.5
 
 ### Patch Changes
