@@ -64,7 +64,7 @@ export const PROGRAM_TEA_FIELDS: string = [
 // `programSection` is requested even though it is absent from OpenAPI v43 — DHIS2 simply omits
 // it on versions where the field doesn't exist.
 const PROGRAM_RULE_ACTIONS_FIELD =
-    'programRuleActions[id,programRuleActionType,priority,content,data,location,dataElement[id,displayName,valueType,optionSet[id,options[id,code,displayName]]],trackedEntityAttribute[id,displayName,valueType],option[id,code,displayName],optionGroup[id,displayName],programStageSection[id,displayName],programSection[id,displayName]]';
+    'programRuleActions[id,programRuleActionType,priority,content,data,location,dataElement[id,displayName,valueType,optionSet[id,options[id,code,displayName]]],trackedEntityAttribute[id,displayName,valueType],option[id,code,displayName],optionGroup[id,displayName],programStageSection[id,displayName],programSection[id,displayName],programStage[id]]';
 
 /**
  * `programRules` resource fields — independent top-level resource, filtered by `program.id`.

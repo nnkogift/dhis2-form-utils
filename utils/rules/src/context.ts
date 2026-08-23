@@ -127,6 +127,7 @@ const toActionValues = (action: ProgramRuleAction): Map<string, string> => {
     if (action.programStageSection?.id)
         values.set('programStageSection', action.programStageSection.id);
     if (action.programSection?.id) values.set('programSection', action.programSection.id);
+    if (action.programStage?.id) values.set('programStage', action.programStage.id);
     if (action.location) values.set('location', action.location);
 
     return values;

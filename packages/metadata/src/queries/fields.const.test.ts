@@ -46,7 +46,7 @@ describe('field constants', () => {
 
     it('PROGRAM_RULE_FIELDS matches the expected fixture string', () => {
         expect(PROGRAM_RULE_FIELDS).toBe(
-            'id,name,displayName,condition,priority,programStage[id],programRuleActions[id,programRuleActionType,priority,content,data,location,dataElement[id,displayName,valueType,optionSet[id,options[id,code,displayName]]],trackedEntityAttribute[id,displayName,valueType],option[id,code,displayName],optionGroup[id,displayName],programStageSection[id,displayName],programSection[id,displayName]]'
+            'id,name,displayName,condition,priority,programStage[id],programRuleActions[id,programRuleActionType,priority,content,data,location,dataElement[id,displayName,valueType,optionSet[id,options[id,code,displayName]]],trackedEntityAttribute[id,displayName,valueType],option[id,code,displayName],optionGroup[id,displayName],programStageSection[id,displayName],programSection[id,displayName],programStage[id]]'
         );
     });
 

@@ -66,6 +66,7 @@ export const PROGRAM_RULE_ACTION_FIELDS = [
     'option',
     'optionGroup',
     'programStageSection[id,displayName]',
+    'programStage[id]',
 ] as const;
 
 // Note: `programRuleActions` is deliberately excluded here — on `ProgramRuleParams`, the
