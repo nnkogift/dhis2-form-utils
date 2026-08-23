@@ -132,6 +132,31 @@ Bounded ring buffer (default 200) avoids unbounded memory growth in a long dev s
 
 ## 5. Wiring in a consuming app
 
+Import styles once:
+
+```ts
+import '@nnkogift/dhis2-form-utils-devtools/style.css';
+```
+
+Prefer **subpath imports** so field chrome and the scope wrapper do not pull the Graph stack (`@xyflow/react`):
+
+```ts
+import { RuleDevtoolsScope } from '@nnkogift/dhis2-form-utils-devtools/scope';
+import { RulesPanel } from '@nnkogift/dhis2-form-utils-devtools';
+import {
+    EFFECT_ICONS,
+    getEffectVariant,
+    getEffectVisual,
+} from '@nnkogift/dhis2-form-utils-devtools/effect-styles';
+```
+
+The root barrel (`.`) still re-exports everything for convenience (Storybook, quick prototypes). For production-shaped apps:
+
+- **`./scope`** — `RuleDevtoolsScope` only (eager, cheap)
+- **`./effect-styles`** — badge/feedback helpers (`getEffectVariant`, `EFFECT_ICONS`, …) with no Graph/xyflow
+- **`.`** — `RulesPanel` (and the rest). Inside the panel, the Graph tab and fullscreen modal are `React.lazy`-loaded so Rules/Trace do not download `@xyflow/react` until the user opens Graph
+- Optionally `React.lazy` `RulesPanel` itself in the host app so the panel chunk loads after first paint
+
 Wrap the form and the panel in `RuleDevtoolsScope` so they share a single trace subscription:
 
 ```tsx
@@ -158,7 +183,18 @@ For tracker registration forms:
 </RuleDevtoolsScope>
 ```
 
-`RulesPanel`'s Rules tab lists every rule from metadata — it does not pre-filter by stage. Instead, each card compares the rule's `programStage` against the slot currently being viewed (the event form's `programStageId`, or `null` for tracker registration) to decide whether it's in scope, and whether an in-scope rule is currently firing is derived from the latest `RuleTraceEntry`: any `ruleId` in `ruleResults` is marked firing. The engine only reports rules that fired with effects — a rule whose condition is false produces no trace and stays idle.
+`RulesPanel`'s Rules tab lists every rule from metadata — it does not pre-filter by stage. Instead, each card compares the rule's `programStage` against the slot currently being viewed to decide whether it's in scope, and whether an in-scope rule is currently firing is derived from the latest `RuleTraceEntry`: any `ruleId` in `ruleResults` is marked firing. The engine only reports rules that fired with effects — a rule whose condition is false produces no trace and stays idle.
+
+**Which slot counts as "currently being viewed":** by default this is derived from `metadata` alone — the event form's `programStageId`, or `null` (no stage visible) for tracker registration. Program stage visibility is usually owned by the host app (a stage tab bar, a rail, routing state), not by `RulesPanel` itself, so pass the optional `activeProgramStageId` prop to override the default explicitly:
+
+```tsx
+<RulesPanel
+    metadata={{ formKind: 'tracker', metadata: trackerMetadata, programStages }}
+    activeProgramStageId={selectedSlot.kind === 'stage' ? selectedSlot.stageId : null}
+/>
+```
+
+`undefined` (the default when the prop is omitted) keeps the metadata-derived behavior; pass `null` explicitly for "no stage visible" (registration) or a stage UID for the stage currently on screen. This matters most for tracker forms — without it, a `RulesPanel` attached to a tracker/registration context has no way to know which stage the user is viewing, so every stage-scoped rule always reports as out of scope.
 
 Without `metadata`, rule/field/section/stage names fall back to raw UIDs — the panel is fully functional either way.
 
@@ -204,9 +240,10 @@ Clicking a trace-timeline entry highlights the exact rule-node and edges that en
 
 ## 7. UI shell — side panel
 
-- `<RulesPanel>` — single right-hand panel with three tabs: **Rules** (catalog of all program rules from metadata, 4-state scope/firing accent), **Trace**, and **Graph**. The Graph tab includes a fullscreen expand button that opens the dependency graph in a large modal.
-- `<RuleDevtoolsScope>` — wraps the panel; owns the shared trace store subscription.
+- `<RulesPanel>` — single right-hand panel with three tabs: **Rules** (catalog of all program rules from metadata, 4-state scope/firing accent), **Trace**, and **Graph**. The Graph tab includes a fullscreen expand button that opens the dependency graph in a large modal. Graph view/modal modules are loaded lazily when the Graph tab or fullscreen modal opens.
+- `<RuleDevtoolsScope>` — wraps the panel; owns the shared trace store subscription. Prefer `@nnkogift/dhis2-form-utils-devtools/scope`.
 - Graph rendered with **`@xyflow/react`** (v12.11.1). React Flow styles are bundled into `@nnkogift/dhis2-form-utils-devtools/style.css` — consumers need only that single stylesheet import.
+- Package build uses `preserveModules` (same as `hooks` / `rules` / `metadata`) plus subpath exports (`./effect-styles`, `./scope`) so badge helpers do not share a module graph with xyflow.
 - This is the one new runtime dependency in this design, scoped entirely to the optional `devtools` package — never imported by `hooks`, never in a production form bundle.
 
 ---

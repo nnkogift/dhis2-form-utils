@@ -1,7 +1,15 @@
 import { Button, IconFullscreen16, IconInfo16, SegmentedControl } from '@dhis2/ui';
 import type { RuleTraceEntry } from '@nnkogift/dhis2-form-utils-hooks';
 import { useFormStateContext, useFormStore } from '@nnkogift/dhis2-form-utils-hooks';
-import { useCallback, useMemo, useRef, useState, useSyncExternalStore } from 'react';
+import {
+    lazy,
+    Suspense,
+    useCallback,
+    useMemo,
+    useRef,
+    useState,
+    useSyncExternalStore,
+} from 'react';
 import { buildGraphFromTrace } from './buildGraph';
 import { createLabelLookup, type RuleDevtoolsMetadata } from './createLabelLookup';
 import { EffectBadge } from './EffectBadge';
@@ -12,11 +20,18 @@ import type { CatalogRule } from './resolveProgramRulesList';
 import { resolveProgramRulesList } from './resolveProgramRulesList';
 import { useRuleTraceStore } from './RuleDevtoolsScope';
 import { RuleDetailsModal, type RuleDetailsStatus } from './RuleDetailsModal';
-import { RuleGraphModal } from './RuleGraphModal';
-import { RuleGraphView } from './RuleGraphView';
+import { RulesPanelGraphFallback } from './RulesPanelGraphFallback';
 import { TraceTimeline } from './TraceTimeline';
 import { getActiveRuleIds, resolveGraphTraceEntry } from './traceEntry';
 import { useFlipReorder } from './useFlipReorder';
+
+const LazyRuleGraphView = lazy(() =>
+    import('./RuleGraphView').then((module) => ({ default: module.RuleGraphView }))
+);
+
+const LazyRuleGraphModal = lazy(() =>
+    import('./RuleGraphModal').then((module) => ({ default: module.RuleGraphModal }))
+);
 
 export type { RuleDevtoolsMetadata } from './createLabelLookup';
 
@@ -24,6 +39,13 @@ export type RulesPanelProps = {
     metadata: RuleDevtoolsMetadata;
     /** Show each rule's raw condition expression in the Rules tab. Defaults to true. */
     showConditions?: boolean;
+    /**
+     * The program stage currently visible in the host app, overriding the metadata-derived
+     * default. Pass `null` for a registration/enrollment view (no stage visible), or a stage
+     * UID for the stage currently being viewed. Omit to fall back to `metadata.programStageId`
+     * (event forms) or `null` (tracker forms).
+     */
+    activeProgramStageId?: string | null;
 };
 
 type DevtoolsTab = 'rules' | 'trace' | 'graph';
@@ -35,7 +57,13 @@ type RuleCardStatus = {
     className: string;
 };
 
-function resolveScopeStageId(metadata: RuleDevtoolsMetadata): string | null {
+function resolveScopeStageId(
+    metadata: RuleDevtoolsMetadata,
+    activeProgramStageId: string | null | undefined
+): string | null {
+    if (activeProgramStageId !== undefined) {
+        return activeProgramStageId;
+    }
     return metadata.formKind === 'event' ? metadata.programStageId : null;
 }
 
@@ -107,7 +135,11 @@ function resolveTabLabel(key: DevtoolsTab): string {
     }
 }
 
-export function RulesPanel({ metadata, showConditions = true }: RulesPanelProps) {
+export function RulesPanel({
+    metadata,
+    showConditions = true,
+    activeProgramStageId,
+}: RulesPanelProps) {
     const formStore = useFormStore();
     const { form } = useFormStateContext();
     const traceStore = useRuleTraceStore();
@@ -121,7 +153,10 @@ export function RulesPanel({ metadata, showConditions = true }: RulesPanelProps)
 
     const labelLookup = useMemo(() => createLabelLookup(metadata), [metadata]);
     const catalog = useMemo(() => resolveProgramRulesList(metadata), [metadata]);
-    const scopeStageId = useMemo(() => resolveScopeStageId(metadata), [metadata]);
+    const scopeStageId = useMemo(
+        () => resolveScopeStageId(metadata, activeProgramStageId),
+        [metadata, activeProgramStageId]
+    );
 
     const entries = useSyncExternalStore(
         useCallback((listener) => traceStore.subscribe(listener), [traceStore]),
@@ -330,10 +365,12 @@ export function RulesPanel({ metadata, showConditions = true }: RulesPanelProps)
                         labelLookup={labelLookup}
                     />
                 ) : (
-                    <RuleGraphView
-                        {...graphProps}
-                        headerActions={graphHasNodes ? expandGraphButton : undefined}
-                    />
+                    <Suspense fallback={<RulesPanelGraphFallback />}>
+                        <LazyRuleGraphView
+                            {...graphProps}
+                            headerActions={graphHasNodes ? expandGraphButton : undefined}
+                        />
+                    </Suspense>
                 )}
             </div>
 
@@ -346,15 +383,19 @@ export function RulesPanel({ metadata, showConditions = true }: RulesPanelProps)
                 </p>
             ) : null}
 
-            <RuleGraphModal
-                {...graphProps}
-                open={graphModalOpen}
-                onClose={() => {
-                    setGraphModalOpen(false);
-                }}
-                subtitle={graphSubtitle}
-                layoutKey={graphModalOpen ? 'open' : 'closed'}
-            />
+            {graphModalOpen ? (
+                <Suspense fallback={null}>
+                    <LazyRuleGraphModal
+                        {...graphProps}
+                        open={graphModalOpen}
+                        onClose={() => {
+                            setGraphModalOpen(false);
+                        }}
+                        subtitle={graphSubtitle}
+                        layoutKey="open"
+                    />
+                </Suspense>
+            ) : null}
 
             <RuleDetailsModal
                 open={detailsRuleId != null}

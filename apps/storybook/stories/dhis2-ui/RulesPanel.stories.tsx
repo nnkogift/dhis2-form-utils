@@ -1,8 +1,10 @@
+import { SegmentedControl } from '@dhis2/ui';
 import { D2Field, FormFeedback } from '@nnkogift/dhis2-form-utils-dhis2-ui';
 import '@nnkogift/dhis2-form-utils-devtools/style.css';
 import { RuleDevtoolsScope, RulesPanel } from '@nnkogift/dhis2-form-utils-devtools';
 import { useFormStore } from '@nnkogift/dhis2-form-utils-hooks';
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { useState } from 'react';
 import { ProgrammeRegistrationForm } from '../../components/ProgrammeRegistrationForm';
 import { withTrackerForm } from '../../decorators/withTrackerForm';
 import {
@@ -17,12 +19,30 @@ const registrationDefaults = {
     enrolledAt: '2024-01-15',
 };
 
+const STAGE_SELECTOR_OPTIONS = [
+    { label: 'Registration', value: '' },
+    ...TRACKER_RULES_PROGRAM_STAGES.filter((stage) => stage.id).map((stage) => ({
+        label: stage.displayName ?? stage.id ?? '',
+        value: stage.id ?? '',
+    })),
+];
+
 function RulesPanelStory() {
     const formStore = useFormStore();
+    const [activeStageId, setActiveStageId] = useState('');
 
     return (
         <RuleDevtoolsScope formStore={formStore}>
             <div style={{ flex: 1, minWidth: 0, overflow: 'auto' }}>
+                <div style={{ marginBottom: 16 }}>
+                    <SegmentedControl
+                        options={STAGE_SELECTOR_OPTIONS}
+                        selected={activeStageId}
+                        onChange={({ value }) => {
+                            setActiveStageId(value);
+                        }}
+                    />
+                </div>
                 <ProgrammeRegistrationForm Field={D2Field} Feedback={FormFeedback} />
             </div>
             <RulesPanel
@@ -31,6 +51,7 @@ function RulesPanelStory() {
                     metadata: trackerProgramRulesMetadata,
                     programStages: TRACKER_RULES_PROGRAM_STAGES,
                 }}
+                activeProgramStageId={activeStageId === '' ? null : activeStageId}
             />
         </RuleDevtoolsScope>
     );
@@ -57,7 +78,7 @@ export const Default: Story = {
     parameters: {
         docs: {
             description: {
-                story: 'The devtools Rules panel wired up to a live tracker registration form, fed by the `tracker-program-rules-example.json` fixture. Interact with the fields to see the panel react.',
+                story: 'The devtools Rules panel wired up to a live tracker registration form, fed by the `tracker-program-rules-example.json` fixture. Interact with the fields to see the panel react. Use the segmented control above the form to simulate an external stage selector — it drives the `activeProgramStageId` prop so stage-scoped rules correctly report in/out of scope for the currently "visible" stage.',
             },
         },
     },
