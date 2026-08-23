@@ -183,7 +183,7 @@ For tracker registration forms:
 </RuleDevtoolsScope>
 ```
 
-`RulesPanel`'s Rules tab lists every rule from metadata — it does not pre-filter by stage. Instead, each card compares the rule's `programStage` against the slot currently being viewed to decide whether it's in scope, and whether an in-scope rule is currently firing is derived from the latest `RuleTraceEntry`: any `ruleId` in `ruleResults` is marked firing. The engine only reports rules that fired with effects — a rule whose condition is false produces no trace and stays idle.
+`RulesPanel`'s Rules tab lists every rule from metadata — it does not pre-filter by stage. Instead, each card compares the rule's `programStage` against the slot currently being viewed to decide whether it's in scope. Scope is strict and tied to the form on screen, not to how the DHIS2 rule engine actually evaluates the rule: a rule with no `programStage` is in scope only while the registration/enrollment slot is being viewed (`scopeStageId === null`), and a rule with a `programStage` is in scope only while that exact stage is being viewed. Whether an in-scope rule is currently firing is derived from the latest `RuleTraceEntry`: any `ruleId` in `ruleResults` is marked firing. The engine only reports rules that fired with effects — a rule whose condition is false produces no trace and stays idle.
 
 **Which slot counts as "currently being viewed":** by default this is derived from `metadata` alone — the event form's `programStageId`, or `null` (no stage visible) for tracker registration. Program stage visibility is usually owned by the host app (a stage tab bar, a rail, routing state), not by `RulesPanel` itself, so pass the optional `activeProgramStageId` prop to override the default explicitly:
 

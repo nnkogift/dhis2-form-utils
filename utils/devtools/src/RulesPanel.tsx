@@ -11,7 +11,11 @@ import {
     useSyncExternalStore,
 } from 'react';
 import { buildGraphFromTrace } from './buildGraph';
-import { createLabelLookup, type RuleDevtoolsMetadata } from './createLabelLookup';
+import {
+    createLabelLookup,
+    type DevtoolsLabelLookup,
+    type RuleDevtoolsMetadata,
+} from './createLabelLookup';
 import { EffectBadge } from './EffectBadge';
 import { formatAgo } from './formatAgo';
 import { formatRuleActionSummary } from './formatRuleActionSummary';
@@ -67,8 +71,14 @@ function resolveScopeStageId(
     return metadata.formKind === 'event' ? metadata.programStageId : null;
 }
 
+/**
+ * A rule with no `programStageId` belongs to the registration/enrollment form only — it is in
+ * scope there and nowhere else. A rule with a `programStageId` is in scope only for that exact
+ * stage. Scope is strictly tied to the form currently being viewed, not to where the underlying
+ * DHIS2 rule engine happens to evaluate the rule.
+ */
 function isRuleInScope(rule: CatalogRule, scopeStageId: string | null): boolean {
-    return rule.programStageId === null || rule.programStageId === scopeStageId;
+    return rule.programStageId === scopeStageId;
 }
 
 function resolveAccentClassName(inScope: boolean, firing: boolean, selected: boolean): string {
@@ -95,6 +105,14 @@ function resolveDetailsStatus(inScope: boolean, firing: boolean): RuleDetailsSta
         return 'out-of-scope';
     }
     return firing ? 'firing' : 'idle';
+}
+
+function resolveAppliesToCaption(rule: CatalogRule, labelLookup: DevtoolsLabelLookup): string {
+    return rule.programStageId === null
+        ? translate('Applies to registration')
+        : translate('Applies to {{stage}}', {
+              stage: labelLookup.resolveStageName(rule.programStageId),
+          });
 }
 
 function formatActionLabel(action: ReturnType<typeof formatRuleActionSummary>): string {
@@ -565,11 +583,9 @@ function RulesTab({
                                 </p>
                             ) : null}
 
-                            {!inScope && rule.programStageId ? (
+                            {!inScope ? (
                                 <span className="text-[11px] text-dhis2-grey-600">
-                                    {translate('Applies to {{stage}}', {
-                                        stage: labelLookup.resolveStageName(rule.programStageId),
-                                    })}
+                                    {resolveAppliesToCaption(rule, labelLookup)}
                                 </span>
                             ) : null}
                         </article>
