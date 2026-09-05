@@ -242,6 +242,16 @@ export const mswHandlers = {
             }
             return HttpResponse.json(detail);
         }),
+        // Mirrors the real DHIS2 `programRules/condition/description` endpoint (see
+        // conditionDescriptionMutation.ts) — enough for the devtools story to demonstrate the
+        // "In plain language" callout in RuleDetailsModal.
+        http.post(apiPath('programRules/condition/description'), async ({ request }) => {
+            const condition = await request.text();
+            return HttpResponse.json({
+                status: 'OK',
+                description: `This condition evaluates: ${condition}`,
+            });
+        }),
         // Generic fallback — must stay last so the more specific handlers above win.
         http.get(apiPath(''), () => HttpResponse.json({ status: 'ok' })),
     ],

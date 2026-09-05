@@ -1,7 +1,17 @@
-import { Button, ButtonStrip, CircularLoader, Modal, ModalContent } from '@dhis2/ui';
+import {
+    Button,
+    ButtonStrip,
+    CircularLoader,
+    IconInfo16,
+    Modal,
+    ModalContent,
+    NoticeBox,
+} from '@dhis2/ui';
+import type { ConditionDescriptionState } from './useConditionDescription';
 import { EFFECT_ICONS, getEffectVisual } from './effectStyles';
 import { translate } from './i18n';
 import type { ProgramRuleActionDetail, ProgramRuleDetail } from './programRuleDetailQuery';
+import { useConditionDescription } from './useConditionDescription';
 import { useProgramRuleDetail } from './useProgramRuleDetail';
 
 export type RuleDetailsStatus = 'firing' | 'idle' | 'out-of-scope';
@@ -402,12 +412,52 @@ function RuleDetailsHeader({
     );
 }
 
+function ConditionDescriptionLoading() {
+    return (
+        <div className="mt-dp12 flex items-center gap-dp8 text-dhis2-grey-600">
+            <CircularLoader extrasmall />
+            <span className="text-sm">{translate('Generating a plain-language description…')}</span>
+        </div>
+    );
+}
+
+function ConditionDescriptionCallout({ description }: { description: string }) {
+    return (
+        <NoticeBox title={translate('Description')} icon={<IconInfo16 color="#147cd7" />}>
+            {description}
+        </NoticeBox>
+    );
+}
+
+function ConditionDescriptionWarning({ warning }: { warning: string }) {
+    return (
+        <p className="m-0 mt-dp12 rounded-[3px] bg-dhis2-yellow-100 px-dp16 py-[10px] text-sm text-dhis2-yellow-900">
+            {translate('Could not describe this expression: {{message}}', { message: warning })}
+        </p>
+    );
+}
+
+function ConditionDescription({ loading, description, warning }: ConditionDescriptionState) {
+    if (loading) {
+        return <ConditionDescriptionLoading />;
+    }
+    if (description) {
+        return <ConditionDescriptionCallout description={description} />;
+    }
+    if (warning) {
+        return <ConditionDescriptionWarning warning={warning} />;
+    }
+    return null;
+}
+
 function ConditionSection({
     condition,
     variables,
+    descriptionState,
 }: {
     condition: string | undefined;
     variables: VariableChip[];
+    descriptionState: ConditionDescriptionState;
 }) {
     return (
         <section>
@@ -415,6 +465,13 @@ function ConditionSection({
             <pre className="m-0 whitespace-pre-wrap break-words rounded-[3px] border border-dhis2-grey-300 bg-dhis2-grey-200 px-dp16 py-[14px] font-mono text-[13px] leading-[1.6] text-dhis2-grey-900">
                 {condition ?? EM_DASH}
             </pre>
+            <div
+                style={{
+                    padding: '16px 0',
+                }}
+            >
+                <ConditionDescription {...descriptionState} />
+            </div>
             {variables.length ? (
                 <div className="mt-dp12">
                     <p className="m-0 mb-dp8 text-xs text-dhis2-grey-600">
@@ -455,11 +512,13 @@ function RuleDetailsContent({
     ruleName,
     programStageName,
     variables,
+    descriptionState,
 }: {
     detail: ProgramRuleDetail;
     ruleName: string;
     programStageName?: string | null;
     variables: VariableChip[];
+    descriptionState: ConditionDescriptionState;
 }) {
     return (
         <div className="flex flex-col gap-dp24 pt-dp16">
@@ -471,7 +530,11 @@ function RuleDetailsContent({
                     programStageName={programStageName}
                 />
             </section>
-            <ConditionSection condition={detail.condition} variables={variables} />
+            <ConditionSection
+                condition={detail.condition}
+                variables={variables}
+                descriptionState={descriptionState}
+            />
             <ActionsSection actions={detail.programRuleActions ?? []} />
         </div>
     );
@@ -484,6 +547,7 @@ function RuleDetailsBody({
     ruleName,
     programStageName,
     variables,
+    descriptionState,
 }: {
     detail: ProgramRuleDetail | undefined;
     loading: boolean;
@@ -491,6 +555,7 @@ function RuleDetailsBody({
     ruleName: string;
     programStageName?: string | null;
     variables: VariableChip[];
+    descriptionState: ConditionDescriptionState;
 }) {
     if (loading) {
         return (
@@ -515,6 +580,7 @@ function RuleDetailsBody({
             ruleName={ruleName}
             programStageName={programStageName}
             variables={variables}
+            descriptionState={descriptionState}
         />
     );
 }
@@ -551,6 +617,14 @@ function shouldRenderModal(open: boolean, ruleId: string | null): boolean {
     return open && ruleId != null;
 }
 
+function resolveConditionText(rule: ProgramRuleDetail | undefined): string | undefined {
+    return rule?.condition;
+}
+
+function resolveProgramId(rule: ProgramRuleDetail | undefined): string | undefined {
+    return rule?.program?.id;
+}
+
 export function RuleDetailsModal({
     open,
     onClose,
@@ -561,13 +635,17 @@ export function RuleDetailsModal({
     programRuleVariables,
 }: RuleDetailsModalProps) {
     const { detail, loading, error } = useProgramRuleDetail(resolveActiveRuleId(open, ruleId));
+    const descriptionState = useConditionDescription(
+        resolveConditionText(detail),
+        resolveProgramId(detail)
+    );
 
     if (!shouldRenderModal(open, ruleId)) {
         return null;
     }
 
     const chip = resolveStatusChip(status);
-    const variables = parseConditionVariables(detail?.condition, programRuleVariables);
+    const variables = parseConditionVariables(resolveConditionText(detail), programRuleVariables);
     const title = resolveRuleDisplayName(detail, ruleName);
 
     return (
@@ -581,6 +659,7 @@ export function RuleDetailsModal({
                     ruleName={ruleName}
                     programStageName={programStageName}
                     variables={variables}
+                    descriptionState={descriptionState}
                 />
             </ModalContent>
             <RuleDetailsFooter onClose={onClose} />
