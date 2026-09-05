@@ -1,5 +1,12 @@
 # @nnkogift/dhis2-form-utils-mui
 
+## 0.1.0-alpha.8
+
+### Patch Changes
+
+- Updated dependencies []:
+    - @nnkogift/dhis2-form-utils-hooks@0.1.0-alpha.8
+
 ## 0.1.0-alpha.7
 
 ### Minor Changes

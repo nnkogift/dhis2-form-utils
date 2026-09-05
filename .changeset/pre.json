@@ -27,6 +27,8 @@
         "fix-schedule-create-event-action-type",
         "hideprogramstage-target-metadata",
         "map-jit-package",
+        "rule-condition-description",
+        "rule-details-editor-link",
         "rules-panel-details-modal",
         "rules-panel-firing-sort",
         "rules-panel-form-relative-scope"
