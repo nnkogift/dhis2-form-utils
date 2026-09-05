@@ -118,3 +118,22 @@ export const Default: Story = {
         },
     },
 };
+
+export const MetadataManagementAppLink: Story = {
+    decorators: [
+        withTrackerForm({
+            programId: TRACKER_RULES_PROGRAM_ID,
+            metadata: trackerProgramRulesMetadata,
+            defaultValues: registrationDefaults,
+            containerStyle: { display: 'flex', gap: 16, padding: 16, height: 640 },
+            serverVersion: { major: 2, minor: 43, full: '2.43.0' },
+        }),
+    ],
+    parameters: {
+        docs: {
+            description: {
+                story: 'Same panel, but with the runtime server version set to 2.43 — open a rule from the Rules tab and check the details modal footer links to the Metadata Management app instead of the Maintenance app.',
+            },
+        },
+    },
+};

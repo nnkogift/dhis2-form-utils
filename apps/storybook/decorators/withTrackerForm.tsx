@@ -8,6 +8,7 @@ import { FormProvider, type UseFormReturn } from 'react-hook-form';
 const runtimeConfig = {
     baseUrl: 'https://debug.dhis2.org',
     apiVersion: 41,
+    serverVersion: { major: 2, minor: 41, full: '2.41.0' },
 };
 
 type TrackerFormStoryContextValue = {
@@ -30,6 +31,8 @@ export type TrackerFormDecoratorOptions = {
     defaultValues?: Record<string, string>;
     /** Overrides the default single-column `maxWidth: 480` wrapper, e.g. for side-by-side layouts. */
     containerStyle?: CSSProperties;
+    /** Overrides the default `2.41.0` runtime server version, e.g. to exercise v43+ behavior. */
+    serverVersion?: { major: number; minor: number; full: string };
 };
 
 export function TrackerFormWrapper({
@@ -38,6 +41,7 @@ export function TrackerFormWrapper({
     metadata,
     defaultValues,
     containerStyle,
+    serverVersion,
 }: {
     children: ReactNode;
 } & TrackerFormDecoratorOptions) {
@@ -54,7 +58,7 @@ export function TrackerFormWrapper({
 
     return (
         <Provider
-            config={runtimeConfig}
+            config={serverVersion ? { ...runtimeConfig, serverVersion } : runtimeConfig}
             userInfo={undefined}
             plugin={false}
             parentAlertsAdd={undefined}

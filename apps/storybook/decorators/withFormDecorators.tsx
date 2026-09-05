@@ -9,6 +9,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 const runtimeConfig = {
     baseUrl: 'https://debug.dhis2.org',
     apiVersion: 41,
+    serverVersion: { major: 2, minor: 41, full: '2.41.0' },
 };
 
 export type FormDecoratorOptions = {

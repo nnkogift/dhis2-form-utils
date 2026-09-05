@@ -1,3 +1,4 @@
+import { useConfig } from '@dhis2/app-runtime';
 import {
     Button,
     ButtonStrip,
@@ -11,6 +12,11 @@ import type { ConditionDescriptionState } from './useConditionDescription';
 import { EFFECT_ICONS, getEffectVisual } from './effectStyles';
 import { translate } from './i18n';
 import type { ProgramRuleActionDetail, ProgramRuleDetail } from './programRuleDetailQuery';
+import type { ProgramRuleEditorApp } from './resolveProgramRuleEditUrl';
+import {
+    resolveProgramRuleEditorApp,
+    resolveProgramRuleEditUrl,
+} from './resolveProgramRuleEditUrl';
 import { useConditionDescription } from './useConditionDescription';
 import { useProgramRuleDetail } from './useProgramRuleDetail';
 
@@ -591,14 +597,35 @@ function RuleDetailsBody({
  * trick here would compute against that shrunk box. `order: 3` reproduces `ModalActions`'
  * position in the flex column without that side effect.
  */
-function RuleDetailsFooter({ onClose }: { onClose: () => void }) {
+function RuleDetailsFooter({
+    onClose,
+    editUrl,
+    editorApp,
+}: {
+    onClose: () => void;
+    editUrl: string;
+    editorApp: ProgramRuleEditorApp;
+}) {
+    const appName =
+        editorApp === 'metadata-management'
+            ? translate('Metadata Management app')
+            : translate('Maintenance app');
+
     return (
         <div
             style={{ order: 3 }}
             className="-mx-dp24 -mb-dp24 mt-dp16 flex items-center justify-between gap-dp12 border-t border-dhis2-grey-300 bg-dhis2-grey-050 px-dp24 py-[14px]"
         >
             <p className="m-0 text-sm text-dhis2-grey-600">
-                {translate('Read-only view. Edit rules in the Maintenance app.')}
+                {translate('Read-only view.')}{' '}
+                <a
+                    href={editUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-dhis2-blue-900 underline hover:text-dhis2-blue-1000"
+                >
+                    {translate('Edit in {{appName}}', { appName })}
+                </a>
             </p>
             <ButtonStrip>
                 <Button secondary onClick={onClose}>
@@ -613,7 +640,7 @@ function resolveActiveRuleId(open: boolean, ruleId: string | null): string | nul
     return open ? ruleId : null;
 }
 
-function shouldRenderModal(open: boolean, ruleId: string | null): boolean {
+function shouldRenderModal(open: boolean, ruleId: string | null): ruleId is string {
     return open && ruleId != null;
 }
 
@@ -639,6 +666,7 @@ export function RuleDetailsModal({
         resolveConditionText(detail),
         resolveProgramId(detail)
     );
+    const { baseUrl, serverVersion: { minor: minorVersion } = { minor: 0 } } = useConfig();
 
     if (!shouldRenderModal(open, ruleId)) {
         return null;
@@ -647,6 +675,8 @@ export function RuleDetailsModal({
     const chip = resolveStatusChip(status);
     const variables = parseConditionVariables(resolveConditionText(detail), programRuleVariables);
     const title = resolveRuleDisplayName(detail, ruleName);
+    const editUrl = resolveProgramRuleEditUrl(baseUrl, minorVersion, ruleId);
+    const editorApp = resolveProgramRuleEditorApp(minorVersion);
 
     return (
         <Modal position="middle" onClose={onClose}>
@@ -662,7 +692,7 @@ export function RuleDetailsModal({
                     descriptionState={descriptionState}
                 />
             </ModalContent>
-            <RuleDetailsFooter onClose={onClose} />
+            <RuleDetailsFooter onClose={onClose} editUrl={editUrl} editorApp={editorApp} />
         </Modal>
     );
 }
