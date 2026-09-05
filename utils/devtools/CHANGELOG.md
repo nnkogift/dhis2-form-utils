@@ -1,5 +1,19 @@
 # @nnkogift/dhis2-form-utils-devtools
 
+## 0.1.0-alpha.8
+
+### Minor Changes
+
+- [`9c0e18d`](https://github.com/nnkogift/dhis2-form-utils/commit/9c0e18de0e8b45ff422022cbffbc911da738976c) Thanks [@nnkogift](https://github.com/nnkogift)! - Rule details modal now shows a human-readable reading of the condition expression, fetched from the same DHIS2 `programRules/condition/description` endpoint the Maintenance app uses, rather than reimplementing expression parsing client-side. Renders between the raw condition and the existing "Variables referenced" chips, with loading and malformed-expression states.
+
+- [`9c0e18d`](https://github.com/nnkogift/dhis2-form-utils/commit/9c0e18de0e8b45ff422022cbffbc911da738976c) Thanks [@nnkogift](https://github.com/nnkogift)! - The read-only rule details modal footer now links to the actual program rule editor instead of just naming it. It resolves to the Maintenance app on DHIS2 v42 and below, or the Metadata Management app on v43+, based on the connected server's version via `useConfig`.
+
+### Patch Changes
+
+- Updated dependencies []:
+    - @nnkogift/dhis2-form-utils-metadata@0.1.0-alpha.8
+    - @nnkogift/dhis2-form-utils-hooks@0.1.0-alpha.8
+
 ## 0.1.0-alpha.7
 
 ### Patch Changes
