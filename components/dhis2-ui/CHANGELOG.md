@@ -1,5 +1,16 @@
 # @nnkogift/dhis2-form-utils-dhis2-ui
 
+## 0.1.0-alpha.7
+
+### Minor Changes
+
+- [#38](https://github.com/nnkogift/dhis2-form-utils/pull/38) [`52e5ba8`](https://github.com/nnkogift/dhis2-form-utils/commit/52e5ba80f766d29e4c7b5f6012ee97587ea9d002) Thanks [@github-actions](https://github.com/apps/github-actions)! - `D2CoordinateField` and `D2GeoJsonField` now open the map in a modal instead of rendering it inline. The form shows a compact value summary (labeled Lat/Lng for coordinates; a geometry-type badge with a vertex count for GeoJSON) plus a "Set/Change location" or "Set/Edit geometry" button. Opening the modal edits a draft — Cancel discards it, Update commits it via `field.onChange`. The underlying `@nnkogift/dhis2-form-utils-map` building blocks (`CoordinateMapPicker`, `GeoJsonMapEditor`, value parsing helpers) are unchanged.
+
+### Patch Changes
+
+- Updated dependencies []:
+    - @nnkogift/dhis2-form-utils-hooks@0.1.0-alpha.7
+
 ## 0.1.0-alpha.6
 
 ### Patch Changes
