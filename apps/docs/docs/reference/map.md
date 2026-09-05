@@ -4,7 +4,10 @@ MapLibre GL JS building blocks for the `coordinate` and `geojson` widgets — a 
 (single draggable/click-to-place marker) and a GeoJSON draw editor (point/line/polygon via
 [`terra-draw`](https://github.com/JamesLMilner/terra-draw)). UI-kit-agnostic: no `@dhis2/ui`,
 Mantine, or MUI dependency. Each UI adapter (`dhis2-ui`, `mantine`, `mui`) wraps these components
-with its own field chrome (label, validation, accessible numeric inputs / textarea fallback).
+in a modal picker: the form shows a compact value summary and a "Set/Change location" (or
+"Set/Edit geometry") button, and opening it surfaces the map plus the accessible numeric inputs /
+textarea fallback as a draft — the user either cancels (discards the draft) or updates (commits it
+via `field.onChange`).
 
 :::note Internal package
 `@nnkogift/dhis2-form-utils-map` is an internal workspace package, not published to npm. It's

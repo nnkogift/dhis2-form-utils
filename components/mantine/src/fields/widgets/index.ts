@@ -4,5 +4,6 @@ export { D2DateField, D2AgeField, D2TimeField, D2DateTimeField } from './DateFie
 export { D2BooleanField, D2TrueOnlyField, D2SelectField, D2MultiSelectField } from './ChoiceFields';
 export { D2OrgUnitField } from './OrgUnitField';
 export { D2FileField, D2ImageField } from './FileFields';
-export { D2CoordinateField, D2GeoJsonField } from './MapFields';
+export { D2CoordinateField } from './D2CoordinateField';
+export { D2GeoJsonField } from './D2GeoJsonField';
 export { D2UnsupportedField } from './UnsupportedField';
