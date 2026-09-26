@@ -3,7 +3,7 @@ import {
     PROGRAM_RULE_FIELDS as PROGRAM_RULE_FIELD_LIST,
     PROGRAM_RULE_VARIABLE_FIELDS as PROGRAM_RULE_VARIABLE_FIELD_LIST,
     PROGRAM_STAGE_CORE_FIELDS,
-} from '../fieldFilters';
+} from '../domain/fieldFilters';
 
 // Requested with its expanded nested shape, which `ProgramStageSectionParams` cannot express
 // (see the comment on `PROGRAM_STAGE_CORE_FIELDS` in fieldFilters.ts) — consumers read this via

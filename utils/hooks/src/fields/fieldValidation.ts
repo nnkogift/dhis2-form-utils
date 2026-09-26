@@ -14,7 +14,7 @@ const GEOJSON_GEOMETRY_TYPES = new Set([
     'GeometryCollection',
 ]);
 
-// Mirrors packages/map/src/coordinateValue.ts's parseCoordinateValue — duplicated here (rather
+// Mirrors packages/map/src/utils/coordinateValue.ts's parseCoordinateValue — duplicated here (rather
 // than depending on @nnkogift/dhis2-form-utils-map) because the hooks package is meant to stay
 // usable standalone, without pulling in a map-rendering package. See the same note in
 // packages/metadata/src/buildTeaFieldSchema.ts.
@@ -40,7 +40,7 @@ const isValidCoordinateString = (value: string): boolean => {
     );
 };
 
-// Mirrors packages/map/src/geojsonValue.ts's isValidGeojsonGeometry — see the note above
+// Mirrors packages/map/src/utils/geojsonValue.ts's isValidGeojsonGeometry — see the note above
 // isValidCoordinateString for why this is duplicated rather than imported.
 // fallow-ignore-next-line code-duplication
 const isValidGeojsonGeometryString = (value: string): boolean => {

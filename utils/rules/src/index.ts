@@ -20,11 +20,11 @@ export type {
     EffectHandlersMap,
     RuleEngineLike,
     EvaluateAndMapResult,
-} from './evaluate';
-export { applyEffect, buildFieldMap, evaluateAndMap } from './evaluate';
-export { partitionEffects } from './partitionEffects';
-export type { PartitionedEffects } from './partitionEffects';
-export { buildSectionMap, buildFeedbackMap, feedbackItemKey } from './sectionFeedback';
+} from './engine/evaluate';
+export { applyEffect, buildFieldMap, evaluateAndMap } from './engine/evaluate';
+export { partitionEffects } from './engine/partitionEffects';
+export type { PartitionedEffects } from './engine/partitionEffects';
+export { buildSectionMap, buildFeedbackMap, feedbackItemKey } from './feedback/sectionFeedback';
 export type {
     EnrollmentContext,
     RuleEngineContext,
@@ -33,18 +33,18 @@ export type {
     RuleEventInput,
     RuleEventStatusInput,
     RuleSupplementaryDataInput,
-} from './context';
+} from './engine/context';
 export {
     buildRuleEngineContext,
     buildRuleEngine,
     toRuleEventFromInput,
     toRuleSupplementaryData,
-} from './context';
-export type { EnrollmentRuleEngineContext } from './enrollmentContext';
+} from './engine/context';
+export type { EnrollmentRuleEngineContext } from './engine/enrollmentContext';
 export {
     buildEnrollmentRuleEngineContext,
     buildEnrollmentRuleEngine,
     toRuleEnrollment,
-} from './enrollmentContext';
-export { filterPayload } from './filterPayload';
-export { resolveHiddenOptionCodes } from './resolveHiddenOptionCodes';
+} from './engine/enrollmentContext';
+export { filterPayload } from './payload/filterPayload';
+export { resolveHiddenOptionCodes } from './options/resolveHiddenOptionCodes';

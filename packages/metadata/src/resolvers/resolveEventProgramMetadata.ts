@@ -3,7 +3,7 @@ import type {
     ProgramConstant,
     ProgramRule,
     ProgramRuleVariable,
-} from '../types';
+} from '../domain/types';
 
 type RawProgram = Partial<
     Omit<EventProgramMetadata, 'programRules' | 'programRuleVariables' | 'constants'>

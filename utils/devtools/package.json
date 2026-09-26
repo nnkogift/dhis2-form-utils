@@ -29,8 +29,8 @@
         },
         "./effect-styles": {
             "import": {
-                "types": "./dist/effectStyles.d.ts",
-                "default": "./dist/effectStyles.js"
+                "types": "./dist/styles/effectStyles.d.ts",
+                "default": "./dist/styles/effectStyles.js"
             },
             "require": {
                 "types": "./dist/index.d.cts",
@@ -39,8 +39,8 @@
         },
         "./scope": {
             "import": {
-                "types": "./dist/RuleDevtoolsScope.d.ts",
-                "default": "./dist/RuleDevtoolsScope.js"
+                "types": "./dist/components/RuleDevtoolsScope.d.ts",
+                "default": "./dist/components/RuleDevtoolsScope.js"
             },
             "require": {
                 "types": "./dist/index.d.cts",
@@ -57,8 +57,8 @@
         "registry": "https://registry.npmjs.org/"
     },
     "scripts": {
-        "build": "tsup && tailwindcss -i ./src/tailwind.css -o ./dist/index.css --minify && node ../../packages/config/copyEntryDtsCts.mjs",
-        "dev": "concurrently -n tsup,css -c blue,magenta \"tsup --watch\" \"tailwindcss -i ./src/tailwind.css -o ./dist/index.css --watch\"",
+        "build": "tsup && tailwindcss -i ./src/styles/tailwind.css -o ./dist/index.css --minify && node ../../packages/config/copyEntryDtsCts.mjs",
+        "dev": "concurrently -n tsup,css -c blue,magenta \"tsup --watch\" \"tailwindcss -i ./src/styles/tailwind.css -o ./dist/index.css --watch\"",
         "typecheck": "tsc --noEmit",
         "test": "vitest run"
     },

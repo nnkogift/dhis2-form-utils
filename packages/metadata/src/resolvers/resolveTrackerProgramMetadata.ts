@@ -3,12 +3,12 @@ import type {
     ProgramRule,
     ProgramRuleAction,
     ProgramRuleVariable,
-} from '../types';
+} from '../domain/types';
 import type {
     ExpandedProgramRule,
     ExpandedProgramRuleAction,
     TrackerProgramMetadata,
-} from '../trackerTypes';
+} from '../domain/trackerTypes';
 
 type RawProgram = Partial<
     Omit<TrackerProgramMetadata, 'programRules' | 'programRuleVariables' | 'constants'>

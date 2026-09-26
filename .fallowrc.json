@@ -26,6 +26,12 @@
   "rules": {
     "unused-dependencies": "warn"
   },
+  "ignoreExports": [
+    {
+      "file": "packages/metadata/src/domain/fieldFilters.ts",
+      "exports": ["*"]
+    }
+  ],
   "ignoreDependencies": [
     // Consumed as a source-only (unbuilt) internal package by dhis2-ui/mantine/mui
     // via MapFields.tsx — fallow's dependency-usage detector doesn't resolve it.

@@ -1,6 +1,6 @@
-import { FormStore } from '../formStore';
-import { FormStateProvider } from '../FormStateContext';
-import { toGenericFormReturn } from '../formValue';
+import { FormStore } from '../store/formStore';
+import { FormStateProvider } from '../context/FormStateContext';
+import { toGenericFormReturn } from '../utils/formValue';
 import type { OptionGroupCodeMap } from '@nnkogift/dhis2-form-utils-metadata';
 import type { FieldStateMap } from '@nnkogift/dhis2-form-utils-rules';
 import { renderHook, type RenderHookOptions } from '@testing-library/react';
