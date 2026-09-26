@@ -2,7 +2,7 @@ import type { FieldControlInput } from '@nnkogift/dhis2-form-utils-hooks';
 import type { ProgramTrackedEntityAttribute } from '@nnkogift/dhis2-form-utils-metadata';
 import { useFormContext } from 'react-hook-form';
 import type { ComponentType } from 'react';
-import { useTrackerFormStory } from '../decorators/withTrackerForm';
+import { useTrackerFormStory } from '../decorators/TrackerFormWrapper';
 
 export type RegistrationFormFieldProps = {
     field: FieldControlInput;

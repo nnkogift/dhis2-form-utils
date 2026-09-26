@@ -15,6 +15,7 @@ import {
     type SectionState,
 } from '@nnkogift/dhis2-form-utils-rules';
 import type { FormStore } from './formStore';
+import { toGenericFormReturn } from './formValue';
 import { FieldStateStore } from './store/fieldStateStore';
 import { NonFieldStateStore } from './store/nonFieldStateStore';
 
@@ -39,7 +40,7 @@ export function FormStateProvider<T extends Record<string, unknown> = Record<str
     return (
         <FormStateContext.Provider
             value={{
-                form: form as UseFormReturn<Record<string, unknown>>,
+                form: toGenericFormReturn(form),
                 formStore,
             }}
         >

@@ -8,7 +8,7 @@ import {
 import { useMemo } from 'react';
 import type { ComponentType, ReactNode } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { useEventFormStory } from '../decorators/withEventForm';
+import { useEventFormStory } from '../decorators/EventFormWrapper';
 
 export type EventFormFieldProps = {
     field: FieldControlInput;

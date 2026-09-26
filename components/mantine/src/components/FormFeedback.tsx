@@ -1,35 +1,8 @@
-import { Alert, Stack, Text, Title } from '@mantine/core';
+// fallow-ignore-file code-duplication
+import { Stack } from '@mantine/core';
 import { useFormFeedback } from '@nnkogift/dhis2-form-utils-hooks';
 
-type FeedbackItem = ReturnType<typeof useFormFeedback>[string];
-
-function FeedbackPanel({ title, items }: { title: string; items: FeedbackItem[] }) {
-    if (!items.length) {
-        return null;
-    }
-
-    return (
-        <Stack gap="sm" mb="md">
-            <Title order={5}>{title}</Title>
-            {items.map((item) => (
-                <Alert key={`${item.location}:${item.content}`} title={item.content} color="blue">
-                    <Text>
-                        {item.value ? (
-                            <>
-                                <Text span fw={600}>
-                                    {item.content}
-                                </Text>
-                                : {item.value}
-                            </>
-                        ) : (
-                            item.content
-                        )}
-                    </Text>
-                </Alert>
-            ))}
-        </Stack>
-    );
-}
+import { FeedbackPanel } from './FeedbackPanel';
 
 export function FormFeedback() {
     const feedback = useFormFeedback();

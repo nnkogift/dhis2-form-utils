@@ -1,70 +1,10 @@
 // fallow-ignore-file code-duplication
-import {
-    type FieldControlInput,
-    useFieldControl,
-    type WidgetProps,
-} from '@nnkogift/dhis2-form-utils-hooks';
-import type { WidgetKind } from '@nnkogift/dhis2-form-utils-hooks';
-import type { ComponentType } from 'react';
-import {
-    D2AgeField,
-    D2BooleanField,
-    D2CoordinateField,
-    D2DateField,
-    D2DateTimeField,
-    D2EmailField,
-    D2FileField,
-    D2GeoJsonField,
-    D2ImageField,
-    D2IntegerField,
-    D2LongTextField,
-    D2MultiSelectField,
-    D2NumberField,
-    D2OrgUnitField,
-    D2PercentageField,
-    D2PhoneField,
-    D2SelectField,
-    D2TextField,
-    D2TimeField,
-    D2TrueOnlyField,
-    D2UnsupportedField,
-} from './widgets';
+import { type FieldControlInput, useFieldControl } from '@nnkogift/dhis2-form-utils-hooks';
+import { D2FieldWidget } from './D2FieldWidget';
 
 export type D2FieldProps = {
     field: FieldControlInput;
 };
-
-export type D2FieldWidgetProps = WidgetProps;
-
-const WIDGET_BY_KIND: Record<WidgetKind, ComponentType<WidgetProps>> = {
-    text: D2TextField,
-    longText: D2LongTextField,
-    email: D2EmailField,
-    phone: D2PhoneField,
-    number: D2NumberField,
-    integer: D2IntegerField,
-    percentage: D2PercentageField,
-    boolean: D2BooleanField,
-    trueOnly: D2TrueOnlyField,
-    date: D2DateField,
-    time: D2TimeField,
-    age: D2AgeField,
-    select: D2SelectField,
-    multiSelect: D2MultiSelectField,
-    datetime: D2DateTimeField,
-    coordinate: D2CoordinateField,
-    geojson: D2GeoJsonField,
-    orgUnit: D2OrgUnitField,
-    file: D2FileField,
-    image: D2ImageField,
-    unsupported: D2UnsupportedField,
-};
-
-/** Dispatches an already-resolved `FieldControlReturn` to its widget component, without re-deriving field control state. Reused by consumers that build their own chrome (labels, badges, ghost placeholders) around a field. */
-export function D2FieldWidget({ control }: D2FieldWidgetProps) {
-    const Widget = WIDGET_BY_KIND[control.widgetKind];
-    return <Widget control={control} />;
-}
 
 export function D2Field({ field }: D2FieldProps) {
     const fieldControl = useFieldControl({ ...field });

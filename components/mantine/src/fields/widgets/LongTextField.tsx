@@ -1,0 +1,24 @@
+import { Textarea } from '@mantine/core';
+import type { WidgetProps } from '@nnkogift/dhis2-form-utils-hooks';
+import { resolveFieldValidation } from '@nnkogift/dhis2-form-utils-hooks';
+
+export function D2LongTextField({ control }: WidgetProps) {
+    const { fieldConfig, field, isMandatory, isDisabled } = control;
+    const { validationText, hasError } = resolveFieldValidation(control);
+
+    return (
+        <Textarea
+            name={field.name}
+            value={field.value as string}
+            label={fieldConfig.label}
+            description={fieldConfig.description}
+            required={isMandatory}
+            disabled={isDisabled}
+            error={hasError ? validationText : undefined}
+            onChange={(event) => {
+                field.onChange(event.currentTarget.value);
+            }}
+            onBlur={field.onBlur}
+        />
+    );
+}

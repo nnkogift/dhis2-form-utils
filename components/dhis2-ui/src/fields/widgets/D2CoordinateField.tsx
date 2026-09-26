@@ -1,49 +1,11 @@
-import { Button, Field, colors } from '@dhis2/ui';
+import { Button, Field } from '@dhis2/ui';
 import type { WidgetProps } from '@nnkogift/dhis2-form-utils-hooks';
 import { resolveFieldValidation } from '@nnkogift/dhis2-form-utils-hooks';
-import { parseCoordinateValue } from '@nnkogift/dhis2-form-utils-map';
-import type { CSSProperties } from 'react';
 import { useState } from 'react';
 
 import { CoordinateLocationModal } from './CoordinateLocationModal';
-
-const labelStyle: CSSProperties = {
-    margin: 0,
-    fontSize: 11,
-    fontWeight: 600,
-    textTransform: 'uppercase',
-    letterSpacing: 0.4,
-    color: colors.grey700,
-};
-
-const valueStyle: CSSProperties = {
-    margin: 0,
-    fontSize: 14,
-    fontWeight: 500,
-    fontVariantNumeric: 'tabular-nums',
-};
-
-// A definition list pairs each axis label with its value for assistive tech, and tabular figures
-// keep the digits from jittering in width as the user edits the pair.
-function CoordinateSummary({ value }: { value: string }) {
-    const parsed = parseCoordinateValue(value);
-    if (!parsed) {
-        return <span style={{ color: colors.grey700 }}>No location set</span>;
-    }
-
-    return (
-        <dl style={{ display: 'flex', gap: 16, margin: 0 }}>
-            <div style={{ display: 'flex', gap: 4, alignItems: 'baseline' }}>
-                <dt style={labelStyle}>Lat</dt>
-                <dd style={valueStyle}>{parsed.lat.toFixed(5)}</dd>
-            </div>
-            <div style={{ display: 'flex', gap: 4, alignItems: 'baseline' }}>
-                <dt style={labelStyle}>Lng</dt>
-                <dd style={valueStyle}>{parsed.lng.toFixed(5)}</dd>
-            </div>
-        </dl>
-    );
-}
+import { CoordinateSummary } from './CoordinateSummary';
+import './fieldWidgetLayout.css';
 
 export function D2CoordinateField({ control }: WidgetProps) {
     const { fieldConfig, field, isMandatory, isDisabled } = control;
@@ -61,7 +23,7 @@ export function D2CoordinateField({ control }: WidgetProps) {
             disabled={isDisabled}
             validationText={validationText}
         >
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div className="d2-field-row">
                 <CoordinateSummary value={value} />
                 <Button
                     small

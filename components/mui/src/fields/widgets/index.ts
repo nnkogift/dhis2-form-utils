@@ -1,9 +1,22 @@
-export { D2TextField, D2LongTextField, D2EmailField, D2PhoneField } from './TextField';
-export { D2NumberField, D2IntegerField, D2PercentageField } from './NumericFields';
-export { D2DateField, D2AgeField, D2TimeField, D2DateTimeField } from './DateFields';
-export { D2BooleanField, D2TrueOnlyField, D2SelectField, D2MultiSelectField } from './ChoiceFields';
+// fallow-ignore-file code-duplication
+export { D2TextField } from './TextField';
+export { D2LongTextField } from './LongTextField';
+export { D2EmailField } from './D2EmailField';
+export { D2PhoneField } from './D2PhoneField';
+export { D2NumberField } from './D2NumberField';
+export { D2IntegerField } from './D2IntegerField';
+export { D2PercentageField } from './D2PercentageField';
+export { D2DateField } from './D2DateField';
+export { D2AgeField } from './D2AgeField';
+export { D2TimeField } from './D2TimeField';
+export { D2DateTimeField } from './D2DateTimeField';
+export { D2BooleanField } from './D2BooleanField';
+export { D2TrueOnlyField } from './D2TrueOnlyField';
+export { D2SelectField } from './D2SelectField';
+export { D2MultiSelectField } from './D2MultiSelectField';
 export { D2OrgUnitField } from './OrgUnitField';
-export { D2FileField, D2ImageField } from './FileFields';
+export { D2FileField } from './D2FileField';
+export { D2ImageField } from './D2ImageField';
 export { D2CoordinateField } from './D2CoordinateField';
 export { D2GeoJsonField } from './D2GeoJsonField';
 export { D2UnsupportedField } from './UnsupportedField';

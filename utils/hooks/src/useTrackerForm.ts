@@ -18,7 +18,7 @@ import {
     toRuleEventFromInput,
 } from '@nnkogift/dhis2-form-utils-rules';
 import { FormStore } from './formStore';
-import type { DefaultFormValue } from './formValue';
+import { toGenericFormReturn, type DefaultFormValue } from './formValue';
 
 export type UseTrackerFormOptions = {
     programId: string;
@@ -72,14 +72,14 @@ export function useTrackerForm<FormValue extends DefaultFormValue = DefaultFormV
     if (prevEngineRef.current !== ruleEngine) {
         if (prevEngineRef.current !== null) {
             formStore.reinit(
-                form as UseFormReturn<Record<string, unknown>>,
+                toGenericFormReturn(form),
                 ruleEngine,
                 effectHandlersRef,
                 optionGroupsRef
             );
         } else {
             formStore.init(
-                form as UseFormReturn<Record<string, unknown>>,
+                toGenericFormReturn(form),
                 ruleEngine,
                 effectHandlersRef,
                 optionGroupsRef

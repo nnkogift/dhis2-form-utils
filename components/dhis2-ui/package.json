@@ -10,7 +10,9 @@
     },
     "homepage": "https://github.com/nnkogift/dhis2-form-utils#readme",
     "type": "module",
-    "sideEffects": false,
+    "sideEffects": [
+        "**/*.css"
+    ],
     "main": "./dist/index.cjs",
     "module": "./dist/index.js",
     "types": "./dist/index.d.ts",

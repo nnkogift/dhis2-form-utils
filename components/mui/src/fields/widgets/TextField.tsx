@@ -31,15 +31,3 @@ export function D2TextField({ control, type, multiline }: WidgetProps & D2TextFi
         />
     );
 }
-
-export function D2LongTextField(props: WidgetProps) {
-    return <D2TextField {...props} multiline />;
-}
-
-export function D2EmailField(props: WidgetProps) {
-    return <D2TextField {...props} type="email" />;
-}
-
-export function D2PhoneField(props: WidgetProps) {
-    return <D2TextField {...props} type="tel" />;
-}

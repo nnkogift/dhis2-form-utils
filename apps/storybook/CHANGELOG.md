@@ -1,4 +1,4 @@
-# @nnkogift/dhis2-form-storybook
+# @nnkogift/dhis2-form-utils-storybook
 
 ## 0.1.0-alpha.8
 

@@ -20,7 +20,7 @@ import {
     toRuleEventFromInput,
 } from '@nnkogift/dhis2-form-utils-rules';
 import { FormStore } from './formStore';
-import type { DefaultFormValue } from './formValue';
+import { toGenericFormReturn, type DefaultFormValue } from './formValue';
 
 export type UseEventFormOptions = {
     programStageId: string;
@@ -103,14 +103,14 @@ export function useEventForm<FormValue extends DefaultFormValue = DefaultFormVal
     if (prevEngineRef.current !== ruleEngine) {
         if (prevEngineRef.current !== null) {
             formStore.reinit(
-                form as UseFormReturn<Record<string, unknown>>,
+                toGenericFormReturn(form),
                 ruleEngine,
                 effectHandlersRef,
                 optionGroupsRef
             );
         } else {
             formStore.init(
-                form as UseFormReturn<Record<string, unknown>>,
+                toGenericFormReturn(form),
                 ruleEngine,
                 effectHandlersRef,
                 optionGroupsRef

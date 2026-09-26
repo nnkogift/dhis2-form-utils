@@ -277,31 +277,41 @@ export function fieldStoryPlays(adapter: FieldStoryAdapter) {
         await expect(canvas.getByText(/Age: \d+ years/)).toBeInTheDocument();
     };
 
-    // Coordinate/GeoJson map canvas interactions (WebGL hit-testing) are unreliable in headless
-    // browsers, so these plays exercise the accessible numeric-input / textarea fallback paths
-    // instead — which also matches how a screen-reader user would use these widgets. Both widgets
-    // derive their inputs' displayed `value` from the RHF field value (not local state), so
-    // re-reading an input after editing a sibling input verifies the round trip through
-    // `field.onChange`, not just an uncontrolled DOM value.
+    // Coordinate/GeoJson widgets show a closed-state summary + a "Set location"/"Set geometry"
+    // button; the actual editable inputs only exist inside a modal opened by that button, and the
+    // modal owns its own draft state (only reconciled into the RHF field via `field.onChange` when
+    // "Update location"/"Update geometry" is clicked) — so these plays open the modal first, edit
+    // the draft there, commit it, and then verify the *closed-state summary* reflects the
+    // committed RHF value, proving the round trip through `field.onChange` end-to-end rather than
+    // just an uncontrolled DOM value. Modals are portal-rendered outside `canvasElement`, so modal
+    // content is queried via the global `screen`, matching how portaled dropdown/select content is
+    // queried elsewhere in this file.
+    // Map canvas interactions (WebGL hit-testing) are unreliable in headless browsers, so these
+    // plays exercise the accessible numeric-input / textarea fallback paths instead — which also
+    // matches how a screen-reader user would use these widgets.
     // dhis2-ui's InputField doesn't wire <label for>/aria-labelledby to its <input>, so
     // getByLabelText fails there; Mantine's NumberInput renders type="text"/inputmode="numeric"
     // (role "textbox", not "spinbutton"), so getByRole('spinbutton') fails there. Try both.
-    function queryCoordinateInput(canvas: Canvas, labelText: RegExp): HTMLElement {
+    async function queryCoordinateInput(scope: Canvas, labelText: RegExp): Promise<HTMLElement> {
         try {
-            return canvas.getByRole('spinbutton', { name: labelText });
+            return await scope.findByRole('spinbutton', { name: labelText });
         } catch {
             try {
-                return canvas.getByLabelText(labelText);
+                return await scope.findByLabelText(labelText);
             } catch {
-                return canvas.getByRole('textbox', { name: labelText });
+                return await scope.findByRole('textbox', { name: labelText });
             }
         }
     }
 
     const coordinateInput: PlayFunction<FieldStoryArgs> = async ({ canvasElement }) => {
         const canvas = canvasOf(canvasElement);
-        const lng = queryCoordinateInput(canvas, /Longitude/i);
-        const lat = queryCoordinateInput(canvas, /Latitude/i);
+        await userEvent.click(
+            canvas.getByRole('button', { name: /set location|change location/i })
+        );
+
+        const lng = await queryCoordinateInput(screen, /Longitude/i);
+        const lat = await queryCoordinateInput(screen, /Latitude/i);
 
         await userEvent.clear(lng);
         await userEvent.type(lng, '35.703');
@@ -311,20 +321,33 @@ export function fieldStoryPlays(adapter: FieldStoryAdapter) {
         await userEvent.type(lat, '-5.639');
         await assertInputValue(lat, '-5.639');
 
-        // Re-query: proves longitude survived the latitude edit via field.value, not local state.
-        await assertInputValue(queryCoordinateInput(canvas, /Longitude/i), '35.703');
+        // Re-query: proves longitude survived the latitude edit via the modal's draft state.
+        await assertInputValue(await queryCoordinateInput(screen, /Longitude/i), '35.703');
+
+        await userEvent.click(await screen.findByRole('button', { name: /update location/i }));
+
+        // Modal closes and the summary re-renders from the newly-committed RHF value.
+        await expect(await canvas.findByText('35.70300')).toBeInTheDocument();
+        await expect(await canvas.findByText('-5.63900')).toBeInTheDocument();
     };
 
     const geojsonDraw: PlayFunction<FieldStoryArgs> = async ({ canvasElement }) => {
         const canvas = canvasOf(canvasElement);
-        const textarea = canvas.getByRole('textbox', { name: /Geometry \(JSON\)/i });
+        await userEvent.click(canvas.getByRole('button', { name: /set geometry|edit geometry/i }));
+
+        const textarea = await screen.findByRole('textbox', { name: /Geometry \(JSON\)/i });
         await userEvent.clear(textarea);
         // userEvent.type() parses `{`/`}` as its keyboard DSL (e.g. "{enter}"), so paste the
         // literal JSON instead of typing it character by character.
         await userEvent.click(textarea);
         await userEvent.paste('{"type":"Point","coordinates":[10.9,59.8]}');
         await userEvent.tab();
-        await expect(canvas.queryByText(/Not a valid GeoJSON geometry/i)).not.toBeInTheDocument();
+        await expect(screen.queryByText(/Not a valid GeoJSON geometry/i)).not.toBeInTheDocument();
+
+        await userEvent.click(await screen.findByRole('button', { name: /update geometry/i }));
+
+        // Modal closes and the summary re-renders from the newly-committed RHF value.
+        await expect(await canvas.findByText('Point')).toBeInTheDocument();
     };
 
     const orgUnitSelect: PlayFunction<FieldStoryArgs> = async ({ canvasElement }) => {

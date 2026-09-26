@@ -81,7 +81,7 @@ Returns `{ form, formStore }` — identical shape to `useEventForm`.
 
 ## Real worked examples in this repo
 
-- `apps/storybook/decorators/withTrackerForm.tsx` — minimal decorator wiring, same shape as
+- `apps/storybook/decorators/TrackerFormWrapper.tsx` — minimal decorator wiring, same shape as
   above.
 - `apps/storybook/components/ProgrammeRegistrationForm.tsx` — a fuller, sectioned example.
 - `apps/playground/src/components/programs/forms/ProgramRegistrationForm.tsx` and

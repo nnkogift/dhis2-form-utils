@@ -1,7 +1,7 @@
-export { RulesPanel } from './RulesPanel';
-export type { RulesPanelProps } from './RulesPanel';
-export { RuleDetailsModal } from './RuleDetailsModal';
-export type { RuleDetailsModalProps, RuleDetailsStatus } from './RuleDetailsModal';
+export { RulesPanel } from './RulesPanel/index';
+export type { RulesPanelProps } from './RulesPanel/index';
+export { RuleDetailsModal } from './RuleDetailsModal/index';
+export type { RuleDetailsModalProps, RuleDetailsStatus } from './RuleDetailsModal/index';
 export { RuleDevtoolsScope } from './RuleDevtoolsScope';
 export type { RuleDevtoolsScopeProps } from './RuleDevtoolsScope';
 export {

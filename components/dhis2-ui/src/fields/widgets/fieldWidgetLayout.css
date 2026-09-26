@@ -1,0 +1,59 @@
+.d2-field-row {
+    display: flex;
+    align-items: center;
+    gap: var(--spacers-dp12);
+}
+
+.d2-field-muted {
+    color: var(--colors-grey700);
+}
+
+.d2-boolean-options {
+    display: flex;
+    gap: var(--spacers-dp16);
+}
+
+.d2-coordinate-summary {
+    display: flex;
+    gap: var(--spacers-dp16);
+    margin: 0;
+}
+
+.d2-coordinate-axis {
+    display: flex;
+    gap: var(--spacers-dp4);
+    align-items: baseline;
+}
+
+.d2-coordinate-label {
+    margin: 0;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: var(--colors-grey700);
+}
+
+.d2-coordinate-value {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+}
+
+.d2-geojson-summary {
+    display: flex;
+    align-items: center;
+    gap: var(--spacers-dp8);
+}
+
+.d2-geojson-meta {
+    font-size: 12px;
+    color: var(--colors-grey700);
+}
+
+.d2-image-preview {
+    max-width: 200px;
+    max-height: 200px;
+    margin-top: var(--spacers-dp8);
+}

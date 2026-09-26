@@ -145,7 +145,7 @@ jobs:
               with:
                   name: build-dist
                   path: .
-            - run: pnpm --filter storybook test
+            - run: pnpm --filter @nnkogift/dhis2-form-utils-storybook test
 
     fallow:
         runs-on: ubuntu-latest

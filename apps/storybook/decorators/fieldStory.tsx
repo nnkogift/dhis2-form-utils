@@ -1,7 +1,7 @@
 import type { WidgetKind } from '@nnkogift/dhis2-form-utils-hooks';
 import type { Decorator, Meta } from '@storybook/react';
 import { NETWORK_WIDGET_KINDS, TIER1_WIDGET_KINDS } from '../fixtures/fieldMetadata';
-import { fieldStateFor, FormWrapper } from './withFormDecorators';
+import { fieldStateFor, FormWrapper } from './FormWrapper';
 
 export type FieldStoryArgs = {
     widgetKind: WidgetKind;

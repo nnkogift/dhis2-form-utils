@@ -1,7 +1,7 @@
 import { D2Field, FormFeedback } from '@nnkogift/dhis2-form-utils-mui';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { ProgrammeRegistrationForm } from '../../components/ProgrammeRegistrationForm';
-import { withTrackerForm } from '../../decorators/withTrackerForm';
+import { withTrackerForm } from '../../decorators/TrackerFormWrapper';
 import {
     TRACKER_RULES_DEFAULT_ORG_UNIT,
     TRACKER_RULES_PROGRAM_ID,

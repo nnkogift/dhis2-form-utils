@@ -8,7 +8,7 @@ import {
     withFieldStoryForm,
 } from '../../decorators/fieldStory';
 import { fieldStoryPlays } from '../../interactions/fieldStoryInteractions';
-import { fieldStateFor, withFormDecorators } from '../../decorators/withFormDecorators';
+import { fieldStateFor, withFormDecorators } from '../../decorators/FormWrapper';
 
 const plays = fieldStoryPlays('dhis2-ui');
 

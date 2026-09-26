@@ -4,7 +4,7 @@ import type { FieldStateMap } from '@nnkogift/dhis2-form-utils-rules';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect } from 'storybook/test';
 import { makeFieldPsde } from '../../fixtures/fieldMetadata';
-import { withFormDecorators } from '../../decorators/withFormDecorators';
+import { withFormDecorators } from '../../decorators/FormWrapper';
 
 function ThreeFieldForm() {
     return (

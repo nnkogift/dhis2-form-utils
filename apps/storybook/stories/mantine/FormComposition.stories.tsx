@@ -5,7 +5,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect } from 'storybook/test';
 import { MantineProvider } from '@mantine/core';
 import { makeFieldPsde } from '../../fixtures/fieldMetadata';
-import { withFormDecorators } from '../../decorators/withFormDecorators';
+import { withFormDecorators } from '../../decorators/FormWrapper';
 
 function ThreeFieldForm() {
     return (

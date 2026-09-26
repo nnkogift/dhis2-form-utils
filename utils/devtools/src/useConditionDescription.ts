@@ -6,12 +6,15 @@ export type ConditionDescriptionState = {
     description: string | undefined;
     warning: string | undefined;
     loading: boolean;
+    /** True when the describe-condition request failed (network, permissions, server error). */
+    fetchError: boolean;
 };
 
 const EMPTY_STATE: ConditionDescriptionState = {
     description: undefined,
     warning: undefined,
     loading: false,
+    fetchError: false,
 };
 
 export function parseConditionDescriptionResult(
@@ -47,9 +50,8 @@ function resolveRequestKey(
 /**
  * Fetches a plain-language reading of a condition from the same DHIS2 endpoint the
  * Maintenance app uses. Fires once per (condition, programId) pair when the details modal
- * opens; fails quiet on transport/permission errors (older DHIS2 instances, offline) since the
- * raw condition + variable chips already cover the essentials — only a well-formed `ERROR`
- * response (bad expression syntax) surfaces as a `warning`.
+ * opens. Transport/permission failures set `fetchError` so they are distinguishable from
+ * "no description"; a well-formed `ERROR` response (bad expression syntax) surfaces as `warning`.
  */
 export function useConditionDescription(
     condition: string | undefined,
@@ -68,16 +70,33 @@ export function useConditionDescription(
             return;
         }
         let cancelled = false;
-        setState({ key, description: undefined, warning: undefined, loading: true });
+        setState({
+            key,
+            description: undefined,
+            warning: undefined,
+            loading: true,
+            fetchError: false,
+        });
         mutate({ condition, programId })
             .then((data) => {
                 if (!cancelled) {
-                    setState({ key, loading: false, ...parseConditionDescriptionResult(data) });
+                    setState({
+                        key,
+                        loading: false,
+                        fetchError: false,
+                        ...parseConditionDescriptionResult(data),
+                    });
                 }
             })
             .catch(() => {
                 if (!cancelled) {
-                    setState({ key, ...EMPTY_STATE });
+                    setState({
+                        key,
+                        description: undefined,
+                        warning: undefined,
+                        loading: false,
+                        fetchError: true,
+                    });
                 }
             });
         return () => {
@@ -86,7 +105,14 @@ export function useConditionDescription(
     }, [key, condition, programId, mutate]);
 
     if (state.key !== key) {
-        return key ? { description: undefined, warning: undefined, loading: true } : EMPTY_STATE;
+        return key
+            ? { description: undefined, warning: undefined, loading: true, fetchError: false }
+            : EMPTY_STATE;
     }
-    return { description: state.description, warning: state.warning, loading: state.loading };
+    return {
+        description: state.description,
+        warning: state.warning,
+        loading: state.loading,
+        fetchError: state.fetchError,
+    };
 }

@@ -1,7 +1,7 @@
 import { D2Field, FormFeedback } from '@nnkogift/dhis2-form-utils-mui';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { ProgrammeEventForm } from '../../components/ProgrammeEventForm';
-import { withEventForm } from '../../decorators/withEventForm';
+import { withEventForm } from '../../decorators/EventFormWrapper';
 import {
     EVENT_RULES_STAGE_ID,
     eventProgramRulesMetadata,

@@ -1,0 +1,7 @@
+.d2-feedback-panel {
+    margin-bottom: var(--spacers-dp16);
+}
+
+.d2-feedback-panel-title {
+    margin: 0 0 var(--spacers-dp8);
+}

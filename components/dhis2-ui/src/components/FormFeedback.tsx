@@ -1,30 +1,7 @@
-import { NoticeBox } from '@dhis2/ui';
+// fallow-ignore-file code-duplication
 import { useFormFeedback } from '@nnkogift/dhis2-form-utils-hooks';
 
-type FeedbackItem = ReturnType<typeof useFormFeedback>[string];
-
-function FeedbackPanel({ title, items }: { title: string; items: FeedbackItem[] }) {
-    if (!items.length) {
-        return null;
-    }
-
-    return (
-        <div style={{ marginBottom: 'var(--spacers-dp16)' }}>
-            <h3 style={{ margin: '0 0 var(--spacers-dp8)' }}>{title}</h3>
-            {items.map((item) => (
-                <NoticeBox key={`${item.location}:${item.content}`} title={item.content}>
-                    {item.value ? (
-                        <>
-                            <strong>{item.content}</strong>: {item.value}
-                        </>
-                    ) : (
-                        item.content
-                    )}
-                </NoticeBox>
-            ))}
-        </div>
-    );
-}
+import { FeedbackPanel } from './FeedbackPanel';
 
 export function FormFeedback() {
     const feedback = useFormFeedback();

@@ -26,7 +26,6 @@ jobs:
                   cache: pnpm
             - run: pnpm install --frozen-lockfile
             - run: pnpm build:packages
-            - run: pnpm --filter storybook build
             - run: pnpm --filter docs build
             - name: Merge Storybook into the docs build output
               run: cp -R apps/storybook/storybook-static apps/docs/build/storybook

@@ -3,7 +3,7 @@ import { useFieldControl } from '@nnkogift/dhis2-form-utils-hooks';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, userEvent } from 'storybook/test';
 import { makeFieldPsde } from '../../../fixtures/fieldMetadata';
-import { fieldStateFor, withFormDecorators } from '../../../decorators/withFormDecorators';
+import { fieldStateFor, withFormDecorators } from '../../../decorators/FormWrapper';
 
 const FIELD_ID = 'field-boolean';
 

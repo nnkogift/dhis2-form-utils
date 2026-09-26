@@ -1,5 +1,6 @@
 import { FormStore } from '../formStore';
 import { FormStateProvider } from '../FormStateContext';
+import { toGenericFormReturn } from '../formValue';
 import type { OptionGroupCodeMap } from '@nnkogift/dhis2-form-utils-metadata';
 import type { FieldStateMap } from '@nnkogift/dhis2-form-utils-rules';
 import { renderHook, type RenderHookOptions } from '@testing-library/react';
@@ -11,7 +12,6 @@ import {
     useFormContext,
     type Control,
     type UseFormProps,
-    type UseFormReturn,
 } from 'react-hook-form';
 
 export type FieldControlWrapperOptions = {
@@ -39,10 +39,7 @@ function FieldControlWrapper({
     }, [fieldState, optionGroups]);
 
     return (
-        <FormStateProvider
-            formStore={formStore}
-            form={form as UseFormReturn<Record<string, unknown>>}
-        >
+        <FormStateProvider formStore={formStore} form={toGenericFormReturn(form)}>
             <FormProvider {...form}>{children}</FormProvider>
         </FormStateProvider>
     );
