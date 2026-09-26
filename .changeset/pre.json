@@ -21,6 +21,7 @@
         "coordinate-geojson-modal-picker",
         "devtools-lazy-graph-split",
         "devtools-vitest-bump",
+        "devtools-without-registration-scope",
         "field-widgets-map-integration",
         "fix-mobile-render-hint",
         "fix-program-stage-section-data-elements",

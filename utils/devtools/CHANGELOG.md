@@ -1,5 +1,15 @@
 # @nnkogift/dhis2-form-utils-devtools
 
+## 0.1.0-alpha.9
+
+### Patch Changes
+
+- [`a1dd1c6`](https://github.com/nnkogift/dhis2-form-utils/commit/a1dd1c6a26e383ec47313a59672766f4cb5a52cc) Thanks [@nnkogift](https://github.com/nnkogift)! - Disable stage-based program-rule scope filtering for event programs with `programType === 'WITHOUT_REGISTRATION'`. All rules are shown as in scope and the In scope / All control is hidden, since single-stage programs often store rules without a `programStage`.
+
+- Updated dependencies []:
+    - @nnkogift/dhis2-form-utils-metadata@0.1.0-alpha.9
+    - @nnkogift/dhis2-form-utils-hooks@0.1.0-alpha.9
+
 ## 0.1.0-alpha.8
 
 ### Minor Changes
