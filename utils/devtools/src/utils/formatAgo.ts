@@ -1,4 +1,4 @@
-import { translate } from '../i18n';
+import { translate } from '../i18n/index';
 
 // fallow-ignore-next-line complexity
 export function formatAgo(timestamp: number, now = Date.now()): string {

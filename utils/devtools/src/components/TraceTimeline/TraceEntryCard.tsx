@@ -2,7 +2,7 @@ import { Card, IconChevronDown16, IconChevronRight16, Tag } from '@dhis2/ui';
 import type { RuleTraceEntry } from '@nnkogift/dhis2-form-utils-hooks';
 import type { DevtoolsLabelLookup } from '../../lib/createLabelLookup';
 import { formatAgo } from '../../utils/formatAgo';
-import { translate } from '../../i18n';
+import { translate } from '../../i18n/index';
 import { RuleResultBlock } from './RuleResultBlock';
 import { resolveLabel } from './shared';
 

@@ -1,5 +1,5 @@
 import { Modal, ModalContent, ModalTitle } from '@dhis2/ui';
-import { translate } from '../../i18n';
+import { translate } from '../../i18n/index';
 import { RuleGraphView, type RuleGraphViewProps } from '../RuleGraphView/index';
 
 export type RuleGraphModalProps = Omit<

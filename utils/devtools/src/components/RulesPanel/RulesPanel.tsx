@@ -5,7 +5,7 @@ import { lazy, Suspense, useCallback, useMemo, useState, useSyncExternalStore } 
 import { buildGraphFromTrace } from '../../graph/buildGraph';
 import { createLabelLookup, type RuleDevtoolsMetadata } from '../../lib/createLabelLookup';
 import { formatAgo } from '../../utils/formatAgo';
-import { translate } from '../../i18n';
+import { translate } from '../../i18n/index';
 import type { CatalogRule } from '../../lib/resolveProgramRulesList';
 import { resolveProgramRulesList } from '../../lib/resolveProgramRulesList';
 import { useRuleTraceStore } from '../RuleDevtoolsScope';

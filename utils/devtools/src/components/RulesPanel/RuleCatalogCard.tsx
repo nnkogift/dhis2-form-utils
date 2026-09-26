@@ -2,7 +2,7 @@ import { IconInfo16 } from '@dhis2/ui';
 import type { DevtoolsLabelLookup, createLabelLookup } from '../../lib/createLabelLookup';
 import { EffectBadge } from '../EffectBadge';
 import { formatRuleActionSummary } from '../../lib/formatRuleActionSummary';
-import { translate } from '../../i18n';
+import { translate } from '../../i18n/index';
 import type { CatalogRule } from '../../lib/resolveProgramRulesList';
 import { isRuleInScope } from './shared';
 

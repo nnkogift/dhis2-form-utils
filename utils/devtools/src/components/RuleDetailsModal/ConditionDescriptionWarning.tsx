@@ -1,4 +1,4 @@
-import { translate } from '../../i18n';
+import { translate } from '../../i18n/index';
 
 export function ConditionDescriptionWarning({ warning }: { warning: string }) {
     return (

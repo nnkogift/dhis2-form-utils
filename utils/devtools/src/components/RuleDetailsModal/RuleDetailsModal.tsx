@@ -7,7 +7,7 @@ import {
 } from '../../lib/resolveProgramRuleEditUrl';
 import { useConditionDescription } from '../../hooks/useConditionDescription';
 import { useProgramRuleDetail } from '../../hooks/useProgramRuleDetail';
-import { translate } from '../../i18n';
+import { translate } from '../../i18n/index';
 import { parseConditionVariables } from './parseConditionVariables';
 import { resolveRuleDisplayName } from './shared';
 import { RuleDetailsBody } from './RuleDetailsBody';

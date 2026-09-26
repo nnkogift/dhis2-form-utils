@@ -4,7 +4,7 @@ import {
     getEffectTagRenderPropsForVariant,
     type EffectVisualVariant,
 } from '../styles/effectStyles';
-import { translate } from '../i18n';
+import { translate } from '../i18n/index';
 
 const LEGEND_VARIANTS: Array<{ variant: EffectVisualVariant; label: string }> = [
     { variant: 'read', label: translate('Read') },

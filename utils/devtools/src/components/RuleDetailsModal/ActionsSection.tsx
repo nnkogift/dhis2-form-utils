@@ -1,5 +1,5 @@
 import type { ProgramRuleActionDetail } from '../../api/programRuleDetailQuery';
-import { translate } from '../../i18n';
+import { translate } from '../../i18n/index';
 import { ActionCard } from './ActionCard';
 import { SECTION_HEADING_CLASS } from './shared';
 

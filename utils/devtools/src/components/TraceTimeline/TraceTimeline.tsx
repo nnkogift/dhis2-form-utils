@@ -2,7 +2,7 @@ import { NoticeBox } from '@dhis2/ui';
 import type { RuleTraceEntry } from '@nnkogift/dhis2-form-utils-hooks';
 import { useEffect, useState } from 'react';
 import type { DevtoolsLabelLookup } from '../../lib/createLabelLookup';
-import { translate } from '../../i18n';
+import { translate } from '../../i18n/index';
 import { TraceEntryCard } from './TraceEntryCard';
 
 type TraceTimelineProps = {

@@ -1,4 +1,4 @@
-import { translate } from '../../i18n';
+import { translate } from '../../i18n/index';
 
 /**
  * `Modal` already renders its own absolutely-positioned close button and wraps every child in

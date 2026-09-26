@@ -1,5 +1,5 @@
 import { CircularLoader } from '@dhis2/ui';
-import { translate } from '../../i18n';
+import { translate } from '../../i18n/index';
 
 export function RulesPanelGraphFallback() {
     return (

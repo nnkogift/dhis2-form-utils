@@ -3,7 +3,7 @@ import type { GraphNode } from '../../graph/buildGraph';
 import { EffectLegend } from '../EffectLegend';
 import type { EffectVisualVariant } from '../../styles/effectStyles';
 import { getLegendSwatchClassName } from '../../graph/graphNodeStyles';
-import { translate } from '../../i18n';
+import { translate } from '../../i18n/index';
 
 type GraphToolbarProps = {
     nodeCount: number;

@@ -1,6 +1,6 @@
 import type { ProgramRuleActionDetail } from '../../api/programRuleDetailQuery';
 import { EFFECT_ICONS, getEffectVisual } from '../../styles/effectStyles';
-import { translate } from '../../i18n';
+import { translate } from '../../i18n/index';
 
 type ActionTarget = { label: string; value: string };
 type ActionTargetRef = { id: string; displayName?: string } | undefined;

@@ -1,5 +1,5 @@
 import type { ProgramRuleDetail } from '../../api/programRuleDetailQuery';
-import { translate } from '../../i18n';
+import { translate } from '../../i18n/index';
 import { BasicDetailCell } from './BasicDetailCell';
 import { EM_DASH, formatTimestamp, orDash, resolveRuleDisplayName } from './shared';
 

@@ -1,7 +1,7 @@
 import { CircularLoader } from '@dhis2/ui';
 import type { ConditionDescriptionState } from '../../hooks/useConditionDescription';
 import type { ProgramRuleDetail } from '../../api/programRuleDetailQuery';
-import { translate } from '../../i18n';
+import { translate } from '../../i18n/index';
 import { RuleDetailsContent } from './RuleDetailsContent';
 import type { VariableChip } from './ConditionSection';
 

@@ -1,5 +1,5 @@
 import type { ConditionDescriptionState } from '../../hooks/useConditionDescription';
-import { translate } from '../../i18n';
+import { translate } from '../../i18n/index';
 import { ConditionDescription } from './ConditionDescription';
 import { EM_DASH, SECTION_HEADING_CLASS } from './shared';
 import type { VariableChip } from './parseConditionVariables';

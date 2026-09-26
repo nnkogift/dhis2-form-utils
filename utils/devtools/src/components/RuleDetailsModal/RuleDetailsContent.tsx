@@ -1,6 +1,6 @@
 import type { ConditionDescriptionState } from '../../hooks/useConditionDescription';
 import type { ProgramRuleDetail } from '../../api/programRuleDetailQuery';
-import { translate } from '../../i18n';
+import { translate } from '../../i18n/index';
 import { ActionsSection } from './ActionsSection';
 import { BasicDetails } from './BasicDetails';
 import { ConditionSection, type VariableChip } from './ConditionSection';

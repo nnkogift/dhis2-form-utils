@@ -1,6 +1,6 @@
 import { useMemo, useRef } from 'react';
 import type { createLabelLookup } from '../../lib/createLabelLookup';
-import { translate } from '../../i18n';
+import { translate } from '../../i18n/index';
 import type { CatalogRule } from '../../lib/resolveProgramRulesList';
 import { useFlipReorder } from '../../hooks/useFlipReorder';
 import { RuleCatalogCard } from './RuleCatalogCard';

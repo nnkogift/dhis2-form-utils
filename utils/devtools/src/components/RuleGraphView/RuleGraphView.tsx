@@ -3,7 +3,7 @@ import { NoticeBox } from '@dhis2/ui';
 import { useMemo } from 'react';
 import { buildGraphFromTrace } from '../../graph/buildGraph';
 import { getEffectVariant, type EffectVisualVariant } from '../../styles/effectStyles';
-import { translate } from '../../i18n';
+import { translate } from '../../i18n/index';
 import { resolveGraphTraceEntry } from '../../lib/traceEntry';
 import { GraphToolbar } from './GraphToolbar';
 import { RuleGraphCanvas } from './RuleGraphCanvas';

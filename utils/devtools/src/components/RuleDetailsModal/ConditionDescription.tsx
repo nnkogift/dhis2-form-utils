@@ -1,4 +1,4 @@
-import { translate } from '../../i18n';
+import { translate } from '../../i18n/index';
 import type { ConditionDescriptionState } from '../../hooks/useConditionDescription';
 import { ConditionDescriptionCallout } from './ConditionDescriptionCallout';
 import { ConditionDescriptionLoading } from './ConditionDescriptionLoading';

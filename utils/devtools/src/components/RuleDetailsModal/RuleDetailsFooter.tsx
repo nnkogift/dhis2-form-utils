@@ -1,6 +1,6 @@
 import { Button, ButtonStrip } from '@dhis2/ui';
 import type { ProgramRuleEditorApp } from '../../lib/resolveProgramRuleEditUrl';
-import { translate } from '../../i18n';
+import { translate } from '../../i18n/index';
 
 /**
  * A plain div (not `ModalActions`) — `ModalActions` sets `align-self: flex-end`, which
