@@ -14,7 +14,7 @@ import { TraceTimeline } from '../TraceTimeline/index';
 import { getActiveRuleIds, resolveGraphTraceEntry } from '../../lib/traceEntry';
 import { RulesPanelGraphFallback } from './RulesPanelGraphFallback';
 import { RulesTab } from './RulesTab';
-import { isRuleInScope, type RuleScopeFilter } from './shared';
+import { isProgramRuleScopeFilterEnabled, isRuleInScope, type RuleScopeFilter } from './shared';
 
 const LazyRuleGraphView = lazy(() =>
     import('../RuleGraphView/index').then((module) => ({ default: module.RuleGraphView }))
@@ -109,6 +109,7 @@ export function RulesPanel({
         () => resolveScopeStageId(metadata, activeProgramStageId),
         [metadata, activeProgramStageId]
     );
+    const scopeFilterEnabled = useMemo(() => isProgramRuleScopeFilterEnabled(metadata), [metadata]);
 
     const entries = useSyncExternalStore(
         useCallback((listener) => traceStore.subscribe(listener), [traceStore]),
@@ -124,8 +125,11 @@ export function RulesPanel({
 
     const activeRuleIds = useMemo(() => getActiveRuleIds(entries), [entries]);
     const scopedRules = useMemo(
-        () => catalog.filter((rule: CatalogRule) => isRuleInScope(rule, scopeStageId)),
-        [catalog, scopeStageId]
+        () =>
+            catalog.filter((rule: CatalogRule) =>
+                isRuleInScope(rule, scopeStageId, scopeFilterEnabled)
+            ),
+        [catalog, scopeFilterEnabled, scopeStageId]
     );
     const firingCount = useMemo(
         () => scopedRules.filter((rule) => activeRuleIds.has(rule.id)).length,
@@ -174,7 +178,7 @@ export function RulesPanel({
     );
     const detailsStatus = detailsRule
         ? resolveDetailsStatus(
-              isRuleInScope(detailsRule, scopeStageId),
+              isRuleInScope(detailsRule, scopeStageId, scopeFilterEnabled),
               activeRuleIds.has(detailsRule.id)
           )
         : 'idle';
@@ -229,13 +233,15 @@ export function RulesPanel({
                                 firing: firingCount,
                             })}
                         </span>
-                        <SegmentedControl
-                            options={SCOPE_FILTER_OPTIONS}
-                            selected={scopeFilter}
-                            onChange={({ value }) => {
-                                setScopeFilter(value as RuleScopeFilter);
-                            }}
-                        />
+                        {scopeFilterEnabled ? (
+                            <SegmentedControl
+                                options={SCOPE_FILTER_OPTIONS}
+                                selected={scopeFilter}
+                                onChange={({ value }) => {
+                                    setScopeFilter(value as RuleScopeFilter);
+                                }}
+                            />
+                        ) : null}
                     </div>
                 </div>
                 <div className="flex">
@@ -289,6 +295,7 @@ export function RulesPanel({
                         catalog={catalog}
                         scopeStageId={scopeStageId}
                         scopeFilter={scopeFilter}
+                        scopeFilterEnabled={scopeFilterEnabled}
                         activeRuleIds={activeRuleIds}
                         selectedRuleId={highlightRuleId}
                         showConditions={showConditions}

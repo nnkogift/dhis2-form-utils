@@ -22,6 +22,7 @@ type RulesTabProps = {
     catalog: CatalogRule[];
     scopeStageId: string | null;
     scopeFilter: RuleScopeFilter;
+    scopeFilterEnabled: boolean;
     activeRuleIds: ReadonlySet<string>;
     selectedRuleId: string | null;
     showConditions: boolean;
@@ -34,6 +35,7 @@ export function RulesTab({
     catalog,
     scopeStageId,
     scopeFilter,
+    scopeFilterEnabled,
     activeRuleIds,
     selectedRuleId,
     showConditions,
@@ -43,8 +45,14 @@ export function RulesTab({
 }: RulesTabProps) {
     const listRef = useRef<HTMLUListElement>(null);
     const visibleRules = useMemo(
-        () => catalog.filter((rule) => scopeFilter === 'all' || isRuleInScope(rule, scopeStageId)),
-        [catalog, scopeFilter, scopeStageId]
+        () =>
+            catalog.filter(
+                (rule) =>
+                    !scopeFilterEnabled ||
+                    scopeFilter === 'all' ||
+                    isRuleInScope(rule, scopeStageId, scopeFilterEnabled)
+            ),
+        [catalog, scopeFilter, scopeFilterEnabled, scopeStageId]
     );
     const sortedRules = useMemo(
         () => sortRulesFiringFirst(visibleRules, activeRuleIds),
@@ -71,6 +79,7 @@ export function RulesTab({
                     key={rule.id}
                     rule={rule}
                     scopeStageId={scopeStageId}
+                    scopeFilterEnabled={scopeFilterEnabled}
                     firing={activeRuleIds.has(rule.id)}
                     isSelected={selectedRuleId === rule.id}
                     showConditions={showConditions}

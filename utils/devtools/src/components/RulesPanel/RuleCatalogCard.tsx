@@ -52,6 +52,7 @@ function formatActionLabel(action: ReturnType<typeof formatRuleActionSummary>): 
 export function RuleCatalogCard({
     rule,
     scopeStageId,
+    scopeFilterEnabled,
     firing,
     isSelected,
     showConditions,
@@ -61,6 +62,7 @@ export function RuleCatalogCard({
 }: {
     rule: CatalogRule;
     scopeStageId: string | null;
+    scopeFilterEnabled: boolean;
     firing: boolean;
     isSelected: boolean;
     showConditions: boolean;
@@ -68,7 +70,7 @@ export function RuleCatalogCard({
     onSelectRule: (ruleId: string) => void;
     onOpenDetails: (ruleId: string) => void;
 }) {
-    const inScope = isRuleInScope(rule, scopeStageId);
+    const inScope = isRuleInScope(rule, scopeStageId, scopeFilterEnabled);
     const status = resolveCardStatus(inScope, firing);
 
     return (
