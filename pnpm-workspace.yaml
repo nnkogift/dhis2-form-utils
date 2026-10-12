@@ -26,13 +26,6 @@ publicHoistPattern:
     - '@dhis2/app-adapter'
     - '@dhis2/pwa'
 
-onlyBuiltDependencies:
-    - '@dhis2/cli-helpers-engine'
-    - '@swc/core'
-    - core-js-pure
-    - esbuild
-    - msw
-
 # Dependabot remediation: force patched versions of transitive deps whose
 # direct parents (Docusaurus, changesets, eslint-plugin-react) are already
 # on their latest release but haven't picked up the fix yet.
@@ -60,3 +53,6 @@ overrides:
 # It's a transitive dep of Docusaurus's MDX image-size plugin, used only at
 # docs-build time against trusted repo-local images — low risk. Revisit once
 # a fix ships.
+permissions:
+    fallow:
+        skills: true
