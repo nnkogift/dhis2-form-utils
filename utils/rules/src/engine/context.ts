@@ -289,7 +289,7 @@ const toRuleEvent = (
         metadata.id ?? '',
         metadata.displayName ?? '',
         DEFAULT_EVENT_STATUS,
-        toRuleDate(currentValues.eventDate),
+        toRuleDate(currentValues.eventDate ?? currentValues.occurredAt),
         RuleInstant.now(),
         null,
         toRuleDate(currentValues.dueDate),
