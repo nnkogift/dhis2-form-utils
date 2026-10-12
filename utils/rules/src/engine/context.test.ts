@@ -276,6 +276,56 @@ describe('buildRuleEngineContext / buildRuleEngine', () => {
         expect(engine.evaluate({})[0].content).toBe('Female TEI');
     });
 
+    describe('V{event_date}', () => {
+        const buildEventDateEngine = () =>
+            buildRuleEngine(
+                buildRuleEngineContext({
+                    stageMetadata,
+                    programRules: [
+                        {
+                            id: 'rule-event-date',
+                            condition: 'd2:hasValue(V{event_date})',
+                            priority: 1,
+                            programRuleActions: [
+                                {
+                                    programRuleActionType: ProgramRuleActionType.SHOWWARNING,
+                                    content: 'Event date matched',
+                                    dataElement: {
+                                        id: 'age',
+                                        displayName: 'Age',
+                                        valueType: 'INTEGER' as const,
+                                    },
+                                },
+                            ],
+                        },
+                    ] as ProgramRule[],
+                    programRuleVariables: [],
+                    programStageId: 'stage-1',
+                })
+            );
+
+        it('resolves from eventDate', () => {
+            const effects = buildEventDateEngine().evaluate({ eventDate: '2024-01-01' });
+
+            expect(effects).toHaveLength(1);
+        });
+
+        it('resolves from occurredAt when eventDate is absent', () => {
+            const effects = buildEventDateEngine().evaluate({ occurredAt: '2024-01-01' });
+
+            expect(effects).toHaveLength(1);
+        });
+
+        it('prefers eventDate over occurredAt', () => {
+            const effects = buildEventDateEngine().evaluate({
+                eventDate: '2024-01-01',
+                occurredAt: '2025-05-05',
+            });
+
+            expect(effects).toHaveLength(1);
+        });
+    });
+
     it('resolves V{event_count} from sibling events built via toRuleEventFromInput', () => {
         const context = buildRuleEngineContext({
             stageMetadata,
