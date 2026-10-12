@@ -106,12 +106,16 @@ const handleSubmit = form.handleSubmit((values) => {
                 orgUnit: values.orgUnit,
                 enrolledAt: values.enrolledAt,
                 ...(metadata.displayIncidentDate ? { occurredAt: values.occurredAt } : {}),
-                status: 'ACTIVE',
+                status: values.status ?? 'ACTIVE',
             },
         ],
     });
 });
 ```
+
+The optional `status` form value (`ACTIVE`, `COMPLETED` or `CANCELLED`) also drives `V{enrollment_status}` in
+program rules and defaults to `ACTIVE` when absent. Because `attributes` is built from TEA uids only, `status` never
+leaks into the submitted attribute values — keep it that way in your own payload builder.
 
 `useTrackerForm` does not generate tracked entity or enrollment UIDs, and does not decide the
 POST/PATCH distinction for updates — both stay caller-owned.

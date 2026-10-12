@@ -276,6 +276,59 @@ describe('buildRuleEngineContext / buildRuleEngine', () => {
         expect(engine.evaluate({})[0].content).toBe('Female TEI');
     });
 
+    it('exposes the enrollment status from enrollment values to event rules', () => {
+        const enrollmentMetadata = {
+            id: 'prog-1',
+            displayName: 'Tracker Program',
+            trackedEntityType: { id: 'te-type-1' },
+            displayIncidentDate: false,
+            selectEnrollmentDatesInFuture: true,
+            selectIncidentDatesInFuture: true,
+            programTrackedEntityAttributes: [],
+            programRules: [],
+            programRuleVariables: [],
+            constants: [],
+        };
+        const buildWithStatus = (status?: string) =>
+            buildRuleEngine(
+                buildRuleEngineContext({
+                    stageMetadata,
+                    programRules: [
+                        {
+                            id: 'rule-enrollment-status',
+                            condition: "V{enrollment_status} == 'COMPLETED'",
+                            priority: 1,
+                            programRuleActions: [
+                                {
+                                    programRuleActionType: ProgramRuleActionType.SHOWWARNING,
+                                    content: 'Enrollment completed',
+                                    dataElement: {
+                                        id: 'age',
+                                        displayName: 'Age',
+                                        valueType: 'INTEGER' as const,
+                                    },
+                                },
+                            ],
+                        },
+                    ] as ProgramRule[],
+                    programRuleVariables: [],
+                    programStageId: 'stage-1',
+                }),
+                {
+                    enrollment: toRuleEnrollment(enrollmentMetadata, {
+                        orgUnit: 'abcdefghijk',
+                        enrolledAt: '2024-01-01',
+                        status,
+                    }),
+                    events: [],
+                }
+            );
+
+        expect(buildWithStatus('COMPLETED').evaluate({})).toHaveLength(1);
+        expect(buildWithStatus('ACTIVE').evaluate({})).toHaveLength(0);
+        expect(buildWithStatus().evaluate({})).toHaveLength(0);
+    });
+
     describe('V{event_date}', () => {
         const buildEventDateEngine = () =>
             buildRuleEngine(

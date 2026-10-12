@@ -5,7 +5,11 @@ import {
 } from '@nnkogift/dhis2-form-utils-metadata';
 import { describe, expect, it } from 'vitest';
 import { toRuleEventFromInput } from './context';
-import { buildEnrollmentRuleEngine, buildEnrollmentRuleEngineContext } from './enrollmentContext';
+import {
+    buildEnrollmentRuleEngine,
+    buildEnrollmentRuleEngineContext,
+    toRuleEnrollment,
+} from './enrollmentContext';
 
 const teaId = 'tea-age';
 
@@ -348,5 +352,57 @@ describe('buildEnrollmentRuleEngineContext / buildEnrollmentRuleEngine', () => {
 
         expect(effects).toHaveLength(1);
         expect(effects[0].content).toBe('Has events');
+    });
+
+    describe('V{enrollment_status}', () => {
+        const metadataWithStatusRule = (status: string): TrackerProgramMetadata => ({
+            ...baseTrackerMetadata(),
+            programRules: [
+                {
+                    id: `rule-status-${status}`,
+                    condition: `V{enrollment_status} == '${status}'`,
+                    priority: 1,
+                    name: `Status is ${status}`,
+                    programRuleActions: [
+                        {
+                            id: 'action-status',
+                            programRuleActionType: ProgramRuleActionType.SHOWWARNING,
+                            content: `Status ${status}`,
+                            trackedEntityAttribute: { id: teaId },
+                        },
+                    ],
+                },
+            ],
+        });
+
+        const evaluateWith = (ruleStatus: string, values: Record<string, unknown>) =>
+            buildEnrollmentRuleEngine(
+                buildEnrollmentRuleEngineContext(metadataWithStatusRule(ruleStatus))
+            ).evaluate({ orgUnit: 'abcdefghijk', enrolledAt: '2024-01-01', ...values });
+
+        it.each(['COMPLETED', 'CANCELLED'])(
+            'fires a %s rule only when currentValues.status matches',
+            (status) => {
+                expect(evaluateWith(status, { status })).toHaveLength(1);
+                expect(evaluateWith(status, { status: 'ACTIVE' })).toHaveLength(0);
+                expect(evaluateWith(status, {})).toHaveLength(0);
+            }
+        );
+
+        it.each([undefined, 'BOGUS', 'toString', 42])(
+            'falls back to ACTIVE when status is %s',
+            (status) => {
+                expect(evaluateWith('ACTIVE', { status })).toHaveLength(1);
+                expect(evaluateWith('COMPLETED', { status })).toHaveLength(0);
+            }
+        );
+
+        it('does not treat status as a tracked entity attribute', () => {
+            const enrollment = toRuleEnrollment(baseTrackerMetadata(), {
+                status: 'COMPLETED',
+                [teaId]: '5',
+            });
+            expect(enrollment.attributeValues).toHaveLength(1);
+        });
     });
 });
