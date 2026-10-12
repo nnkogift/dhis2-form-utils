@@ -40,7 +40,10 @@ export {
     toRuleEventFromInput,
     toRuleSupplementaryData,
 } from './engine/context';
-export type { EnrollmentRuleEngineContext } from './engine/enrollmentContext';
+export type {
+    EnrollmentRuleEngineContext,
+    RuleEnrollmentStatusInput,
+} from './engine/enrollmentContext';
 export {
     buildEnrollmentRuleEngineContext,
     buildEnrollmentRuleEngine,

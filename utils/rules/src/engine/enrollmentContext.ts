@@ -23,6 +23,15 @@ import { normalizeEffect, toRuleAction, toStringValue } from '../interop/ruleInt
 import { ruleValueTypeFromDhis2 } from '../interop/ruleValueType';
 
 const DEFAULT_ENROLLMENT_ID = 'current-enrollment';
+const DEFAULT_ENROLLMENT_STATUS = RuleEnrollmentStatus.ACTIVE;
+
+export type RuleEnrollmentStatusInput = 'ACTIVE' | 'COMPLETED' | 'CANCELLED';
+
+const ENROLLMENT_STATUS_MAP: Record<RuleEnrollmentStatusInput, RuleEnrollmentStatus> = {
+    ACTIVE: RuleEnrollmentStatus.ACTIVE,
+    COMPLETED: RuleEnrollmentStatus.COMPLETED,
+    CANCELLED: RuleEnrollmentStatus.CANCELLED,
+};
 
 export type EnrollmentRuleEngineContext = {
     metadata: TrackerProgramMetadata;
@@ -34,6 +43,11 @@ const ENROLLMENT_VARIABLE_SOURCES = new Set<string>([
     ProgramRuleVariableSourceType.TEI_ATTRIBUTE,
     ProgramRuleVariableSourceType.CALCULATED_VALUE,
 ]);
+
+const toRuleEnrollmentStatus = (value: unknown): RuleEnrollmentStatus =>
+    typeof value === 'string' && Object.prototype.hasOwnProperty.call(ENROLLMENT_STATUS_MAP, value)
+        ? ENROLLMENT_STATUS_MAP[value as RuleEnrollmentStatusInput]
+        : DEFAULT_ENROLLMENT_STATUS;
 
 const toRuleDate = (value: unknown, fallback: string): RuleLocalDate => {
     if (typeof value === 'string' && value) {
@@ -171,7 +185,7 @@ export const toRuleEnrollment = (
         metadata.displayName,
         toRuleDate(occurredAt, enrolledAt),
         toRuleDate(enrolledAt, '2000-01-01'),
-        RuleEnrollmentStatus.ACTIVE,
+        toRuleEnrollmentStatus(currentValues.status),
         toStringValue(currentValues.orgUnit, 'UNKNOWN_ORG_UNIT'),
         null,
         attributeValues

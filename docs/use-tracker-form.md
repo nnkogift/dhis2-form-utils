@@ -481,7 +481,7 @@ const handleSubmit = form.handleSubmit((values) => {
                 orgUnit: values.orgUnit,
                 enrolledAt: values.enrolledAt,
                 ...(metadata.displayIncidentDate ? { occurredAt: values.occurredAt } : {}),
-                status: 'ACTIVE',
+                status: values.status ?? 'ACTIVE',
             },
         ],
     });
@@ -493,6 +493,10 @@ values, and — given the optional third `optionGroups` argument (`formStore.opt
 `optionGroups` option) — nulls out a field's value if it currently holds an option code hidden by `HIDEOPTION` or a
 member of a `HIDEOPTIONGROUP`-hidden group. It is the same utility used by `useEventForm` consumers — shared, not
 duplicated.
+
+The optional `status` form value (`ACTIVE`, `COMPLETED` or `CANCELLED`) also drives `V{enrollment_status}` in
+program rules and defaults to `ACTIVE` when absent. Because `attributes` is built from TEA uids only, `status` never
+leaks into the submitted attribute values — keep it that way in your own payload builder.
 
 The caller splits the flat form values into the TEA attributes array (for `trackedEntities`) and the system fields (for
 `enrollments`). The hook does not prescribe how this split happens — it is a straightforward Set membership check on the
