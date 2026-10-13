@@ -23,6 +23,10 @@ export {
     DECLARED_BUT_NOT_EXECUTED_ACTIONS,
 } from './lib/resolveServerRuleSupport';
 export type { ServerRuleSupport } from './lib/resolveServerRuleSupport';
+export { useServerRuleActions } from './hooks/useServerRuleActions';
+export type { UseServerRuleActionsResult } from './hooks/useServerRuleActions';
+export type { ServerRuleAction, ServerRuleActionsByRule } from './lib/resolveServerRuleActions';
+export type { NotificationTemplate } from './api/serverRuleActionsQuery';
 export { createLabelLookup } from './lib/createLabelLookup';
 export type {
     DevtoolsLabelLookup,
