@@ -55,7 +55,8 @@ const resolveTargetId = (effect: RuleEffect): string | null => {
         return effect.location;
     }
 
-    return null;
+    // SENDMESSAGE, SCHEDULEMESSAGE, SCHEDULEEVENT, CREATEEVENT have no field/section target
+    return effect.programStage ?? effect.ruleActionType;
 };
 
 export function buildTraceEntry(

@@ -52,6 +52,8 @@ const EFFECT_VARIANT: Record<string, EffectVisualVariant> = {
     DISPLAYKEYVALUEPAIR: 'feedback',
     SENDMESSAGE: 'message',
     SCHEDULEMESSAGE: 'message',
+    SCHEDULEEVENT: 'message',
+    CREATEEVENT: 'message',
     read: 'read',
 };
 
