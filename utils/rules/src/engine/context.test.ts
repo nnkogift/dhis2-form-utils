@@ -379,6 +379,55 @@ describe('buildRuleEngineContext / buildRuleEngine', () => {
         });
     });
 
+    describe('V{event_status}', () => {
+        const buildEventStatusEngine = () =>
+            buildRuleEngine(
+                buildRuleEngineContext({
+                    stageMetadata,
+                    programRules: [
+                        {
+                            id: 'rule-event-status',
+                            condition: "V{event_status} == 'COMPLETED'",
+                            priority: 1,
+                            programRuleActions: [
+                                {
+                                    programRuleActionType: ProgramRuleActionType.SHOWWARNING,
+                                    content: 'Event completed',
+                                    dataElement: {
+                                        id: 'age',
+                                        displayName: 'Age',
+                                        valueType: 'INTEGER' as const,
+                                    },
+                                },
+                            ],
+                        },
+                    ] as ProgramRule[],
+                    programRuleVariables: [],
+                    programStageId: 'stage-1',
+                })
+            );
+
+        it('fires when status is COMPLETED', () => {
+            expect(buildEventStatusEngine().evaluate({ status: 'COMPLETED' })).toHaveLength(1);
+        });
+
+        it('does not fire when status is ACTIVE', () => {
+            expect(buildEventStatusEngine().evaluate({ status: 'ACTIVE' })).toHaveLength(0);
+        });
+
+        it('defaults to ACTIVE when status is absent', () => {
+            expect(buildEventStatusEngine().evaluate({})).toHaveLength(0);
+        });
+
+        it('falls back to ACTIVE when status is not recognised', () => {
+            const engine = buildEventStatusEngine();
+
+            expect(engine.evaluate({ status: 'BOGUS' })).toHaveLength(0);
+            expect(engine.evaluate({ status: 42 })).toHaveLength(0);
+            expect(engine.evaluate({ status: 'toString' })).toHaveLength(0);
+        });
+    });
+
     it('resolves V{event_count} from sibling events built via toRuleEventFromInput', () => {
         const context = buildRuleEngineContext({
             stageMetadata,
