@@ -18,6 +18,11 @@ export type {
     EffectVisual,
     EffectTagRenderProps,
 } from './styles/effectStyles';
+export {
+    resolveServerRuleSupport,
+    DECLARED_BUT_NOT_EXECUTED_ACTIONS,
+} from './lib/resolveServerRuleSupport';
+export type { ServerRuleSupport } from './lib/resolveServerRuleSupport';
 export { createLabelLookup } from './lib/createLabelLookup';
 export type {
     DevtoolsLabelLookup,
