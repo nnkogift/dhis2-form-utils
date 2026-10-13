@@ -59,15 +59,39 @@ describe('buildTraceEntry', () => {
         });
     });
 
-    it('skips passthrough effects without a target', () => {
-        const effects: RuleEffect[] = [
+    it('records SENDMESSAGE effects without a target using the action type', () => {
+        const entry = buildTraceEntry(
+            [],
+            [{ ruleId, ruleActionType: ProgramRuleActionType.SENDMESSAGE, data: 'hi' }],
+            'e',
+            1
+        );
+
+        expect(entry.ruleResults).toEqual([
             {
                 ruleId,
-                ruleActionType: ProgramRuleActionType.SENDMESSAGE,
+                effects: [{ type: 'SENDMESSAGE', targetId: 'SENDMESSAGE', data: 'hi' }],
             },
-        ];
+        ]);
+    });
 
-        const entry = buildTraceEntry(['age'], effects, 'entry-2', 2000);
-        expect(entry.ruleResults).toEqual([]);
+    it('uses the program stage as targetId for SCHEDULEEVENT and keeps data', () => {
+        const entry = buildTraceEntry(
+            [],
+            [
+                {
+                    ruleId,
+                    ruleActionType: ProgramRuleActionType.SCHEDULEEVENT,
+                    programStage: 'stage-1',
+                    data: '2026-01-01',
+                },
+            ],
+            'e',
+            1
+        );
+
+        expect(entry.ruleResults[0].effects).toEqual([
+            { type: 'SCHEDULEEVENT', targetId: 'stage-1', data: '2026-01-01' },
+        ]);
     });
 });

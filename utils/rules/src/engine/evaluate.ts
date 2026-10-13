@@ -21,6 +21,7 @@ export type RuleEffect = {
     optionGroupId?: string | null;
     programStageSection?: string | null;
     programSection?: string | null;
+    programStage?: string | null;
     location?: string | null;
 };
 
