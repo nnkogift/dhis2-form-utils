@@ -235,6 +235,11 @@ const EVENT_STATUS_MAP: Record<RuleEventStatusInput, RuleEventStatus> = {
     OVERDUE: RuleEventStatus.OVERDUE,
 };
 
+const toRuleEventStatus = (value: unknown): RuleEventStatus =>
+    typeof value === 'string' && Object.prototype.hasOwnProperty.call(EVENT_STATUS_MAP, value)
+        ? EVENT_STATUS_MAP[value as RuleEventStatusInput]
+        : DEFAULT_EVENT_STATUS;
+
 const toRuleInstant = (value: string | undefined): RuleInstant => {
     if (!value) return RuleInstant.now();
     try {
@@ -288,7 +293,7 @@ const toRuleEvent = (
         toStringValue(currentValues.event, 'current-event'),
         metadata.id ?? '',
         metadata.displayName ?? '',
-        DEFAULT_EVENT_STATUS,
+        toRuleEventStatus(currentValues.status),
         toRuleDate(currentValues.eventDate ?? currentValues.occurredAt),
         RuleInstant.now(),
         null,
