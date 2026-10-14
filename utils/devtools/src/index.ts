@@ -33,3 +33,10 @@ export type {
     ProgramStageRef,
     RuleDevtoolsMetadata,
 } from './lib/createLabelLookup';
+export { ServerEffectsSummary } from './components/ServerEffectsSummary/index';
+export type { ServerEffectsSummaryProps } from './components/ServerEffectsSummary/index';
+export type {
+    ServerReportEntry,
+    ServerReportLevel,
+    ServerVerification,
+} from './lib/serverVerification';
