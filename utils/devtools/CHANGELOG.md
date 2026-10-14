@@ -1,5 +1,19 @@
 # @nnkogift/dhis2-form-utils-devtools
 
+## 0.1.0-alpha.10
+
+### Minor Changes
+
+- [#48](https://github.com/nnkogift/dhis2-form-utils/pull/48) [`e57b5c2`](https://github.com/nnkogift/dhis2-form-utils/commit/e57b5c2ee67281d945d2f9f1279d5a723b70fee1) Thanks [@nnkogift](https://github.com/nnkogift)! - Add `ServerEffectsSummary`, a modal summarising the notifications, scheduled events and server validation a rule evaluation would trigger on the server. Rows are tagged `Simulated`, `Server-verified` or `Server only`, actions the connected server version does not run are greyed out, and each row opens `RuleDetailsModal`. Also exports the `ServerVerification` report types.
+
+### Patch Changes
+
+- [#47](https://github.com/nnkogift/dhis2-form-utils/pull/47) [`8ff642f`](https://github.com/nnkogift/dhis2-form-utils/commit/8ff642f96b68849e03495214e7e034ee975a0e2f) Thanks [@nnkogift](https://github.com/nnkogift)! - fix: record untargeted rule effects (SENDMESSAGE, SCHEDULEMESSAGE, SCHEDULEEVENT, CREATEEVENT) in the rule trace
+
+- Updated dependencies [[`8ff642f`](https://github.com/nnkogift/dhis2-form-utils/commit/8ff642f96b68849e03495214e7e034ee975a0e2f)]:
+    - @nnkogift/dhis2-form-utils-hooks@0.1.0-alpha.10
+    - @nnkogift/dhis2-form-utils-metadata@0.1.0-alpha.10
+
 ## 0.1.0-alpha.9
 
 ### Patch Changes

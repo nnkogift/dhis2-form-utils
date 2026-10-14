@@ -28,10 +28,16 @@
         "fix-schedule-create-event-action-type",
         "hideprogramstage-target-metadata",
         "map-jit-package",
+        "quiet-trace-effects",
         "rule-condition-description",
         "rule-details-editor-link",
+        "rules-effect-program-stage",
+        "rules-enrollment-status",
+        "rules-event-date-occurred-at",
+        "rules-event-status",
         "rules-panel-details-modal",
         "rules-panel-firing-sort",
-        "rules-panel-form-relative-scope"
+        "rules-panel-form-relative-scope",
+        "server-effects-summary"
     ]
 }
