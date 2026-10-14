@@ -1,5 +1,22 @@
 # @nnkogift/dhis2-form-utils-rules
 
+## 0.1.0-alpha.10
+
+### Patch Changes
+
+- [#47](https://github.com/nnkogift/dhis2-form-utils/pull/47) [`8ff642f`](https://github.com/nnkogift/dhis2-form-utils/commit/8ff642f96b68849e03495214e7e034ee975a0e2f) Thanks [@nnkogift](https://github.com/nnkogift)! - fix: record untargeted rule effects (SENDMESSAGE, SCHEDULEMESSAGE, SCHEDULEEVENT, CREATEEVENT) in the rule trace
+
+- [#49](https://github.com/nnkogift/dhis2-form-utils/pull/49) [`6475a15`](https://github.com/nnkogift/dhis2-form-utils/commit/6475a1518d7e905ca85874819bd93890df40f656) Thanks [@nnkogift](https://github.com/nnkogift)! - fix: carry `programStage` onto rule effects so SCHEDULEEVENT/CREATEEVENT handlers know their target stage
+
+- [#43](https://github.com/nnkogift/dhis2-form-utils/pull/43) [`825de03`](https://github.com/nnkogift/dhis2-form-utils/commit/825de03318ad525b8557e3784185a9745d7afb8a) Thanks [@nnkogift](https://github.com/nnkogift)! - Read the enrollment status for `V{enrollment_status}` from `currentValues.status` (`ACTIVE`, `COMPLETED` or `CANCELLED`) instead of hard-coding `ACTIVE`. Missing or unrecognised values still fall back to `ACTIVE`. This applies to both the registration engine and event forms that receive an `enrollment`. Callers must keep `status` out of submitted attribute values.
+
+- [#41](https://github.com/nnkogift/dhis2-form-utils/pull/41) [`a10c08b`](https://github.com/nnkogift/dhis2-form-utils/commit/a10c08b6744bf05bd365eec22583aed1e415b22d) Thanks [@nnkogift](https://github.com/nnkogift)! - Resolve `V{event_date}` from `occurredAt` when `eventDate` is absent, so event forms that follow tracker API field naming no longer evaluate the event date as null.
+
+- [#44](https://github.com/nnkogift/dhis2-form-utils/pull/44) [`2312105`](https://github.com/nnkogift/dhis2-form-utils/commit/231210546e06148259f717494acdc26a9083721b) Thanks [@nnkogift](https://github.com/nnkogift)! - Read the event status for `V{event_status}` from `currentValues.status` (`ACTIVE`, `COMPLETED`, `SCHEDULE`, `SKIPPED`, `VISITED` or `OVERDUE`) instead of hard-coding `ACTIVE`. Missing or unrecognised values still fall back to `ACTIVE`. Callers must keep `status` out of submitted data values.
+
+- Updated dependencies []:
+    - @nnkogift/dhis2-form-utils-metadata@0.1.0-alpha.10
+
 ## 0.1.0-alpha.9
 
 ### Patch Changes

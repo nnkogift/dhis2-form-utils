@@ -1,5 +1,15 @@
 # @nnkogift/dhis2-form-utils-hooks
 
+## 0.1.0-alpha.10
+
+### Patch Changes
+
+- [#47](https://github.com/nnkogift/dhis2-form-utils/pull/47) [`8ff642f`](https://github.com/nnkogift/dhis2-form-utils/commit/8ff642f96b68849e03495214e7e034ee975a0e2f) Thanks [@nnkogift](https://github.com/nnkogift)! - fix: record untargeted rule effects (SENDMESSAGE, SCHEDULEMESSAGE, SCHEDULEEVENT, CREATEEVENT) in the rule trace
+
+- Updated dependencies [[`8ff642f`](https://github.com/nnkogift/dhis2-form-utils/commit/8ff642f96b68849e03495214e7e034ee975a0e2f), [`6475a15`](https://github.com/nnkogift/dhis2-form-utils/commit/6475a1518d7e905ca85874819bd93890df40f656), [`825de03`](https://github.com/nnkogift/dhis2-form-utils/commit/825de03318ad525b8557e3784185a9745d7afb8a), [`a10c08b`](https://github.com/nnkogift/dhis2-form-utils/commit/a10c08b6744bf05bd365eec22583aed1e415b22d), [`2312105`](https://github.com/nnkogift/dhis2-form-utils/commit/231210546e06148259f717494acdc26a9083721b)]:
+    - @nnkogift/dhis2-form-utils-rules@0.1.0-alpha.10
+    - @nnkogift/dhis2-form-utils-metadata@0.1.0-alpha.10
+
 ## 0.1.0-alpha.9
 
 ### Patch Changes
