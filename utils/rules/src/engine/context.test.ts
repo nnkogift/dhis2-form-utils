@@ -141,6 +141,41 @@ describe('buildRuleEngineContext / buildRuleEngine', () => {
         expect(effects[0].data).toBe('30');
     });
 
+    describe('SCHEDULEEVENT target stage', () => {
+        const scheduleRule = (programStage?: { id: string }) =>
+            [
+                {
+                    id: 'rule-schedule',
+                    condition: "d2:hasValue('age')",
+                    priority: 1,
+                    programRuleActions: [
+                        {
+                            programRuleActionType: ProgramRuleActionType.SCHEDULEEVENT,
+                            data: "d2:addDays('2026-08-01', 6)",
+                            ...(programStage && { programStage }),
+                        },
+                    ],
+                },
+            ] as ProgramRule[];
+
+        it('carries programStage and the evaluated date onto the effect', () => {
+            const engine = buildRuleEngine(buildContext(scheduleRule({ id: 'stage-2' })));
+
+            const effects = engine.evaluate({ age: 15 });
+
+            expect(effects).toHaveLength(1);
+            expect(effects[0].ruleActionType).toBe(ProgramRuleActionType.SCHEDULEEVENT);
+            expect(effects[0].programStage).toBe('stage-2');
+            expect(effects[0].data).toBe('2026-08-07');
+        });
+
+        it('sets programStage to null when the action has no target stage', () => {
+            const engine = buildRuleEngine(buildContext(scheduleRule()));
+
+            expect(engine.evaluate({ age: 15 })[0].programStage).toBeNull();
+        });
+    });
+
     it('resolves C{constantUid} when constants are passed into the context', () => {
         const constantUid = 'bCqvfPR02Im';
         const context = buildRuleEngineContext({
