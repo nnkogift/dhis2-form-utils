@@ -11,7 +11,7 @@ export type EventDetailsProps = {
 
 export function EventDetails({ row, labelLookup }: EventDetailsProps) {
     return (
-        <div className="flex flex-col gap-dp8">
+        <dl className="m-0 flex flex-col gap-dp8">
             {row.stageId ? (
                 <DetailLine label={translate('Target stage')}>
                     <span className="text-[0.8125rem] text-dhis2-grey-800">
@@ -26,6 +26,6 @@ export function EventDetails({ row, labelLookup }: EventDetailsProps) {
                     flagInvalid={false}
                 />
             ) : null}
-        </div>
+        </dl>
     );
 }

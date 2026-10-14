@@ -8,10 +8,11 @@ export function RuleLinkButton({ ruleId, ruleName, onOpen }: RuleLinkButtonProps
     return (
         <button
             type="button"
+            aria-haspopup="dialog"
             onClick={() => {
                 onOpen(ruleId);
             }}
-            className="cursor-pointer border-0 bg-transparent p-0 text-start text-[0.8125rem] font-medium text-dhis2-blue-900 underline hover:text-dhis2-blue-1000"
+            className="cursor-pointer rounded-sm border-0 bg-transparent px-dp4 py-dp8 text-start text-[0.8125rem] font-medium text-dhis2-blue-900 underline hover:text-dhis2-blue-1000 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dhis2-blue-700"
         >
             {ruleName}
         </button>

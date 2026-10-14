@@ -15,7 +15,7 @@ export function NotificationDetails({ row, values }: NotificationDetailsProps) {
     const { template, scheduledDate } = row;
     if (!template) {
         return (
-            <p className="m-0 text-[0.8125rem] text-dhis2-grey-600">
+            <p className="m-0 text-[0.8125rem] text-dhis2-grey-700">
                 {translate('Notification template not found for this action.')}
             </p>
         );
@@ -24,7 +24,7 @@ export function NotificationDetails({ row, values }: NotificationDetailsProps) {
     const recipient = resolveNotificationRecipient(template);
 
     return (
-        <div className="flex flex-col gap-dp8">
+        <dl className="m-0 flex flex-col gap-dp8">
             <DetailLine label={translate('Template')}>
                 <span className="text-[0.8125rem] text-dhis2-grey-800">
                     {template.displayName ?? template.id}
@@ -59,6 +59,6 @@ export function NotificationDetails({ row, values }: NotificationDetailsProps) {
                     <TemplateText template={template.messageTemplate} values={values} />
                 </DetailLine>
             ) : null}
-        </div>
+        </dl>
     );
 }

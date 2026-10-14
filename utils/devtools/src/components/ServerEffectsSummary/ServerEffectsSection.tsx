@@ -13,9 +13,9 @@ export function ServerEffectsSection({ title, count, children }: ServerEffectsSe
 
     return (
         <section>
-            <h3 className="mb-dp8 mt-0 text-sm font-semibold text-dhis2-grey-900">
+            <h2 className="mb-dp8 mt-0 text-sm font-semibold text-dhis2-grey-900">
                 {title} ({count})
-            </h3>
+            </h2>
             <ul className="m-0 flex list-none flex-col gap-dp12 p-0">{children}</ul>
         </section>
     );

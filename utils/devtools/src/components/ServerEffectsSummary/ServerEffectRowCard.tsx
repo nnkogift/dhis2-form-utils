@@ -30,9 +30,11 @@ export function ServerEffectRowCard({
 }: ServerEffectRowCardProps) {
     return (
         <li
-            className={`flex flex-col gap-dp8 rounded border border-dhis2-grey-200 bg-dhis2-grey-050 p-dp12 ${row.executedByServer ? '' : 'opacity-60'}`}
+            className={`flex flex-col gap-dp8 rounded border bg-dhis2-grey-050 p-dp12 ${row.executedByServer ? 'border-dhis2-grey-200' : 'border-dashed border-dhis2-grey-500'}`}
         >
-            <div className="flex flex-wrap items-center gap-dp8">
+            <div
+                className={`flex flex-wrap items-center gap-dp8 ${row.executedByServer ? '' : 'opacity-75'}`}
+            >
                 <EffectBadge type={row.actionType} />
                 <RuleLinkButton
                     ruleId={row.ruleId}
@@ -48,11 +50,13 @@ export function ServerEffectRowCard({
                     {resolveUnsupportedMessage(row)}
                 </p>
             )}
-            {row.section === 'notifications' ? (
-                <NotificationDetails row={row} values={values} />
-            ) : (
-                <EventDetails row={row} labelLookup={labelLookup} />
-            )}
+            <div className={row.executedByServer ? '' : 'opacity-75'}>
+                {row.section === 'notifications' ? (
+                    <NotificationDetails row={row} values={values} />
+                ) : (
+                    <EventDetails row={row} labelLookup={labelLookup} />
+                )}
+            </div>
         </li>
     );
 }

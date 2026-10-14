@@ -1,4 +1,3 @@
-import { Chip } from '@dhis2/ui';
 import { renderTemplatePlaceholders } from '../../lib/renderTemplatePlaceholders';
 
 export type TemplateTextProps = {
@@ -17,9 +16,12 @@ export function TemplateText({ template, values }: TemplateTextProps) {
                         {segment.text}
                     </span>
                 ) : (
-                    <Chip key={index} dense>
-                        <span className="font-mono">{segment.token}</span>
-                    </Chip>
+                    <code
+                        key={index}
+                        className="rounded border border-dhis2-grey-400 bg-dhis2-grey-200 px-dp8 py-[1px] font-mono text-xs whitespace-nowrap text-dhis2-grey-900"
+                    >
+                        {segment.token}
+                    </code>
                 )
             )}
         </p>

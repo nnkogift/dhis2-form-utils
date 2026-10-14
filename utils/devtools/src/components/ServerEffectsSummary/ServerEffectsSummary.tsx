@@ -75,7 +75,12 @@ export function ServerEffectsSummary({
                         </NoticeBox>
                     ) : null}
                     {loading ? (
-                        <CircularLoader small />
+                        <div role="status" className="flex items-center gap-dp8">
+                            <CircularLoader small />
+                            <span className="text-sm text-dhis2-grey-700">
+                                {translate('Loading server-side actions…')}
+                            </span>
+                        </div>
                     ) : (
                         <ServerEffectsSummaryContent
                             rows={rows}

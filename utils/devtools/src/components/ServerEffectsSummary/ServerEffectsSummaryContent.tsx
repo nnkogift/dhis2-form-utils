@@ -21,7 +21,7 @@ export function ServerEffectsSummaryContent({
     const { notifications, events, validation } = rows;
     if (notifications.length + events.length + validation.length === 0) {
         return (
-            <p className="m-0 text-sm text-dhis2-grey-600">
+            <p className="m-0 text-sm text-dhis2-grey-700">
                 {translate('No server-side rule effects fired.')}
             </p>
         );
