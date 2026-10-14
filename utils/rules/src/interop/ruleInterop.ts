@@ -36,6 +36,7 @@ export const normalizeEffect = (effect: RuleEffectJs): RuleEffect => {
         optionGroupId: values.get('optionGroupId') ?? values.get('optionGroup') ?? null,
         programStageSection: values.get('programStageSection') ?? null,
         programSection: values.get('programSection') ?? null,
+        programStage: values.get('programStage') ?? null,
         location: values.get('location') ?? null,
         data: effect.data ?? effect.ruleAction.data ?? null,
     };
