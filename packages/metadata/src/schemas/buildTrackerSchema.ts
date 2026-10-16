@@ -1,6 +1,8 @@
 import { z } from 'zod';
-import { buildTeaFieldSchema, enrollmentDateSchema } from './buildTeaFieldSchema';
 import type { TrackerProgramMetadata } from '../domain/trackerTypes';
+import { buildFieldSchema } from './buildFieldSchema';
+import { enrollmentDateSchema } from './dateRules';
+import { trackerFieldSchemaInput } from './toFieldSchemaInput';
 
 export function buildTrackerSchema(metadata: TrackerProgramMetadata): z.ZodObject<z.ZodRawShape> {
     const shape: z.ZodRawShape = {
@@ -8,19 +10,10 @@ export function buildTrackerSchema(metadata: TrackerProgramMetadata): z.ZodObjec
         enrolledAt: enrollmentDateSchema(metadata.selectEnrollmentDatesInFuture),
     };
 
-    for (const {
-        trackedEntityAttribute,
-        mandatory,
-        allowFutureDate,
-    } of metadata.programTrackedEntityAttributes) {
-        const teaId = trackedEntityAttribute.id;
+    for (const ptea of metadata.programTrackedEntityAttributes) {
+        const teaId = ptea.trackedEntityAttribute.id;
         if (!teaId) continue;
-
-        shape[teaId] = buildTeaFieldSchema(
-            trackedEntityAttribute,
-            mandatory ?? false,
-            allowFutureDate ?? true
-        );
+        shape[teaId] = buildFieldSchema(trackerFieldSchemaInput(ptea));
     }
 
     if (metadata.displayIncidentDate) {

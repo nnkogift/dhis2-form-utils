@@ -88,4 +88,31 @@ describe('buildFieldSchema', () => {
         expect(schema.safeParse('550e8400-e29b-41d4-a716-446655440000').success).toBe(true);
         expect(schema.safeParse('not-a-uuid').success).toBe(false);
     });
+
+    it('does not require a mandatory generated attribute', () => {
+        const schema = buildFieldSchema({
+            ...fromProgramStageDataElement(makePsde('de-text', 'TEXT')),
+            required: true,
+            generated: true,
+        });
+        expect(schema.safeParse('').success).toBe(true);
+    });
+
+    it('applies numeric bounds from the field config', () => {
+        const schema = buildFieldSchema({
+            ...fromProgramStageDataElement(makePsde('de-int', 'INTEGER')),
+            required: true,
+            bounds: { min: 1, max: 5 },
+        });
+        expect(schema.safeParse('3').success).toBe(true);
+        expect(schema.safeParse('9').success).toBe(false);
+    });
+
+    it('parses to the typed value', () => {
+        const schema = buildFieldSchema({
+            ...fromProgramStageDataElement(makePsde('de-int', 'INTEGER')),
+            required: true,
+        });
+        expect(schema.parse('42')).toBe(42);
+    });
 });

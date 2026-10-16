@@ -11,12 +11,28 @@ function buildSchema(metadata: ProgramStageMetadata): z.ZodObject<z.ZodRawShape>
 function buildTrackerSchema(metadata: TrackerProgramMetadata): z.ZodObject<z.ZodRawShape>;
 ```
 
-`buildSchema` is used by `useEventForm`; `buildTrackerSchema` by `useTrackerForm`. Event schemas
-use coercion (raw API strings → typed values); tracker schemas use string validators, since
-tracker form values are flat strings end to end (matching the Tracker API's attribute value
-shape). Each DHIS2 `valueType` maps to a Zod validator — `TEXT`/`LONG_TEXT` → `z.string()`,
-`INTEGER` → `z.number().int()` with `Number()` coercion, `BOOLEAN` → `z.boolean()`,
-`ORGANISATION_UNIT` → an 11-character uid string, and so on.
+`buildSchema` is used by `useEventForm`; `buildTrackerSchema` by `useTrackerForm`. Both loop over
+`buildFieldSchema`, which derives each field's schema from its configuration:
+
+| Property                                     | Effect                                                                                               |
+| -------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `valueType`                                  | base validator (`INTEGER` → whole number, `EMAIL`, `DATETIME`, `ORGANISATION_UNIT` → 11-char uid, …) |
+| `compulsory` (event) / `mandatory` (tracker) | empty value fails with `Required` (not for `generated` TEAs, which the server fills)                 |
+| `allowFutureDate`                            | `DATE` / `DATETIME` after today are rejected                                                         |
+| `optionSet.options[].code`                   | value must be one of the codes (every selected code for `MULTI_TEXT`)                                |
+| `renderType.min` / `max` / `decimalPoints`   | numeric bounds when rendered as spinner, slider or linear scale                                      |
+
+Form inputs are flat strings. The schema's **output** is typed — numeric value types become
+`number`, `BOOLEAN` / `TRUE_ONLY` become `boolean`, everything else stays `string`, and an empty
+optional value is `undefined`. Use `toPayloadValues` to turn the parsed values back into the
+strings DHIS2 expects in `dataValues` / `attributes`:
+
+```ts
+const payload = toPayloadValues(filterPayload(parsedValues, formStore.fieldStore.getSnapshot()));
+```
+
+`unique` is enforced by the server only, and `TrackedEntityAttribute.pattern` is a value
+_generation_ template, so neither is used for client validation.
 
 `buildTrackerSchema` includes `occurredAt` in the schema only when
 `metadata.displayIncidentDate` is `true` — it's conditionally _absent_, not present-but-optional.

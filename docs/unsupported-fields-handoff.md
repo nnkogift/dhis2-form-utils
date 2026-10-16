@@ -63,7 +63,7 @@ FieldConfig.valueType
 
 - Do **not** invent a widget for `REFERENCE` — keep `unsupported`.
 - Do **not** change enrollment system field ownership: tracker docs still say callers render `orgUnit` / `enrolledAt` / `occurredAt` themselves. This handoff is about **data-element / TEA** fields with `valueType: ORGANISATION_UNIT`, which may reuse the same picker component but are registered under the DE/TEA uid, not the literal key `'orgUnit'`.
-- Do **not** rework event `buildSchema` coercion; per-field string validation lives in `buildFieldSchema` / `buildTeaFieldSchema`.
+- ~~Do not rework event `buildSchema` coercion~~ (superseded by NNK-180): event and tracker now share `buildFieldSchema` in `@nnkogift/dhis2-form-utils-metadata`, which validates flat strings and outputs typed values; `toPayloadValues` serializes back to strings.
 - Do **not** change select / multiSelect / boolean / date behavior from #23.
 
 ---
@@ -104,7 +104,7 @@ Validate ranges: lng ∈ [-180, 180], lat ∈ [-90, 90]. Empty `''` allowed when
 
 ### Validation
 
-- Extend `buildFieldSchema` and `buildTeaFieldSchema` with a refine/regex for the `[lng,lat]` string (today both fall through to `z.string()`).
+- Extend `buildFieldSchema` (formerly also `buildTeaFieldSchema`) with a refine/regex for the `[lng,lat]` string (today both fall through to `z.string()`).
 - Event `buildSchema` already treats `COORDINATE` as a plain string — keep that; do not switch to object shapes.
 
 ### Adapter mapping
