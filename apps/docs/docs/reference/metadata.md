@@ -31,6 +31,12 @@ strings DHIS2 expects in `dataValues` / `attributes`:
 const payload = toPayloadValues(filterPayload(parsedValues, formStore.fieldStore.getSnapshot()));
 ```
 
+Validation messages are short and human-friendly ("Enter a valid number", "Select one of the
+available options", "Must be at least 1") and are translated at validation time through
+`@dhis2/d2-i18n`, which is a **peer dependency** — install it alongside Zod. Raw Zod wording such
+as `Expected number, received nan` never reaches the UI. Add the English strings to your app's
+i18n extraction so they get translated.
+
 `unique` is enforced by the server only, and `TrackedEntityAttribute.pattern` is a value
 _generation_ template, so neither is used for client validation.
 

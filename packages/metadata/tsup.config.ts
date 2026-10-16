@@ -2,5 +2,5 @@ import { createLibTsupConfig } from '@nnkogift/dhis2-form-utils-config/createLib
 
 export default createLibTsupConfig({
     preserveModules: true,
-    external: ['zod'],
+    external: ['zod', '@dhis2/d2-i18n'],
 });

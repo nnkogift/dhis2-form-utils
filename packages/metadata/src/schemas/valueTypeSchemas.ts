@@ -43,9 +43,9 @@ export const valueTypeToStringSchema = (valueType: ValueType | undefined): z.Zod
                     'Must be between 0 and 100'
                 );
         case 'EMAIL':
-            return z.string().email('Invalid email address');
+            return z.string().email('Enter a valid email address');
         case 'PHONE_NUMBER':
-            return z.string().regex(/^\+?[\d\s\-()+]+$/, 'Invalid phone number');
+            return z.string().regex(/^\+?[\d\s\-()+]+$/, 'Enter a valid phone number');
         case 'LETTER':
             return z.string().length(1, 'Must be a single character');
         case 'DATE':

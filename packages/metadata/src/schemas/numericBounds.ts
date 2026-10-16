@@ -1,5 +1,6 @@
 import type { ValueTypeRenderingObject } from '@dhis2/api-types/v43';
 import { z } from 'zod';
+import { messageWithVars } from './friendlyMessages';
 
 export type NumericBounds = {
     min?: number;
@@ -35,19 +36,22 @@ export function applyNumericBounds(schema: z.ZodTypeAny, bounds?: NumericBounds)
     let bounded = schema;
 
     if (min !== undefined) {
-        bounded = bounded.refine((value: string) => Number(value) >= min, {
-            message: `Must be at least ${String(min)}`,
-        });
+        bounded = bounded.refine(
+            (value: string) => Number(value) >= min,
+            messageWithVars('Must be at least {{min}}', { min })
+        );
     }
     if (max !== undefined) {
-        bounded = bounded.refine((value: string) => Number(value) <= max, {
-            message: `Must be at most ${String(max)}`,
-        });
+        bounded = bounded.refine(
+            (value: string) => Number(value) <= max,
+            messageWithVars('Must be at most {{max}}', { max })
+        );
     }
     if (decimalPoints !== undefined) {
-        bounded = bounded.refine((value: string) => countDecimals(value) <= decimalPoints, {
-            message: `Must have at most ${String(decimalPoints)} decimal places`,
-        });
+        bounded = bounded.refine(
+            (value: string) => countDecimals(value) <= decimalPoints,
+            messageWithVars('Must have at most {{decimalPoints}} decimal places', { decimalPoints })
+        );
     }
     return bounded;
 }
