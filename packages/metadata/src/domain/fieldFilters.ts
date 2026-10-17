@@ -138,9 +138,9 @@ export type ProgramStageDataElement = Omit<
     'renderType'
 > & { renderType?: RenderTypeByDevice };
 
+/** DHIS2 returns a section's data elements as plain references, in display order. */
 export type ProgramStageSectionDataElement = {
-    sortOrder?: number;
-    dataElement?: DataElementRef;
+    id: string;
 };
 
 export type ProgramStageSection = {
