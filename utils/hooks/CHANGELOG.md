@@ -1,5 +1,21 @@
 # @nnkogift/dhis2-form-utils-hooks
 
+## 0.1.0-alpha.11
+
+### Minor Changes
+
+- [#50](https://github.com/nnkogift/dhis2-form-utils/pull/50) [`81c54b7`](https://github.com/nnkogift/dhis2-form-utils/commit/81c54b76af2ce130021e374d61fbd800bedc6f40) Thanks [@nnkogift](https://github.com/nnkogift)! - Field schemas are now derived from the full field configuration through one shared `buildFieldSchema` used by `buildSchema` and `buildTrackerSchema`. It enforces `compulsory` / `mandatory` (not for `generated` TEAs), `allowFutureDate`, option-set codes and numeric `renderType` bounds (`min`, `max`, `decimalPoints`).
+
+    Behaviour change: form inputs stay strings, but the schema output is now typed (numbers, booleans, strings; `undefined` when empty) instead of using `z.coerce`. Use the new `toPayloadValues` to serialize parsed values back to the strings DHIS2 expects. `buildFieldSchema` in the hooks package is now a thin adapter over the metadata one.
+
+    Schema error messages are now human-friendly (for example "Enter a valid number" instead of "Expected number, received nan") and translated at validation time via `@dhis2/d2-i18n`, which becomes a peer dependency of `@nnkogift/dhis2-form-utils-metadata`.
+
+### Patch Changes
+
+- Updated dependencies [[`81c54b7`](https://github.com/nnkogift/dhis2-form-utils/commit/81c54b76af2ce130021e374d61fbd800bedc6f40)]:
+    - @nnkogift/dhis2-form-utils-metadata@0.1.0-alpha.11
+    - @nnkogift/dhis2-form-utils-rules@0.1.0-alpha.11
+
 ## 0.1.0-alpha.10
 
 ### Patch Changes

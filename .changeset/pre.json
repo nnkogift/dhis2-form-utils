@@ -22,6 +22,7 @@
         "devtools-lazy-graph-split",
         "devtools-vitest-bump",
         "devtools-without-registration-scope",
+        "field-schema-from-field-config",
         "field-widgets-map-integration",
         "fix-mobile-render-hint",
         "fix-program-stage-section-data-elements",
