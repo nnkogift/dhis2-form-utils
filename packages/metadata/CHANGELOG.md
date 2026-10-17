@@ -1,5 +1,11 @@
 # @nnkogift/dhis2-form-utils-metadata
 
+## 0.1.0-alpha.13
+
+### Patch Changes
+
+- [#54](https://github.com/nnkogift/dhis2-form-utils/pull/54) [`aef0f8a`](https://github.com/nnkogift/dhis2-form-utils/commit/aef0f8a272576fae9a17bfb2739fc05ce8aa4f95) Thanks [@nnkogift](https://github.com/nnkogift)! - fix: read program stage section data elements as plain `{ id }` references so fields land in their sections
+
 ## 0.1.0-alpha.12
 
 ### Patch Changes

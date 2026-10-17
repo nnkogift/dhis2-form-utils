@@ -30,6 +30,7 @@
         "hideprogramstage-target-metadata",
         "map-jit-package",
         "package-readmes",
+        "quiet-sections-fit",
         "quiet-trace-effects",
         "rule-condition-description",
         "rule-details-editor-link",
