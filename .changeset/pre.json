@@ -29,6 +29,7 @@
         "fix-schedule-create-event-action-type",
         "hideprogramstage-target-metadata",
         "map-jit-package",
+        "package-readmes",
         "quiet-trace-effects",
         "rule-condition-description",
         "rule-details-editor-link",
