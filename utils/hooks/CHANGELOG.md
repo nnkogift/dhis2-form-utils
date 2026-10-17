@@ -1,5 +1,15 @@
 # @nnkogift/dhis2-form-utils-hooks
 
+## 0.1.0-alpha.12
+
+### Patch Changes
+
+- [`3dad11a`](https://github.com/nnkogift/dhis2-form-utils/commit/3dad11a50b4b9a37a0a30266b9ddd4374f9185b3) Thanks [@nnkogift](https://github.com/nnkogift)! - docs: add README to each published package so it shows on npm
+
+- Updated dependencies [[`3dad11a`](https://github.com/nnkogift/dhis2-form-utils/commit/3dad11a50b4b9a37a0a30266b9ddd4374f9185b3)]:
+    - @nnkogift/dhis2-form-utils-metadata@0.1.0-alpha.12
+    - @nnkogift/dhis2-form-utils-rules@0.1.0-alpha.12
+
 ## 0.1.0-alpha.11
 
 ### Minor Changes
