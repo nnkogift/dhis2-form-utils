@@ -9,7 +9,7 @@ import {
 // (see the comment on `PROGRAM_STAGE_CORE_FIELDS` in fieldFilters.ts) — consumers read this via
 // the hand-written `ProgramStageSection` type.
 const PROGRAM_STAGE_SECTIONS_FIELD =
-    'programStageSections[id,displayName,sortOrder,renderType,dataElements[sortOrder,dataElement[id,displayName,displayFormName,valueType,description,optionSet[id,options[id,code,displayName]]]]]';
+    'programStageSections[id,displayName,sortOrder,renderType,dataElements[id]]';
 
 /** Nested field-selector for a single program stage — same shape `buildSchema` and `useFieldControl` expect. */
 export const PROGRAM_STAGE_FIELDS: string = [

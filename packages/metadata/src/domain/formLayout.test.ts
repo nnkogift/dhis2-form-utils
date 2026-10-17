@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { resolveFormSectionLayout } from './formLayout';
+import { getProgramStageSectionDataElementIds, resolveFormSectionLayout } from './formLayout';
 
 describe('resolveFormSectionLayout', () => {
     it('sorts sections by sortOrder and collects unsectioned fields', () => {
@@ -32,5 +32,19 @@ describe('resolveFormSectionLayout', () => {
 
         expect(layout.sections).toEqual([]);
         expect(layout.unsectionedItemIds).toEqual(['field-1', 'field-2']);
+    });
+});
+
+describe('getProgramStageSectionDataElementIds', () => {
+    it('reads ids from the plain data element references DHIS2 returns', () => {
+        expect(
+            getProgramStageSectionDataElementIds({
+                dataElements: [{ id: 'a' }, { id: 'b' }],
+            })
+        ).toEqual(['a', 'b']);
+    });
+
+    it('returns an empty list when the section has no data elements', () => {
+        expect(getProgramStageSectionDataElementIds({})).toEqual([]);
     });
 });
