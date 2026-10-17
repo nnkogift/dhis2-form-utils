@@ -37,6 +37,12 @@ export {
 } from './domain/fieldFilters';
 export { buildSchema } from './schemas/buildSchema';
 export { buildTrackerSchema } from './schemas/buildTrackerSchema';
+export { buildFieldSchema } from './schemas/buildFieldSchema';
+export type { FieldSchemaInput } from './schemas/buildFieldSchema';
+export { eventFieldSchemaInput, trackerFieldSchemaInput } from './schemas/toFieldSchemaInput';
+export { resolveRenderBounds } from './schemas/numericBounds';
+export type { NumericBounds } from './schemas/numericBounds';
+export { toPayloadValues } from './payload/toPayloadValues';
 export { joinMultiTextValue, parseMultiTextValue } from './schemas/multiTextValue';
 export {
     CONSTANT_FIELDS,

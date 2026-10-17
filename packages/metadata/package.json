@@ -40,11 +40,13 @@
         "test": "vitest run"
     },
     "peerDependencies": {
+        "@dhis2/d2-i18n": ">=1.0.0",
         "zod": ">=3.0.0"
     },
     "devDependencies": {
         "@nnkogift/dhis2-form-utils-config": "workspace:*",
         "@dhis2/api-types": "43.0.0-beta.daa0d8e",
+        "@dhis2/d2-i18n": "^1.2.0",
         "@dhis2/data-engine": "^3.17.0",
         "tsup": "^8.5.1",
         "typescript": "^5.9.3",

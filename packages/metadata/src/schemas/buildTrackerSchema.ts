@@ -1,30 +1,28 @@
 import { z } from 'zod';
-import { buildTeaFieldSchema, enrollmentDateSchema } from './buildTeaFieldSchema';
 import type { TrackerProgramMetadata } from '../domain/trackerTypes';
+import { buildFieldSchema } from './buildFieldSchema';
+import { enrollmentDateSchema } from './dateRules';
+import { withFriendlyMessages } from './friendlyMessages';
+import { trackerFieldSchemaInput } from './toFieldSchemaInput';
 
 export function buildTrackerSchema(metadata: TrackerProgramMetadata): z.ZodObject<z.ZodRawShape> {
     const shape: z.ZodRawShape = {
-        orgUnit: z.string().min(11).max(11),
-        enrolledAt: enrollmentDateSchema(metadata.selectEnrollmentDatesInFuture),
+        orgUnit: withFriendlyMessages(z.string().length(11, 'Must be a valid organisation unit')),
+        enrolledAt: withFriendlyMessages(
+            enrollmentDateSchema(metadata.selectEnrollmentDatesInFuture)
+        ),
     };
 
-    for (const {
-        trackedEntityAttribute,
-        mandatory,
-        allowFutureDate,
-    } of metadata.programTrackedEntityAttributes) {
-        const teaId = trackedEntityAttribute.id;
+    for (const ptea of metadata.programTrackedEntityAttributes) {
+        const teaId = ptea.trackedEntityAttribute.id;
         if (!teaId) continue;
-
-        shape[teaId] = buildTeaFieldSchema(
-            trackedEntityAttribute,
-            mandatory ?? false,
-            allowFutureDate ?? true
-        );
+        shape[teaId] = buildFieldSchema(trackerFieldSchemaInput(ptea));
     }
 
     if (metadata.displayIncidentDate) {
-        shape.occurredAt = enrollmentDateSchema(metadata.selectIncidentDatesInFuture);
+        shape.occurredAt = withFriendlyMessages(
+            enrollmentDateSchema(metadata.selectIncidentDatesInFuture)
+        );
     }
 
     return z.object(shape);

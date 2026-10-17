@@ -319,10 +319,11 @@ responsibility clear: wire the form, wire the store, return both.
 // In @nnkogift/dhis2-form-utils-metadata
 
 export function buildTrackerSchema(metadata: TrackerProgramMetadata): z.ZodObject<z.ZodRawShape> {
+    // mandatory / allowFutureDate / optionSet / generated / renderType bounds → one field schema each
     const teaFields = Object.fromEntries(
-        metadata.programTrackedEntityAttributes.map(({ trackedEntityAttribute, mandatory }) => [
-            trackedEntityAttribute.id,
-            buildTeaFieldSchema(trackedEntityAttribute, mandatory),
+        metadata.programTrackedEntityAttributes.map((ptea) => [
+            ptea.trackedEntityAttribute.id,
+            buildFieldSchema(trackerFieldSchemaInput(ptea)),
         ])
     );
 

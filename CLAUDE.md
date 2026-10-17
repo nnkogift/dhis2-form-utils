@@ -70,7 +70,7 @@ Converts DHIS2 metadata into Zod schemas:
 - `buildSchema(metadata)` — program stage event forms (data elements keyed by DE uid)
 - `buildTrackerSchema(metadata)` — tracker registration forms (TEA fields + `orgUnit`, `enrolledAt`, conditional `occurredAt`)
 
-Each `valueType` maps to a Zod validator. Event `buildSchema` uses coercion; tracker `buildTrackerSchema` uses string validators (form values are flat strings). The Zod schema is passed directly to `useForm` via `@hookform/resolvers/zod`.
+Both builders loop over a shared per-field builder, `buildFieldSchema`, driven by the field configuration: `valueType`, `compulsory`/`mandatory` (relaxed for `generated` TEAs), `allowFutureDate`, option-set codes and numeric `renderType` bounds (spinner/slider/linear scale). Form inputs are flat strings; the schema output is typed (number / boolean / string, `undefined` when empty). `toPayloadValues(values)` serializes parsed values back to the strings DHIS2 expects. The Zod schema is passed directly to `useForm` via `@hookform/resolvers/zod`.
 
 `TrackerProgramMetadata` is the program-level metadata shape for registration (TEAs, enrollment date flags, expanded program rules).
 

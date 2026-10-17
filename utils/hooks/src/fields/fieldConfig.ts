@@ -1,4 +1,6 @@
+import { resolveRenderBounds } from '@nnkogift/dhis2-form-utils-metadata';
 import type {
+    NumericBounds,
     ProgramStageDataElement,
     ProgramTrackedEntityAttribute,
     ValueType,
@@ -26,6 +28,7 @@ export type FieldConfig = {
     generated?: boolean;
     allowProvidedElsewhere?: boolean;
     renderTypeHint?: RenderTypeHint;
+    bounds?: NumericBounds;
 };
 
 const resolveRenderTypeHint = (
@@ -71,6 +74,7 @@ export function fromProgramStageDataElement(psde: ProgramStageDataElement): Fiel
         allowProvidedElsewhere: psde.allowProvidedElsewhere,
         optionSet: readOptionSet(de),
         renderTypeHint: resolveRenderTypeHint(psde.renderType),
+        bounds: resolveRenderBounds(psde.renderType),
     };
 }
 
@@ -93,5 +97,6 @@ export function fromProgramTrackedEntityAttribute(
         generated: tea.generated,
         optionSet: readOptionSet(tea),
         renderTypeHint: resolveRenderTypeHint(ptea.renderType),
+        bounds: resolveRenderBounds(ptea.renderType),
     };
 }

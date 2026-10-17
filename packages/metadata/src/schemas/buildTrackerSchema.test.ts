@@ -135,4 +135,57 @@ describe('buildTrackerSchema', () => {
             }).success
         ).toBe(true);
     });
+
+    it('does not require a mandatory generated attribute (server fills it)', () => {
+        const schema = buildTrackerSchema({
+            ...baseMetadata(),
+            programTrackedEntityAttributes: [
+                {
+                    mandatory: true,
+                    trackedEntityAttribute: {
+                        id: 'tea-id',
+                        displayName: 'ID',
+                        valueType: 'TEXT',
+                        generated: true,
+                    },
+                },
+            ],
+        });
+
+        const result = schema.safeParse({
+            orgUnit: 'abcdefghijk',
+            enrolledAt: '2024-01-15',
+            'tea-id': '',
+        });
+        expect(result.success).toBe(true);
+    });
+
+    it('restricts a TEA to its option set codes and parses typed output', () => {
+        const schema = buildTrackerSchema({
+            ...baseMetadata(),
+            programTrackedEntityAttributes: [
+                {
+                    mandatory: false,
+                    trackedEntityAttribute: {
+                        id: 'tea-sex',
+                        displayName: 'Sex',
+                        valueType: 'TEXT',
+                        optionSet: { id: 'os', options: [{ id: 'o1', code: 'M' }] },
+                    },
+                },
+                {
+                    mandatory: false,
+                    trackedEntityAttribute: {
+                        id: 'tea-age',
+                        displayName: 'Age',
+                        valueType: 'INTEGER',
+                    },
+                },
+            ],
+        } as unknown as TrackerProgramMetadata);
+        const base = { orgUnit: 'abcdefghijk', enrolledAt: '2024-01-15' };
+
+        expect(schema.safeParse({ ...base, 'tea-sex': 'X' }).success).toBe(false);
+        expect(schema.parse({ ...base, 'tea-sex': 'M', 'tea-age': '30' })['tea-age']).toBe(30);
+    });
 });

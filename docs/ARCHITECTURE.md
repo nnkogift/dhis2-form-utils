@@ -243,29 +243,28 @@ Handles the translation from DHIS2 metadata objects (programs, program stages, d
 tracked entity attributes, option sets) into Zod schemas that React Hook Form can consume via
 `@hookform/resolvers/zod`.
 
-Each DHIS2 `valueType` maps to a Zod validator. Coercers normalise the raw strings that the DHIS2
-API returns into proper JavaScript types before validation runs:
+Every field schema comes from one shared builder, `buildFieldSchema`, which takes a normalized
+`FieldSchemaInput` (`valueType`, `required`, `allowFutureDate`, `optionCodes`, numeric `bounds`).
+`buildSchema` (event) and `buildTrackerSchema` (tracker) map `compulsory` / `mandatory`,
+`allowFutureDate`, option-set codes, `generated` and numeric `renderType` bounds into that input.
 
-| DHIS2 valueType                | Zod schema                   | Coercion               |
-| ------------------------------ | ---------------------------- | ---------------------- |
-| `TEXT` / `LONG_TEXT`           | `z.string()`                 | None                   |
-| `INTEGER` / `INTEGER_POSITIVE` | `z.number().int()`           | `Number(value)`        |
-| `NUMBER`                       | `z.number()`                 | `parseFloat(value)`    |
-| `BOOLEAN`                      | `z.boolean()`                | `value === 'true'`     |
-| `DATE`                         | `z.string().date()`          | ISO format enforcement |
-| `ORGANISATION_UNIT`            | `z.string().min(11).max(11)` | UID validation         |
-| `FILE_RESOURCE`                | `z.string().uuid()`          | UID                    |
+Form values stay flat strings. The schema validates the string and transforms it to its specific
+type, so `handleSubmit` receives typed values; `toPayloadValues` serializes them back to the
+strings DHIS2 expects:
 
-The primary export is `buildSchema`, which accepts a program stage or data set metadata object and
-returns a `ZodObject` that can be passed directly into `useForm`:
+| DHIS2 valueType                      | Validation                               | Parsed output |
+| ------------------------------------ | ---------------------------------------- | ------------- |
+| `TEXT` / `LONG_TEXT`                 | `z.string()`                             | `string`      |
+| `INTEGER*` / `NUMBER` / `PERCENTAGE` | numeric string (+ sign / range / bounds) | `number`      |
+| `BOOLEAN` / `TRUE_ONLY`              | `'true'` / `'false'`                     | `boolean`     |
+| `DATE` / `DATETIME`                  | ISO date / `YYYY-MM-DDTHH:mm`            | `string`      |
+| `ORGANISATION_UNIT`                  | 11-character uid                         | `string`      |
+| `FILE_RESOURCE` / `IMAGE`            | `z.string().uuid()`                      | `string`      |
 
 ```ts
-// packages/metadata/src/buildSchema.ts
-import { z } from 'zod';
-import type { ProgramStageMetadata } from './types';
-
+// packages/metadata/src/schemas/buildSchema.ts
 export function buildSchema(metadata: ProgramStageMetadata): z.ZodObject<z.ZodRawShape> {
-    // iterates dataElements / trackedEntityAttributes, maps valueType → Zod
+    // for each programStageDataElement → buildFieldSchema(eventFieldSchemaInput(psde))
 }
 ```
 
