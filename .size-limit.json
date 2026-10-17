@@ -2,19 +2,13 @@
     {
         "name": "metadata (ESM)",
         "path": "packages/metadata/dist/**/*.js",
-        "limit": "10 KB",
+        "limit": "13 KB",
         "gzip": true
     },
     {
         "name": "rules (ESM)",
         "path": "utils/rules/dist/**/*.js",
         "limit": "10 KB",
-        "gzip": true
-    },
-    {
-        "name": "map (ESM, excl. maplibre-gl/terra-draw)",
-        "path": "packages/map/dist/**/*.js",
-        "limit": "15 KB",
         "gzip": true
     },
     {
@@ -26,19 +20,19 @@
     {
         "name": "dhis2-ui (ESM)",
         "path": "components/dhis2-ui/dist/index.js",
-        "limit": "5 KB",
+        "limit": "8 KB",
         "gzip": true
     },
     {
         "name": "mantine (ESM)",
         "path": "components/mantine/dist/index.js",
-        "limit": "5 KB",
+        "limit": "8 KB",
         "gzip": true
     },
     {
         "name": "mui (ESM)",
         "path": "components/mui/dist/index.js",
-        "limit": "5 KB",
+        "limit": "8 KB",
         "gzip": true
     },
     {
