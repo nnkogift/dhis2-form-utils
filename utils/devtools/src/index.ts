@@ -33,6 +33,8 @@ export type {
     ProgramStageRef,
     RuleDevtoolsMetadata,
 } from './lib/createLabelLookup';
+export { EFFECT_LEGEND, PROVENANCE_TAGS } from './constants/legend';
+export type { EffectLegendEntry, ProvenanceTagEntry, ProvenanceTagId } from './constants/legend';
 export { ServerEffectsSummary } from './components/ServerEffectsSummary/index';
 export type { ServerEffectsSummaryProps } from './components/ServerEffectsSummary/index';
 export type {

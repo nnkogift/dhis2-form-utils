@@ -12,7 +12,7 @@ function resolveStageName(
     programStageName: string | null | undefined
 ): string {
     if (programStageName === null) {
-        return translate('All stages (registration)');
+        return translate('All stages (enrollment)');
     }
     return orDash(resolveRuleStageName(rule) ?? programStageName);
 }

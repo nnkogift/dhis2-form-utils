@@ -30,6 +30,7 @@ export function ServerEffectRowCard({
 }: ServerEffectRowCardProps) {
     return (
         <li
+            data-test="devtools-server-effect-row"
             className={`flex flex-col gap-dp8 rounded border bg-dhis2-grey-050 p-dp12 ${row.executedByServer ? 'border-dhis2-grey-200' : 'border-dashed border-dhis2-grey-500'}`}
         >
             <div
@@ -46,7 +47,10 @@ export function ServerEffectRowCard({
                 </span>
             </div>
             {row.executedByServer ? null : (
-                <p className="m-0 text-xs font-medium text-dhis2-grey-700">
+                <p
+                    data-test="devtools-provenance-not-executed"
+                    className="m-0 text-xs font-medium text-dhis2-grey-700"
+                >
                     {resolveUnsupportedMessage(row)}
                 </p>
             )}

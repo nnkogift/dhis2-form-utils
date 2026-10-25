@@ -32,7 +32,7 @@ export type RulesPanelProps = {
     showConditions?: boolean;
     /**
      * The program stage currently visible in the host app, overriding the metadata-derived
-     * default. Pass `null` for a registration/enrollment view (no stage visible), or a stage
+     * default. Pass `null` for a enrollment view (no stage visible), or a stage
      * UID for the stage currently being viewed. Omit to fall back to `metadata.programStageId`
      * (event forms) or `null` (tracker forms).
      */
@@ -202,6 +202,7 @@ export function RulesPanel({
             type="button"
             className="inline-flex size-11 min-h-11 min-w-11 shrink-0 cursor-pointer items-center justify-center rounded border border-dhis2-grey-300 bg-white text-dhis2-grey-800 hover:bg-dhis2-grey-100 focus-visible:outline-2 focus-visible:outline-dhis2-teal-600 focus-visible:outline-offset-1"
             aria-label={translate('Open graph in full screen')}
+            data-test="devtools-graph-fullscreen"
             onClick={() => {
                 setGraphModalOpen(true);
             }}
@@ -234,13 +235,15 @@ export function RulesPanel({
                             })}
                         </span>
                         {scopeFilterEnabled ? (
-                            <SegmentedControl
-                                options={SCOPE_FILTER_OPTIONS}
-                                selected={scopeFilter}
-                                onChange={({ value }) => {
-                                    setScopeFilter(value as RuleScopeFilter);
-                                }}
-                            />
+                            <span data-test="devtools-scope-filter">
+                                <SegmentedControl
+                                    options={SCOPE_FILTER_OPTIONS}
+                                    selected={scopeFilter}
+                                    onChange={({ value }) => {
+                                        setScopeFilter(value as RuleScopeFilter);
+                                    }}
+                                />
+                            </span>
                         ) : null}
                     </div>
                 </div>
@@ -249,6 +252,7 @@ export function RulesPanel({
                         <button
                             key={key}
                             type="button"
+                            data-test={`devtools-tab-${key}`}
                             className={`cursor-pointer border-0 border-b-[3px] bg-transparent px-dp12 py-dp8 text-sm font-medium ${
                                 tab === key
                                     ? 'border-b-dhis2-blue-600 text-dhis2-blue-600'

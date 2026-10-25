@@ -32,7 +32,7 @@ function resolveCardStatus(inScope: boolean, firing: boolean): RuleCardStatus {
 
 function resolveAppliesToCaption(rule: CatalogRule, labelLookup: DevtoolsLabelLookup): string {
     return rule.programStageId === null
-        ? translate('Applies to registration')
+        ? translate('Applies to enrollment')
         : translate('Applies to {{stage}}', {
               stage: labelLookup.resolveStageName(rule.programStageId),
           });
@@ -74,7 +74,7 @@ export function RuleCatalogCard({
     const status = resolveCardStatus(inScope, firing);
 
     return (
-        <li data-rule-id={rule.id} className="m-0 shrink-0">
+        <li data-rule-id={rule.id} data-test="devtools-rule-card" className="m-0 shrink-0">
             <article
                 role="button"
                 tabIndex={0}
@@ -102,11 +102,15 @@ export function RuleCatalogCard({
                         {rule.name}
                     </h3>
                     <span className="flex shrink-0 items-center gap-[6px]">
-                        <span className={`text-[11px] font-semibold ${status.className}`}>
+                        <span
+                            data-test="devtools-rule-status"
+                            className={`text-[11px] font-semibold ${status.className}`}
+                        >
                             {status.label}
                         </span>
                         <button
                             type="button"
+                            data-test="devtools-rule-details-button"
                             title={translate('Program rule details')}
                             aria-label={translate('Program rule details')}
                             onClick={(event) => {
