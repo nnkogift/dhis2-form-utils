@@ -12,7 +12,7 @@ export function ServerEffectsSection({ title, count, children }: ServerEffectsSe
     }
 
     return (
-        <section>
+        <section data-test="devtools-server-effects-section">
             <h2 className="mb-dp8 mt-0 text-sm font-semibold text-dhis2-grey-900">
                 {title} ({count})
             </h2>

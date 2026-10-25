@@ -27,7 +27,10 @@ export function ValidationRowCard({ row, labelLookup, onOpenRule }: ValidationRo
     const { entry } = row;
 
     return (
-        <li className="flex flex-col gap-dp8 rounded border border-dhis2-grey-200 bg-dhis2-grey-050 p-dp12">
+        <li
+            data-test="devtools-server-validation-row"
+            className="flex flex-col gap-dp8 rounded border border-dhis2-grey-200 bg-dhis2-grey-050 p-dp12"
+        >
             <div className="flex flex-wrap items-center gap-dp8">
                 <LevelTag level={entry.level} />
                 <RuleLinkButton

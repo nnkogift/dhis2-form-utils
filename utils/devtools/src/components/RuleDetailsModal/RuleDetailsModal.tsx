@@ -98,7 +98,7 @@ export function RuleDetailsModal({
     const editorApp = resolveProgramRuleEditorApp(minorVersion);
 
     return (
-        <Modal position="middle" onClose={onClose}>
+        <Modal position="middle" onClose={onClose} dataTest="devtools-rule-details-modal">
             <RuleDetailsHeader title={title} chip={chip} description={detail?.description} />
             <ModalContent>
                 <RuleDetailsBody
