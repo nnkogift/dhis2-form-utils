@@ -1,5 +1,15 @@
 # @nnkogift/dhis2-form-utils-devtools
 
+## 0.1.0-alpha.14
+
+### Patch Changes
+
+- [#57](https://github.com/nnkogift/dhis2-form-utils/pull/57) [`1ded473`](https://github.com/nnkogift/dhis2-form-utils/commit/1ded47341b11e1a9de6db7b256a0d3998820d7d7) Thanks [@nnkogift](https://github.com/nnkogift)! - Add stable `data-test` hooks (tabs, rule cards, scope filter, graph full screen, rule details modal, server effect rows, provenance tags), export `EFFECT_LEGEND` and `PROVENANCE_TAGS` with descriptions, and use "enrollment" instead of "registration" in rule scope wording.
+
+- Updated dependencies []:
+    - @nnkogift/dhis2-form-utils-metadata@0.1.0-alpha.14
+    - @nnkogift/dhis2-form-utils-hooks@0.1.0-alpha.14
+
 ## 0.1.0-alpha.13
 
 ### Patch Changes

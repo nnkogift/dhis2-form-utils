@@ -19,6 +19,7 @@
     "changesets": [
         "chatty-ears-camp",
         "coordinate-geojson-modal-picker",
+        "devtools-docs-support",
         "devtools-lazy-graph-split",
         "devtools-vitest-bump",
         "devtools-without-registration-scope",
